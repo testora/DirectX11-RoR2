@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -17,6 +17,19 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Public\Engine_Enum.h" />
+    <ClInclude Include="Public\Engine_Struct.h" />
+    <ClInclude Include="Public\GameInstance.h" />
+    <ClInclude Include="Public\Engine_Macro.h" />
+    <ClInclude Include="Public\GraphicDevice.h" />
+    <ClInclude Include="Public\Engine_Define.h" />
+    <ClInclude Include="Public\Engine_Typedef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Private\GameInstance.cpp" />
+    <ClCompile Include="Private\GraphicDevice.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -72,15 +85,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)Bin/</OutDir>
+    <IntDir>$(ProjectDir)Bin/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)Bin/</OutDir>
+    <IntDir>$(ProjectDir)Bin/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)Bin/</OutDir>
+    <IntDir>$(ProjectDir)Bin/</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)Bin/</OutDir>
+    <IntDir>$(ProjectDir)Bin/</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -88,7 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Header/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -96,13 +113,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
+call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -114,7 +130,7 @@ call "Utility/UpdateLib.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Header/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -124,13 +140,12 @@ call "Utility/UpdateLib.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
+call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -140,7 +155,7 @@ call "Utility/UpdateLib.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Header/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -148,13 +163,12 @@ call "Utility/UpdateLib.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;DirectXTKd.lib;Effects11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
+call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -166,7 +180,7 @@ call "Utility/UpdateLib.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Header/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -176,13 +190,12 @@ call "Utility/UpdateLib.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;DirectXTK.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PreBuildEvent>
-      <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
+call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
