@@ -145,6 +145,8 @@ HRESULT CGraphicDevice::Ready_SwapChain(GRAPHICDESC _tGraphicDesc)
 	}
 
 	return S_OK;
+
+	// flip-model counterparts
 }
 
 HRESULT CGraphicDevice::Ready_RenderTargetView()

@@ -6,16 +6,6 @@
 #define	ENGINE_DLL				_declspec(dllimport)
 #endif
 
-#define VK_MAX					0xFF
-
-#define BEGIN(NAME)				namespace NAME {
-#define END						}
-
-#define PURE					= 0
-#define DEFAULT					= default
-
-#define IDX(ENUM)				static_cast<unsigned int>(ENUM)
-
 #pragma region MessageBox
 
 #define MSG_BOX(TITLE, MESSAGE)							MessageBox(0, TEXT(MESSAGE), TEXT(TITLE), MB_OK)

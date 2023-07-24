@@ -5,12 +5,16 @@
 #include "framework.h"
 #include "Client.h"
 
+#include "MainApp.h"
+
 #define MAX_LOADSTRING	100
 
 // Global Variables:
 HINSTANCE	hInst;								// current instance
 WCHAR		szTitle[MAX_LOADSTRING];			// The title bar text
 WCHAR		szWindowClass[MAX_LOADSTRING];		// the main window class name
+
+HWND		g_hWnd;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -25,10 +29,15 @@ int APIENTRY wWinMain(
 	_In_		int			nCmdShow
 )
 {
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
+	shared_ptr<CMainApp> pMainApp = CMainApp::Get_Instance();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -39,6 +48,11 @@ int APIENTRY wWinMain(
 	if (!InitInstance(hInstance, nCmdShow))
 	{
 		return FALSE;
+	}
+
+	if (FAILED(pMainApp->Initialize()))
+	{
+		MSG_RETURN(FALSE, "Application Initialization", "Failed to pMainApp->Initialize");
 	}
 
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
@@ -79,7 +93,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CLIENT));
 	wcex.hCursor		= LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName	= MAKEINTRESOURCEW(IDC_CLIENT);
+	wcex.lpszMenuName	= ACTIVATE_MENU ? MAKEINTRESOURCEW(IDC_CLIENT) : NULL;
 	wcex.lpszClassName	= szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -100,14 +114,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
 
+	RECT rcWndSize = { 0, 0, g_iWinCX, g_iWinCY };
+	AdjustWindowRect(&rcWndSize, WS_OVERLAPPEDWINDOW, ACTIVATE_MENU);
+
 	HWND hWnd = CreateWindowW(
 		szWindowClass,
 		szTitle,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		0,
-		CW_USEDEFAULT,
-		0,
+		rcWndSize.right - rcWndSize.left,
+		rcWndSize.bottom - rcWndSize.top,
 		nullptr,
 		nullptr,
 		hInstance,
@@ -121,6 +138,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
+
+	g_hWnd = hWnd;
 
 	return TRUE;
 }

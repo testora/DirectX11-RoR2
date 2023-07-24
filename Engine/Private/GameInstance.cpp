@@ -8,7 +8,7 @@ CGameInstance::CGameInstance()
 
 #pragma region Engine
 
-HRESULT CGameInstance::Initialize_Engine(_In_ const GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
+HRESULT CGameInstance::Initialize_Engine(_In_ const GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, ComPtr<ID3D11DeviceContext>& _pContext)
 {
 	if (FAILED(m_pGraphicDevice->Ready_GraphicDevice(_tGraphicDesc, _pDevice, _pContext)))
 	{

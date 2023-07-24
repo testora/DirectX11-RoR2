@@ -1,6 +1,5 @@
 #pragma once
 #include "Engine_Define.h"
-#include "Singleton.h"
 
 BEGIN(Engine)
 

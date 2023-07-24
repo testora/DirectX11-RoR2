@@ -4,11 +4,11 @@ setlocal
 set "cppExtension=.cpp"
 set "hExtension=.h"
 
-set "SourceFolder=.\Engine"
-set "PrivateFolder=.\Engine\Private"
-set "PublicFolder=.\Engine\Public"
-set "targetProject=.\Engine\Engine.vcxproj"
-set "targetFilters=.\Engine\Engine.vcxproj.filters"
+set "SourceFolder=..\Engine"
+set "PrivateFolder=..\Engine\Private"
+set "PublicFolder=..\Engine\Public"
+set "targetProject=..\Engine\Engine.vcxproj"
+set "targetFilters=..\Engine\Engine.vcxproj.filters"
 
 if not exist "%PrivateFolder%" (
 	mkdir "%PrivateFolder%"
