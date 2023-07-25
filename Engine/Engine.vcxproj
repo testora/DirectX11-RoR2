@@ -36,6 +36,9 @@
     <ClCompile Include="Private\Timer.cpp" />
     <ClCompile Include="Private\Timer_Manager.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Public\Engine_Typedef.inl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -123,8 +126,8 @@
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"
-call "Utility/UpdateLib.bat"</Command>
+call "Utility/UpdateLib.bat"
+call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
   </ItemDefinitionGroup>
@@ -151,8 +154,8 @@ call "Utility/UpdateLib.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"
-call "Utility/UpdateLib.bat"</Command>
+call "Utility/UpdateLib.bat"
+call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
   </ItemDefinitionGroup>
@@ -175,8 +178,8 @@ call "Utility/UpdateLib.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"
-call "Utility/UpdateLib.bat"</Command>
+call "Utility/UpdateLib.bat"
+call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
   </ItemDefinitionGroup>
@@ -203,8 +206,8 @@ call "Utility/UpdateLib.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Engine.bat"
-call "Utility/UpdateLib.bat"</Command>
+call "Utility/UpdateLib.bat"
+call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
   </ItemDefinitionGroup>

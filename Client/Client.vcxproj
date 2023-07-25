@@ -127,8 +127,8 @@
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Client.bat"
-call "Utility/UpdateResources.bat"</Command>
+call "Utility/UpdateResources.bat"
+call "Utility/UpdatePath_Client.bat"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -161,8 +161,8 @@ call "Utility/UpdateResources.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Client.bat"
-call "Utility/UpdateResources.bat"</Command>
+call "Utility/UpdateResources.bat"
+call "Utility/UpdatePath_Client.bat"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -191,8 +191,8 @@ call "Utility/UpdateResources.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Client.bat"
-call "Utility/UpdateResources.bat"</Command>
+call "Utility/UpdateResources.bat"
+call "Utility/UpdatePath_Client.bat"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -225,8 +225,8 @@ call "Utility/UpdateResources.bat"</Command>
     <PreBuildEvent />
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
-call "Utility/UpdatePath_Client.bat"
-call "Utility/UpdateResources.bat"</Command>
+call "Utility/UpdateResources.bat"
+call "Utility/UpdatePath_Client.bat"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderType>Effect</ShaderType>

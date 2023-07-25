@@ -1,1 +1,1 @@
-echo A | xcopy /E /I ".\Resources" "Client\Bin\Resources"
+echo A | xcopy /E /I "..\Resources" "..\Client\Bin\Resources"

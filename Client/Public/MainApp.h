@@ -20,10 +20,13 @@ public:
 	void		Tick(_float fTimeDelta);
 	HRESULT		Render();
 
-public:
+#pragma region Timer Management
+
 	void		Tick_Timer();
 	_bool		Check_Timer(const _float fFPS);
 	_float		Get_TimeDelta(const _float fFPS) const;
+
+#pragma endregion
 
 private:
 	HRESULT		Default_Settings();
