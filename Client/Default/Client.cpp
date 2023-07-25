@@ -52,7 +52,7 @@ int APIENTRY wWinMain(
 
 	if (FAILED(pMainApp->Initialize()))
 	{
-		MSG_RETURN(FALSE, "Application Initialization", "Failed to pMainApp->Initialize");
+		MSG_RETURN(FALSE, "Application Initialization", "Failed: pMainApp->Initialize");
 	}
 
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
@@ -60,12 +60,31 @@ int APIENTRY wWinMain(
 	MSG msg;
 
 	// Main message loop:
-	while (GetMessage(&msg, nullptr, 0, 0))
+	while (true)
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (WM_QUIT == msg.message)
+			{
+				break;
+			}
+
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+
+		pMainApp->Tick_Timer();
+
+		if (pMainApp->Check_Timer(DEFAULT_FPS))
+		{
+			pMainApp->Tick(pMainApp->Get_TimeDelta(DEFAULT_FPS));
+			if (FAILED(pMainApp->Render()))
+			{
+				MSG_BOX("Client Error", "Failed: pMainApp->Render");
+			}
 		}
 	}
 

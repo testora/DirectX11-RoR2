@@ -20,6 +20,14 @@ public:
 	void		Tick(_float fTimeDelta);
 	HRESULT		Render();
 
+public:
+	void		Tick_Timer();
+	_bool		Check_Timer(const _float fFPS);
+	_float		Get_TimeDelta(const _float fFPS) const;
+
+private:
+	HRESULT		Default_Settings();
+
 private:
 	ComPtr<ID3D11Device>		m_pDevice;
 	ComPtr<ID3D11DeviceContext>	m_pContext;

@@ -19,17 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Engine_Function.h" />
     <ClInclude Include="Public\Engine_Enum.h" />
     <ClInclude Include="Public\Engine_Struct.h" />
     <ClInclude Include="Public\GameInstance.h" />
     <ClInclude Include="Public\Engine_Macro.h" />
-    <ClInclude Include="Public\GraphicDevice.h" />
+    <ClInclude Include="Public\Graphic_Device.h" />
     <ClInclude Include="Public\Engine_Define.h" />
     <ClInclude Include="Public\Engine_Typedef.h" />
+    <ClInclude Include="Public\Timer.h" />
+    <ClInclude Include="Public\Timer_Manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\GameInstance.cpp" />
-    <ClCompile Include="Private\GraphicDevice.cpp" />
+    <ClCompile Include="Private\Graphic_Device.cpp" />
+    <ClCompile Include="Private\Timer.cpp" />
+    <ClCompile Include="Private\Timer_Manager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -121,6 +126,7 @@
 call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -148,6 +154,7 @@ call "Utility/UpdateLib.bat"</Command>
 call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -171,6 +178,7 @@ call "Utility/UpdateLib.bat"</Command>
 call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -198,6 +206,7 @@ call "Utility/UpdateLib.bat"</Command>
 call "Utility/UpdatePath_Engine.bat"
 call "Utility/UpdateLib.bat"</Command>
     </PostBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

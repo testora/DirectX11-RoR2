@@ -3,12 +3,12 @@
 
 BEGIN(Engine)
 
-class CGraphicDevice final : public CSingleton<CGraphicDevice>
+class CGraphic_Device final : public CSingleton<CGraphic_Device>
 {
-	friend class CSingleton<CGraphicDevice>;
+	friend class CSingleton<CGraphic_Device>;
 private:
-	explicit CGraphicDevice();
-	virtual ~CGraphicDevice() DEFAULT;
+	explicit CGraphic_Device();
+	virtual ~CGraphic_Device() DEFAULT;
 
 public:
 	HRESULT							Ready_GraphicDevice(_In_ GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);

@@ -1,10 +1,10 @@
-#include "GraphicDevice.h"
+#include "Graphic_Device.h"
 
-CGraphicDevice::CGraphicDevice()
+CGraphic_Device::CGraphic_Device()
 {
 }
 
-HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
+HRESULT CGraphic_Device::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
 {
 	_uint				iFlag = 0;
 	D3D_FEATURE_LEVEL	eFeatureLevel;
@@ -15,22 +15,22 @@ HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out
 
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, m_pDevice.GetAddressOf(), &eFeatureLevel, m_pContext.GetAddressOf())))
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed to D3D11CreateDevice");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Failed: D3D11CreateDevice");
 	}
 
 	if (FAILED(Ready_SwapChain(_tGraphicDesc)))
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed to Ready_SwapChain");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Failed: Ready_SwapChain");
 	}
 
 	if (FAILED(Ready_RenderTargetView()))
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed to Ready_RenderTargetView");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Failed: Ready_RenderTargetView");
 	}
 
 	if (FAILED(Ready_DepthStencilView(_tGraphicDesc.iWinCX, _tGraphicDesc.iWinCY)))
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed to Ready_DepthStencilView");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Failed: Ready_DepthStencilView");
 	}
 
 	ID3D11RenderTargetView* pArrRenderTargetView[] =
@@ -57,11 +57,11 @@ HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Clear_BackBuffer_View(_float4 _vColor)
+HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 _vColor)
 {
 	if (nullptr == m_pRenderTargetView)
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Clear_BackBuffer_View", "Nullptr Exception: m_pRenderTargetView");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Clear_BackBuffer_View", "Nullptr Exception: m_pRenderTargetView");
 	}
 
 	m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<_float*>(&_vColor));
@@ -69,11 +69,11 @@ HRESULT CGraphicDevice::Clear_BackBuffer_View(_float4 _vColor)
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Clear_DepthStencil_View()
+HRESULT CGraphic_Device::Clear_DepthStencil_View()
 {
 	if (nullptr == m_pDepthStencilView)
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Clear_DepthStencil_View", "Nullptr Exception: m_pDepthStencilView");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Clear_DepthStencil_View", "Nullptr Exception: m_pDepthStencilView");
 	}
 
 	m_pContext->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
@@ -81,22 +81,22 @@ HRESULT CGraphicDevice::Clear_DepthStencil_View()
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Present()
+HRESULT CGraphic_Device::Present()
 {
 	if (nullptr == m_pSwapChain)
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Present", "Nullptr Exception: m_pSwapChain");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Present", "Nullptr Exception: m_pSwapChain");
 	}
 
 	if (FAILED(m_pSwapChain->Present(0, 0)))
 	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Present", "Failed to m_pSwapChain->Present(0, 0)");
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Present", "Failed: m_pSwapChain->Present(0, 0)");
 	}
 
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Ready_SwapChain(GRAPHICDESC _tGraphicDesc)
+HRESULT CGraphic_Device::Ready_SwapChain(GRAPHICDESC _tGraphicDesc)
 {
 	ComPtr<IDXGIDevice>	pDXGIDevice;
 	if (FAILED(m_pDevice->QueryInterface(_uuidof(IDXGIDevice), reinterpret_cast<void**>(pDXGIDevice.GetAddressOf()))))
@@ -149,7 +149,7 @@ HRESULT CGraphicDevice::Ready_SwapChain(GRAPHICDESC _tGraphicDesc)
 	// flip-model counterparts
 }
 
-HRESULT CGraphicDevice::Ready_RenderTargetView()
+HRESULT CGraphic_Device::Ready_RenderTargetView()
 {
 	ComPtr<ID3D11Texture2D> pBackBuffer;
 	if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(pBackBuffer.GetAddressOf()))))
@@ -164,7 +164,7 @@ HRESULT CGraphicDevice::Ready_RenderTargetView()
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Ready_DepthStencilView(_uint _iWinCX, _uint _iWinCY)
+HRESULT CGraphic_Device::Ready_DepthStencilView(_uint _iWinCX, _uint _iWinCY)
 {
 	ComPtr<ID3D11Texture2D> pDepthStencilBuffer;
 
