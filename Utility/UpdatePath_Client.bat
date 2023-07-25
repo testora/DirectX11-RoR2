@@ -1,15 +1,15 @@
-@echo off
+@echo on
 setlocal
 
 set "hExtension=.h"
 set "inlExtension=.inl"
 set "cppExtension=.cpp"
 
-set "SourceFolder=..\Client"
-set "PrivateFolder=..\Client\Private"
-set "PublicFolder=..\Client\Public"
-set "targetProject=..\Client\Client.vcxproj"
-set "targetFilters=..\Client\Client.vcxproj.filters"
+set "SourceFolder=.\Client"
+set "PrivateFolder=.\Client\Private"
+set "PublicFolder=.\Client\Public"
+set "targetProject=.\Client\Client.vcxproj"
+set "targetFilters=.\Client\Client.vcxproj.filters"
 
 if not exist "%PrivateFolder%" (
 	mkdir "%PrivateFolder%"

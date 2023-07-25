@@ -19,6 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="Component_Manager.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="ObjectLayer.h" />
+    <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Object_Manager.h" />
     <ClInclude Include="Public\Engine_Function.h" />
     <ClInclude Include="Public\Engine_Enum.h" />
     <ClInclude Include="Public\Engine_Struct.h" />
@@ -29,12 +35,22 @@
     <ClInclude Include="Public\Engine_Typedef.h" />
     <ClInclude Include="Public\Timer.h" />
     <ClInclude Include="Public\Timer_Manager.h" />
+    <ClInclude Include="Public\Scene_Manager.h" />
+    <ClInclude Include="Public\Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Component_Manager.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="ObjectLayer.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
+    <ClCompile Include="Object_Manager.cpp" />
     <ClCompile Include="Private\GameInstance.cpp" />
     <ClCompile Include="Private\Graphic_Device.cpp" />
     <ClCompile Include="Private\Timer.cpp" />
     <ClCompile Include="Private\Timer_Manager.cpp" />
+    <ClCompile Include="Private\Scene_Manager.cpp" />
+    <ClCompile Include="Private\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Typedef.inl" />
@@ -127,6 +143,7 @@
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
 call "Utility/UpdateLib.bat"
+cd "$(SolutionDir)"
 call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
@@ -155,6 +172,7 @@ call "Utility/UpdatePath_Engine.bat"</Command>
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
 call "Utility/UpdateLib.bat"
+cd "$(SolutionDir)"
 call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
@@ -179,6 +197,7 @@ call "Utility/UpdatePath_Engine.bat"</Command>
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
 call "Utility/UpdateLib.bat"
+cd "$(SolutionDir)"
 call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
@@ -207,6 +226,7 @@ call "Utility/UpdatePath_Engine.bat"</Command>
     <PostBuildEvent>
       <Command>cd "$(SolutionDir)"
 call "Utility/UpdateLib.bat"
+cd "$(SolutionDir)"
 call "Utility/UpdatePath_Engine.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />

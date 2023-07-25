@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{9591CEB5-27DF-4337-903A-0617C5FBC173}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0DECB6EA-E4CE-49E8-8E0A-2D626E5618C2} = {0DECB6EA-E4CE-49E8-8E0A-2D626E5618C2}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{0DECB6EA-E4CE-49E8-8E0A-2D626E5618C2}"
 EndProject
@@ -19,6 +22,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Design", "01. Design", "{392FD607-7F77-4D3B-8D87-2ABDFBAFB739}"
 	ProjectSection(SolutionItems) = preProject
 		Public\Design\Singleton.h = Public\Design\Singleton.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B5BCC534-060C-46B2-B532-9615E20A0DBB}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
