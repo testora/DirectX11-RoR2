@@ -1,3 +1,4 @@
+#include "EnginePCH.h"
 #include "Graphic_Device.h"
 
 CGraphic_Device::CGraphic_Device()
@@ -16,6 +17,12 @@ HRESULT CGraphic_Device::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Ou
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, m_pDevice.GetAddressOf(), &eFeatureLevel, m_pContext.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Failed: D3D11CreateDevice");
+	}
+
+	if (nullptr == m_pDevice
+	||	nullptr == m_pContext)
+	{
+		MSG_RETURN(E_FAIL, "CGraphic_Device::Ready_GraphicDevice", "Null Exception: m_pDevice || m_pContext");
 	}
 
 	if (FAILED(Ready_SwapChain(_tGraphicDesc)))

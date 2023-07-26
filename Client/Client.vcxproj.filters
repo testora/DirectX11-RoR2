@@ -19,15 +19,15 @@
     <Filter Include="02. MainApp">
       <UniqueIdentifier>{3b7ae8ef-0473-406e-b975-0f5e86b97cbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00. Header\00. PCH">
+      <UniqueIdentifier>{66c4c4fb-9c25-4617-8a5e-faa413c8ca98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
       <Filter>01. Default\00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Default\framework.h">
-      <Filter>01. Default\00. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Default\pch.h">
       <Filter>01. Default\00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Default\Resource.h">
@@ -45,16 +45,19 @@
     <ClInclude Include="Public\Client_Settings.h">
       <Filter>00. Header</Filter>
     </ClInclude>
+    <ClInclude Include="Public\ClientPCH.h">
+      <Filter>00. Header\00. PCH</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
       <Filter>01. Default\01. Source</Filter>
     </ClCompile>
-    <ClCompile Include="Default\pch.cpp">
-      <Filter>01. Default\01. Source</Filter>
-    </ClCompile>
     <ClCompile Include="Private\MainApp.cpp">
       <Filter>02. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ClientPCH.cpp">
+      <Filter>00. Header\00. PCH</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,22 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
-#include "Public_Define.h"
+#include <time.h>
+#include <process.h>
+
+#include <cmath>
+#include <memory>
+#include <iostream>
+
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <algorithm>
+#include <functional>
+
+using namespace std;
 
 #endif //PCH_H

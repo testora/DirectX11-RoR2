@@ -23,15 +23,20 @@
     <ClInclude Include="Public\Client_Define.h" />
     <ClInclude Include="Default\Client.h" />
     <ClInclude Include="Default\framework.h" />
-    <ClInclude Include="Default\pch.h" />
     <ClInclude Include="Default\Resource.h" />
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\MainApp.h" />
+    <ClInclude Include="Public\ClientPCH.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
-    <ClCompile Include="Default\pch.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
+    <ClCompile Include="Private\ClientPCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -114,8 +119,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -146,8 +151,8 @@ call "Utility/UpdatePath_Client.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -178,8 +183,8 @@ call "Utility/UpdatePath_Client.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -210,8 +215,8 @@ call "Utility/UpdatePath_Client.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>Create</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

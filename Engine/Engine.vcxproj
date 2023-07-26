@@ -19,12 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="Component_Manager.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="ObjectLayer.h" />
-    <ClInclude Include="ObjectPool.h" />
-    <ClInclude Include="Object_Manager.h" />
+    <ClInclude Include="Public\Factory.h" />
+    <ClInclude Include="Public\GameObject.h" />
     <ClInclude Include="Public\Engine_Function.h" />
     <ClInclude Include="Public\Engine_Enum.h" />
     <ClInclude Include="Public\Engine_Struct.h" />
@@ -33,26 +29,29 @@
     <ClInclude Include="Public\Graphic_Device.h" />
     <ClInclude Include="Public\Engine_Define.h" />
     <ClInclude Include="Public\Engine_Typedef.h" />
+    <ClInclude Include="Public\EnginePCH.h" />
     <ClInclude Include="Public\Timer.h" />
     <ClInclude Include="Public\Timer_Manager.h" />
     <ClInclude Include="Public\Scene_Manager.h" />
     <ClInclude Include="Public\Scene.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Component_Manager.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="ObjectLayer.cpp" />
-    <ClCompile Include="ObjectPool.cpp" />
-    <ClCompile Include="Object_Manager.cpp" />
+    <ClCompile Include="Private\GameObject.cpp" />
     <ClCompile Include="Private\GameInstance.cpp" />
     <ClCompile Include="Private\Graphic_Device.cpp" />
+    <ClCompile Include="Private\EnginePCH.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Private\Timer.cpp" />
     <ClCompile Include="Private\Timer_Manager.cpp" />
     <ClCompile Include="Private\Scene_Manager.cpp" />
     <ClCompile Include="Private\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Public\Factory.inl" />
     <None Include="Public\Engine_Typedef.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -130,7 +129,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,7 +157,8 @@ call "Utility/UpdatePath_Engine.bat"</Command>
       <PreprocessorDefinitions>WIN32;NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -184,7 +185,8 @@ call "Utility/UpdatePath_Engine.bat"</Command>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -211,7 +213,8 @@ call "Utility/UpdatePath_Engine.bat"</Command>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
