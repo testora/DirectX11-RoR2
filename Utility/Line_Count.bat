@@ -1,8 +1,8 @@
 @echo off
 setlocal
 
-set "folderPath=."
-set "extensions=*.cpp *.h *.hlsl"
+set "folderPath=.."
+set "extensions=*.h *.inl *.cpp *.hlsl"
 set "totalCount=0"
 
 for /r "%folderPath%" %%F in (%extensions%) do (

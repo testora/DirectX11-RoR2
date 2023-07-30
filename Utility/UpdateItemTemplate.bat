@@ -10,4 +10,6 @@ for /d %%i in ("%SrcPath%\*") do (
     popd
 )
 
+echo Done!
+
 endlocal

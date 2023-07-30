@@ -17,7 +17,16 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const GRAPHICDESC _tGraphicDesc, _
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
 	}
-
+#ifdef _DEBUG
+	if (ACTIVATE_CONSOLE && ::AllocConsole() == TRUE)
+	{
+		FILE* nfp[3];
+		freopen_s(nfp + 0, "CONOUT$", "rb", stdin);
+		freopen_s(nfp + 1, "CONOUT$", "wb", stdout);
+		freopen_s(nfp + 2, "CONOUT$", "wb", stderr);
+		std::ios::sync_with_stdio();
+	}
+#endif
 	return S_OK;
 }
 
@@ -126,6 +135,13 @@ HRESULT CGameInstance::Present()
 
 void CGameInstance::Release_Engine()
 {
+#ifdef _DEBUG
+	if (ACTIVATE_CONSOLE)
+	{
+		FreeConsole();
+	}
+#endif
+
 	CGameInstance::Destroy_Instance();
 	CTimer_Manager::Destroy_Instance();
 	CGraphic_Device::Destroy_Instance();

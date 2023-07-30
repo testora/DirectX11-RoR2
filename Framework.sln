@@ -64,6 +64,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Engine Singleton Template",
 		Template\Item\Engine Singleton Class\__TemplateIcon.ico = Template\Item\Engine Singleton Class\__TemplateIcon.ico
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{7D9D00BE-4603-4915-82DA-EB5360D3DCA0}"
+	ProjectSection(SolutionItems) = preProject
+		Utility\Line_Count.bat = Utility\Line_Count.bat
+		Utility\UpdateItemTemplate.bat = Utility\UpdateItemTemplate.bat
+		Utility\UpdateLib.bat = Utility\UpdateLib.bat
+		Utility\UpdatePath_Client.bat = Utility\UpdatePath_Client.bat
+		Utility\UpdatePath_Engine.bat = Utility\UpdatePath_Engine.bat
+		Utility\UpdateResources.bat = Utility\UpdateResources.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -100,6 +110,7 @@ Global
 		{0D12E34F-312C-4694-9E2F-3BCCF9BF6EF1} = {F3B5D2CD-165B-43B3-A0AA-2DE3B757F2CD}
 		{8FD8CEDF-4943-4274-ADC5-F7A95B14AC24} = {F3B5D2CD-165B-43B3-A0AA-2DE3B757F2CD}
 		{4D3B2C65-3BD1-4C90-AD7C-EBF0A0DA65EF} = {F3B5D2CD-165B-43B3-A0AA-2DE3B757F2CD}
+		{7D9D00BE-4603-4915-82DA-EB5360D3DCA0} = {B5BCC534-060C-46B2-B532-9615E20A0DBB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {496F4186-516B-4E8D-928E-F77F530E0D6F}

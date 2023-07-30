@@ -43,7 +43,7 @@ HRESULT CTimer_Manager::Add_Timer(const _float _fFPS)
 		return E_FAIL;
 	}
 
-	m_mapTimer.emplace(_fFPS, make_shared<CTimer>());
+	m_mapTimer.emplace(_fFPS, std::make_shared<CTimer>());
 	if (FAILED(m_mapTimer[_fFPS]->Initialize()))
 	{
 		m_mapTimer.erase(_fFPS);

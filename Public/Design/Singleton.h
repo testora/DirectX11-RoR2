@@ -15,10 +15,10 @@ protected:
 	virtual ~CSingleton()							= default;
 
 public:
-	static shared_ptr<T> Get_Instance()
+	static std::shared_ptr<T> Get_Instance()
 	{
 		if (nullptr == m_pInstance)
-			m_pInstance = shared_ptr<T>(new T(), [](T* p) { delete p; });
+			m_pInstance = std::shared_ptr<T>(new T(), [](T* p) { delete p; });
 		return m_pInstance;
 	}
 
@@ -30,8 +30,8 @@ public:
 	}
 
 private:
-	static shared_ptr<T> m_pInstance;
+	static std::shared_ptr<T> m_pInstance;
 };
 
 template<typename T>
-shared_ptr<T> CSingleton<T>::m_pInstance = nullptr;
+std::shared_ptr<T> CSingleton<T>::m_pInstance = nullptr;

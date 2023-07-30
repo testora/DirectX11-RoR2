@@ -1,6 +1,8 @@
 #pragma once
 #include "framework.h"
+
 #include "Public_Define.h"
+#include "Engine_Define.h"
 
 namespace Client
 {
@@ -10,6 +12,7 @@ namespace Client
 
 using namespace Client;
 
-extern HWND	g_hWnd;
+extern HWND		g_hWnd;
+
 
 #include "Client_Settings.h"

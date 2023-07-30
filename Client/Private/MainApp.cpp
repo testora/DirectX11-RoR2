@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "MainApp.h"
 #include "GameInstance.h"
+#include "Transform.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::Get_Instance())
@@ -56,8 +57,14 @@ HRESULT CMainApp::Initialize()
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Default_Settings");
 	}
 
+	CTransform a(m_pDevice, m_pContext);
+	a.Set_State(TRANSFORM::UP, _float3(-1.f, 0.f, 0.f));
+	int b = 0;
+
 	return S_OK;
 }
+
+#pragma region Timer Management
 
 void CMainApp::Tick_Timer()
 {
@@ -86,6 +93,8 @@ _float CMainApp::Get_TimeDelta(const _float _fFPS) const
 
 	return 0.f;
 }
+
+#pragma endregion
 
 void CMainApp::Tick(_float fTimeDelta)
 {
