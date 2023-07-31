@@ -13,4 +13,24 @@ namespace DirectX
 	inline XMVECTOR		QuaternionBetweenAxis(FXMVECTOR, FXMVECTOR);
 }
 
+template <typename T>
+void Safe_Delete(T& _p)
+{
+	if (nullptr != _p)
+	{
+		delete _p;
+		_p = nullptr;
+	}
+}
+
+template <typename T>
+void Safe_Delete_Array(T& _p)
+{
+	if (nullptr != _p)
+	{
+		delete[] _p;
+		_p = nullptr;
+	}
+}
+
 #include "Engine_Function.inl"

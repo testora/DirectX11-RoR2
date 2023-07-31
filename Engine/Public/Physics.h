@@ -6,8 +6,10 @@ BEGIN(Engine)
 
 class ENGINE_DLL CPhysics final : public CBehavior
 {
-    explicit CPhysics(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-    virtual ~CPhysics() DEFAULT;
+	explicit CPhysics(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	virtual ~CPhysics() DEFAULT;
+
+	friend class CFactory;
 };
 
 END

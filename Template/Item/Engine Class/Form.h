@@ -7,6 +7,8 @@ class C$safeitemname$
 {
     explicit C$safeitemname$();
     virtual ~C$safeitemname$() DEFAULT;
+
+    friend class CFactory;
 };
 
 END

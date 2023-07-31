@@ -12,5 +12,3 @@ constexpr _float	g_fTolorance = 1e-5f;
 #include "Engine_Typedef.h"
 
 using namespace Engine;
-
-#include "Factory.h"

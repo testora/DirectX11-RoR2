@@ -28,6 +28,8 @@ public:
 
 private:
 	_float4x4	m_mWorld{};
+
+	friend class CFactory;
 };
 
 END

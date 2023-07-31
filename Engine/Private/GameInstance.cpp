@@ -1,11 +1,11 @@
 #include "EnginePCH.h"
 #include "GameInstance.h"
 #include "Timer_Manager.h"
-#include "Graphic_Device.h"
+#include "GraphicDevice.h"
 
 CGameInstance::CGameInstance()
 	: m_pTimer_Manager(CTimer_Manager::Get_Instance())
-	, m_pGraphic_Device(CGraphic_Device::Get_Instance())
+	, m_pGraphic_Device(CGraphicDevice::Get_Instance())
 {
 }
 
@@ -144,5 +144,5 @@ void CGameInstance::Release_Engine()
 
 	CGameInstance::Destroy_Instance();
 	CTimer_Manager::Destroy_Instance();
-	CGraphic_Device::Destroy_Instance();
+	CGraphicDevice::Destroy_Instance();
 }

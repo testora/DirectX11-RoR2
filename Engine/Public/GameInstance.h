@@ -5,7 +5,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CGameInstance final : public CSingleton<CGameInstance>
 {
-	friend class CSingleton<CGameInstance>;
 private:
 	explicit CGameInstance();
 	virtual ~CGameInstance() DEFAULT;
@@ -38,10 +37,12 @@ public:
 
 private:
 	shared_ptr<class CTimer_Manager>	m_pTimer_Manager;
-	shared_ptr<class CGraphic_Device>	m_pGraphic_Device;
+	shared_ptr<class CGraphicDevice>	m_pGraphic_Device;
 
 public:
 	static void					Release_Engine();
+
+	friend CSingleton<CGameInstance>;
 };
 
 END

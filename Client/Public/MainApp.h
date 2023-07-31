@@ -9,7 +9,6 @@ BEGIN(Client)
 
 class CMainApp final : public CSingleton<CMainApp>
 {
-	friend CSingleton<CMainApp>;
 private:
 	explicit CMainApp();
 	virtual ~CMainApp();
@@ -34,6 +33,8 @@ private:
 	ComPtr<ID3D11Device>		m_pDevice;
 	ComPtr<ID3D11DeviceContext>	m_pContext;
 	shared_ptr<CGameInstance>	m_pGameInstance;
+
+	friend CSingleton<CMainApp>;
 };
 
 END

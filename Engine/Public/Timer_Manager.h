@@ -5,7 +5,6 @@ BEGIN(Engine)
 
 class CTimer_Manager final : public CSingleton<CTimer_Manager>
 {
-	friend class CSingleton<CTimer_Manager>;
 private:
 	explicit CTimer_Manager();
 	virtual ~CTimer_Manager() DEFAULT;
@@ -24,6 +23,8 @@ public:
 
 private:
 	map<_float, shared_ptr<class CTimer>>	m_mapTimer;
+
+	friend CSingleton<CTimer_Manager>;
 };
 
 END

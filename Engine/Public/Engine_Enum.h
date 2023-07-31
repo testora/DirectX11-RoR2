@@ -1,6 +1,13 @@
 #pragma once
 
-enum class	SCENE;
+enum class	SCENE
+{
+	STATIC,
+	LOADING,
+	LOGO,
+	STAGE1,
+	MAX
+};
 
 enum class	COMPONENT
 {
@@ -10,6 +17,7 @@ enum class	COMPONENT
 
 enum class	BEHAVIOR
 {
+	PHYSICS,
 	MAX
 };
 

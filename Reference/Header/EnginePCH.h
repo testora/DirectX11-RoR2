@@ -16,9 +16,18 @@
 #include <memory>
 #include <iostream>
 
+#include <typeinfo>
+#include <typeindex>
+
+using std::type_info;
+using std::type_index;
+
 using std::unique_ptr;
 using std::shared_ptr;
 using std::weak_ptr;
+
+using std::make_unique;
+using std::make_shared;
 
 using std::cout;
 using std::wcout;
@@ -28,8 +37,9 @@ using std::endl;
 #include <vector>
 #include <list>
 #include <map>
-#include <unordered_map>
 #include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <bitset>
 #include <algorithm>
 #include <functional>
@@ -39,8 +49,9 @@ using std::wstring;
 using std::vector;
 using std::list;
 using std::map;
-using std::unordered_map;
 using std::set;
+using std::unordered_map;
+using std::unordered_set;
 using std::bitset;
 
 #include <wrl/client.h>
