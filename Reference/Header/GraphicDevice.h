@@ -6,7 +6,7 @@ BEGIN(Engine)
 class CGraphicDevice final : public CSingleton<CGraphicDevice>
 {
 private:
-	explicit CGraphicDevice();
+	explicit CGraphicDevice() DEFAULT;
 	virtual ~CGraphicDevice() DEFAULT;
 
 public:

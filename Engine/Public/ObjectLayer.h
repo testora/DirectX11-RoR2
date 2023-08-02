@@ -6,21 +6,22 @@ BEGIN(Engine)
 class CObjectLayer final
 {
 private:
-	explicit CObjectLayer();
+	explicit CObjectLayer() DEFAULT;
 	virtual ~CObjectLayer() DEFAULT;
 
 public:
-	void								Tick(_float fTimeDelta);
-	void								Late_Tick(_float fTimeDelta);
+	void											Tick(_float fTimeDelta);
+	void											Late_Tick(_float fTimeDelta);
 
 public:
-	HRESULT								Add(shared_ptr<class CGameObject>);
-	HRESULT								Delete();
+	HRESULT											Add(shared_ptr<class CGameObject>);
+	HRESULT											Delete(shared_ptr<class CGameObject>);
 
 private:
-	list<shared_ptr<class CGameObject>>	m_lstObjectList;
+	unordered_set<shared_ptr<class CGameObject>>	m_usetObject;
 
-	friend class CFactory;
+public:
+	static shared_ptr<CObjectLayer>					Create();
 };
 
 END

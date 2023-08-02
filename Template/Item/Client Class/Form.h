@@ -3,12 +3,16 @@
 
 BEGIN(Client)
 
-class C$safeitemname$
+class C$safeitemname$ final
 {
-    explicit C$safeitemname$();
-    virtual ~C$safeitemname$() DEFAULT;
+private:
+	explicit C$safeitemname$();
+	explicit C$safeitemname$(const C$safeitemname$&);
+	virtual ~C$safeitemname$() DEFAULT;
 
-    friend class CFactory;
+public:
+	static shared_ptr<C$safeitemname$>	Create();
+	virtual shared_ptr<>	Clone() override;
 };
 
 END

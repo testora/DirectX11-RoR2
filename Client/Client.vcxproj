@@ -186,6 +186,7 @@ call "UpdateResources.bat"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

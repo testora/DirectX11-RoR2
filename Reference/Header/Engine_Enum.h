@@ -9,25 +9,27 @@ enum class	SCENE
 	MAX
 };
 
+enum class	RENDER_GROUP
+{
+	PRIORITY,
+	NONBLEND,
+	BLEND,
+	UI,
+	MAX
+};
+
 enum class	COMPONENT
 {
-	TRANSFORM = 0b1,
-	RENDERER = 0b10,
-	SHADER = 0b100,
+	RENDERER,
+	TRANSFORM,
+	SHADER,
+	TEXTURE,
+	VIBUFFER,
 	MAX
 };
 
 enum class	BEHAVIOR
 {
 	PHYSICS,
-	MAX
-};
-
-enum class	TRANSFORM
-{
-	RIGHT,
-	UP,
-	LOOK,
-	POSITION,
 	MAX
 };

@@ -7,6 +7,7 @@ class ENGINE_DLL CComponent abstract
 {
 protected:
 	explicit CComponent(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);
+	explicit CComponent(const CComponent&);
 	virtual ~CComponent() DEFAULT;
 
 public:
@@ -18,6 +19,9 @@ private:
 protected:
 	ComPtr<ID3D11Device>				m_pDevice;
 	ComPtr<ID3D11DeviceContext>			m_pContext;
+
+public:
+	virtual shared_ptr<CComponent>		Clone(std::any = nullptr)	PURE;
 };
 
 END

@@ -26,6 +26,11 @@ using std::unique_ptr;
 using std::shared_ptr;
 using std::weak_ptr;
 
+using std::static_pointer_cast;
+using std::dynamic_pointer_cast;
+using std::const_pointer_cast;
+using std::reinterpret_pointer_cast;
+
 using std::make_unique;
 using std::make_shared;
 
@@ -40,9 +45,16 @@ using std::endl;
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
+#include <deque>
+#include <stack>
+
 #include <bitset>
+
 #include <algorithm>
 #include <functional>
+#include <tuple>
+#include <any>
 
 using std::string;
 using std::wstring;
@@ -52,7 +64,13 @@ using std::map;
 using std::set;
 using std::unordered_map;
 using std::unordered_set;
+using std::queue;
+using std::deque;
+using std::stack;
+
 using std::bitset;
+
+using std::function;
 
 #include <wrl/client.h>
 
@@ -66,6 +84,7 @@ using namespace DirectX;
 
 #ifdef ENGINE_EXPORTS
 
+#include "FX11/d3dx11effect.h"
 #include "DirectXTK/SimpleMath.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"

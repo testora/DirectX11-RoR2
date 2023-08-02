@@ -1,10 +1,6 @@
 #include "EnginePCH.h"
 #include "GraphicDevice.h"
 
-CGraphicDevice::CGraphicDevice()
-{
-}
-
 HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
 {
 	_uint				iFlag = 0;
@@ -16,27 +12,29 @@ HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out
 
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, m_pDevice.GetAddressOf(), &eFeatureLevel, m_pContext.GetAddressOf())))
 	{
+		_pDevice	= nullptr;
+		_pContext	= nullptr;
 		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed: D3D11CreateDevice");
-	}
-
-	if (nullptr == m_pDevice
-	||	nullptr == m_pContext)
-	{
-		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Null Exception: m_pDevice || m_pContext");
 	}
 
 	if (FAILED(Ready_SwapChain(_tGraphicDesc)))
 	{
+		_pDevice	= nullptr;
+		_pContext	= nullptr;
 		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed: Ready_SwapChain");
 	}
 
 	if (FAILED(Ready_RenderTargetView()))
 	{
+		_pDevice	= nullptr;
+		_pContext	= nullptr;
 		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed: Ready_RenderTargetView");
 	}
 
 	if (FAILED(Ready_DepthStencilView(_tGraphicDesc.iWinCX, _tGraphicDesc.iWinCY)))
 	{
+		_pDevice	= nullptr;
+		_pContext	= nullptr;
 		MSG_RETURN(E_FAIL, "CGraphicDevice::Ready_GraphicDevice", "Failed: Ready_DepthStencilView");
 	}
 
@@ -49,12 +47,12 @@ HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out
 
 	D3D11_VIEWPORT tViewPort{};
 
-	tViewPort.TopLeftX = 0;
-	tViewPort.TopLeftY = 0;
-	tViewPort.Width = (_float)_tGraphicDesc.iWinCX;
-	tViewPort.Height = (_float)_tGraphicDesc.iWinCY;
-	tViewPort.MinDepth = 0.f;
-	tViewPort.MaxDepth = 1.f;
+	tViewPort.TopLeftX	= 0;
+	tViewPort.TopLeftY	= 0;
+	tViewPort.Width		= (_float)_tGraphicDesc.iWinCX;
+	tViewPort.Height	= (_float)_tGraphicDesc.iWinCY;
+	tViewPort.MinDepth	= 0.f;
+	tViewPort.MaxDepth	= 1.f;
 
 	m_pContext->RSSetViewports(sizeof(pArrRenderTargetView) / sizeof(ID3D11RenderTargetView*), &tViewPort);
 

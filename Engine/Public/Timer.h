@@ -6,7 +6,7 @@ BEGIN(Engine)
 class CTimer final
 {
 private:
-	explicit CTimer();
+	explicit CTimer() DEFAULT;
 	virtual ~CTimer() DEFAULT;
 
 public:
@@ -27,7 +27,8 @@ private:
 	_float			m_fTimeDelta	= 0.f;
 	_float			m_fTimeAcc		= 0.f;
 
-	friend class CFactory;
+public:
+	static shared_ptr<CTimer> Create();
 };
 
 END

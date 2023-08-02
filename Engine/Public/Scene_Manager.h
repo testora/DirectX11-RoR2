@@ -6,13 +6,18 @@ BEGIN(Engine)
 class CScene_Manager final : public CSingleton<CScene_Manager>
 {
 private:
-	explicit CScene_Manager();
+	explicit CScene_Manager() DEFAULT;
 	virtual ~CScene_Manager() DEFAULT;
 
 public:
-	HRESULT		Open_Scene(SCENE eScene);
-	HRESULT		Tick(_float fTimeDelta);
-	HRESULT		Late_Tick(_float fTimeDelta);
+	void						Tick(_float fTimeDelta);
+	void						Late_Tick(_float fTimeDelta);
+
+public:
+	HRESULT						Open_Scene(shared_ptr<class CScene>);
+
+private:
+	shared_ptr<class CScene>	m_pScene;
 
 	friend CSingleton<CScene_Manager>;
 };

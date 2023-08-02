@@ -1,11 +1,6 @@
 #include "EnginePCH.h"
 #include "Timer_Manager.h"
 #include "Timer.h"
-#include "Factory.h"
-
-CTimer_Manager::CTimer_Manager()
-{
-}
 
 void CTimer_Manager::Tick()
 {
@@ -44,7 +39,7 @@ HRESULT CTimer_Manager::Add_Timer(const _float _fFPS)
 		return E_FAIL;
 	}
 
-	m_mapTimer.emplace(_fFPS, CFactory::Create<CTimer>());
+	m_mapTimer.emplace(_fFPS, CFactory<CTimer>::Create());
 	if (FAILED(m_mapTimer[_fFPS]->Initialize()))
 	{
 		m_mapTimer.erase(_fFPS);

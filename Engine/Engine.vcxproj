@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Behavior_Manager.h" />
+    <ClInclude Include="Public\Component_Manager.h" />
+    <ClInclude Include="Public\Object_Manager.h" />
+    <ClInclude Include="Public\PipeLine.h" />
+    <ClInclude Include="Public\Camera.h" />
     <ClInclude Include="Public\ObjectLayer.h" />
     <ClInclude Include="Public\ObjectPool.h" />
     <ClInclude Include="Public\Behavior.h" />
@@ -41,9 +46,18 @@
     <ClInclude Include="Public\Scene_Manager.h" />
     <ClInclude Include="Public\Scene.h" />
     <ClInclude Include="Public\Transform.h" />
+    <ClInclude Include="Public\Renderer.h" />
+    <ClInclude Include="Public\Shader.h" />
+    <ClInclude Include="Public\Texture.h" />
+    <ClInclude Include="Public\VIBuffer.h" />
+    <ClInclude Include="Public\VIBuffer_Rect.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Private\Factory.cpp" />
+    <ClCompile Include="Private\Behavior_Manager.cpp" />
+    <ClCompile Include="Private\Component_Manager.cpp" />
+    <ClCompile Include="Private\Engine_Header.cpp" />
+    <ClCompile Include="Private\Object_Manager.cpp" />
+    <ClCompile Include="Private\Camera.cpp" />
     <ClCompile Include="Private\ObjectLayer.cpp" />
     <ClCompile Include="Private\ObjectPool.cpp" />
     <ClCompile Include="Private\Behavior.cpp" />
@@ -63,6 +77,11 @@
     <ClCompile Include="Private\Scene_Manager.cpp" />
     <ClCompile Include="Private\Scene.cpp" />
     <ClCompile Include="Private\Transform.cpp" />
+    <ClCompile Include="Private\Renderer.cpp" />
+    <ClCompile Include="Private\Shader.cpp" />
+    <ClCompile Include="Private\Texture.cpp" />
+    <ClCompile Include="Private\VIBuffer.cpp" />
+    <ClCompile Include="Private\VIBuffer_Rect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Function.inl" />
@@ -141,11 +160,11 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,11 +188,11 @@ call "UpdateLib.bat"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -197,11 +216,11 @@ call "UpdateLib.bat"</Command>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -225,11 +244,11 @@ call "UpdateLib.bat"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>EnginePCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

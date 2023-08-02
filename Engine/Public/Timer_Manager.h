@@ -6,7 +6,7 @@ BEGIN(Engine)
 class CTimer_Manager final : public CSingleton<CTimer_Manager>
 {
 private:
-	explicit CTimer_Manager();
+	explicit CTimer_Manager() DEFAULT;
 	virtual ~CTimer_Manager() DEFAULT;
 
 public:

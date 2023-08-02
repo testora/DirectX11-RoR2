@@ -15,18 +15,7 @@ public:
 	virtual void												Late_Tick(_float fTimeDelta);
 	virtual HRESULT												Render();
 
-public:
-	shared_ptr<class CObjectLayer>								Find_Layer(const wstring& strLayerTag);
-	shared_ptr<class CObjectPool>								Find_Pool(const type_index);
-
-public:
-	HRESULT														Add_Layer(const wstring& strLayerTag);
-	HRESULT														Add_Pool(const type_index _type, shared_ptr<class CGameObject>, _uint iPoolSize);
-
 protected:
-	unordered_map<wstring, shared_ptr<class CObjectLayer>>		m_umapLayer;
-	unordered_map<type_index, shared_ptr<class CObjectPool>>	m_umapPool;
-
 	const SCENE													m_eScene;
 
 private:

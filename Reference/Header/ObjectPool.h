@@ -10,21 +10,26 @@ private:
 	virtual ~CObjectPool() DEFAULT;
 
 public:
-	HRESULT								Initialize(shared_ptr<class CGameObject>);
-	void								Tick(_float fTimeDelta);
-	void								Late_Tick(_float fTimeDelta);
+	HRESULT											Initialize(const wstring& strPrototype, std::any = nullptr);
+	void											Tick(_float fTimeDelta);
+	void											Late_Tick(_float fTimeDelta);
 
 public:
-	shared_ptr<class CGameObject>		Pop();
-	void								Push(shared_ptr<class CGameObject>);
+	shared_ptr<class CGameObject>					Pop();
+	void											Push(shared_ptr<class CGameObject> = nullptr);
 
 private:
-	_uint								m_iPoolSize;
+	deque<shared_ptr<class CGameObject>>			m_deqPool;
+ 	unordered_set<shared_ptr<class CGameObject>>	m_usetPop;
 
-private:
-	list<shared_ptr<class CGameObject>>	m_lstObjectPool;
+	_uint											m_iPoolSize;
 
-	friend class CFactory;
+	shared_ptr<class CGameObject>					m_pPrototype;
+
+	std::function<shared_ptr<class CGameObject>()>	m_fnPush;
+
+public:
+	static shared_ptr<CObjectPool>					Create(const _uint iPoolSize, const wstring& strPrototypeTag, std::any = nullptr);
 };
 
 END

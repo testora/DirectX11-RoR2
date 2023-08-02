@@ -7,29 +7,35 @@ BEGIN(Engine)
 class ENGINE_DLL CTransform final : public CComponent
 {
 public:
+	enum STATE	{ RIGHT, UP, LOOK, POSITION, MAX };
+
+private:
 	explicit CTransform(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	explicit CTransform(const CTransform&);
 	virtual ~CTransform() DEFAULT;
 
 public:
-	_float4x4	Get_Matrix() const;
-	_float3		Get_State(const TRANSFORM eState) const;
-	_float3		Get_Scale() const;
+	_float4x4						Get_Matrix() const;
+	_float3							Get_State(const STATE eState) const;
+	_float3							Get_Scale() const;
 
-	void		Set_State(const TRANSFORM eState, const _float3 vState);
-	void		Set_Scale(const _float3 vScale);
+	void							Set_State(const STATE eState, const _vectorf vState);
+	void							Set_Scale(const _vectorf vScale);
 
 public:
-	void		Multiply(const _float4x4 mMatrix);
+	void							Multiply(const _matrixf mMatrix);
 
-	void		Translate(const _float3 vPosition);
-	void		Rotate(const _float3 vAxis, const _float fDegree);
-	void		LookAt(const _float3 vPosition);
-	void		LookTo(const _float3 vDirection);
+	void							Translate(const _vectorf vPosition);
+	void							Rotate(const _vectorf vAxis, const _float fDegree);
+	void							LookAt(const _vectorf vPosition);
+	void							LookTo(const _vectorf vDirection);
 
 private:
-	_float4x4	m_mWorld{};
+	_float4x4						m_mWorld{};
 
-	friend class CFactory;
+public:
+	static shared_ptr<CTransform>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	virtual shared_ptr<CComponent>	Clone(std::any = nullptr) override;
 };
 
 END

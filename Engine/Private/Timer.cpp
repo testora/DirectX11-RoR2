@@ -1,10 +1,6 @@
 #include "EnginePCH.h"
 #include "Timer.h"
 
-CTimer::CTimer()
-{
-}
-
 HRESULT CTimer::Initialize()
 {
 	QueryPerformanceFrequency(&m_cpuTick);
@@ -41,4 +37,16 @@ _bool CTimer::Check(_float _fFPS)
 	}
 
 	return false;
+}
+
+shared_ptr<CTimer> CTimer::Create()
+{
+	shared_ptr<CTimer> pInstance = shared_ptr<CTimer>(new CTimer(), [](CTimer* p) { delete p; });
+
+	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_RETURN(nullptr, "CTimer::Create", "Failed to Initialize");
+	}
+
+	return pInstance;
 }

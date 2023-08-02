@@ -8,3 +8,4 @@
 #define DEFAULT					= default
 
 #define IDX(ENUM)				static_cast<unsigned int>(ENUM)
+#define BIT(ENUM)				static_cast<unsigned int>(1u << IDX(ENUM))
