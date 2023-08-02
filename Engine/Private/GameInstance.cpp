@@ -155,14 +155,14 @@ HRESULT CGameInstance::Present()
 #pragma endregion
 #pragma region Scene Manager
 
-HRESULT CGameInstance::Open_Scene(shared_ptr<class CScene> _pScene)
+HRESULT CGameInstance::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pScene)
 {
 	if (nullptr == m_pScene_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Open_Scene", "Null Exception: m_pScene_Manager");
 	}
 
-	return m_pScene_Manager->Open_Scene(_pScene);
+	return m_pScene_Manager->Open_Scene(_eScene, _pScene);
 }
 
 #pragma endregion
@@ -233,25 +233,45 @@ shared_ptr<class CObjectPool> CGameInstance::Find_Pool(const wstring& _strPoolTa
 
 HRESULT CGameInstance::Add_Component_Prototype(const wstring& _strPrototypeTag, shared_ptr<CComponent> _pPrototype)
 {
-	return E_NOTIMPL;
+	if (nullptr == m_pComponent_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Add_Component_Prototype", "Null Exception: m_pComponent_Manager");
+	}
+
+	return m_pComponent_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
 }
 
 shared_ptr<CComponent> CGameInstance::Clone_Component(const wstring& _strPrototypeTag, std::any _arg)
 {
-	return shared_ptr<CComponent>();
+	if (nullptr == m_pComponent_Manager)
+	{
+		MSG_RETURN(nullptr, "CGameInstance::Clone_Component", "Null Exception: m_pComponent_Manager");
+	}
+
+	return m_pComponent_Manager->Clone_Component(_strPrototypeTag, _arg);
 }
 
 #pragma endregion
 #pragma region Behavior Manager
 
-HRESULT CGameInstance::Add_Behavior_Prototype(const wstring& _strPrototypeTag, shared_ptr<CComponent> _pPrototype)
+HRESULT CGameInstance::Add_Behavior_Prototype(const wstring& _strPrototypeTag, shared_ptr<CBehavior> _pPrototype)
 {
-	return E_NOTIMPL;
+	if (nullptr == m_pBehavior_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Add_Behavior_Prototype", "Null Exception: m_pBehavior_Manager");
+	}
+
+	return m_pBehavior_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
 }
 
 shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const wstring& _strPrototypeTag, std::any _arg)
 {
-	return shared_ptr<CBehavior>();
+	if (nullptr == m_pBehavior_Manager)
+	{
+		MSG_RETURN(nullptr, "CGameInstance::Clone_Component", "Null Exception: m_pBehavior_Manager");
+	}
+
+	return m_pBehavior_Manager->Clone_Behavior(_strPrototypeTag, _arg);
 }
 
 #pragma endregion

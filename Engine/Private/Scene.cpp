@@ -8,21 +8,3 @@ CScene::CScene(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCont
 	, m_eScene	(_eScene)
 {
 }
-
-HRESULT CScene::Initialize()
-{
-	return S_OK;
-}
-
-void CScene::Tick(_float _fTimeDelta)
-{
-}
-
-void CScene::Late_Tick(_float _fTimeDelta)
-{
-}
-
-HRESULT CScene::Render()
-{
-	return S_OK;
-}

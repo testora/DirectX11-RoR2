@@ -36,7 +36,7 @@ public:
 #pragma endregion
 #pragma region Scene Manager
 
-	HRESULT										Open_Scene(shared_ptr<class CScene>);
+	HRESULT										Open_Scene(SCENE, shared_ptr<class CScene>);
 
 #pragma endregion
 #pragma region Object Manager
@@ -59,7 +59,7 @@ public:
 #pragma endregion
 #pragma region Behavior Manager
 
-	HRESULT										Add_Behavior_Prototype(const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
+	HRESULT										Add_Behavior_Prototype(const wstring& strPrototypeTag, shared_ptr<class CBehavior> pPrototype);
 	shared_ptr<class CBehavior>					Clone_Behavior(const wstring& strPrototypeTag, std::any = nullptr);
 
 #pragma endregion

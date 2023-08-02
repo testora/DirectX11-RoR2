@@ -1,13 +1,6 @@
 #pragma once
 
-enum class	SCENE
-{
-	STATIC,
-	LOADING,
-	LOGO,
-	STAGE1,
-	MAX
-};
+enum class	SCENE;
 
 enum class	RENDER_GROUP
 {

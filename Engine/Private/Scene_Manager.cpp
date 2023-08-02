@@ -18,8 +18,9 @@ void CScene_Manager::Late_Tick(_float _fTimeDelta)
 	}
 }
 
-HRESULT CScene_Manager::Open_Scene(shared_ptr<class CScene> _pScene)
+HRESULT CScene_Manager::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pScene)
 {
+	m_eScene = _eScene;
 	m_pScene = _pScene;
 
 	return S_OK;

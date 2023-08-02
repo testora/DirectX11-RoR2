@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 class CGameInstance;
+class CRenderer;
 END
 
 BEGIN(Client)
@@ -28,11 +29,14 @@ public:
 
 private:
 	HRESULT		Default_Settings();
+	HRESULT		Ready_Component_Prototype();
 
 private:
+	shared_ptr<CGameInstance>	m_pGameInstance;
+	shared_ptr<CRenderer>		m_pMainRenderer;
+
 	ComPtr<ID3D11Device>		m_pDevice;
 	ComPtr<ID3D11DeviceContext>	m_pContext;
-	shared_ptr<CGameInstance>	m_pGameInstance;
 
 	friend CSingleton<CMainApp>;
 };

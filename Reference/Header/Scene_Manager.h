@@ -14,10 +14,11 @@ public:
 	void						Late_Tick(_float fTimeDelta);
 
 public:
-	HRESULT						Open_Scene(shared_ptr<class CScene>);
+	HRESULT						Open_Scene(SCENE, shared_ptr<class CScene>);
 
 private:
 	shared_ptr<class CScene>	m_pScene;
+	SCENE						m_eScene;
 
 	friend CSingleton<CScene_Manager>;
 };

@@ -19,17 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Client_Enum.h" />
     <ClInclude Include="Public\Client_Settings.h" />
     <ClInclude Include="Public\Client_Define.h" />
     <ClInclude Include="Default\Client.h" />
     <ClInclude Include="Default\framework.h" />
     <ClInclude Include="Default\Resource.h" />
     <ClInclude Include="Default\targetver.h" />
+    <ClInclude Include="Public\Loader.h" />
+    <ClInclude Include="Public\Loader_Menu.h" />
+    <ClInclude Include="Public\Loader_Stage1.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\ClientPCH.h" />
+    <ClInclude Include="Public\Scene_Load.h" />
+    <ClInclude Include="Public\Scene_Menu.h" />
+    <ClInclude Include="Public\Scene_Stage1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp" />
+    <ClCompile Include="Private\Loader.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
     <ClCompile Include="Private\ClientPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -37,6 +45,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Private\Scene_Load.cpp" />
+    <ClCompile Include="Private\Scene_Menu.cpp" />
+    <ClCompile Include="Private\Scene_Stage1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -122,6 +133,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,6 +166,7 @@ call "UpdateResources.bat"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -219,6 +232,7 @@ call "UpdateResources.bat"</Command>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

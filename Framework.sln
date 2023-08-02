@@ -74,6 +74,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{7D9D
 		Utility\UpdateResources.bat = Utility\UpdateResources.bat
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code Snippet", "Code Snippet", "{9084204D-2900-450F-B5BE-B954D83E411F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -111,6 +113,7 @@ Global
 		{8FD8CEDF-4943-4274-ADC5-F7A95B14AC24} = {F3B5D2CD-165B-43B3-A0AA-2DE3B757F2CD}
 		{4D3B2C65-3BD1-4C90-AD7C-EBF0A0DA65EF} = {F3B5D2CD-165B-43B3-A0AA-2DE3B757F2CD}
 		{7D9D00BE-4603-4915-82DA-EB5360D3DCA0} = {B5BCC534-060C-46B2-B532-9615E20A0DBB}
+		{9084204D-2900-450F-B5BE-B954D83E411F} = {B5BCC534-060C-46B2-B532-9615E20A0DBB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {496F4186-516B-4E8D-928E-F77F530E0D6F}
