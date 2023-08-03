@@ -16,6 +16,9 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT					Render() override;
 
+public:
+	virtual const SCENE				Get_Scene(_bool _bSkipLoad) const override	{ return _bSkipLoad ? m_eLoadScene : m_eScene; }
+
 private:
 	shared_ptr<class CLoader>		m_pLoader;
 

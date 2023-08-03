@@ -53,7 +53,7 @@ HRESULT CMainApp::Initialize()
 	tGraphicDesc.iWinCX		= g_iWinCX;
 	tGraphicDesc.iWinCY		= g_iWinCY;
 
-	if (FAILED(m_pGameInstance->Initialize_Engine(tGraphicDesc, m_pDevice, m_pContext)))
+	if (FAILED(m_pGameInstance->Initialize_Engine(SCENE::STATIC, SCENE::MAX, tGraphicDesc, m_pDevice, m_pContext)))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: m_pGameInstance->Initialize_Engine");
 	}
@@ -150,25 +150,25 @@ HRESULT CMainApp::Default_Settings()
 
 HRESULT CMainApp::Ready_Component_Prototype()
 {
-	if (FAILED(m_pGameInstance->Add_Component_Prototype(PROTOTYPE_COMPONENT_RENDERER_MAIN,
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN,
 		CRenderer::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_RENDERER_MAIN");
 	}
 	
-	if (FAILED(m_pGameInstance->Add_Component_Prototype(PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX,
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX,
 		CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSTEX.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
 	}
 
-	if (FAILED(m_pGameInstance->Add_Component_Prototype(PROTOTYPE_COMPONENT_VIBUFFER_RECT,
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_RECT,
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_RECT");
 	}
 
-	m_pMainRenderer = dynamic_pointer_cast<CRenderer>(m_pGameInstance->Clone_Component(PROTOTYPE_COMPONENT_RENDERER_MAIN));
+	m_pMainRenderer = dynamic_pointer_cast<CRenderer>(m_pGameInstance->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
 	if (nullptr == m_pMainRenderer)
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Clone_Component: CRenderer");
@@ -179,7 +179,7 @@ HRESULT CMainApp::Ready_Component_Prototype()
 
 HRESULT CMainApp::Ready_GameObject_Prototype()
 {
-	if (FAILED(m_pGameInstance->Add_Object_Prototype(PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
+	if (FAILED(m_pGameInstance->Add_Object_Prototype(SCENE::STATIC, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
 		CCamera_Main::Create(m_pDevice, m_pContext, PROTOTYPE_COMPONENT_RENDERER_MAIN))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_GameObject_Prototype", "Failed to Add_Object_Prototype: CCamera");

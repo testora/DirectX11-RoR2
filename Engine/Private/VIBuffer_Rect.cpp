@@ -14,9 +14,9 @@ CVIBuffer_Rect::CVIBuffer_Rect(const CVIBuffer_Rect& _rhs)
 HRESULT CVIBuffer_Rect::Initialize()
 {
 	m_iNumVB		= 1;
-	m_iNumVertex	= 4;
+	m_iNumVertices	= 4;
 	m_iVertexStride	= sizeof(VTXPOSTEX);
-	m_iNumIndex	= 6;
+	m_iNumIndices	= 6;
 	m_iIndexStride	= sizeof(_ushort);
 	m_eIndexFormat	= DXGI_FORMAT_R16_UINT;
 	m_eTopology		= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -24,15 +24,15 @@ HRESULT CVIBuffer_Rect::Initialize()
 #pragma region VERTEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumVertex * m_iVertexStride;
+	m_tBufferDesc.ByteWidth				= m_iNumVertices * m_iVertexStride;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= m_iVertexStride;
 
-	auto pVertices = Function::MakeUniqueDynamicArray<VTXPOSTEX>(m_iNumVertex);
-	ZeroMemory(pVertices.get(), m_iVertexStride * m_iNumVertex);
+	auto pVertices = Function::MakeUniqueDynamicArray<VTXPOSTEX>(m_iNumVertices);
+	ZeroMemory(pVertices.get(), m_iVertexStride * m_iNumVertices);
 
 	pVertices[0].vPosition	= _float3(-0.5f, 0.5f, 0.f);
 	pVertices[0].vTexCoord	= _float2(0.f, 0.f);
@@ -59,15 +59,15 @@ HRESULT CVIBuffer_Rect::Initialize()
 #pragma region INDEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumIndex * m_iIndexStride;
+	m_tBufferDesc.ByteWidth				= m_iNumIndices * m_iIndexStride;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_INDEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pIndices = Function::MakeUniqueDynamicArray<_ushort>(m_iNumIndex);
-	ZeroMemory(pIndices.get(), m_iIndexStride * m_iNumIndex);
+	auto pIndices = Function::MakeUniqueDynamicArray<_ushort>(m_iNumIndices);
+	ZeroMemory(pIndices.get(), m_iIndexStride * m_iNumIndices);
 
 	pIndices[0]	= 0;
 	pIndices[1]	= 1;

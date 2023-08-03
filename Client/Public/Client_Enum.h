@@ -2,6 +2,7 @@
 
 enum class	SCENE
 {
+	STATIC,
 	LOADING,
 	MENU,
 	STAGE1,

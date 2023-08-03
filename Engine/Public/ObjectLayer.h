@@ -6,7 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL CObjectLayer final
 {
 private:
-	explicit CObjectLayer() DEFAULT;
+	explicit CObjectLayer(const SCENE);
 	virtual ~CObjectLayer() DEFAULT;
 
 public:
@@ -20,8 +20,10 @@ public:
 private:
 	unordered_set<shared_ptr<class CGameObject>>	m_usetObject;
 
+	const SCENE										m_eScene;
+
 public:
-	static shared_ptr<CObjectLayer>					Create();
+	static shared_ptr<CObjectLayer>					Create(const SCENE);
 };
 
 END

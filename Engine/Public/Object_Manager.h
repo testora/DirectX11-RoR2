@@ -10,30 +10,37 @@ private:
 	virtual ~CObject_Manager() DEFAULT;
 
 public:
-	void														Tick(_float fTimeDelta);
-	void														Late_Tick(_float fTimeDelta);
+	HRESULT															Reserve_Manager(const SCENE);
 
 public:
-	shared_ptr<class CObjectLayer>								Find_Layer(const wstring& strLayerTag);
-	shared_ptr<class CObjectPool>								Find_Pool(const wstring& strPoolTag);
+	void															Tick(_float fTimeDelta);
+	void															Late_Tick(_float fTimeDelta);
 
 public:
-	HRESULT														Add_Prototype(const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
+	shared_ptr<class CObjectLayer>									Find_Layer(const SCENE, const wstring& strLayerTag);
+	shared_ptr<class CObjectPool>									Find_Pool(const SCENE, const wstring& strPoolTag);
 
-	HRESULT														Add_Layer(const wstring& strLayerTag);
-	HRESULT														Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
+public:
+	HRESULT															Add_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
 
-	shared_ptr<class CGameObject>								Clone_GameObject(const wstring& strPrototypeTag, any = any());
+	HRESULT															Add_Layer(const SCENE, const wstring& strLayerTag);
+	HRESULT															Add_Pool(const SCENE, const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
+
+	shared_ptr<class CGameObject>									Clone_GameObject(const SCENE, const wstring& strPrototypeTag, any = any());
+
+	HRESULT															Clear_Scene_Object(const SCENE);
 
 private:
-	shared_ptr<class CGameObject>								Find_Prototype(const wstring& strPrototypeTag);
-
-protected:
-	unordered_map<wstring, shared_ptr<class CObjectLayer>>		m_umapLayer;
-	unordered_map<wstring, shared_ptr<class CObjectPool>>		m_umapPool;
+	shared_ptr<class CGameObject>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
 
 private:
-	unordered_map<wstring, shared_ptr<class CGameObject>>		m_umapPrototype;
+	typedef unordered_map<wstring, shared_ptr<class CGameObject>>	Prototype;
+	typedef unordered_map<wstring, shared_ptr<class CObjectLayer>>	Layer;
+	typedef unordered_map<wstring, shared_ptr<class CObjectPool>>	Pool;
+
+	unique_ptr<Prototype[]>											m_arrPrototypes;
+	unique_ptr<Layer[]>												m_arrLayers;
+	unique_ptr<Pool[]>												m_arrPools;
 
 	friend CSingleton<CObject_Manager>;
 };

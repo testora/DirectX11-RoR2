@@ -6,7 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL CObjectPool final
 {
 private:
-	explicit CObjectPool(const _uint iPoolSize);
+	explicit CObjectPool(const SCENE, const _uint iPoolSize);
 	virtual ~CObjectPool() DEFAULT;
 
 public:
@@ -32,8 +32,10 @@ private:
 	std::function<shared_ptr<class CGameObject>()>	m_fnPush;
 	any												m_fetchArg;
 
+	const SCENE										m_eScene;
+
 public:
-	static shared_ptr<CObjectPool>					Create(const _uint iPoolSize, const wstring& strPrototypeTag, any = any());
+	static shared_ptr<CObjectPool>					Create(const SCENE, const _uint iPoolSize, const wstring& strPrototypeTag, any = any());
 };
 
 END

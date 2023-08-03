@@ -39,6 +39,7 @@ using std::wcout;
 using std::endl;
 
 #include <utility>
+#include <optional>
 
 using std::pair;
 using std::make_pair;

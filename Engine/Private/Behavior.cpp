@@ -20,10 +20,10 @@ HRESULT CBehavior::Initialize(any)
 	return E_NOTIMPL;
 }
 
-void CBehavior::Tick(_float fTimeDelta)
+void CBehavior::Tick(_float _fTimeDelta)
 {
 }
 
-void CBehavior::Late_Tick(_float fTimeDelta)
+void CBehavior::Late_Tick(_float _fTimeDelta)
 {
 }

@@ -3,15 +3,25 @@
 #include "ObjectLayer.h"
 #include "ObjectPool.h"
 #include "GameObject.h"
+#include "Scene_Manager.h"
+
+HRESULT CObject_Manager::Reserve_Manager(const SCENE _eScene)
+{
+	m_arrPrototypes	= Function::MakeUniqueDynamicArray<Prototype>(IDX(_eScene));
+	m_arrLayers		= Function::MakeUniqueDynamicArray<Layer>(IDX(_eScene));
+	m_arrPools		= Function::MakeUniqueDynamicArray<Pool>(IDX(_eScene));
+
+	return S_OK;
+}
 
 void CObject_Manager::Tick(_float _fTimeDelta)
 {
-	for (auto& iter : m_umapLayer)
+	for (auto& iter : m_arrLayers[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Tick(_fTimeDelta);
 	}
-
-	for (auto& iter : m_umapPool)
+	
+	for (auto& iter : m_arrPools[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Tick(_fTimeDelta);
 	}
@@ -19,78 +29,79 @@ void CObject_Manager::Tick(_float _fTimeDelta)
 
 void CObject_Manager::Late_Tick(_float _fTimeDelta)
 {
-	for (auto& iter : m_umapLayer)
+	for (auto& iter : m_arrLayers[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Late_Tick(_fTimeDelta);
 	}
-
-	for (auto& iter : m_umapPool)
+		for (auto& iter : m_arrPools[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Late_Tick(_fTimeDelta);
 	}
 }
 
-shared_ptr<class CObjectLayer> CObject_Manager::Find_Layer(const wstring& _strLayerTag)
+shared_ptr<class CObjectLayer> CObject_Manager::Find_Layer(const SCENE _eScene, const wstring& _strLayerTag)
 {
-	auto iter = m_umapLayer.find(_strLayerTag);
-	if (iter == m_umapLayer.end())
+	auto& Prototype = m_arrLayers[IDX(_eScene)];
+	auto iter = Prototype.find(_strLayerTag);
+	if (iter == Prototype.end())
 	{
 		return nullptr;
 	}
 
-	return m_umapLayer[_strLayerTag];
+	return iter->second;
 }
 
-shared_ptr<class CObjectPool> CObject_Manager::Find_Pool(const wstring& _strPoolTag)
+shared_ptr<class CObjectPool> CObject_Manager::Find_Pool(const SCENE _eScene, const wstring& _strPoolTag)
 {
-	auto iter = m_umapPool.find(_strPoolTag);
-	if (iter == m_umapPool.end())
+	auto& Prototype = m_arrPools[IDX(_eScene)];
+	auto iter = Prototype.find(_strPoolTag);
+	if (iter == Prototype.end())
 	{
 		return nullptr;
 	}
 
-	return m_umapPool[_strPoolTag];
+	return iter->second;
 }
 
-HRESULT CObject_Manager::Add_Prototype(const wstring& _strPrototypeTag, shared_ptr<CGameObject> _pPrototype)
+HRESULT CObject_Manager::Add_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag, shared_ptr<CGameObject> _pPrototype)
 {
-	if (nullptr != Find_Prototype(_strPrototypeTag))
+	if (nullptr != Find_Prototype(_eScene, _strPrototypeTag))
 	{
 		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Prototype", "Already Exists: CGameObject");
 	}
 
-	m_umapPrototype.emplace(_strPrototypeTag, _pPrototype);
+	m_arrPrototypes[IDX(_eScene)].emplace(_strPrototypeTag, _pPrototype);
 
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_Layer(const wstring& _strLayerTag)
+HRESULT CObject_Manager::Add_Layer(const SCENE _eScene, const wstring& _strLayerTag)
 {
-	if (nullptr != Find_Layer(_strLayerTag))
+	if (nullptr != Find_Layer(_eScene, _strLayerTag))
 	{
 		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Layer", "Already Exists: CObjectLayer");
 	}
 
-	m_umapLayer.emplace(_strLayerTag, CObjectLayer::Create());
+	m_arrLayers[IDX(_eScene)].emplace(_strLayerTag, CObjectLayer::Create(_eScene));
 
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
+HRESULT CObject_Manager::Add_Pool(const SCENE _eScene, const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
 {
-	if (nullptr != Find_Pool(_strPoolTag))
+	if (nullptr != Find_Pool(_eScene, _strPoolTag))
 	{
 		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Pool", "Already Exists: CObjectPool");
 	}
 
-	m_umapPool.emplace(_strPoolTag, CObjectPool::Create(_iPoolSize, _strPrototypeTag, _arg));
+	m_arrPools[IDX(_eScene)].emplace(_strPoolTag, CObjectPool::Create(_eScene, _iPoolSize, _strPrototypeTag, _arg));
 
 	return S_OK;
 }
 
-shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const wstring& _strPrototypeTag, any _arg)
+shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const SCENE _eScene, const wstring& _strPrototypeTag, any _arg)
 {
-	shared_ptr<CGameObject> pGameObject = Find_Prototype(_strPrototypeTag);
+	shared_ptr<CGameObject> pGameObject = Find_Prototype(_eScene,_strPrototypeTag);
 	if (nullptr == pGameObject)
 	{
 		MSG_RETURN(nullptr, "CObject_Manager::Clone_GameObject", "Failed to Find_Prototype");
@@ -99,13 +110,23 @@ shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const wstring& _strPro
 	return pGameObject->Clone(_arg);
 }
 
-shared_ptr<CGameObject> CObject_Manager::Find_Prototype(const wstring& _strPrototypeTag)
+HRESULT CObject_Manager::Clear_Scene_Object(const SCENE _eScene)
 {
-	auto iter = m_umapPrototype.find(_strPrototypeTag);
-	if (iter == m_umapPrototype.end())
+	m_arrPrototypes[IDX(_eScene)].clear();
+	m_arrLayers[IDX(_eScene)].clear();
+	m_arrPools[IDX(_eScene)].clear();
+
+	return S_OK;
+}
+
+shared_ptr<CGameObject> CObject_Manager::Find_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag)
+{
+	auto& Prototype = m_arrPrototypes[IDX(_eScene)];
+	auto iter = Prototype.find(_strPrototypeTag);
+	if (iter == Prototype.end())
 	{
 		return nullptr;
 	}
 
-	return m_umapPrototype[_strPrototypeTag];
+	return iter->second;
 }

@@ -2,6 +2,11 @@
 #include "ObjectLayer.h"
 #include "GameObject.h"
 
+CObjectLayer::CObjectLayer(const SCENE _eScene)
+	: m_eScene(_eScene)
+{
+}
+
 void CObjectLayer::Tick(_float _fTimeDelta)
 {
 	for (auto& pObject : m_usetObject)
@@ -43,7 +48,7 @@ HRESULT CObjectLayer::Delete(shared_ptr<class CGameObject> _pObject)
 	return S_OK;
 }
 
-shared_ptr<CObjectLayer> CObjectLayer::Create()
+shared_ptr<CObjectLayer> CObjectLayer::Create(const SCENE _eScene)
 {
-	return make_private_shared(CObjectLayer);
+	return make_private_shared(CObjectLayer, _eScene);
 }

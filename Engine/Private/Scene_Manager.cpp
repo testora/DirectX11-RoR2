@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Scene_Manager.h"
 #include "Scene.h"
+#include "Object_Manager.h"
 
 void CScene_Manager::Tick(_float _fTimeDelta)
 {
@@ -18,8 +19,18 @@ void CScene_Manager::Late_Tick(_float _fTimeDelta)
 	}
 }
 
+HRESULT CScene_Manager::Initialize(const SCENE _eStatic, const SCENE _eMax)
+{
+	m_eSceneStatic	= _eStatic;
+	m_eSceneMax		= _eMax;
+
+	return S_OK;
+}
+
 HRESULT CScene_Manager::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pScene)
 {
+	CObject_Manager::Get_Instance()->Clear_Scene_Object(m_eScene);
+
 	m_eScene = _eScene;
 	m_pScene = _pScene;
 

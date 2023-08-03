@@ -14,7 +14,7 @@ private:
 public:
 #pragma region Engine
 
-	HRESULT										Initialize_Engine(_In_ const GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
+	HRESULT										Initialize_Engine(_In_ const SCENE eStatic, _In_ const SCENE eMax, _In_ const GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
 	void										Tick_Engine(_float fTimeDelta);
 
 #pragma endregion
@@ -39,30 +39,31 @@ public:
 #pragma region Scene Manager
 
 	HRESULT										Open_Scene(SCENE, shared_ptr<class CScene>);
+	const SCENE									Current_Scene(_bool bSkipLoad = true);
 
 #pragma endregion
 #pragma region Object Manager
 
-	HRESULT										Add_Object_Prototype(const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
-	shared_ptr<class CGameObject>				Clone_GameObject(const wstring& strPrototypeTag, any = any());
+	HRESULT										Add_Object_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
+	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& strPrototypeTag, any = any());
 
-	HRESULT										Add_Layer(const wstring& strLayerTag);
-	HRESULT										Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
+	HRESULT										Add_Layer(const SCENE, const wstring& strLayerTag);
+	HRESULT										Add_Pool(const SCENE, const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
 
-	shared_ptr<class CObjectLayer>				Find_Layer(const wstring& strLayerTag);
-	shared_ptr<class CObjectPool>				Find_Pool(const wstring& strPoolTag);
+	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& strLayerTag);
+	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& strPoolTag);
 
 #pragma endregion
 #pragma region Component Manager
 
-	HRESULT										Add_Component_Prototype(const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
-	shared_ptr<class CComponent>				Clone_Component(const wstring& strPrototypeTag, any = any());
+	HRESULT										Add_Component_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
+	shared_ptr<class CComponent>				Clone_Component(const SCENE, const wstring& strPrototypeTag, any = any());
 
 #pragma endregion
 #pragma region Behavior Manager
 
-	HRESULT										Add_Behavior_Prototype(const wstring& strPrototypeTag, shared_ptr<class CBehavior> pPrototype);
-	shared_ptr<class CBehavior>					Clone_Behavior(const wstring& strPrototypeTag, any = any());
+	HRESULT										Add_Behavior_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CBehavior> pPrototype);
+	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& strPrototypeTag, any = any());
 
 #pragma endregion
 

@@ -19,16 +19,16 @@ protected:
 	ComPtr<ID3D11Buffer>			m_pVB;
 	ComPtr<ID3D11Buffer>			m_pIB;
 
-	D3D11_BUFFER_DESC				m_tBufferDesc;
-	D3D11_SUBRESOURCE_DATA			m_tInitializeData;
+	D3D11_BUFFER_DESC				m_tBufferDesc{};
+	D3D11_SUBRESOURCE_DATA			m_tInitializeData{};
 	D3D11_PRIMITIVE_TOPOLOGY		m_eTopology;
 	DXGI_FORMAT						m_eIndexFormat;
 
-	_uint							m_iNumVB;
-	_uint 							m_iNumVertex;
-	_uint							m_iVertexStride;
-	_uint 							m_iNumIndex;
-	_uint							m_iIndexStride;
+	_uint							m_iNumVB		= 0;
+	_uint 							m_iNumVertices	= 0;
+	_uint							m_iVertexStride	= 0;
+	_uint 							m_iNumIndices	= 0;
+	_uint							m_iIndexStride	= 0;
 
 	vector<ComPtr<ID3D11Buffer>>	m_vecVB;
 	vector<_uint>					m_vecVertexStride;

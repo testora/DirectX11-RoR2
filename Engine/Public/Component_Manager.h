@@ -16,15 +16,19 @@ private:
 	virtual ~CComponent_Manager() DEFAULT;
 
 public:
-	HRESULT												Add_Prototype(const wstring& strPrototypeTag, shared_ptr<CComponent> pPrototype);
+	HRESULT													Reserve_Manager(const SCENE);
 
-	shared_ptr<CComponent>								Clone_Component(const wstring& strPrototypeTag, any = any());
+public:
+	HRESULT													Add_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<CComponent> pPrototype);
+
+	shared_ptr<CComponent>									Clone_Component(const SCENE, const wstring& strPrototypeTag, any = any());
 
 private:
-	shared_ptr<CComponent>								Find_Prototype(const wstring& strPrototypeTag);
+	shared_ptr<CComponent>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
 
 private:
-	unordered_map<wstring, shared_ptr<CComponent>>		m_umapPrototype;
+	typedef unordered_map<wstring, shared_ptr<CComponent>>	ComponentPrototype;
+	unique_ptr<ComponentPrototype[]>						m_arrComponentPrototypes;
 
 	friend CSingleton<CComponent_Manager>;
 };

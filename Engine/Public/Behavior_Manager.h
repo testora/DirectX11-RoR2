@@ -12,15 +12,19 @@ private:
 	virtual ~CBehavior_Manager() DEFAULT;
 
 public:
-	HRESULT												Add_Prototype(const wstring& strPrototypeTag, shared_ptr<CBehavior> pPrototype);
+	HRESULT													Reserve_Manager(const SCENE);
 
-	shared_ptr<CBehavior>								Clone_Behavior(const wstring& strPrototypeTag, any = any());
+public:
+	HRESULT													Add_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<CBehavior> pPrototype);
+
+	shared_ptr<CBehavior>									Clone_Behavior(const SCENE, const wstring& strPrototypeTag, any = any());
 
 private:
-	shared_ptr<CBehavior>								Find_Prototype(const wstring& strPrototypeTag);
+	shared_ptr<CBehavior>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
 
 private:
-	unordered_map<wstring, shared_ptr<CBehavior>>		m_umapPrototype;
+	typedef unordered_map<wstring, shared_ptr<CBehavior>>	BehaviorPrototype;
+	unique_ptr<BehaviorPrototype[]>							m_arrBehaviorPrototypes;
 
 	friend CSingleton<CBehavior_Manager>;
 };

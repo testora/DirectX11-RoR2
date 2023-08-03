@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
+#include "Scene_Manager.h"
 
 CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: m_pDevice	(_pDevice)
@@ -127,7 +128,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	switch (_eComponent)
 	{
 	case COMPONENT::RENDERER:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
@@ -136,17 +137,17 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 		break;
 
 	case COMPONENT::SHADER:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
 	case COMPONENT::TEXTURE:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
 	case COMPONENT::VIBUFFER_RECT:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 

@@ -19,9 +19,29 @@ CGameInstance::CGameInstance()
 
 #pragma region Engine
 
-HRESULT CGameInstance::Initialize_Engine(_In_ const GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
+HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const SCENE _eMax, _In_ const GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
 {
 	if (FAILED(m_pGraphic_Device->Ready_GraphicDevice(_tGraphicDesc, _pDevice, _pContext)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
+	}
+
+	if (FAILED(m_pScene_Manager->Initialize(_eStatic, _eMax)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
+	}
+
+	if (FAILED(m_pObject_Manager->Reserve_Manager(_eMax)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
+	}
+
+	if (FAILED(m_pComponent_Manager->Reserve_Manager(_eMax)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
+	}
+
+	if (FAILED(m_pBehavior_Manager->Reserve_Manager(_eMax)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
 	}
@@ -165,113 +185,123 @@ HRESULT CGameInstance::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pScen
 	return m_pScene_Manager->Open_Scene(_eScene, _pScene);
 }
 
+const SCENE CGameInstance::Current_Scene(_bool _bSkipLoad)
+{
+	if (nullptr == m_pScene_Manager)
+	{
+		MSG_RETURN(m_pScene_Manager->Max_Scene(), "CGameInstance::Current_Scene", "Null Exception: m_pScene_Manager");
+	}
+
+	return m_pScene_Manager->Current_Scene(_bSkipLoad);
+}
+
 #pragma endregion
 #pragma region Object Manager
 
-HRESULT CGameInstance::Add_Object_Prototype(const wstring& _strPrototypeTag, shared_ptr<class CGameObject> _pPrototype)
+HRESULT CGameInstance::Add_Object_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag, shared_ptr<class CGameObject> _pPrototype)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Object_Prototype", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
+	return m_pObject_Manager->Add_Prototype(_eScene, _strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<class CGameObject> CGameInstance::Clone_GameObject(const wstring& _strPrototypeTag, any _arg)
+shared_ptr<class CGameObject> CGameInstance::Clone_GameObject(const SCENE _eScene, const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(nullptr, "CGameInstance::Clone_GameObject", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Clone_GameObject(_strPrototypeTag, _arg);
+	return m_pObject_Manager->Clone_GameObject(_eScene, _strPrototypeTag, _arg);
 }
 
-HRESULT CGameInstance::Add_Layer(const wstring& _strLayerTag)
+HRESULT CGameInstance::Add_Layer(const SCENE _eScene, const wstring& _strLayerTag)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Layer", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Add_Layer(_strLayerTag);
+	return m_pObject_Manager->Add_Layer(_eScene, _strLayerTag);
 }
 
-HRESULT CGameInstance::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
+HRESULT CGameInstance::Add_Pool(const SCENE _eScene, const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Pool", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Add_Pool(_strPoolTag, _strPrototypeTag, _iPoolSize, _arg);
+	return m_pObject_Manager->Add_Pool(_eScene, _strPoolTag, _strPrototypeTag, _iPoolSize, _arg);
 }
 
-shared_ptr<class CObjectLayer> CGameInstance::Find_Layer(const wstring& _strLayerTag)
+shared_ptr<class CObjectLayer> CGameInstance::Find_Layer(const SCENE _eScene, const wstring& _strLayerTag)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(nullptr, "CGameInstance::Find_Layer", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Find_Layer(_strLayerTag);
+	return m_pObject_Manager->Find_Layer(_eScene, _strLayerTag);
 }
 
-shared_ptr<class CObjectPool> CGameInstance::Find_Pool(const wstring& _strPoolTag)
+shared_ptr<class CObjectPool> CGameInstance::Find_Pool(const SCENE _eScene, const wstring& _strPoolTag)
 {
 	if (nullptr == m_pObject_Manager)
 	{
 		MSG_RETURN(nullptr, "CGameInstance::Find_Pool", "Null Exception: m_pObject_Manager");
 	}
 
-	return m_pObject_Manager->Find_Pool(_strPoolTag);
+	return m_pObject_Manager->Find_Pool(_eScene, _strPoolTag);
 }
 
 #pragma endregion
 #pragma region Component Manager
 
-HRESULT CGameInstance::Add_Component_Prototype(const wstring& _strPrototypeTag, shared_ptr<CComponent> _pPrototype)
+HRESULT CGameInstance::Add_Component_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag, shared_ptr<CComponent> _pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Component_Prototype", "Null Exception: m_pComponent_Manager");
 	}
 
-	return m_pComponent_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
+	return m_pComponent_Manager->Add_Prototype(_eScene, _strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<CComponent> CGameInstance::Clone_Component(const wstring& _strPrototypeTag, any _arg)
+shared_ptr<CComponent> CGameInstance::Clone_Component(const SCENE _eScene, const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pComponent_Manager)
 	{
 		MSG_RETURN(nullptr, "CGameInstance::Clone_Component", "Null Exception: m_pComponent_Manager");
 	}
 
-	return m_pComponent_Manager->Clone_Component(_strPrototypeTag, _arg);
+	return m_pComponent_Manager->Clone_Component(_eScene, _strPrototypeTag, _arg);
 }
 
 #pragma endregion
 #pragma region Behavior Manager
 
-HRESULT CGameInstance::Add_Behavior_Prototype(const wstring& _strPrototypeTag, shared_ptr<CBehavior> _pPrototype)
+HRESULT CGameInstance::Add_Behavior_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag, shared_ptr<CBehavior> _pPrototype)
 {
 	if (nullptr == m_pBehavior_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Behavior_Prototype", "Null Exception: m_pBehavior_Manager");
 	}
 
-	return m_pBehavior_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
+	return m_pBehavior_Manager->Add_Prototype(_eScene, _strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const wstring& _strPrototypeTag, any _arg)
+shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const SCENE _eScene, const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pBehavior_Manager)
 	{
 		MSG_RETURN(nullptr, "CGameInstance::Clone_Component", "Null Exception: m_pBehavior_Manager");
 	}
 
-	return m_pBehavior_Manager->Clone_Behavior(_strPrototypeTag, _arg);
+	return m_pBehavior_Manager->Clone_Behavior(_eScene, _strPrototypeTag, _arg);
 }
 
 #pragma endregion

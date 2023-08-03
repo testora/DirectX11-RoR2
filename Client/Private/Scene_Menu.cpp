@@ -33,18 +33,18 @@ HRESULT CScene_Menu::Render()
 
 HRESULT CScene_Menu::Ready_Background()
 {
-	if (FAILED(CGameInstance::Get_Instance()->Add_Layer(SCENE_MENU_LAYER_BACKGROUND)))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND)))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Add Layer");
 	}
 
-	auto pLayerBackground = CGameInstance::Get_Instance()->Find_Layer(SCENE_MENU_LAYER_BACKGROUND);
+	auto pLayerBackground = CGameInstance::Get_Instance()->Find_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND);
 	if (nullptr == pLayerBackground)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Find_Layer");
 	}
 
-	if (FAILED(pLayerBackground->Add(CGameInstance::Get_Instance()->Clone_GameObject(PROTOTYPE_GAMEOBJECT_BACKGROUND))))
+	if (FAILED(pLayerBackground->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MENU, PROTOTYPE_GAMEOBJECT_BACKGROUND))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_BACKGROUND");
 	}
