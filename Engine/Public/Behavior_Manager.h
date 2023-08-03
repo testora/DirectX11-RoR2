@@ -14,7 +14,7 @@ private:
 public:
 	HRESULT												Add_Prototype(const wstring& strPrototypeTag, shared_ptr<CBehavior> pPrototype);
 
-	shared_ptr<CBehavior>								Clone_Behavior(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<CBehavior>								Clone_Behavior(const wstring& strPrototypeTag, any = any());
 
 private:
 	shared_ptr<CBehavior>								Find_Prototype(const wstring& strPrototypeTag);

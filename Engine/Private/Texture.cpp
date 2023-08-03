@@ -87,7 +87,7 @@ shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 	return pInstance;
 }
 
-shared_ptr<CComponent> CTexture::Clone(std::any)
+shared_ptr<CComponent> CTexture::Clone(any)
 {
 	return shared_from_this();
 }

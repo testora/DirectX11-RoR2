@@ -39,7 +39,7 @@ HRESULT CTimer_Manager::Add_Timer(const _float _fFPS)
 		return E_FAIL;
 	}
 
-	m_mapTimer.emplace(_fFPS, CFactory<CTimer>::Create());
+	m_mapTimer.emplace(_fFPS, CTimer::Create());
 	if (FAILED(m_mapTimer[_fFPS]->Initialize()))
 	{
 		m_mapTimer.erase(_fFPS);

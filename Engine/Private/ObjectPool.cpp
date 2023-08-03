@@ -8,7 +8,7 @@ CObjectPool::CObjectPool(const _uint _iPoolSize)
 {
 }
 
-HRESULT CObjectPool::Initialize(const wstring& _strPrototype, std::any _arg)
+HRESULT CObjectPool::Initialize(const wstring& _strPrototype, any _arg)
 {
 	m_pPrototype = CObject_Manager::Get_Instance()->Clone_GameObject(_strPrototype);
 
@@ -16,7 +16,7 @@ HRESULT CObjectPool::Initialize(const wstring& _strPrototype, std::any _arg)
 
 	for (size_t i = 0; i < m_iPoolSize; ++i)
 	{
-		Push();
+		Add();
 	}
 
 	return S_OK;
@@ -42,34 +42,39 @@ shared_ptr<CGameObject> CObjectPool::Pop()
 {
 	if (m_deqPool.empty())
 	{
-		Push();
+		Add();
 	}
 
 	shared_ptr<CGameObject> pObject = m_deqPool.front();
-	pObject->Fetch();
+	pObject->Fetch(m_fetchArg);
 	m_deqPool.pop_front();
 
 	return pObject;
 }
 
-void CObjectPool::Push(shared_ptr<CGameObject> _pObject)
+HRESULT CObjectPool::Push(shared_ptr<CGameObject> _pObject)
 {
 	if (nullptr == _pObject)
 	{
-		shared_ptr<CGameObject> pObject = m_fnPush();
-		if (nullptr != pObject)
-		{
-			m_deqPool.emplace_back(pObject);
-		}
+		MSG_RETURN(E_FAIL, "CObjectPool::Push", "Null Exception");
 	}
-	else
+
+	m_usetPop.erase(_pObject);
+	m_deqPool.emplace_back(_pObject);
+
+	return S_OK;
+}
+
+void CObjectPool::Add()
+{
+	shared_ptr<CGameObject> pObject = m_fnPush();
+	if (nullptr != pObject)
 	{
-		m_usetPop.erase(_pObject);
-		m_deqPool.emplace_back(_pObject);
+		m_deqPool.emplace_back(pObject);
 	}
 }
 
-shared_ptr<CObjectPool> CObjectPool::Create(const _uint _iPoolSize, const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CObjectPool> CObjectPool::Create(const _uint _iPoolSize, const wstring& _strPrototypeTag, any _arg)
 {
 	shared_ptr<CObjectPool> pInstance = make_private_shared(CObjectPool, _iPoolSize);
 

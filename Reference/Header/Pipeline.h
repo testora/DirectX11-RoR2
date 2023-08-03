@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CPipeLine final : public CSingleton<CPipeLine>
+class ENGINE_DLL CPipeLine final : public CSingleton<CPipeLine>
 {
 public:
 	enum STATE	{ WORLD, VIEW, PROJ, MAX };

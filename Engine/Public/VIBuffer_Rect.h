@@ -16,7 +16,7 @@ public:
 
 public:
 	static shared_ptr<CVIBuffer_Rect>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CComponent>		Clone(std::any = nullptr) override;
+	virtual shared_ptr<CComponent>		Clone(any = any()) override;
 };
 
 END

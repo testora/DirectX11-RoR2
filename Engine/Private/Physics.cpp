@@ -11,7 +11,7 @@ CPhysics::CPhysics(const CPhysics& _rhs)
 {
 }
 
-HRESULT CPhysics::Initialize(std::any _arg)
+HRESULT CPhysics::Initialize(any _arg)
 {
 	return S_OK;
 }
@@ -29,7 +29,7 @@ shared_ptr<CPhysics> CPhysics::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 	return make_private_shared(CPhysics, _pDevice, _pContext);
 }
 
-shared_ptr<CBehavior> CPhysics::Clone(std::any _arg)
+shared_ptr<CBehavior> CPhysics::Clone(any _arg)
 {
-	return make_private_copy_shared(CPhysics, *this);
+	return make_private_shared_copy(CPhysics, *this);
 }

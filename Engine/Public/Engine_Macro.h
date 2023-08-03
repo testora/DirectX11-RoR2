@@ -17,9 +17,9 @@
 #pragma region Pointer
 
 #define make_private_shared(ClassType, ...)								shared_ptr<ClassType>(new ClassType(__VA_ARGS__), [](ClassType * p) { delete p; })
-#define make_private_copy_shared(ClassType, rhs)						shared_ptr<ClassType>(new ClassType(rhs), [](ClassType* p) { delete p; })
+#define make_private_shared_copy(ClassType, rhs)						shared_ptr<ClassType>(new ClassType(rhs), [](ClassType* p) { delete p; })
 
 #define make_private_shared_derived(ReturnType, ClassType, ...)			shared_ptr<ReturnType>(new ClassType(__VA_ARGS__), [](ReturnType* p) { delete static_cast<ClassType*>(p); })
-#define make_private_copy_shared_derived(ReturnType, ClassType, rhs)	shared_ptr<ReturnType>(new ClassType(rhs), [](ReturnType* p) { delete static_cast<ClassType*>(p); })
+#define make_private_shared_copy_derived(ReturnType, ClassType, rhs)	shared_ptr<ReturnType>(new ClassType(rhs), [](ReturnType* p) { delete static_cast<ClassType*>(p); })
 
 #pragma endregion

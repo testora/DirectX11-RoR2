@@ -11,7 +11,7 @@ protected:
 	virtual ~CBehavior() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(std::any = nullptr);
+	virtual HRESULT					Initialize(any = any());
 	virtual void					Tick(_float fTimeDelta);
 	virtual void					Late_Tick(_float fTimeDelta);
 
@@ -26,7 +26,7 @@ protected:
 	ComPtr<ID3D11DeviceContext>		m_pContext;
 
 public:
-	virtual shared_ptr<CBehavior>	Clone(std::any = nullptr)	PURE;
+	virtual shared_ptr<CBehavior>	Clone(any = any())	PURE;
 };
 
 END

@@ -3,6 +3,9 @@
 
 #include "Renderer.h"
 #include "Transform.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "VIBuffer_Rect.h"
 
 BEGIN(Engine)
 
@@ -15,7 +18,7 @@ private:
 public:
 	HRESULT												Add_Prototype(const wstring& strPrototypeTag, shared_ptr<CComponent> pPrototype);
 
-	shared_ptr<CComponent>								Clone_Component(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<CComponent>								Clone_Component(const wstring& strPrototypeTag, any = any());
 
 private:
 	shared_ptr<CComponent>								Find_Prototype(const wstring& strPrototypeTag);

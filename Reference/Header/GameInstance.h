@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine_Define.h"
+#include "Component_Manager.h"
+#include "Behavior_Manager.h"
 
 BEGIN(Engine)
 
@@ -42,10 +44,10 @@ public:
 #pragma region Object Manager
 
 	HRESULT										Add_Object_Prototype(const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
-	shared_ptr<class CGameObject>				Clone_GameObject(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<class CGameObject>				Clone_GameObject(const wstring& strPrototypeTag, any = any());
 
 	HRESULT										Add_Layer(const wstring& strLayerTag);
-	HRESULT										Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, std::any = nullptr);
+	HRESULT										Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
 
 	shared_ptr<class CObjectLayer>				Find_Layer(const wstring& strLayerTag);
 	shared_ptr<class CObjectPool>				Find_Pool(const wstring& strPoolTag);
@@ -54,13 +56,13 @@ public:
 #pragma region Component Manager
 
 	HRESULT										Add_Component_Prototype(const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
-	shared_ptr<class CComponent>				Clone_Component(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<class CComponent>				Clone_Component(const wstring& strPrototypeTag, any = any());
 
 #pragma endregion
 #pragma region Behavior Manager
 
 	HRESULT										Add_Behavior_Prototype(const wstring& strPrototypeTag, shared_ptr<class CBehavior> pPrototype);
-	shared_ptr<class CBehavior>					Clone_Behavior(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<class CBehavior>					Clone_Behavior(const wstring& strPrototypeTag, any = any());
 
 #pragma endregion
 

@@ -7,7 +7,7 @@ CRenderer::CRenderer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> 
 {
 }
 
-HRESULT CRenderer::Initialize(std::any)
+HRESULT CRenderer::Initialize(any _arg)
 {
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_Priority(); });
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_NonBlend(); });
@@ -147,7 +147,7 @@ shared_ptr<CRenderer> CRenderer::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID
 	return pInstance;
 }
 
-shared_ptr<CComponent> CRenderer::Clone(std::any _arg)
+shared_ptr<CComponent> CRenderer::Clone(any _arg)
 {
 	return shared_from_this();
 }

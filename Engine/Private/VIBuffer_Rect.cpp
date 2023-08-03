@@ -2,7 +2,7 @@
 #include "VIBuffer_Rect.h"
 
 CVIBuffer_Rect::CVIBuffer_Rect(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CVIBuffer(_pDevice, _pContext)
+	: CVIBuffer(_pDevice, _pContext, COMPONENT::VIBUFFER_RECT)
 {
 }
 
@@ -103,10 +103,10 @@ shared_ptr<CVIBuffer_Rect> CVIBuffer_Rect::Create(ComPtr<ID3D11Device> _pDevice,
 		MSG_RETURN(nullptr, "CVIBuffer_Rect::Create", "Failed to Initialize_Prototype");
 	}
 
-	return nullptr;
+	return pInstance;
 }
 
-shared_ptr<CComponent> CVIBuffer_Rect::Clone(std::any)
+shared_ptr<CComponent> CVIBuffer_Rect::Clone(any _arg)
 {
 	return shared_from_this();
 }

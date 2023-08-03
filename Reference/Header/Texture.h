@@ -23,7 +23,7 @@ private:
 
 public:
 	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const _tchar* pTexturePath, _uint iNumTextures = 1);
-	virtual shared_ptr<CComponent>				Clone(std::any = nullptr) override;
+	virtual shared_ptr<CComponent>				Clone(any = any()) override;
 };
 
 END

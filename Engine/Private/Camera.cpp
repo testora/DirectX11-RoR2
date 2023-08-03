@@ -1,35 +1,35 @@
 #include "EnginePCH.h"
 #include "Camera.h"
 #include "PipeLine.h"
-#include "Transform.h"
+#include "Component_Manager.h"
+#include "Behavior_Manager.h"
 
 CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CGameObject(_pDevice, _pContext)
-	, m_pPipeLine(CPipeLine::Get_Instance())
+	: CGameObject	(_pDevice, _pContext)
+	, m_pPipeLine	(CPipeLine::Get_Instance())
+	, m_mView		(XMMatrixIdentity())
+	, m_mProj		(XMMatrixIdentity())
 {
 }
 
-CCamera::CCamera(const CCamera& _rhs)
-	: CGameObject(_rhs)
-	, m_pPipeLine		(_rhs.m_pPipeLine)
-	, m_tCameraDesc		(_rhs.m_tCameraDesc)
-	, m_pTransformCom	(_rhs.m_pTransformCom)
+HRESULT CCamera::Initialize(any _arg)
 {
-}
+	auto arg = any_cast<CAMERA_DESC>(_arg);
 
-HRESULT CCamera::Initialize(std::any arg)
-{
-	if (FAILED(__super::Initialize(arg)))
+	m_tCameraDesc = arg;
+
+	m_bitComponent |= BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::RENDERER);
+	
+	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Failed to Initialize");
 	}
 
-	m_tCameraDesc = std::any_cast<CAMERA_DESC>(arg);
-
-	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransformCom)
+	switch (m_tCameraDesc.eType)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransformCom");
+	case TYPE::PERSPECTIVE:
+		m_mProj = XMMatrixPerspectiveFovLH(m_tCameraDesc.fFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+		break;
 	}
 
 	m_pTransformCom->Set_State(CTransform::POSITION, m_tCameraDesc.vEye);
@@ -38,33 +38,48 @@ HRESULT CCamera::Initialize(std::any arg)
 	return S_OK;
 }
 
-void CCamera::Tick(_float fTimeDelta)
+void CCamera::Tick(_float _fTimeDelta)
 {
+	__super::Tick(_fTimeDelta);
 }
 
-void CCamera::Late_Tick(_float fTimeDelta)
+void CCamera::Late_Tick(_float _fTimeDelta)
 {
+	__super::Late_Tick(_fTimeDelta);
 }
 
 HRESULT CCamera::Render()
 {
+	switch (m_tCameraDesc.eType)
+	{
+	case TYPE::PERSPECTIVE:
+		m_pPipeLine->Set_Transform(CPipeLine::WORLD, m_pTransformCom->Get_Matrix());
+		m_pPipeLine->Set_Transform(CPipeLine::VIEW, XMMatrixInverse(nullptr, m_pTransformCom->Get_Matrix()));
+		m_pPipeLine->Set_Transform(CPipeLine::PROJ, m_mProj);
+		break;
+	}
+
 	return S_OK;
 }
 
-HRESULT CCamera::Ready_Components(bitset<IDX(COMPONENT::MAX)> _bitFlag)
+HRESULT CCamera::Ready_Components()
 {
-	return __super::Ready_Components(_bitFlag |= BIT(COMPONENT::TRANSFORM));
-}
+	if (FAILED(__super::Ready_Components()))
+	{
+		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Failed to __super::Ready_Components");
+	}
 
-HRESULT CCamera::Ready_Behaviors(bitset<IDX(BEHAVIOR::MAX)> _bitFlag)
-{
-	return __super::Ready_Behaviors(_bitFlag);
-}
+	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransformCom)
+	{
+		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransformCom");
+	}
 
-void CCamera::Set_Transform()
-{
-	m_pPipeLine->Set_Transform(CPipeLine::WORLD, m_pTransformCom->Get_Matrix());
-	m_pPipeLine->Set_Transform(CPipeLine::VIEW, XMMatrixInverse(nullptr, m_pTransformCom->Get_Matrix()));
-	m_pPipeLine->Set_Transform(CPipeLine::PROJ, XMMatrixPerspectiveFovLH(m_tCameraDesc.fFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar));
-}
+	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	if (nullptr == m_pRendererCom)
+	{
+		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pRendererCom");
+	}
 
+	return S_OK;
+}

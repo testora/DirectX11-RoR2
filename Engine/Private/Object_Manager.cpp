@@ -71,24 +71,24 @@ HRESULT CObject_Manager::Add_Layer(const wstring& _strLayerTag)
 		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Layer", "Already Exists: CObjectLayer");
 	}
 
-	m_umapLayer.emplace(_strLayerTag, CFactory<CObjectLayer>::Create());
+	m_umapLayer.emplace(_strLayerTag, CObjectLayer::Create());
 
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, std::any _arg)
+HRESULT CObject_Manager::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
 {
 	if (nullptr != Find_Pool(_strPoolTag))
 	{
 		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Pool", "Already Exists: CObjectPool");
 	}
 
-	m_umapPool.emplace(_strPoolTag, CFactory<CObjectPool>::Create(_iPoolSize, _strPrototypeTag, _arg));
+	m_umapPool.emplace(_strPoolTag, CObjectPool::Create(_iPoolSize, _strPrototypeTag, _arg));
 
 	return S_OK;
 }
 
-shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const wstring& _strPrototypeTag, any _arg)
 {
 	shared_ptr<CGameObject> pGameObject = Find_Prototype(_strPrototypeTag);
 	if (nullptr == pGameObject)

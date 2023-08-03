@@ -7,40 +7,43 @@ BEGIN(Engine)
 class ENGINE_DLL CCamera abstract : public CGameObject
 {
 public:
+	enum class	TYPE	{ PERSPECTIVE, ORTHOGONAL, MAX };
+
 	typedef struct tagCameraDesc
 	{
-		_float3	vEye, vAt;
-		_float	fFovAngleY, fAspect, fNear, fFar;
+		TYPE			eType;
+		_float3			vEye, vAt;
+		_float			fFovAngleY, fAspect;
+		_float			fWidth, fHeight;
+		_float			fNear, fFar;
 	} CAMERA_DESC;
 
-private:
+protected:
 	explicit CCamera(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	explicit CCamera(const CCamera&);
 	virtual ~CCamera() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize(std::any = nullptr) override;
+	virtual HRESULT						Initialize(any = any()) override;
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
-protected:
-	virtual HRESULT						Ready_Components(bitset<IDX(COMPONENT::MAX)> bitFlag) override;
-	virtual HRESULT						Ready_Behaviors(bitset<IDX(BEHAVIOR::MAX)> bitFlag) override;
+public:
+	virtual HRESULT						Ready_Components() override;
 
-protected:
-	void								Set_Transform();
-	
 protected:
 	shared_ptr<class CTransform>		m_pTransformCom;
+	shared_ptr<class CRenderer>			m_pRendererCom;
 
 private:
-	shared_ptr<class CPipeLine>			m_pPipeLine;
-
 	CAMERA_DESC							m_tCameraDesc;
 
+	_float4x4							m_mView, m_mProj;
+
+	shared_ptr<class CPipeLine>			m_pPipeLine;
+
 public:
-	virtual shared_ptr<CGameObject>		Clone(std::any = nullptr) override		PURE;
+	virtual shared_ptr<CGameObject>		Clone(any = any()) override	PURE;
 };
 
 END

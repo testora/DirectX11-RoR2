@@ -104,7 +104,7 @@ HRESULT CGraphicDevice::Present()
 HRESULT CGraphicDevice::Ready_SwapChain(GRAPHICDESC _tGraphicDesc)
 {
 	ComPtr<IDXGIDevice>	pDXGIDevice;
-	if (FAILED(m_pDevice->QueryInterface(_uuidof(IDXGIDevice), reinterpret_cast<void**>(pDXGIDevice.GetAddressOf()))))
+	if (FAILED(m_pDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(pDXGIDevice.GetAddressOf()))))
 	{
 		return E_FAIL;
 	}

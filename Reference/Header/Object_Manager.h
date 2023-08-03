@@ -21,9 +21,9 @@ public:
 	HRESULT														Add_Prototype(const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
 
 	HRESULT														Add_Layer(const wstring& strLayerTag);
-	HRESULT														Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, std::any = nullptr);
+	HRESULT														Add_Pool(const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
 
-	shared_ptr<class CGameObject>								Clone_GameObject(const wstring& strPrototypeTag, std::any = nullptr);
+	shared_ptr<class CGameObject>								Clone_GameObject(const wstring& strPrototypeTag, any = any());
 
 private:
 	shared_ptr<class CGameObject>								Find_Prototype(const wstring& strPrototypeTag);

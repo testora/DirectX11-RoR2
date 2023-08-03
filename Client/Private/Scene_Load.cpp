@@ -30,6 +30,8 @@ void CScene_Load::Tick(_float _fTimeDelta)
 
 void CScene_Load::Late_Tick(_float _fTimeDelta)
 {
+	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText().c_str());
+
 	if (m_pLoader->Is_Finished())
 	{
 		shared_ptr<CScene> pScene;
@@ -54,8 +56,6 @@ void CScene_Load::Late_Tick(_float _fTimeDelta)
 			MSG_RETURN(, "CScene_Load::Late_Tick", "Failed To Open_Scene");
 		}
 	}
-
-	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText().c_str());
 }
 
 HRESULT CScene_Load::Render()

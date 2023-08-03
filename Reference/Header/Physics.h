@@ -12,13 +12,13 @@ private:
 	virtual ~CPhysics() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(std::any = nullptr) override;
+	virtual HRESULT					Initialize(any = any()) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 public:
 	static shared_ptr<CPhysics>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CBehavior>	Clone(std::any = nullptr) override;
+	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
 };
 
 END

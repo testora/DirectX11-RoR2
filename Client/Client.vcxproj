@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Client_Variable.h" />
+    <ClInclude Include="Public\Background.h" />
+    <ClInclude Include="Public\Camera_Main.h" />
     <ClInclude Include="Public\Client_Enum.h" />
     <ClInclude Include="Public\Client_Settings.h" />
     <ClInclude Include="Public\Client_Define.h" />
@@ -34,8 +37,11 @@
     <ClInclude Include="Public\Scene_Load.h" />
     <ClInclude Include="Public\Scene_Menu.h" />
     <ClInclude Include="Public\Scene_Stage1.h" />
+    <ClInclude Include="Public\Thread_Loader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Background.cpp" />
+    <ClCompile Include="Private\Camera_Main.cpp" />
     <ClCompile Include="Default\Client.cpp" />
     <ClCompile Include="Private\Loader.cpp" />
     <ClCompile Include="Private\MainApp.cpp" />
@@ -55,6 +61,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Default\Client.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

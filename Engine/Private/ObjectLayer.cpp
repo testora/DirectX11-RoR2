@@ -2,7 +2,6 @@
 #include "ObjectLayer.h"
 #include "GameObject.h"
 
-
 void CObjectLayer::Tick(_float _fTimeDelta)
 {
 	for (auto& pObject : m_usetObject)
@@ -21,6 +20,11 @@ void CObjectLayer::Late_Tick(_float _fTimeDelta)
 
 HRESULT CObjectLayer::Add(shared_ptr<class CGameObject> _pObject)
 {
+	if (nullptr == _pObject)
+	{
+		MSG_RETURN(E_FAIL, "CObjectLayer::Add", "Null Exception");
+	}
+
 	m_usetObject.emplace(_pObject);
 
 	return S_OK;

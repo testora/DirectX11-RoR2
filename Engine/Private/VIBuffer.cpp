@@ -1,8 +1,8 @@
 #include "EnginePCH.h"
 #include "VIBuffer.h"
 
-CVIBuffer::CVIBuffer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CComponent(_pDevice, _pContext, COMPONENT::VIBUFFER)
+CVIBuffer::CVIBuffer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const COMPONENT _eComponent)
+	: CComponent(_pDevice, _pContext, _eComponent)
 {
 }
 
@@ -15,7 +15,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& _rhs)
 	, m_eTopology		(_rhs.m_eTopology)
 	, m_eIndexFormat	(_rhs.m_eIndexFormat)
 	, m_iNumVB			(_rhs.m_iNumVB)
-	, m_iNumVertex	(_rhs.m_iNumVertex)
+	, m_iNumVertex		(_rhs.m_iNumVertex)
 	, m_iVertexStride	(_rhs.m_iVertexStride)
 	, m_iNumIndex		(_rhs.m_iNumIndex)
 	, m_iIndexStride	(_rhs.m_iIndexStride)
@@ -34,7 +34,7 @@ HRESULT CVIBuffer::Initialize()
 HRESULT CVIBuffer::Render()
 {
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
-	m_pContext->IASetVertexBuffers(0, m_iNumVB, &m_vecVB.front(), m_vecVertexStride.data(), m_vecVertexOffset.data());
+	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::StoreRawPointerVecter(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
 	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
 	m_pContext->DrawIndexed(m_iNumIndex, 0, 0);
 

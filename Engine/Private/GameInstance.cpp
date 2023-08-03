@@ -149,7 +149,7 @@ HRESULT CGameInstance::Present()
 		MSG_RETURN(E_FAIL, "CGameInstance::Present", "Null Exception: m_pGraphic_Device");
 	}
 
-	return m_pGraphic_Device->Clear_DepthStencil_View();
+	return m_pGraphic_Device->Present();
 }
 
 #pragma endregion
@@ -178,7 +178,7 @@ HRESULT CGameInstance::Add_Object_Prototype(const wstring& _strPrototypeTag, sha
 	return m_pObject_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<class CGameObject> CGameInstance::Clone_GameObject(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<class CGameObject> CGameInstance::Clone_GameObject(const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pObject_Manager)
 	{
@@ -198,7 +198,7 @@ HRESULT CGameInstance::Add_Layer(const wstring& _strLayerTag)
 	return m_pObject_Manager->Add_Layer(_strLayerTag);
 }
 
-HRESULT CGameInstance::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, std::any _arg)
+HRESULT CGameInstance::Add_Pool(const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
 {
 	if (nullptr == m_pObject_Manager)
 	{
@@ -241,7 +241,7 @@ HRESULT CGameInstance::Add_Component_Prototype(const wstring& _strPrototypeTag, 
 	return m_pComponent_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<CComponent> CGameInstance::Clone_Component(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CComponent> CGameInstance::Clone_Component(const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pComponent_Manager)
 	{
@@ -264,7 +264,7 @@ HRESULT CGameInstance::Add_Behavior_Prototype(const wstring& _strPrototypeTag, s
 	return m_pBehavior_Manager->Add_Prototype(_strPrototypeTag, _pPrototype);
 }
 
-shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const wstring& _strPrototypeTag, any _arg)
 {
 	if (nullptr == m_pBehavior_Manager)
 	{

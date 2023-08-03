@@ -36,7 +36,19 @@ void CTransform::Set_State(const STATE _eState, const _vectorf _vState)
 {
 	_matrix mWorld(m_mWorld);
 
-	m_mWorld *= XMMatrixRotationQuaternion(QuaternionBetweenAxis(mWorld.r[_eState], _vState));
+	if (Function::InRange(_eState, STATE::RIGHT, STATE::LOOK, "[]"))
+	{
+		m_mWorld *= XMMatrixRotationQuaternion(QuaternionBetweenAxis(mWorld.r[_eState], _vState));
+	}
+	else if(STATE::POSITION == _eState)
+	{
+		mWorld.r[_eState] = _vState;
+		m_mWorld = mWorld;
+	}
+	else
+	{
+		return;
+	}
 }
 
 void CTransform::Set_Scale(const _vectorf _vScale)
@@ -76,7 +88,7 @@ shared_ptr<CTransform> CTransform::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<
 	return make_private_shared(CTransform, _pDevice, _pContext);
 }
 
-shared_ptr<CComponent> CTransform::Clone(std::any _arg)
+shared_ptr<CComponent> CTransform::Clone(any _arg)
 {
-	return make_private_copy_shared(CTransform, *this);
+	return make_private_shared_copy(CTransform, *this);
 }

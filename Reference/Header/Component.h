@@ -21,7 +21,7 @@ protected:
 	ComPtr<ID3D11DeviceContext>			m_pContext;
 
 public:
-	virtual shared_ptr<CComponent>		Clone(std::any = nullptr)	PURE;
+	virtual shared_ptr<CComponent>		Clone(any = any())	PURE;
 };
 
 END

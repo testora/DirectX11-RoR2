@@ -1,10 +1,7 @@
 #include "EnginePCH.h"
 #include "GameObject.h"
-
-#include "Transform.h"
-#include "Renderer.h"
-
-#include "Physics.h"
+#include "Component_Manager.h"
+#include "Behavior_Manager.h"
 
 CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: m_pDevice	(_pDevice)
@@ -12,6 +9,18 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 {
 	m_bitComponent.reset();
 	m_bitBehavior.reset();
+
+	m_umapComponentArg.reserve(IDX(COMPONENT::MAX));
+	m_umapBehaviorArg.reserve(IDX(BEHAVIOR::MAX));
+
+	for (_uint i = 0; i < IDX(COMPONENT::MAX); ++i)
+	{
+		m_umapComponentArg[static_cast<COMPONENT>(i)] = make_pair(wstring(), any());
+	}
+	for (_uint i = 0; i < IDX(BEHAVIOR::MAX); ++i)
+	{
+		m_umapBehaviorArg[static_cast<BEHAVIOR>(i)] = make_pair(wstring(), any());
+	}
 }
 
 CGameObject::CGameObject(const CGameObject& _rhs)
@@ -27,19 +36,16 @@ HRESULT CGameObject::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CGameObject::Initialize(std::any _arg)
+HRESULT CGameObject::Initialize(any _arg)
 {
-	std::pair bits = std::any_cast<std::pair<bitset<IDX(COMPONENT::MAX)>, bitset<IDX(BEHAVIOR::MAX)>>>(_arg);
-
-	if (FAILED(Ready_Components(bits.first)))
+	if (FAILED(Ready_Components()))
 	{
 		MSG_RETURN(E_FAIL, "CGameObject::Initialize", "Failed to Ready_Components");
 	}
-	if (FAILED(Ready_Behaviors(bits.second)))
+	if (FAILED(Ready_Behaviors()))
 	{
 		MSG_RETURN(E_FAIL, "CGameObject::Initialize", "Failed to Ready_Behaviors");
 	}
-
 
 	return S_OK;
 }
@@ -65,18 +71,18 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-HRESULT CGameObject::Fetch(std::any _arg)
+HRESULT CGameObject::Fetch(any _arg)
 {
 	return S_OK;
 }
 
-HRESULT CGameObject::Ready_Components(bitset<IDX(COMPONENT::MAX)> _bitFlag)
+HRESULT CGameObject::Ready_Components()
 {
 	HRESULT hr = S_OK;
 
 	for (size_t i = 0; i < IDX(COMPONENT::MAX); ++i)
 	{
-		if (_bitFlag.test(i))
+		if (m_bitComponent.test(i))
 		{
 			if (FAILED(Add_Component(static_cast<COMPONENT>(i))))
 			{
@@ -93,13 +99,13 @@ HRESULT CGameObject::Ready_Components(bitset<IDX(COMPONENT::MAX)> _bitFlag)
 	return S_OK;
 }
 
-HRESULT CGameObject::Ready_Behaviors(bitset<IDX(BEHAVIOR::MAX)> _bitFlag)
+HRESULT CGameObject::Ready_Behaviors()
 {
 	HRESULT hr = S_OK;
 
 	for (size_t i = 0; i < IDX(BEHAVIOR::MAX); ++i)
 	{
-		if (_bitFlag.test(i))
+		if (m_bitBehavior.test(i))
 		{
 			if (FAILED(Add_Behavior(static_cast<BEHAVIOR>(i))))
 			{
@@ -120,12 +126,28 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 {
 	switch (_eComponent)
 	{
-	case COMPONENT::TRANSFORM:
-		m_umapComponent.emplace(_eComponent, CFactory<CTransform>::Create(m_pDevice, m_pContext));
+	case COMPONENT::RENDERER:
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
-	case COMPONENT::RENDERER:
-		m_umapComponent.emplace(_eComponent, CFactory<CRenderer>::Create(m_pDevice, m_pContext));
+	case COMPONENT::TRANSFORM:
+		m_umapComponent.emplace(_eComponent, CTransform::Create(m_pDevice, m_pContext));
+		break;
+
+	case COMPONENT::SHADER:
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
+		break;
+
+	case COMPONENT::TEXTURE:
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
+		break;
+
+	case COMPONENT::VIBUFFER_RECT:
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(
+			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
 	default:
@@ -142,7 +164,7 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CFactory<CPhysics>::Create(m_pDevice, m_pContext));
+		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext));
 		break;
 
 	default:

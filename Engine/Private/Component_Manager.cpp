@@ -13,7 +13,7 @@ HRESULT CComponent_Manager::Add_Prototype(const wstring& _strPrototypeTag, share
 	return S_OK;
 }
 
-shared_ptr<CComponent> CComponent_Manager::Clone_Component(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CComponent> CComponent_Manager::Clone_Component(const wstring& _strPrototypeTag, any _arg)
 {
 	shared_ptr<CComponent> pComponent = Find_Prototype(_strPrototypeTag);
 	if (nullptr == pComponent)

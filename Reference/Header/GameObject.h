@@ -12,16 +12,16 @@ protected:
 
 public:
 	virtual HRESULT												Initialize_Prototype();
-	virtual HRESULT												Initialize(std::any = nullptr);
+	virtual HRESULT												Initialize(any = any());
 	virtual void												Tick(_float fTimeDelta);
 	virtual void												Late_Tick(_float fTimeDelta);
 	virtual HRESULT												Render();
 
-	virtual HRESULT												Fetch(std::any = nullptr);
+	virtual HRESULT												Fetch(any = any());
 
 protected:
-	virtual HRESULT												Ready_Components(bitset<IDX(COMPONENT::MAX)> bitFlag);
-	virtual HRESULT												Ready_Behaviors(bitset<IDX(BEHAVIOR::MAX)> bitFlag);
+	virtual HRESULT												Ready_Components();
+	virtual HRESULT												Ready_Behaviors();
 
 	virtual HRESULT												Add_Component(const COMPONENT);
 	virtual HRESULT												Add_Behavior(const BEHAVIOR);
@@ -30,17 +30,18 @@ protected:
 
 protected:
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
+	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;
 	bitset<IDX(COMPONENT::MAX)>									m_bitComponent;
 
 	unordered_map<BEHAVIOR, shared_ptr<class CBehavior>>		m_umapBehavior;
+	unordered_map<BEHAVIOR, pair<wstring, any>>					m_umapBehaviorArg;
 	bitset<IDX(BEHAVIOR::MAX)>									m_bitBehavior;
 
-protected:
 	ComPtr<ID3D11Device>										m_pDevice;
 	ComPtr<ID3D11DeviceContext>									m_pContext;
 
 public:
-	virtual shared_ptr<CGameObject>								Clone(std::any = nullptr)	PURE;
+	virtual shared_ptr<CGameObject>								Clone(any = any())	PURE;
 };
 
 END

@@ -15,7 +15,7 @@ CBehavior::CBehavior(const CBehavior& _rhs)
 {
 }
 
-HRESULT CBehavior::Initialize(std::any)
+HRESULT CBehavior::Initialize(any)
 {
 	return E_NOTIMPL;
 }

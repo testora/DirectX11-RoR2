@@ -30,7 +30,7 @@ void CTimer::Tick()
 
 _bool CTimer::Check(_float _fFPS)
 {
-	if (m_fTimeAcc >= _fFPS)
+	if (1 <= m_fTimeAcc * _fFPS)
 	{
 		m_fTimeAcc = fmod(m_fTimeAcc, _fFPS);
 		return true;

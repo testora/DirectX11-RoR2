@@ -13,7 +13,7 @@ HRESULT CBehavior_Manager::Add_Prototype(const wstring& _strPrototypeTag, shared
 	return S_OK;
 }
 
-shared_ptr<CBehavior> CBehavior_Manager::Clone_Behavior(const wstring& _strPrototypeTag, std::any _arg)
+shared_ptr<CBehavior> CBehavior_Manager::Clone_Behavior(const wstring& _strPrototypeTag, any _arg)
 {
 	shared_ptr<CBehavior> pBehavior = Find_Prototype(_strPrototypeTag);
 	if (nullptr == pBehavior)

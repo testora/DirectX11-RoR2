@@ -38,6 +38,11 @@ using std::cout;
 using std::wcout;
 using std::endl;
 
+#include <utility>
+
+using std::pair;
+using std::make_pair;
+
 #include <string>
 #include <vector>
 #include <list>
@@ -67,10 +72,12 @@ using std::unordered_set;
 using std::queue;
 using std::deque;
 
-
 using std::bitset;
-
 using std::function;
+using std::tuple;
+using std::make_tuple;
+using std::any;
+using std::any_cast;
 
 #include <wrl/client.h>
 
@@ -82,14 +89,9 @@ using Microsoft::WRL::ComPtr;
 
 using namespace DirectX;
 
-#ifdef ENGINE_EXPORTS
-
 #include "FX11/d3dx11effect.h"
-#include "DirectXTK/SimpleMath.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
-
-#endif // ENGINE_EXPORTS
 
 #ifdef _DEBUG
 

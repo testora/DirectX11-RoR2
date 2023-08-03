@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CVIBuffer abstract : public CComponent
 {
 protected:
-	explicit CVIBuffer(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	explicit CVIBuffer(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);
 	explicit CVIBuffer(const CVIBuffer&);
 	virtual ~CVIBuffer() DEFAULT;
 
@@ -35,7 +35,7 @@ protected:
 	vector<_uint>					m_vecVertexOffset;
 
 public:
-	virtual shared_ptr<CComponent>	Clone(std::any = nullptr) override	PURE;
+	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;
 };
 
 END

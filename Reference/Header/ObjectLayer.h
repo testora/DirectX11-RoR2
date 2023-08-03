@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class CObjectLayer final
+class ENGINE_DLL CObjectLayer final
 {
 private:
 	explicit CObjectLayer() DEFAULT;
