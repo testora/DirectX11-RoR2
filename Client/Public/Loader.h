@@ -19,7 +19,7 @@ public:
 
 private:
 	HRESULT						Load_Menu();
-	HRESULT						Load_Stage1();
+	HRESULT						Load_Test();
 
 private:
 	const SCENE					m_eLoadScene;

@@ -1,7 +1,6 @@
 #include "ClientPCH.h"
 #include "Background.h"
 #include "GameInstance.h"
-#include "PipeLine.h"
 
 CBackground::CBackground(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -11,16 +10,6 @@ CBackground::CBackground(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 CBackground::CBackground(const CBackground& _rhs)
 	: CGameObject(_rhs)
 {
-}
-
-HRESULT CBackground::Initialize_Prototype()
-{
-	if (FAILED(__super::Initialize_Prototype()))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize_Prototype", "Failed to __super::Initialize_Prototype");
-	}
-
-	return S_OK;
 }
 
 HRESULT CBackground::Initialize(any _arg)

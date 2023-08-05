@@ -23,7 +23,7 @@ namespace DirectX
 	XMVECTOR QuaternionBetweenAxis(FXMVECTOR _vAxisA, FXMVECTOR _vAxisB)
 	{
 		XMVECTOR vAxisA	= XMVector3Normalize(_vAxisA);
-		XMVECTOR vAxisB	= XMVector3Normalize(_vAxisB);
+		XMVECTOR vAxisB = XMVector3Normalize(_vAxisB);
 
 		XMVECTOR vCross	= XMVector3Cross(vAxisA, vAxisB);
 		_float fDot		= XMVectorGetX(XMVector3Dot(vAxisA, vAxisB));

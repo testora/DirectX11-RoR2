@@ -4,7 +4,7 @@
 
 #pragma region Scene Loader Header
 #include "Loader_Menu.h"
-#include "Loader_Stage1.h"
+#include "Loader_Test.h"
 #pragma endregion
 
 CLoader::CLoader(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const SCENE _eLoadScene)
@@ -44,8 +44,8 @@ HRESULT CLoader::Loading()
 		hr = Load_Menu();
 		break;
 
-	case SCENE::STAGE1:
-		hr = Load_Stage1();
+	case SCENE::TEST:
+		hr = Load_Test();
 		break;
 	}
 

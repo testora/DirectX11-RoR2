@@ -1,11 +1,13 @@
 #include "ClientPCH.h"
 #include "MainApp.h"
 #include "GameInstance.h"
+#include "ImGui_Manager.h"
 #include "Scene_Load.h"
 #include "Camera_Main.h"
 
 CMainApp::CMainApp()
-	: m_pGameInstance(CGameInstance::Get_Instance())
+	: m_pGameInstance	(CGameInstance::Get_Instance())
+	, m_pImGui_Manager	(CImGui_Manager::Get_Instance())
 {
 }
 
@@ -14,6 +16,7 @@ CMainApp::~CMainApp()
 	CMainApp::Destroy_Instance();
 	CGameInstance::Release_Engine();
 
+#ifdef D3D11_LIVE_OBJECT_REF_COUNTER_CHECKER
 #if defined(DEBUG) || defined(_DEBUG)
 	if (nullptr != m_pDevice)
 	{
@@ -36,6 +39,7 @@ CMainApp::~CMainApp()
 			d3dDebug->Release();
 		}
 	}
+#endif
 #endif
 }
 
@@ -66,11 +70,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Component_Prototype()))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Ready_Component_Prototype");
-	}
-
-	if (FAILED(Ready_GameObject_Prototype()))
-	{
-		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Ready_GameObject_Prototype");
 	}
 
 	if (FAILED(m_pGameInstance->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::MENU))))
@@ -117,6 +116,9 @@ void CMainApp::Tick(_float _fTimeDelta)
 {
 	if (m_pGameInstance)
 	{
+#ifdef _DEBUG
+		m_pImGui_Manager->Tick();
+#endif
 		m_pGameInstance->Tick_Engine(_fTimeDelta);
 	}
 }
@@ -132,6 +134,10 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Clear_DepthStencil_View();
 
 	m_pMainRenderer->Draw_RenderGroup();
+
+#ifdef _DEBUG
+	m_pImGui_Manager->Render();
+#endif
 
 	m_pGameInstance->Present();
 
@@ -155,9 +161,15 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_RENDERER_MAIN");
 	}
-	
+
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX,
 		CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSTEX.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
+	}
+
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX,
+		CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTEX.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
 	}
@@ -172,17 +184,6 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	if (nullptr == m_pMainRenderer)
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Clone_Component: CRenderer");
-	}
-
-	return S_OK;
-}
-
-HRESULT CMainApp::Ready_GameObject_Prototype()
-{
-	if (FAILED(m_pGameInstance->Add_Object_Prototype(SCENE::STATIC, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
-		CCamera_Main::Create(m_pDevice, m_pContext, PROTOTYPE_COMPONENT_RENDERER_MAIN))))
-	{
-		MSG_RETURN(E_FAIL, "CMainApp::Ready_GameObject_Prototype", "Failed to Add_Object_Prototype: CCamera");
 	}
 
 	return S_OK;

@@ -23,10 +23,14 @@ public:
 	virtual HRESULT					Render() override;
 
 private:
+	void							Debug_MouseControl(_float fTimeDelta);
+	void							Debug_KeyControl(_float fTimeDelta);
+
+private:
 	CAMERA_MAIN_DESC				m_tCameraMainDesc;
 
 public:
-	static shared_ptr<CCamera_Main>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, any);
+	static shared_ptr<CCamera_Main>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>	Clone(any = any()) override;
 };
 

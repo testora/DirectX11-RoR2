@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 class CGameInstance;
+class CImGui_Manager;
 class CRenderer;
 END
 
@@ -30,11 +31,13 @@ public:
 private:
 	HRESULT							Default_Settings();
 	HRESULT							Ready_Component_Prototype();
-	HRESULT							Ready_GameObject_Prototype();
 
 private:
-	shared_ptr<CGameInstance>		m_pGameInstance;
 	shared_ptr<CRenderer>			m_pMainRenderer;
+	shared_ptr<CGameInstance>		m_pGameInstance;
+#ifdef _DEBUG
+	shared_ptr<CImGui_Manager>		m_pImGui_Manager;
+#endif
 
 	ComPtr<ID3D11Device>			m_pDevice;
 	ComPtr<ID3D11DeviceContext>		m_pContext;

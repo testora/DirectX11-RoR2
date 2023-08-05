@@ -11,7 +11,7 @@ CVIBuffer_Rect::CVIBuffer_Rect(const CVIBuffer_Rect& _rhs)
 {
 }
 
-HRESULT CVIBuffer_Rect::Initialize()
+HRESULT CVIBuffer_Rect::Initialize(any)
 {
 	m_iNumVB		= 1;
 	m_iNumVertices	= 4;
@@ -32,7 +32,6 @@ HRESULT CVIBuffer_Rect::Initialize()
 	m_tBufferDesc.StructureByteStride	= m_iVertexStride;
 
 	auto pVertices = Function::MakeUniqueDynamicArray<VTXPOSTEX>(m_iNumVertices);
-	ZeroMemory(pVertices.get(), m_iVertexStride * m_iNumVertices);
 
 	pVertices[0].vPosition	= _float3(-0.5f, 0.5f, 0.f);
 	pVertices[0].vTexCoord	= _float2(0.f, 0.f);
@@ -47,7 +46,7 @@ HRESULT CVIBuffer_Rect::Initialize()
 	pVertices[3].vTexCoord	= _float2(0.f, 1.f);
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
-	m_tInitializeData.pSysMem = pVertices.get();
+	m_tInitializeData.pSysMem			= pVertices.get();
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pVB)))
 	{
@@ -67,7 +66,6 @@ HRESULT CVIBuffer_Rect::Initialize()
 	m_tBufferDesc.StructureByteStride	= 0;
 
 	auto pIndices = Function::MakeUniqueDynamicArray<_ushort>(m_iNumIndices);
-	ZeroMemory(pIndices.get(), m_iIndexStride * m_iNumIndices);
 
 	pIndices[0]	= 0;
 	pIndices[1]	= 1;
@@ -78,12 +76,13 @@ HRESULT CVIBuffer_Rect::Initialize()
 	pIndices[5]	= 3;
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
-	m_tInitializeData.pSysMem = pIndices.get();
+	m_tInitializeData.pSysMem			= pIndices.get();
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
+
 #pragma endregion
 
 	if (FAILED(__super::Initialize()))
@@ -100,7 +99,7 @@ shared_ptr<CVIBuffer_Rect> CVIBuffer_Rect::Create(ComPtr<ID3D11Device> _pDevice,
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_RETURN(nullptr, "CVIBuffer_Rect::Create", "Failed to Initialize_Prototype");
+		MSG_RETURN(nullptr, "CVIBuffer_Rect::Create", "Failed to Initialize");
 	}
 
 	return pInstance;

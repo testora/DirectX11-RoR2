@@ -1,5 +1,7 @@
 #pragma once
 
+enum class	KEY_STATE { DOWN, HOLD, UP, NONE, MAX };
+
 enum class	SCENE;
 
 enum class	RENDER_GROUP
@@ -18,6 +20,7 @@ enum class	COMPONENT
 	SHADER,
 	TEXTURE,
 	VIBUFFER_RECT,
+	VIBUFFER_TERRAIN,
 	MAX
 };
 

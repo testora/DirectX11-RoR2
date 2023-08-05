@@ -2,6 +2,7 @@
 #include "Engine_Define.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
+#include "PipeLine.h"
 
 BEGIN(Engine)
 
@@ -18,6 +19,13 @@ public:
 	void										Tick_Engine(_float fTimeDelta);
 
 #pragma endregion
+#pragma region Graphic Device
+
+	HRESULT										Clear_BackBuffer_View(_float4 vColor);
+	HRESULT										Clear_DepthStencil_View();
+	HRESULT										Present();
+
+#pragma endregion
 #pragma region Timer Manager
 
 	void										Tick_Timer();
@@ -29,11 +37,26 @@ public:
 	_float										Get_TimeDelta(const _float fFPS);
 
 #pragma endregion
-#pragma region Graphic Device
+#pragma region Mouse Manager
 
-	HRESULT										Clear_BackBuffer_View(_float4 vColor);
-	HRESULT										Clear_DepthStencil_View();
-	HRESULT										Present();
+	POINT										Get_CursorPos();
+	POINT										Get_CursorMove();
+	_bool										Is_CursorOn();
+
+	void										CheckFocus_OnMouse(_bool bCheck = true);
+
+	void										Fix_Cursor(_bool bFix = true);
+	void										Show_Cursor(_bool bShow = true);
+	void										Toggle_Cursor();
+
+#pragma endregion
+#pragma region Key Manager
+
+	_bool										Key_Down(_uint iKey = VK_MAX);
+	_bool										Key_Hold(_uint iKey = VK_MAX);
+	_bool										Key_Up(_uint iKey = VK_MAX);
+
+	void										CheckFocus_OnKeyboard(_bool bCheck = true);
 
 #pragma endregion
 #pragma region Scene Manager
@@ -47,8 +70,8 @@ public:
 	HRESULT										Add_Object_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
 	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& strPrototypeTag, any = any());
 
-	HRESULT										Add_Layer(const SCENE, const wstring& strLayerTag);
-	HRESULT										Add_Pool(const SCENE, const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
+	shared_ptr<class CObjectLayer>				Add_Layer(const SCENE, const wstring& strLayerTag);
+	shared_ptr<class CObjectPool>				Add_Pool(const SCENE, const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
 
 	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& strLayerTag);
 	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& strPoolTag);
@@ -68,8 +91,10 @@ public:
 #pragma endregion
 
 private:
-	shared_ptr<class CTimer_Manager>			m_pTimer_Manager;
 	shared_ptr<class CGraphicDevice>			m_pGraphic_Device;
+	shared_ptr<class CTimer_Manager>			m_pTimer_Manager;
+	shared_ptr<class CMouse_Manager>			m_pMouse_Manager;
+	shared_ptr<class CKey_Manager>				m_pKey_Manager;
 	shared_ptr<class CScene_Manager>			m_pScene_Manager;
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;

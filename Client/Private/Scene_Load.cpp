@@ -3,7 +3,7 @@
 #include "Loader.h"
 #include "Scene_Load.h"
 #include "Scene_Menu.h"
-#include "Scene_Stage1.h"
+#include "Scene_Test.h"
 #include "GameInstance.h"
 
 CScene_Load::CScene_Load(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const SCENE _eLoadScene)
@@ -41,8 +41,8 @@ void CScene_Load::Late_Tick(_float _fTimeDelta)
 		case SCENE::MENU:
 			pScene = CScene_Menu::Create(m_pDevice, m_pContext);
 			break;
-		case SCENE::STAGE1:
-			pScene = CScene_Stage1::Create(m_pDevice, m_pContext);
+		case SCENE::TEST:
+			pScene = CScene_Test::Create(m_pDevice, m_pContext);
 			break;
 		}
 

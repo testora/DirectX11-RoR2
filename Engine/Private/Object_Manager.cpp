@@ -7,9 +7,9 @@
 
 HRESULT CObject_Manager::Reserve_Manager(const SCENE _eScene)
 {
-	m_arrPrototypes	= Function::MakeUniqueDynamicArray<Prototype>(IDX(_eScene));
-	m_arrLayers		= Function::MakeUniqueDynamicArray<Layer>(IDX(_eScene));
-	m_arrPools		= Function::MakeUniqueDynamicArray<Pool>(IDX(_eScene));
+	m_arrPrototypes	= Function::MakeUniqueDynamicArray<Prototype>(IDX(_eScene), false);
+	m_arrLayers		= Function::MakeUniqueDynamicArray<Layer>(IDX(_eScene), false);
+	m_arrPools		= Function::MakeUniqueDynamicArray<Pool>(IDX(_eScene), false);
 
 	return S_OK;
 }
@@ -75,28 +75,40 @@ HRESULT CObject_Manager::Add_Prototype(const SCENE _eScene, const wstring& _strP
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_Layer(const SCENE _eScene, const wstring& _strLayerTag)
+shared_ptr<class CObjectLayer> CObject_Manager::Add_Layer(const SCENE _eScene, const wstring& _strLayerTag)
 {
 	if (nullptr != Find_Layer(_eScene, _strLayerTag))
 	{
-		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Layer", "Already Exists: CObjectLayer");
+		MSG_RETURN(nullptr, "CObject_Manager::Add_Layer", "Already Exists: CObjectLayer");
 	}
 
-	m_arrLayers[IDX(_eScene)].emplace(_strLayerTag, CObjectLayer::Create(_eScene));
+	shared_ptr<class CObjectLayer> pLayer = CObjectLayer::Create(_eScene);
+	if (nullptr == pLayer)
+	{
+		MSG_RETURN(nullptr, "CObject_Manager::Add_Layer", "Failed to Create");
+	}
 
-	return S_OK;
+	m_arrLayers[IDX(_eScene)].emplace(_strLayerTag, pLayer);
+
+	return pLayer;
 }
 
-HRESULT CObject_Manager::Add_Pool(const SCENE _eScene, const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
+shared_ptr<class CObjectPool> CObject_Manager::Add_Pool(const SCENE _eScene, const wstring& _strPoolTag, const wstring& _strPrototypeTag, _uint _iPoolSize, any _arg)
 {
 	if (nullptr != Find_Pool(_eScene, _strPoolTag))
 	{
-		MSG_RETURN(E_FAIL, "CObject_Manager::Add_Pool", "Already Exists: CObjectPool");
+		MSG_RETURN(nullptr, "CObject_Manager::Add_Pool", "Already Exists: CObjectPool");
 	}
 
-	m_arrPools[IDX(_eScene)].emplace(_strPoolTag, CObjectPool::Create(_eScene, _iPoolSize, _strPrototypeTag, _arg));
+	shared_ptr<class CObjectPool> pPool = CObjectPool::Create(_eScene, _iPoolSize, _strPrototypeTag, _arg);
+	if (nullptr == pPool)
+	{
+		MSG_RETURN(nullptr, "CObject_Manager::Add_Pool", "Failed to Create");
+	}
 
-	return S_OK;
+	m_arrPools[IDX(_eScene)].emplace(_strPoolTag, pPool);
+
+	return pPool;
 }
 
 shared_ptr<CGameObject> CObject_Manager::Clone_GameObject(const SCENE _eScene, const wstring& _strPrototypeTag, any _arg)

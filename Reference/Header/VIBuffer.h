@@ -12,7 +12,7 @@ protected:
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize()	PURE;
+	virtual HRESULT					Initialize(any = any())				PURE;
 	HRESULT							Render();
 
 protected:
@@ -35,7 +35,7 @@ protected:
 	vector<_uint>					m_vecVertexOffset;
 
 public:
-	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;
+	virtual shared_ptr<CComponent>	Clone(any = any()) override			PURE;
 };
 
 END

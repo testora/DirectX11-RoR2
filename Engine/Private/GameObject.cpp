@@ -151,6 +151,11 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
+	case COMPONENT::VIBUFFER_TERRAIN:
+		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
+			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
+		break;
+
 	default:
 		MSG_RETURN(E_FAIL, "CGameObject::Add_Component", "Invalid Range");
 	}

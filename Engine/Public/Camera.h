@@ -12,7 +12,7 @@ public:
 	typedef struct tagCameraDesc
 	{
 		TYPE			eType;
-		_float3			vEye, vAt;
+		_float4			vEye, vAt;
 		_float			fFovAngleY, fAspect;
 		_float			fWidth, fHeight;
 		_float			fNear, fFar;

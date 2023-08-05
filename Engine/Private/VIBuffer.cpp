@@ -22,7 +22,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& _rhs)
 {
 }
 
-HRESULT CVIBuffer::Initialize()
+HRESULT CVIBuffer::Initialize(any)
 {
 	m_vecVB.emplace_back(m_pVB);
 	m_vecVertexStride.emplace_back(m_iVertexStride);

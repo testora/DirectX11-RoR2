@@ -6,15 +6,17 @@
 #include "Client.h"
 
 #include "MainApp.h"
+#include "ImGui_Manager.h"
 
 #define MAX_LOADSTRING	100
 
 // Global Variables:
-HINSTANCE	hInst;								// current instance
-WCHAR		szTitle[MAX_LOADSTRING];			// The title bar text
-WCHAR		szWindowClass[MAX_LOADSTRING];		// the main window class name
+HINSTANCE					hInst;								// current instance
+WCHAR						szTitle[MAX_LOADSTRING];			// The title bar text
+WCHAR						szWindowClass[MAX_LOADSTRING];		// the main window class name
 
-HWND		g_hWnd;
+HWND						g_hWnd;
+shared_ptr<CImGui_Manager>	pImGui_Manager;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -54,6 +56,7 @@ int APIENTRY wWinMain(
 	{
 		MSG_RETURN(FALSE, "Application Initialization", "Failed: pMainApp->Initialize");
 	}
+	pImGui_Manager = CImGui_Manager::Get_Instance();
 
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
@@ -175,6 +178,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
+	if (pImGui_Manager && pImGui_Manager->WndProcHandler(hWnd, message, wParam, lParam)) return true;
+#endif
 	switch (message)
 	{
 	case WM_COMMAND:

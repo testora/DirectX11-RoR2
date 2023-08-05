@@ -2,6 +2,7 @@
 #include "Scene_Menu.h"
 #include "GameInstance.h"
 #include "ObjectLayer.h"
+#include "Scene_Load.h"
 
 CScene_Menu::CScene_Menu(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::MENU)
@@ -20,6 +21,13 @@ HRESULT CScene_Menu::Initialize()
 
 void CScene_Menu::Tick(_float _fTimeDelta)
 {
+	if (CGameInstance::Get_Instance()->Key_Down())
+	{
+		if (FAILED(CGameInstance::Get_Instance()->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::TEST))))
+		{
+			MSG_BOX("CScene_Menu::Tick", "Failed to Open_Scene");
+		}
+	}
 }
 
 void CScene_Menu::Late_Tick(_float _fTimeDelta)
@@ -33,18 +41,13 @@ HRESULT CScene_Menu::Render()
 
 HRESULT CScene_Menu::Ready_Background()
 {
-	if (FAILED(CGameInstance::Get_Instance()->Add_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND)))
+	auto pLayer_Background = CGameInstance::Get_Instance()->Add_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND);
+	if (nullptr == pLayer_Background)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Add Layer");
+		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Add_Layer");
 	}
 
-	auto pLayerBackground = CGameInstance::Get_Instance()->Find_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND);
-	if (nullptr == pLayerBackground)
-	{
-		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Find_Layer");
-	}
-
-	if (FAILED(pLayerBackground->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MENU, PROTOTYPE_GAMEOBJECT_BACKGROUND))))
+	if (FAILED(pLayer_Background->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MENU, PROTOTYPE_GAMEOBJECT_BACKGROUND))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_BACKGROUND");
 	}

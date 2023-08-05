@@ -39,6 +39,7 @@ void CTransform::Set_State(const STATE _eState, const _vectorf _vState)
 	if (Function::InRange(_eState, STATE::RIGHT, STATE::LOOK, "[]"))
 	{
 		m_mWorld *= XMMatrixRotationQuaternion(QuaternionBetweenAxis(mWorld.r[_eState], _vState));
+		Set_State(STATE::POSITION, mWorld.r[STATE::POSITION]);
 	}
 	else if(STATE::POSITION == _eState)
 	{
@@ -75,12 +76,12 @@ void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
 
 void CTransform::LookAt(const _vectorf _vPosition)
 {
-	m_mWorld = XMMatrixLookAtLH(Get_State(STATE::POSITION), _vPosition, XMVectorSet(0.f, 1.f, 0.f, 0.f)) * XMMatrixScalingFromVector(Get_Scale());
+	Set_State(STATE::LOOK, _vPosition - Get_State(STATE::POSITION));
 }
 
 void CTransform::LookTo(const _vectorf _vDirection)
 {
-	m_mWorld = XMMatrixLookToLH(Get_State(STATE::POSITION), _vDirection, XMVectorSet(0.f, 1.f, 0.f, 0.f)) * XMMatrixScalingFromVector(Get_Scale());
+	Set_State(STATE::LOOK, _vDirection);
 }
 
 shared_ptr<CTransform> CTransform::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

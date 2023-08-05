@@ -19,6 +19,7 @@ namespace Engine
 		float2() : XMFLOAT2{} {}
 		float2(_float _x, _float _y) : XMFLOAT2(_x, _y) {}
 
+		float2(XMFLOAT2 _rhs) : XMFLOAT2(_rhs) {}
 		float2(XMVECTOR _vector) { XMStoreFloat2(this, _vector); }
 
 		// assignment operators
@@ -62,11 +63,13 @@ namespace Engine
 
 		operator XMVECTOR() const noexcept;
 	} _float2;
+
 	typedef struct ENGINE_DLL	float3 : public DirectX::XMFLOAT3
 	{
 		float3() : XMFLOAT3{} {}
 		float3(_float _x, _float _y, _float _z) : XMFLOAT3(_x, _y, _z) {}
 
+		float3(XMFLOAT3 _rhs) : XMFLOAT3(_rhs) {}
 		float3(XMVECTOR _vector) { XMStoreFloat3(this, _vector); }
 
 		// assignment operators
@@ -110,12 +113,14 @@ namespace Engine
 
 		operator XMVECTOR() const noexcept;
 	} _float3;
+
 	typedef struct ENGINE_DLL	float4 : public DirectX::XMFLOAT4
 	{
 		float4() : XMFLOAT4{} {}
 		float4(_float _x, _float _y, _float _z, _float _w) : XMFLOAT4(_x, _y, _z, _w) {}
 		float4(XMFLOAT3 _float3, _float _w) : XMFLOAT4(_float3.x, _float3.y, _float3.z, _w) {}
 
+		float4(XMFLOAT4 _rhs) : XMFLOAT4(_rhs) {}
 		float4(XMVECTOR _vector) { XMStoreFloat4(this, _vector); }
 
 		// assignment operators
@@ -159,6 +164,7 @@ namespace Engine
 
 		operator XMVECTOR() const noexcept;
 	} _float4;
+
 	typedef struct ENGINE_DLL	float4x4 : public DirectX::XMFLOAT4X4
 	{
 		float4x4() : XMFLOAT4X4{} {}

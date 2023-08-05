@@ -31,13 +31,14 @@
     <ClInclude Include="Default\targetver.h" />
     <ClInclude Include="Public\Loader.h" />
     <ClInclude Include="Public\Loader_Menu.h" />
-    <ClInclude Include="Public\Loader_Stage1.h" />
+    <ClInclude Include="Public\Loader_Test.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\ClientPCH.h" />
     <ClInclude Include="Public\Scene_Load.h" />
     <ClInclude Include="Public\Scene_Menu.h" />
-    <ClInclude Include="Public\Scene_Stage1.h" />
+    <ClInclude Include="Public\Scene_Test.h" />
     <ClInclude Include="Public\Thread_Loader.h" />
+    <ClInclude Include="Public\Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Background.cpp" />
@@ -53,7 +54,8 @@
     </ClCompile>
     <ClCompile Include="Private\Scene_Load.cpp" />
     <ClCompile Include="Private\Scene_Menu.cpp" />
-    <ClCompile Include="Private\Scene_Stage1.cpp" />
+    <ClCompile Include="Private\Scene_Test.cpp" />
+    <ClCompile Include="Private\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -63,6 +65,7 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl" />
     <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -141,14 +144,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(SolutionDir)Reference/Header/ImGui/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;ImGuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -174,7 +177,7 @@ call "UpdateResources.bat"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(SolutionDir)Reference/Header/ImGui/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -207,14 +210,14 @@ call "UpdateResources.bat"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(SolutionDir)Reference/Header/ImGui/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;ImGuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -240,7 +243,7 @@ call "UpdateResources.bat"</Command>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ClientPCH.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Public/Header/;$(SolutionDir)Public/Design/;$(SolutionDir)Reference/Header/;$(SolutionDir)Reference/Header/ImGui/;$(ProjectDir)Default/;$(ProjectDir)Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

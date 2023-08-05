@@ -44,9 +44,11 @@ namespace Function
 	}
 
 	template<typename T>
-	unique_ptr<T[], std::default_delete<T[]>> MakeUniqueDynamicArray(size_t arrSize)
+	unique_ptr<T[], std::default_delete<T[]>> MakeUniqueDynamicArray(size_t arrSize, _bool zeroMemory = true)
 	{
-		return unique_ptr<T[], std::default_delete<T[]>>(new T[arrSize]);
+		T* rawDynamicArray = new T[arrSize];
+		if (zeroMemory) ZeroMemory(rawDynamicArray, sizeof(T) * arrSize);
+		return move(unique_ptr<T[], std::default_delete<T[]>>(rawDynamicArray));
 	}
 
 #pragma endregion
