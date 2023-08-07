@@ -38,6 +38,15 @@ void CTerrain::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+	if (CGameInstance::Get_Instance()->Key_Down(VK_MBUTTON))
+	{
+		_float3 vPos;
+		if (m_pVIBufferCom->Intersect(vPos, m_pTransformCom->Get_Matrix()))
+		{
+			int test = 0;
+		}
+	}
+
 	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 

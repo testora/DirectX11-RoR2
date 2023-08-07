@@ -8,6 +8,7 @@
 #include "Object_Manager.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
+#include "Picker.h"
 
 CGameInstance::CGameInstance()
 	: m_pGraphic_Device		(CGraphicDevice::Get_Instance())
@@ -18,6 +19,7 @@ CGameInstance::CGameInstance()
 	, m_pObject_Manager		(CObject_Manager::Get_Instance())
 	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
 	, m_pBehavior_Manager	(CBehavior_Manager::Get_Instance())
+	, m_pPicker				(CPicker::Get_Instance())
 {
 }
 
@@ -28,6 +30,11 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 	if (FAILED(m_pGraphic_Device->Ready_GraphicDevice(_tGraphicDesc, _pDevice, _pContext)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
+	}
+
+	if (FAILED(m_pPicker->Initialize(_tGraphicDesc.hWnd, _pDevice, _pContext)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pPicker->Initialize");
 	}
 
 	if (FAILED(m_pMouse_Manager->Initialize(_tGraphicDesc.hWnd, POINT{static_cast<LONG>(_tGraphicDesc.iWinCX), static_cast<LONG>(_tGraphicDesc.iWinCY)})))
@@ -62,7 +69,7 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 
 #ifdef _DEBUG
 
-	if (ACTIVATE_CONSOLE && ::AllocConsole() == TRUE)
+	if (::AllocConsole() == TRUE && ACTIVATE_CONSOLE)
 	{
 		FILE* nfp[3];
 		freopen_s(nfp + 0, "CONOUT$", "rb", stdin);
@@ -91,6 +98,8 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 
 	m_pScene_Manager->Tick(_fTimeDelta);
 	m_pObject_Manager->Tick(_fTimeDelta);
+
+	m_pPicker->Tick();
 
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
@@ -460,6 +469,7 @@ shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const SCENE _eScene, const w
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::Destroy_Instance();
+	CPicker::Destroy_Instance();
 	CBehavior_Manager::Destroy_Instance();
 	CComponent_Manager::Destroy_Instance();
 	CObject_Manager::Destroy_Instance();

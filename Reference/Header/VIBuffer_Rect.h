@@ -8,7 +8,6 @@ class ENGINE_DLL CVIBuffer_Rect final : public CVIBuffer, public std::enable_sha
 {
 private:
 	explicit CVIBuffer_Rect(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	explicit CVIBuffer_Rect(const CVIBuffer_Rect&);
 	virtual ~CVIBuffer_Rect() DEFAULT;
 
 public:

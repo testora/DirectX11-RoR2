@@ -88,6 +88,9 @@ using Microsoft::WRL::ComPtr;
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <DirectXCollision.h>
+#include <DirectXPackedVector.h>
+#include <DirectXColors.h>
 
 using namespace DirectX;
 

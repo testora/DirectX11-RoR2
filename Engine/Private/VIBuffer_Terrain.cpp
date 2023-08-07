@@ -7,12 +7,6 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D1
 {
 }
 
-CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& _rhs)
-	: CVIBuffer(_rhs)
-	, m_vNumVertices(_rhs.m_vNumVertices)
-{
-}
-
 HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 {
 	wstring strHeightMapPath = any_cast<wstring>(_strHeightMapPath);
@@ -54,6 +48,9 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	m_eIndexFormat		= DXGI_FORMAT_R32_UINT;
 	m_eTopology			= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
+	m_pVertices			= Function::CreateDynamicArray<_float3>(m_iNumVertices);
+	m_pIndices			= Function::CreateDynamicArray<_byte>(m_iNumIndices * m_iIndexStride);
+
 #pragma region VERTEX_BUFFER
 
 	auto pVertices = Function::CreateDynamicArray<VTXPOSNORTEX>(m_iNumVertices);
@@ -64,7 +61,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 		{
 			_uint	iIndex	= static_cast<_uint>(m_vNumVertices.x * y + x);
 
-			pVertices[iIndex].vPosition	= _float3(static_cast<_float>(x), (pPixel[iIndex] & 0x000000ff) / 20.f, static_cast<_float>(y));
+			pVertices[iIndex].vPosition	= m_pVertices[iIndex] = _float3(static_cast<_float>(x), (pPixel[iIndex] & 0x000000ff) / 20.f, static_cast<_float>(y));
 			pVertices[iIndex].vNormal	= _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexCoord	= _float2(static_cast<_float>(x) / (m_vNumVertices.x - 1.f), static_cast<_float>(y) / (m_vNumVertices.y - 1.f));
 		}
@@ -146,6 +143,8 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 	m_tInitializeData.pSysMem			= pIndices.get();
+
+	memcpy(m_pIndices.get(), pIndices.get(), m_iNumIndices * m_iIndexStride);
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
 	{

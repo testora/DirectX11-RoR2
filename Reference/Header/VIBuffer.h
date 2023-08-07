@@ -8,12 +8,15 @@ class ENGINE_DLL CVIBuffer abstract : public CComponent
 {
 protected:
 	explicit CVIBuffer(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);
-	explicit CVIBuffer(const CVIBuffer&);
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(any = any())				PURE;
+	virtual HRESULT					Initialize(any = any())	PURE;
 	HRESULT							Render();
+
+public:
+	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = XMMatrixIdentity()) const;
+	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = XMMatrixIdentity()) const;
 
 protected:
 	ComPtr<ID3D11Buffer>			m_pVB;
@@ -34,8 +37,11 @@ protected:
 	vector<_uint>					m_vecVertexStride;
 	vector<_uint>					m_vecVertexOffset;
 
+	unique_ptr<_float3[]>			m_pVertices;
+	unique_ptr<_byte[]>				m_pIndices;
+
 public:
-	virtual shared_ptr<CComponent>	Clone(any = any()) override			PURE;
+	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;
 };
 
 END

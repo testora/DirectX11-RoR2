@@ -8,7 +8,6 @@ class ENGINE_DLL CVIBuffer_Terrain final : public CVIBuffer, public std::enable_
 {
 private:
 	explicit CVIBuffer_Terrain(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	explicit CVIBuffer_Terrain(const CVIBuffer_Terrain&);
 	virtual ~CVIBuffer_Terrain() DEFAULT;
 
 public: 

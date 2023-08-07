@@ -102,6 +102,7 @@ private:
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
 	shared_ptr<class CBehavior_Manager>			m_pBehavior_Manager;
+	shared_ptr<class CPicker>					m_pPicker;
 
 private:
 	WNDPROCDESC									m_tWndProcDesc{};

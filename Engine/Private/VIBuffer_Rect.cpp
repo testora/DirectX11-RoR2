@@ -6,11 +6,6 @@ CVIBuffer_Rect::CVIBuffer_Rect(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11Devic
 {
 }
 
-CVIBuffer_Rect::CVIBuffer_Rect(const CVIBuffer_Rect& _rhs)
-	: CVIBuffer(_rhs)
-{
-}
-
 HRESULT CVIBuffer_Rect::Initialize(any)
 {
 	m_iNumVB		= 1;
@@ -20,6 +15,9 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	m_iIndexStride	= sizeof(_ushort);
 	m_eIndexFormat	= DXGI_FORMAT_R16_UINT;
 	m_eTopology		= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_pVertices		= Function::CreateDynamicArray<_float3>(m_iNumVertices);
+	m_pIndices		= Function::CreateDynamicArray<_byte>(m_iNumIndices * m_iIndexStride);
 
 #pragma region VERTEX_BUFFER
 
@@ -33,16 +31,16 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 
 	auto pVertices = Function::CreateDynamicArray<VTXPOSTEX>(m_iNumVertices);
 
-	pVertices[0].vPosition	= _float3(-0.5f, 0.5f, 0.f);
+	pVertices[0].vPosition	= m_pVertices[0] = _float3(-0.5f, 0.5f, 0.f);
 	pVertices[0].vTexCoord	= _float2(0.f, 0.f);
 
-	pVertices[1].vPosition	= _float3(0.5f, 0.5f, 0.f);
+	pVertices[1].vPosition	= m_pVertices[1] = _float3(0.5f, 0.5f, 0.f);
 	pVertices[1].vTexCoord	= _float2(1.f, 0.f);
 
-	pVertices[2].vPosition	= _float3(0.5f, -0.5f, 0.f);
+	pVertices[2].vPosition	= m_pVertices[2] = _float3(0.5f, -0.5f, 0.f);
 	pVertices[2].vTexCoord	= _float2(1.f, 1.f);
 
-	pVertices[3].vPosition	= _float3(-0.5f, -0.5f, 0.f);
+	pVertices[3].vPosition	= m_pVertices[3] = _float3(-0.5f, -0.5f, 0.f);
 	pVertices[3].vTexCoord	= _float2(0.f, 1.f);
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
@@ -77,6 +75,8 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 	m_tInitializeData.pSysMem			= pIndices.get();
+
+	memcpy(m_pIndices.get(), pIndices.get(), m_iNumIndices * m_iIndexStride);
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
 	{
