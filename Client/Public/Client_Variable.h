@@ -18,6 +18,7 @@
 #define PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND		TEXT("Prototype:Component:Texture:Background")
 #define PROTOTYPE_COMPONENT_TEXTURE_TERRAIN			TEXT("Prototype:Component:Texture:Terrain")
 #define PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP		TEXT("Prototype:Component:Texture:HeightMap")
+#define PROTOTYPE_COMPONENT_TEXTURE_BRUSH			TEXT("Prototype:Component:Texture:Brush")
 
 #define PROTOTYPE_COMPONENT_VIBUFFER_RECT			TEXT("Prototype:Component:VIBuffer:Rect")
 #define PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN		TEXT("Prototype:Component:VIBuffer:Terrain")

@@ -9,7 +9,7 @@ HRESULT CLoader::Load_Test()
 #pragma region Prototype Texture
 
 //	PROTOTYPE_COMPONENT_TEXTURE_TERRAIN
-//	PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP
+//	PROTOTYPE_COMPONENT_TEXTURE_BRUSH
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_TEXTURE_TERRAIN,
 		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/Texture/Tile0.dds")))))
@@ -17,11 +17,11 @@ HRESULT CLoader::Load_Test()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_TERRAIN");
 	}
 
-//	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP,
-//		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/Texture/Height.bmp")))))
-//	{
-//		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP");
-//	}
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_TEXTURE_BRUSH,
+		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/Texture/Brush.png")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP");
+	}
 
 #pragma endregion
 #pragma region Prototype VIBuffer

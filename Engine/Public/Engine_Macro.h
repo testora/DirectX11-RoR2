@@ -6,6 +6,8 @@
 #define	ENGINE_DLL				_declspec(dllimport)
 #endif
 
+#define D3DCOLOR_RGBA(r, g, b, a)						((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
 #pragma region MessageBox
 
 #define MSG_BOX(TITLE, MESSAGE)							MessageBox(0, TEXT(MESSAGE), TEXT(TITLE), MB_OK)

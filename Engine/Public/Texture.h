@@ -15,7 +15,10 @@ public:
 	HRESULT										Initialize(const _tchar* pTexturePath, _uint iNumTexture = 1);
 
 public:
-	HRESULT										Bind_ShaderResourceView(shared_ptr<class CShader>, const char* pConstantName, _uint iTextureIdx = 0);
+	HRESULT										Set_Texture2D(ComPtr<ID3D11Texture2D>, D3D11_TEXTURE2D_DESC, _uint iTextureIdx = 0);
+	ComPtr<ID3D11Texture2D>						Get_Texture2D(_uint iTextureIdx = 0) const;
+
+	HRESULT										Bind_ShaderResourceView(shared_ptr<class CShader>, const char* pConstantName, _uint iTextureIdx = 0) const;
 	HRESULT										Bind_ShaderResourceViews(shared_ptr<class CShader>, const char* pConstantName);
 
 private:

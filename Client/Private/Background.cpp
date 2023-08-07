@@ -54,22 +54,22 @@ HRESULT CBackground::Render()
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to __super::Render");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_mWorld", m_pTransformCom->Get_Matrix())))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_WORLD, m_pTransformCom->Get_Matrix())))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_mView", CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_mProj", CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, "g_texDiffuse", 0)))
+	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, SHADER_TEXTURE_DIFFUSE, 0)))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceView");
 	}

@@ -96,7 +96,70 @@ HRESULT CShader::BeginPass(const _uint _iPassIndex)
 	return S_OK;
 }
 
-HRESULT CShader::Bind_Matrix(const char* _pConstantName, _float4x4 _mMatrix)
+HRESULT CShader::Bind_RawValue(const char* pConstantName, const void* pData, _uint iByteSize)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
+	if (nullptr == pVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_RawValue", "Failed to GetVariableByName");
+	}
+
+	if (FAILED(pVariable->SetRawValue(pData, 0, iByteSize)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_RawValue", "Failed to SetRawValue");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_Vector(const char* _pConstantName, _float4 _vValue)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_pConstantName)->AsVector();
+	if (nullptr == pVectorVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_Vector", "Failed to GetVariableByName::AsVector");
+	}
+
+	if (FAILED(pVectorVariable->SetFloatVector(reinterpret_cast<_float*>(&_vValue))))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to SetFloatVectorArray");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_VectorArray(const char* _pConstantName, _float4* _vArray, _uint _iCount)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_pConstantName)->AsVector();
+	if (nullptr == pVectorVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to GetVariableByName::AsVector");
+	}
+
+	if (FAILED(pVectorVariable->SetFloatVectorArray(reinterpret_cast<_float*>(_vArray), 0, _iCount)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to SetFloatVectorArray");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_Matrix(const char* _pConstantName, _float4x4 _mValue)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -106,12 +169,33 @@ HRESULT CShader::Bind_Matrix(const char* _pConstantName, _float4x4 _mMatrix)
 	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_pConstantName)->AsMatrix();
 	if (nullptr == pMatrixVariable)
 	{
-		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to GetVariableByName");
+		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to GetVariableByName::AsMatrix");
 	}
 
-	if (FAILED(pMatrixVariable->SetMatrix(reinterpret_cast<_float*>(&_mMatrix))))
+	if (FAILED(pMatrixVariable->SetMatrix(reinterpret_cast<_float*>(&_mValue))))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to SetMatrix");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_MatrixArray(const char* _pConstantName, _float4x4* _mArray, _uint _iCount)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_pConstantName)->AsMatrix();
+	if (nullptr == pMatrixVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_MatrixArray", "Failed to GetVariableByName::AsMatrix");
+	}
+
+	if (FAILED(pMatrixVariable->SetMatrixArray(reinterpret_cast<_float*>(_mArray), 0, _iCount)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_MatrixArray", "Failed to SetMatrixArray");
 	}
 
 	return S_OK;
