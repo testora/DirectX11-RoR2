@@ -3,7 +3,7 @@
 
 HRESULT CBehavior_Manager::Reserve_Manager(const SCENE _eScene)
 {
-	m_arrBehaviorPrototypes = Function::MakeUniqueDynamicArray<BehaviorPrototype>(IDX(_eScene), false);
+	m_arrBehaviorPrototypes = Function::CreateDynamicArray<BehaviorPrototype>(IDX(_eScene), false);
 
 	return S_OK;
 }

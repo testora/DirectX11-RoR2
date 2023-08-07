@@ -54,7 +54,7 @@ HRESULT CCamera::Render()
 	{
 	case TYPE::PERSPECTIVE:
 		m_pPipeLine->Set_Transform(CPipeLine::WORLD, m_pTransformCom->Get_Matrix());
-		m_pPipeLine->Set_Transform(CPipeLine::VIEW, XMMatrixInverse(nullptr, m_pTransformCom->Get_Matrix()));
+		m_pPipeLine->Set_Transform(CPipeLine::VIEW, m_pTransformCom->Get_Matrix().inverse());
 		m_pPipeLine->Set_Transform(CPipeLine::PROJ, m_mProj);
 		break;
 	}

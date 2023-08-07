@@ -10,6 +10,10 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+
 #include "EnginePCH.h"
 
 #endif // CLIENT_PCH_H

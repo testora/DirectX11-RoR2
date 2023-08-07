@@ -17,10 +17,8 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 {
 	wstring strHeightMapPath = any_cast<wstring>(_strHeightMapPath);
 
-#pragma region VERTEX_BUFFER
-
-	HandleRAII hFile(CreateFile(strHeightMapPath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
-	if (!hFile.isValid())
+	HandleWrapper hFile(CreateFile(strHeightMapPath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
+	if (!hFile.is_valid())
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Terrain::Initialize", "Failed to CreateFile");
 	}
@@ -42,7 +40,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	m_vNumVertices.y	= static_cast<_float>(ih.biHeight);
 	m_iNumVertices		= static_cast<_uint>(m_vNumVertices.x * m_vNumVertices.y);
 
-	auto pPixel = Function::MakeUniqueDynamicArray<_ulong>(m_iNumVertices);
+	auto pPixel = Function::CreateDynamicArray<_ulong>(m_iNumVertices);
 
 	if (!ReadFile(hFile.get(), pPixel.get(), sizeof(_ulong) * m_iNumVertices, &dwByte, nullptr))
 	{
@@ -56,11 +54,9 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	m_eIndexFormat		= DXGI_FORMAT_R32_UINT;
 	m_eTopology			= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-#pragma endregion
-
 #pragma region VERTEX_BUFFER
 
-	auto pVertices = Function::MakeUniqueDynamicArray<VTXPOSNORTEX>(m_iNumVertices);
+	auto pVertices = Function::CreateDynamicArray<VTXPOSNORTEX>(m_iNumVertices);
 
 	for (size_t y = 0; y < m_vNumVertices.y; y++)
 	{
@@ -78,9 +74,9 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 
 #pragma region INDEX_BUFFER
 
-	auto pIndices = Function::MakeUniqueDynamicArray<_ulong>(m_iNumIndices);
+	auto pIndices = Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
-	_uint		iNumIndices = 0;
+	_uint iNumIndices = 0;
 
 	for (size_t y = 0; y < m_vNumVertices.y - 1; y++)
 	{
@@ -104,9 +100,9 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 			vDst	= _float3(pVertices[iIndices[2]].vPosition) - _float3(pVertices[iIndices[1]].vPosition);
 			vNor	= XMVector3Cross(vSrc, vDst);
 
-			pVertices[iIndices[0]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[0]].vNormal) + vNor));
-			pVertices[iIndices[1]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[1]].vNormal) + vNor));
-			pVertices[iIndices[2]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[2]].vNormal) + vNor));
+			pVertices[iIndices[0]].vNormal	= _float3(_float3(pVertices[iIndices[0]].vNormal) + vNor).normalize();
+			pVertices[iIndices[1]].vNormal	= _float3(_float3(pVertices[iIndices[1]].vNormal) + vNor).normalize();
+			pVertices[iIndices[2]].vNormal	= _float3(_float3(pVertices[iIndices[2]].vNormal) + vNor).normalize();
 
 			pIndices[iNumIndices++]	= iIndices[0];
 			pIndices[iNumIndices++]	= iIndices[2];
@@ -116,9 +112,9 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 			vDst	= _float3(pVertices[iIndices[3]].vPosition) - _float3(pVertices[iIndices[2]].vPosition);
 			vNor	= XMVector3Cross(vSrc, vDst);
 
-			pVertices[iIndices[0]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[0]].vNormal) + vNor));
-			pVertices[iIndices[1]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[1]].vNormal) + vNor));
-			pVertices[iIndices[2]].vNormal	= _float3(XMVector3Normalize(_float3(pVertices[iIndices[2]].vNormal) + vNor));
+			pVertices[iIndices[0]].vNormal = _float3(_float3(pVertices[iIndices[0]].vNormal) + vNor).normalize();
+			pVertices[iIndices[1]].vNormal = _float3(_float3(pVertices[iIndices[1]].vNormal) + vNor).normalize();
+			pVertices[iIndices[2]].vNormal = _float3(_float3(pVertices[iIndices[2]].vNormal) + vNor).normalize();
 		}
 	}
 

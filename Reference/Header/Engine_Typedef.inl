@@ -1,6 +1,14 @@
+#include "Engine_Typedef.h"
 namespace Engine
 {
 #pragma region _float2
+
+	__forceinline float2
+	float2::normalize() const noexcept
+	{
+		return XMVector2Normalize(*this);
+	}
+
 #pragma region Assignment Operators
 
 	__forceinline float2&
@@ -248,6 +256,13 @@ namespace Engine
 #pragma endregion
 
 #pragma region _float3
+	
+	__forceinline float3
+	float3::normalize() const noexcept
+	{
+		return XMVector3Normalize(*this);
+	}
+
 #pragma region Assignment Operators
 
 	__forceinline float3&
@@ -495,6 +510,13 @@ namespace Engine
 #pragma endregion
 
 #pragma region _float4
+
+	__forceinline float4
+	float4::normalize() const noexcept
+	{
+		return XMVector4Normalize(*this);
+	}
+
 #pragma region Assignment Operators
 
 	__forceinline float4&
@@ -742,6 +764,13 @@ namespace Engine
 #pragma endregion
 
 #pragma region _float4x4
+
+	__forceinline float4x4
+	float4x4::inverse() const noexcept
+	{
+		return XMMatrixInverse(nullptr, *this);
+	}
+
 #pragma region Assignment Operators
 
 	__forceinline float4x4&

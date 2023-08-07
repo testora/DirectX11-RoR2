@@ -12,7 +12,7 @@ private:
 public:
 	HRESULT							Ready_GraphicDevice(_In_ GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
 
-	HRESULT							Clear_BackBuffer_View(_float4 vColor);
+	HRESULT							Clear_BackBuffer_View(_color cBackBuffer);
 	HRESULT							Clear_DepthStencil_View();
 	HRESULT							Present();
 

@@ -151,7 +151,7 @@ HRESULT CShader::Bind_ShaderResourceViews(const char* _pConstantName, vector<Com
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceView", "Failed to GetVariableByName");
 	}
 
-	auto raw = Function::StoreRawPointerVecter(_vecShaderResourceView);
+	auto raw = Function::ConvertToRawPtrVector(_vecShaderResourceView);
 	if (FAILED(pShaderResourceVariable->SetResourceArray(raw.data(), 0, static_cast<_uint>(_vecShaderResourceView.size()))))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceView", "Failed to SetResource");

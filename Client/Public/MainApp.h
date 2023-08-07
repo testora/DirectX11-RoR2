@@ -3,7 +3,6 @@
 
 BEGIN(Engine)
 class CGameInstance;
-class CImGui_Manager;
 class CRenderer;
 END
 
@@ -16,31 +15,36 @@ private:
 	virtual ~CMainApp();
 
 public:
-	HRESULT							Initialize();
-	void							Tick(_float fTimeDelta);
-	HRESULT							Render();
+	HRESULT								Initialize();
+	void								Tick(_float fTimeDelta);
+	HRESULT								Render();
 
+#pragma region Windows Management
+
+	LRESULT								WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+#pragma endregion
 #pragma region Timer Management
 
-	void							Tick_Timer();
-	_bool							Check_Timer(const _float fFPS);
-	_float							Get_TimeDelta(const _float fFPS) const;
+	void								Tick_Timer();
+	_bool								Check_Timer(const _float fFPS);
+	_float								Get_TimeDelta(const _float fFPS) const;
 
 #pragma endregion
 
 private:
-	HRESULT							Default_Settings();
-	HRESULT							Ready_Component_Prototype();
+	HRESULT								Default_Settings();
+	HRESULT								Ready_Component_Prototype();
 
 private:
-	shared_ptr<CRenderer>			m_pMainRenderer;
-	shared_ptr<CGameInstance>		m_pGameInstance;
+	shared_ptr<CRenderer>				m_pMainRenderer;
+	shared_ptr<CGameInstance>			m_pGameInstance;
 #ifdef _DEBUG
-	shared_ptr<CImGui_Manager>		m_pImGui_Manager;
+	shared_ptr<class CImGui_Manager>	m_pImGui_Manager;
 #endif
 
-	ComPtr<ID3D11Device>			m_pDevice;
-	ComPtr<ID3D11DeviceContext>		m_pContext;
+	ComPtr<ID3D11Device>				m_pDevice;
+	ComPtr<ID3D11DeviceContext>			m_pContext;
 
 	friend CSingleton<CMainApp>;
 };

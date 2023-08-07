@@ -25,21 +25,6 @@
     <Filter Include="00. Header\02. Source">
       <UniqueIdentifier>{49806aae-9f8c-43e5-999e-14d0437aec32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Tool">
-      <UniqueIdentifier>{d3fa75b2-be21-48a4-a3de-475f4c6cbfce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Tool\00. ImGui">
-      <UniqueIdentifier>{f3e155b8-8de3-4c0f-8fb6-6327e484f007}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Tool\00. ImGui\00. Manager">
-      <UniqueIdentifier>{bf5c1c93-5730-4ec5-ad2f-f35bc3bd1420}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Tool\00. ImGui\01. Header">
-      <UniqueIdentifier>{1d453248-9f2a-450a-951f-db5c80e9b7ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Tool\00. ImGui\02. Source">
-      <UniqueIdentifier>{c3a89589-3c25-4aa7-a753-bade00db2667}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. System\02. Input">
       <UniqueIdentifier>{84e32489-3021-4199-97e0-35c8c75028de}</UniqueIdentifier>
     </Filter>
@@ -124,6 +109,15 @@
     <Filter Include="03. Utility\00. RAII">
       <UniqueIdentifier>{468ae8da-9fd0-46e0-9534-88c1bfc4f533}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\08. Picker">
+      <UniqueIdentifier>{713b2480-a1eb-4bb9-a945-c678183d4a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. Light">
+      <UniqueIdentifier>{4299b019-800d-4b5c-bd81-28a1940f65b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. Light\00. Manager">
+      <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\GraphicDevice.cpp">
@@ -198,27 +192,6 @@
     <ClCompile Include="Private\Engine_Header.cpp">
       <Filter>00. Header\02. Source</Filter>
     </ClCompile>
-    <ClCompile Include="Private\ImGui_Manager.cpp">
-      <Filter>04. Tool\00. ImGui\00. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui_widgets.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui_draw.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui_impl_dx11.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui_impl_win32.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\ImGui\imgui_tables.cpp">
-      <Filter>04. Tool\00. ImGui\02. Source</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Mouse_Manager.cpp">
       <Filter>02. System\02. Input\00. Mouse</Filter>
     </ClCompile>
@@ -227,6 +200,15 @@
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
       <Filter>03. Utility\05. Component\05. VIBuffer\01. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Picker.cpp">
+      <Filter>03. Utility\08. Picker</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Light.cpp">
+      <Filter>03. Utility\07. Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Light_Manager.cpp">
+      <Filter>03. Utility\07. Light\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -326,33 +308,6 @@
     <ClInclude Include="Public\VIBuffer.h">
       <Filter>03. Utility\05. Component\05. VIBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="Public\ImGui\imconfig.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imgui.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imgui_impl_dx11.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imgui_impl_win32.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imgui_internal.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imstb_rectpack.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imstb_textedit.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui\imstb_truetype.h">
-      <Filter>04. Tool\00. ImGui\01. Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\ImGui_Manager.h">
-      <Filter>04. Tool\00. ImGui\00. Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Mouse_Manager.h">
       <Filter>02. System\02. Input\00. Mouse</Filter>
     </ClInclude>
@@ -364,6 +319,15 @@
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>03. Utility\00. RAII</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Picker.h">
+      <Filter>03. Utility\08. Picker</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Light.h">
+      <Filter>03. Utility\07. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Light_Manager.h">
+      <Filter>03. Utility\07. Light\00. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

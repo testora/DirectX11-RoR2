@@ -22,41 +22,56 @@
     <Filter Include="00. Header\00. PCH">
       <UniqueIdentifier>{66c4c4fb-9c25-4617-8a5e-faa413c8ca98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene">
-      <UniqueIdentifier>{24b97d89-930c-4ef0-8089-1b4d3a69d5a3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject">
-      <UniqueIdentifier>{c180f1a1-862f-423d-92ac-bf1b70c8cb06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Shader">
+    <Filter Include="04. Shader">
       <UniqueIdentifier>{f23dff80-195c-4c9d-9d13-b93329daf7a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene\00. Load">
+    <Filter Include="05. Scene">
+      <UniqueIdentifier>{24b97d89-930c-4ef0-8089-1b4d3a69d5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\00. Load">
       <UniqueIdentifier>{10d4d4c5-5aab-48ac-8ede-ee6169871edd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene\00. Load\00. Loader">
+    <Filter Include="05. Scene\00. Load\00. Loader">
       <UniqueIdentifier>{28bee0f9-4578-44ba-a03b-e20095276a01}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene\01. Menu">
+    <Filter Include="05. Scene\01. Menu">
       <UniqueIdentifier>{8b4ea43b-340d-4d56-bff6-37d52b1df41f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\01. Camera">
+    <Filter Include="05. Scene\02. Test">
+      <UniqueIdentifier>{62df2cd4-1c96-4869-a45d-ad688667d8c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject">
+      <UniqueIdentifier>{c180f1a1-862f-423d-92ac-bf1b70c8cb06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\01. Camera">
       <UniqueIdentifier>{4a5b1052-39ab-4004-a3e3-43d321a97bd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\01. Camera\00. MainCamera">
+    <Filter Include="06. GameObject\01. Camera\00. MainCamera">
       <UniqueIdentifier>{0967b197-a0a9-4bd8-b3e9-5ead662ed88b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\00. Demo">
+    <Filter Include="06. GameObject\00. Demo">
       <UniqueIdentifier>{794baa40-c63a-4b05-bad3-9fd303f0d4d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\00. Demo\01. Background">
+    <Filter Include="06. GameObject\00. Demo\01. Background">
       <UniqueIdentifier>{aefec61f-1da6-4708-a4dc-9cd9f7290c2a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\00. Demo\02. Terrain">
+    <Filter Include="06. GameObject\00. Demo\02. Terrain">
       <UniqueIdentifier>{ac879c5a-3fc3-40d4-bce9-ce64ddfe1f32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Scene\02. Test">
-      <UniqueIdentifier>{62df2cd4-1c96-4869-a45d-ad688667d8c7}</UniqueIdentifier>
+    <Filter Include="03. Tool">
+      <UniqueIdentifier>{014cff2c-5918-4902-9760-25b35651850a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\00. ImGui">
+      <UniqueIdentifier>{cdb4e014-721c-4724-9f05-a9f6c43f5bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\00. ImGui\00. Manager">
+      <UniqueIdentifier>{e9ff588c-200f-4c81-8694-957f4011a305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\00. ImGui\01. Header">
+      <UniqueIdentifier>{78fa90c1-b78e-47ff-b30d-a051a22d7f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\00. ImGui\02. Source">
+      <UniqueIdentifier>{9fcd03a0-2392-4375-a152-67d982431874}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,40 +100,67 @@
       <Filter>00. Header\00. PCH</Filter>
     </ClInclude>
     <ClInclude Include="Public\Loader_Menu.h">
-      <Filter>04. Scene\01. Menu</Filter>
+      <Filter>05. Scene\01. Menu</Filter>
     </ClInclude>
     <ClInclude Include="Public\Loader_Test.h">
-      <Filter>04. Scene\02. Test</Filter>
+      <Filter>05. Scene\02. Test</Filter>
     </ClInclude>
     <ClInclude Include="Public\Loader.h">
-      <Filter>04. Scene\00. Load\00. Loader</Filter>
+      <Filter>05. Scene\00. Load\00. Loader</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Load.h">
-      <Filter>04. Scene\00. Load</Filter>
+      <Filter>05. Scene\00. Load</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Test.h">
-      <Filter>04. Scene\02. Test</Filter>
+      <Filter>05. Scene\02. Test</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Menu.h">
-      <Filter>04. Scene\01. Menu</Filter>
+      <Filter>05. Scene\01. Menu</Filter>
     </ClInclude>
     <ClInclude Include="Public\Client_Enum.h">
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Background.h">
-      <Filter>05. GameObject\00. Demo\01. Background</Filter>
+      <Filter>06. GameObject\00. Demo\01. Background</Filter>
     </ClInclude>
     <ClInclude Include="Public\Camera_Main.h">
-      <Filter>05. GameObject\01. Camera\00. MainCamera</Filter>
+      <Filter>06. GameObject\01. Camera\00. MainCamera</Filter>
     </ClInclude>
     <ClInclude Include="Public\Client_Variable.h">
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Thread_Loader.h">
-      <Filter>04. Scene\00. Load\00. Loader</Filter>
+      <Filter>05. Scene\00. Load\00. Loader</Filter>
     </ClInclude>
     <ClInclude Include="Public\Terrain.h">
-      <Filter>05. GameObject\00. Demo\02. Terrain</Filter>
+      <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imconfig.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imgui.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_dx11.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_win32.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imgui_internal.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h">
+      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\ImGui_Manager.h">
+      <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -132,25 +174,46 @@
       <Filter>00. Header\00. PCH</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Load.cpp">
-      <Filter>04. Scene\00. Load</Filter>
+      <Filter>05. Scene\00. Load</Filter>
     </ClCompile>
     <ClCompile Include="Private\Loader.cpp">
-      <Filter>04. Scene\00. Load\00. Loader</Filter>
+      <Filter>05. Scene\00. Load\00. Loader</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Test.cpp">
-      <Filter>04. Scene\02. Test</Filter>
+      <Filter>05. Scene\02. Test</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Menu.cpp">
-      <Filter>04. Scene\01. Menu</Filter>
+      <Filter>05. Scene\01. Menu</Filter>
     </ClCompile>
     <ClCompile Include="Private\Background.cpp">
-      <Filter>05. GameObject\00. Demo\01. Background</Filter>
+      <Filter>06. GameObject\00. Demo\01. Background</Filter>
     </ClCompile>
     <ClCompile Include="Private\Camera_Main.cpp">
-      <Filter>05. GameObject\01. Camera\00. MainCamera</Filter>
+      <Filter>06. GameObject\01. Camera\00. MainCamera</Filter>
     </ClCompile>
     <ClCompile Include="Private\Terrain.cpp">
-      <Filter>05. GameObject\00. Demo\02. Terrain</Filter>
+      <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui_draw.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui_impl_dx11.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui_impl_win32.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui_tables.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGui\imgui_widgets.cpp">
+      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\ImGui_Manager.cpp">
+      <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -168,10 +231,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl">
-      <Filter>03. Shader</Filter>
+      <Filter>04. Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl">
-      <Filter>03. Shader</Filter>
+      <Filter>04. Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

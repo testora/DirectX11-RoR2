@@ -3,7 +3,7 @@
 
 HRESULT CComponent_Manager::Reserve_Manager(const SCENE _eScene)
 {
-	m_arrComponentPrototypes = Function::MakeUniqueDynamicArray<ComponentPrototype>(IDX(_eScene), false);
+	m_arrComponentPrototypes = Function::CreateDynamicArray<ComponentPrototype>(IDX(_eScene), false);
 
 	return S_OK;
 }

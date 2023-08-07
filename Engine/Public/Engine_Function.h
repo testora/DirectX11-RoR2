@@ -31,20 +31,20 @@ namespace Function
 	}
 
 	template<typename T>
-	vector<T*> StoreRawPointerVecter(const vector<ComPtr<T>>& comPtrVector)
+	vector<T*> ConvertToRawPtrVector(const vector<ComPtr<T>>& comPtrVector)
 	{
 		std::vector<T*> rawPtrVector;
 		rawPtrVector.reserve(comPtrVector.size());
 
 		for (const auto& comPtr : comPtrVector) {
-			rawPtrVector.push_back(comPtr.Get());
+			rawPtrVector.emplace_back(comPtr.Get());
 		}
 
 		return rawPtrVector;
 	}
 
 	template<typename T>
-	unique_ptr<T[], std::default_delete<T[]>> MakeUniqueDynamicArray(size_t arrSize, _bool zeroMemory = true)
+	unique_ptr<T[], std::default_delete<T[]>> CreateDynamicArray(size_t arrSize, _bool zeroMemory = true)
 	{
 		T* rawDynamicArray = new T[arrSize];
 		if (zeroMemory) ZeroMemory(rawDynamicArray, sizeof(T) * arrSize);
@@ -56,7 +56,7 @@ namespace Function
 
 namespace DirectX
 {
-	inline XMVECTOR						QuaternionBetweenAxis(FXMVECTOR, FXMVECTOR);
+	inline XMVECTOR QuaternionBetweenAxis(FXMVECTOR, FXMVECTOR);
 }
 
 #include "Engine_Function.inl"

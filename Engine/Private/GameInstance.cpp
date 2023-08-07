@@ -8,7 +8,6 @@
 #include "Object_Manager.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
-#include "ImGui_Manager.h"
 
 CGameInstance::CGameInstance()
 	: m_pGraphic_Device		(CGraphicDevice::Get_Instance())
@@ -63,14 +62,6 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 
 #ifdef _DEBUG
 
-	if (ACTIVATE_IMGUI)
-	{
-		if (FAILED(CImGui_Manager::Get_Instance()->Initialize(_tGraphicDesc.hWnd, _pDevice, _pContext)))
-		{
-			MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pImGui_Manager->Initialize");
-		}
-	}
-
 	if (ACTIVATE_CONSOLE && ::AllocConsole() == TRUE)
 	{
 		FILE* nfp[3];
@@ -95,7 +86,7 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 		MSG_RETURN(, "CGameInstance::Tick_Engine", "Null Exception");
 	}
 
-	m_pMouse_Manager->Tick();
+	m_pMouse_Manager->Tick(m_tWndProcDesc);
 	m_pKey_Manager->Tick();
 
 	m_pScene_Manager->Tick(_fTimeDelta);
@@ -103,6 +94,21 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
+}
+
+LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
+{
+	m_tWndProcDesc.hWnd		= _hWnd;
+	m_tWndProcDesc.message	= _message;
+	m_tWndProcDesc.wParam	= _wParam;
+	m_tWndProcDesc.lParam	= _lParam;
+
+	return 1;
+}
+
+WNDPROCDESC CGameInstance::Get_WndProcDesc() const
+{
+	return m_tWndProcDesc;
 }
 
 #pragma endregion
@@ -287,14 +293,14 @@ void CGameInstance::CheckFocus_OnKeyboard(_bool _bCheck)
 #pragma endregion
 #pragma region Graphic Device
 
-HRESULT CGameInstance::Clear_BackBuffer_View(_float4 _vColor)
+HRESULT CGameInstance::Clear_BackBuffer_View(_color _cBackBuffer)
 {
 	if (nullptr == m_pGraphic_Device)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Clear_BackBuffer_View", "Null Exception: m_pGraphic_Device");
 	}
 
-	return m_pGraphic_Device->Clear_BackBuffer_View(_vColor);
+	return m_pGraphic_Device->Clear_BackBuffer_View(_cBackBuffer);
 }
 
 HRESULT CGameInstance::Clear_DepthStencil_View()
@@ -464,7 +470,6 @@ void CGameInstance::Release_Engine()
 	CTimer_Manager::Destroy_Instance();
 
 #ifdef _DEBUG
-	if (ACTIVATE_IMGUI)		CImGui_Manager::Destroy_Instance();
 	if (ACTIVATE_CONSOLE)	FreeConsole();
 #endif
 }

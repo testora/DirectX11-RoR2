@@ -9,10 +9,12 @@ HRESULT CMouse_Manager::Initialize(HWND _hWnd, POINT _ptWinSize)
 	return S_OK;
 }
 
-void CMouse_Manager::Tick()
+void CMouse_Manager::Tick(WNDPROCDESC _tWndProcDesc)
 {
 	if (m_bCheckFocus ? m_hWnd == GetFocus() : true)
 	{
+		MessageProc(m_hWnd, _tWndProcDesc.message, _tWndProcDesc.wParam, _tWndProcDesc.lParam);
+
 		POINT pt;
 		GetCursorPos(&pt);
 		ScreenToClient(m_hWnd, &pt);
@@ -55,6 +57,19 @@ void CMouse_Manager::Show_Cursor(_bool _bShow)
 void CMouse_Manager::Toggle_Cursor()
 {
 	m_bShow ? Show_Cursor(false) : Show_Cursor(true);
+}
+
+void CMouse_Manager::MessageProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
+{
+	switch (_message)
+	{
+	case WM_MOUSEWHEEL:
+		m_ptScroll.y = GET_WHEEL_DELTA_WPARAM(_wParam);
+		break;
+	case WM_MOUSEHWHEEL:
+		m_ptScroll.x = GET_WHEEL_DELTA_WPARAM(_wParam);
+		break;
+	}
 }
 
 

@@ -76,8 +76,9 @@ using std::deque;
 using std::bitset;
 using std::function;
 using std::tuple;
-using std::make_tuple;
 using std::any;
+
+using std::make_tuple;
 using std::any_cast;
 
 #include <wrl/client.h>
@@ -90,15 +91,12 @@ using Microsoft::WRL::ComPtr;
 
 using namespace DirectX;
 
-#include "FX11/d3dx11effect.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
+#include "DirectXTK/ScreenGrab.h"
+#include "FX11/d3dx11effect.h"
 
 #ifdef _DEBUG
-
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

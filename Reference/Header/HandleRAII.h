@@ -4,29 +4,29 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL HandleRAII final
+class ENGINE_DLL HandleWrapper final
 {
 public:
-	HandleRAII(HANDLE hHandle) : m_hHandle(hHandle)
+	HandleWrapper(HANDLE hHandle) : m_hHandle(hHandle)
 	{
 		if (INVALID_HANDLE_VALUE == hHandle)
 			throw std::exception("INVALID_HANDLE_VALUE");
 	}
-	~HandleRAII()
+	~HandleWrapper()
 	{
 		if (INVALID_HANDLE_VALUE != m_hHandle)
 			CloseHandle(m_hHandle);
 	}
 
-	HandleRAII()									= delete;
-	HandleRAII(const HandleRAII&)					= delete;
-	HandleRAII(HandleRAII&&) noexcept				= delete;
-	HandleRAII& operator=(const HandleRAII&)		= delete;
-	HandleRAII& operator=(HandleRAII&&) noexcept	= delete;
+	HandleWrapper()										= delete;
+	HandleWrapper(const HandleWrapper&)					= delete;
+	HandleWrapper(HandleWrapper&&) noexcept				= delete;
+	HandleWrapper& operator=(const HandleWrapper&)		= delete;
+	HandleWrapper& operator=(HandleWrapper&&) noexcept	= delete;
 
 public:
-	HANDLE	get() const		{ return m_hHandle; }
-	_bool	isValid() const	{ return INVALID_HANDLE_VALUE != m_hHandle; }
+	_bool	is_valid() const	{ return INVALID_HANDLE_VALUE != m_hHandle; }
+	HANDLE	get() const			{ return m_hHandle; }
 
 private:
 	HANDLE	m_hHandle		= 0;

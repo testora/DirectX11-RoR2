@@ -13,8 +13,15 @@ CMainApp::CMainApp()
 
 CMainApp::~CMainApp()
 {
-	CMainApp::Destroy_Instance();
 	CGameInstance::Release_Engine();
+
+	CMainApp::Destroy_Instance();
+
+#ifdef _DEBUG
+
+	if (ACTIVATE_IMGUI) CImGui_Manager::Destroy_Instance();
+
+#endif
 
 #ifdef D3D11_LIVE_OBJECT_REF_COUNTER_CHECKER
 #if defined(DEBUG) || defined(_DEBUG)
@@ -62,6 +69,18 @@ HRESULT CMainApp::Initialize()
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: m_pGameInstance->Initialize_Engine");
 	}
 
+#ifdef _DEBUG
+
+	if (ACTIVATE_IMGUI)
+	{
+		if (FAILED(m_pImGui_Manager->Initialize(g_hWnd, m_pDevice, m_pContext)))
+		{
+			MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pImGui_Manager->Initialize");
+		}
+	}
+
+#endif
+
 	if (FAILED(Default_Settings()))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Default_Settings");
@@ -80,54 +99,26 @@ HRESULT CMainApp::Initialize()
 	return S_OK;
 }
 
-#pragma region Timer Management
-
-void CMainApp::Tick_Timer()
-{
-	if (nullptr != m_pGameInstance)
-	{
-		m_pGameInstance->Tick_Timer();
-	}
-}
-
-_bool CMainApp::Check_Timer(const _float _fFPS)
-{
-	if (nullptr != m_pGameInstance)
-	{
-		return m_pGameInstance->Check_Timer(_fFPS);
-	}
-
-	return false;
-}
-
-_float CMainApp::Get_TimeDelta(const _float _fFPS) const
-{
-	if (nullptr != m_pGameInstance)
-	{
-		return m_pGameInstance->Get_TimeDelta(_fFPS);
-	}
-
-	return 0.f;
-}
-
-#pragma endregion
-
 void CMainApp::Tick(_float _fTimeDelta)
 {
+#ifdef _DEBUG
+	if (m_pImGui_Manager)
+	{
+		m_pImGui_Manager->Tick();
+	}
+#endif
+
 	if (m_pGameInstance)
 	{
-#ifdef _DEBUG
-		m_pImGui_Manager->Tick();
-#endif
 		m_pGameInstance->Tick_Engine(_fTimeDelta);
 	}
 }
 
 HRESULT CMainApp::Render()
 {
-	if (!m_pGameInstance || !m_pMainRenderer)
+	if (nullptr == m_pMainRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CMainApp::Render", "Null Exception: m_pGameInstance || m_pMainRenderer");
+		MSG_RETURN(E_FAIL, "CMainApp::Render", "Null Exception: m_pMainRenderer");
 	}
 
 	m_pGameInstance->Clear_BackBuffer_View(BACK_BUFFER_COLOR);
@@ -143,6 +134,51 @@ HRESULT CMainApp::Render()
 
 	return S_OK;
 }
+
+#pragma region Windows Management
+
+LRESULT CMainApp::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
+{
+	if (m_pGameInstance)
+	{
+		return m_pGameInstance->WndProcHandler(_hWnd, _message, _wParam, _lParam);
+	}
+
+	return 0;
+}
+
+#pragma endregion
+#pragma region Timer Management
+
+void CMainApp::Tick_Timer()
+{
+	if (m_pGameInstance)
+	{
+		m_pGameInstance->Tick_Timer();
+	}
+}
+
+_bool CMainApp::Check_Timer(const _float _fFPS)
+{
+	if (m_pGameInstance)
+	{
+		return m_pGameInstance->Check_Timer(_fFPS);
+	}
+
+	return false;
+}
+
+_float CMainApp::Get_TimeDelta(const _float _fFPS) const
+{
+	if (m_pGameInstance)
+	{
+		return m_pGameInstance->Get_TimeDelta(_fFPS);
+	}
+
+	return 0.f;
+}
+
+#pragma endregion
 
 HRESULT CMainApp::Default_Settings()
 {

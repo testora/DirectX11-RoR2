@@ -12,7 +12,34 @@ namespace Engine
 		_uint			iWinCX, iWinCY;
 
 	} GRAPHICDESC;
+
+	typedef struct tagWndProcDesc
+	{
+		HWND			hWnd;
+		UINT			message;
+		WPARAM			wParam;
+		LPARAM			lParam;
+	} WNDPROCDESC;
 	
+#pragma endregion
+#pragma region Light
+
+	typedef struct tagLightDesc
+	{
+		enum LIGHTTYPE	{ DIRECTIONAL, POINT, MAX };
+		XMFLOAT4	vDifuse;
+		XMFLOAT4	vSpecular;
+		XMFLOAT4	vAmbient;
+
+		XMFLOAT3	vPosition;
+		XMFLOAT3	vDirection;
+
+		float		fRange;
+		float		fAttenuation0;
+		float		fAttenuation1;
+		float		fAttenuation2;
+	} LIGHTDESC;
+
 #pragma endregion
 #pragma region Vertex
 

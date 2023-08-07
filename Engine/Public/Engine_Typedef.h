@@ -22,6 +22,8 @@ namespace Engine
 		float2(XMFLOAT2 _rhs) : XMFLOAT2(_rhs) {}
 		float2(XMVECTOR _vector) { XMStoreFloat2(this, _vector); }
 
+		float2 normalize() const noexcept;
+
 		// assignment operators
 		float2& operator = (const XMVECTOR&) noexcept;
 
@@ -71,6 +73,8 @@ namespace Engine
 
 		float3(XMFLOAT3 _rhs) : XMFLOAT3(_rhs) {}
 		float3(XMVECTOR _vector) { XMStoreFloat3(this, _vector); }
+
+		float3 normalize() const noexcept;
 
 		// assignment operators
 		float3& operator = (const XMVECTOR&) noexcept;
@@ -123,6 +127,8 @@ namespace Engine
 		float4(XMFLOAT4 _rhs) : XMFLOAT4(_rhs) {}
 		float4(XMVECTOR _vector) { XMStoreFloat4(this, _vector); }
 
+		float4 normalize() const noexcept;
+
 		// assignment operators
 		float4& operator = (const XMVECTOR&) noexcept;
 
@@ -163,7 +169,7 @@ namespace Engine
 		_bool operator != (const float4&) const noexcept;
 
 		operator XMVECTOR() const noexcept;
-	} _float4;
+	} _float4, _color;
 
 	typedef struct ENGINE_DLL	float4x4 : public DirectX::XMFLOAT4X4
 	{
@@ -176,6 +182,8 @@ namespace Engine
 		) {}
 		float4x4(XMFLOAT4X4 _float4) : XMFLOAT4X4(_float4) {}
 		float4x4(XMMATRIX _matrix) { XMStoreFloat4x4(this, _matrix); }
+
+		float4x4 inverse() const noexcept;
 
 		// assignment operators
 		float4x4& operator = (const XMMATRIX&) noexcept;

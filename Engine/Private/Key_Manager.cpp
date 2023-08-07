@@ -8,7 +8,7 @@ HRESULT CKey_Manager::Initialize(HWND _hWnd)
 	m_vecKey.reserve(VK_MAX);
 	for (_uint i = 0; i < VK_MAX; ++i)
 	{
-		m_vecKey.push_back(KEYINFO{ KEY_STATE::NONE, false });
+		m_vecKey.emplace_back(KEYINFO{ KEY_STATE::NONE, false });
 	}
 
     return S_OK;

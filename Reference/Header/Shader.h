@@ -17,8 +17,8 @@ public:
 public:
 	HRESULT								BeginPass(const _uint iPassIndex);
 	HRESULT								Bind_Matrix(const char* pConstantName, _float4x4);
-	HRESULT								Bind_ShaderResourceView(const char* pConstantName, ComPtr<ID3D11ShaderResourceView> pShaderResourceView);
-	HRESULT								Bind_ShaderResourceViews(const char* pConstantName, vector<ComPtr<ID3D11ShaderResourceView>>& vecShaderResourceView);
+	HRESULT								Bind_ShaderResourceView(const char* pConstantName, ComPtr<ID3D11ShaderResourceView>);
+	HRESULT								Bind_ShaderResourceViews(const char* pConstantName, vector<ComPtr<ID3D11ShaderResourceView>>&);
 
 private:
 	ComPtr<ID3DX11Effect>				m_pEffect;

@@ -18,10 +18,13 @@ public:
 	HRESULT										Initialize_Engine(_In_ const SCENE eStatic, _In_ const SCENE eMax, _In_ const GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
 	void										Tick_Engine(_float fTimeDelta);
 
+	LRESULT										WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	WNDPROCDESC									Get_WndProcDesc() const;
+
 #pragma endregion
 #pragma region Graphic Device
 
-	HRESULT										Clear_BackBuffer_View(_float4 vColor);
+	HRESULT										Clear_BackBuffer_View(_color cBackBuffer);
 	HRESULT										Clear_DepthStencil_View();
 	HRESULT										Present();
 
@@ -99,6 +102,9 @@ private:
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
 	shared_ptr<class CBehavior_Manager>			m_pBehavior_Manager;
+
+private:
+	WNDPROCDESC									m_tWndProcDesc{};
 
 public:
 	static void									Release_Engine();

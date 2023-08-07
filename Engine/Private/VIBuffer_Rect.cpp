@@ -31,7 +31,7 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= m_iVertexStride;
 
-	auto pVertices = Function::MakeUniqueDynamicArray<VTXPOSTEX>(m_iNumVertices);
+	auto pVertices = Function::CreateDynamicArray<VTXPOSTEX>(m_iNumVertices);
 
 	pVertices[0].vPosition	= _float3(-0.5f, 0.5f, 0.f);
 	pVertices[0].vTexCoord	= _float2(0.f, 0.f);
@@ -65,7 +65,7 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pIndices = Function::MakeUniqueDynamicArray<_ushort>(m_iNumIndices);
+	auto pIndices = Function::CreateDynamicArray<_ushort>(m_iNumIndices);
 
 	pIndices[0]	= 0;
 	pIndices[1]	= 1;

@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "Camera_Main.h"
 #include "GameInstance.h"
+#include "ImGui_Manager.h"
 
 CCamera_Main::CCamera_Main(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CCamera(_pDevice, _pContext)
@@ -44,10 +45,7 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	if (!CGameInstance::Get_Instance()->Is_CursorOn())
-	{
-		Debug_MouseControl(_fTimeDelta);
-	}
+	Debug_MouseControl(_fTimeDelta);
 	Debug_KeyControl(_fTimeDelta);
 }
 
@@ -57,9 +55,17 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 
 	if (ACTIVATE_IMGUI)
 	{
-	//	ImGui::Begin("MainCam");
-	//	ImGui::Text("%f %f %f", m_pTransformCom->Get_State(CTransform::POSITION).x, m_pTransformCom->Get_State(CTransform::POSITION).y, m_pTransformCom->Get_State(CTransform::POSITION).z);
-	//	ImGui::End();
+		if (CImGui_Manager::Get_Instance()->Is_Enable())
+		{
+			ImGui::Begin("MainCam");
+			ImGui::Text("Position: ");
+			ImGui::Text("X: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).x);
+			ImGui::SameLine();
+			ImGui::Text("Y: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).y);
+			ImGui::SameLine();
+			ImGui::Text("Z: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).z);
+			ImGui::End();
+		}
 	}
 
 	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
@@ -77,20 +83,25 @@ HRESULT CCamera_Main::Render()
 
 void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
 {
-	POINT ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
+	POINT ptCursorMove{};
+
+	if (!CGameInstance::Get_Instance()->Is_CursorOn() || CGameInstance::Get_Instance()->Key_Hold(VK_RBUTTON))
+	{
+		ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
+	}
 
 	if (ptCursorMove.x)
 	{
-		m_pTransformCom->Rotate(_float3(0.f, 1.f, 0.f), MAINCAM_SENSITIVITY * ptCursorMove.x * _fTimeDelta);
+		m_pTransformCom->Rotate(_float3(0.f, 1.f, 0.f), MAINCAM_SENSITIVITY_YAW * ptCursorMove.x * _fTimeDelta);
 	}
 
 	if (ptCursorMove.y)
 	{
-		_float3 vLook		= m_pTransformCom->Get_State(CTransform::STATE::LOOK);
-		_float fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
-		_float fChgPitch	= MAINCAM_SENSITIVITY * ptCursorMove.y * _fTimeDelta;
-		_float fNewPitch	= Function::Clamp(fCurPitch + fChgPitch, XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX));
-		_float fFinal		= fNewPitch - fCurPitch;
+		_float3	vLook		= m_pTransformCom->Get_State(CTransform::STATE::LOOK);
+		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
+		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
+		_float	fNewPitch	= Function::Clamp(fCurPitch + fChgPitch, XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX));
+		_float	fFinal		= fNewPitch - fCurPitch;
 
 		m_pTransformCom->Rotate(m_pTransformCom->Get_State(CTransform::STATE::RIGHT), fFinal);
 	}

@@ -41,7 +41,7 @@ _bool CTimer::Check(_float _fFPS)
 
 shared_ptr<CTimer> CTimer::Create()
 {
-	shared_ptr<CTimer> pInstance = shared_ptr<CTimer>(new CTimer(), [](CTimer* p) { delete p; });
+	shared_ptr<CTimer> pInstance = make_private_shared(CTimer);
 
 	if (FAILED(pInstance->Initialize()))
 	{

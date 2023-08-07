@@ -71,7 +71,9 @@ void CTransform::Translate(const _vectorf _vPosition)
 
 void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
 {
+	_matrix mWorld(m_mWorld);
 	m_mWorld *= XMMatrixRotationQuaternion(XMQuaternionRotationAxis(_vAxis, XMConvertToRadians(_fDegree)));
+	Set_State(STATE::POSITION, mWorld.r[STATE::POSITION]);
 }
 
 void CTransform::LookAt(const _vectorf _vPosition)

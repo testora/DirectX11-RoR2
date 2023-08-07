@@ -62,14 +62,14 @@ HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out
 	return S_OK;
 }
 
-HRESULT CGraphicDevice::Clear_BackBuffer_View(_float4 _vColor)
+HRESULT CGraphicDevice::Clear_BackBuffer_View(_color _cBackBuffer)
 {
 	if (nullptr == m_pRenderTargetView)
 	{
 		MSG_RETURN(E_FAIL, "CGraphicDevice::Clear_BackBuffer_View", "Nullptr Exception: m_pRenderTargetView");
 	}
 
-	m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<_float*>(&_vColor));
+	m_pContext->ClearRenderTargetView(m_pRenderTargetView.Get(), reinterpret_cast<_float*>(&_cBackBuffer));
 
 	return S_OK;
 }

@@ -16,7 +16,7 @@ WCHAR						szTitle[MAX_LOADSTRING];			// The title bar text
 WCHAR						szWindowClass[MAX_LOADSTRING];		// the main window class name
 
 HWND						g_hWnd;
-shared_ptr<CImGui_Manager>	pImGui_Manager;
+shared_ptr<CMainApp>		g_pMainApp;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -39,7 +39,7 @@ int APIENTRY wWinMain(
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
-	shared_ptr<CMainApp> pMainApp = CMainApp::Get_Instance();
+	g_pMainApp = CMainApp::Get_Instance();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -52,11 +52,10 @@ int APIENTRY wWinMain(
 		return FALSE;
 	}
 
-	if (FAILED(pMainApp->Initialize()))
+	if (FAILED(g_pMainApp->Initialize()))
 	{
 		MSG_RETURN(FALSE, "Application Initialization", "Failed: pMainApp->Initialize");
 	}
-	pImGui_Manager = CImGui_Manager::Get_Instance();
 
 	HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
@@ -79,12 +78,12 @@ int APIENTRY wWinMain(
 			}
 		}
 
-		pMainApp->Tick_Timer();
+		g_pMainApp->Tick_Timer();
 
-		if (pMainApp->Check_Timer(DEFAULT_FPS))
+		if (g_pMainApp->Check_Timer(DEFAULT_FPS))
 		{
-			pMainApp->Tick(pMainApp->Get_TimeDelta(DEFAULT_FPS));
-			if (FAILED(pMainApp->Render()))
+			g_pMainApp->Tick(g_pMainApp->Get_TimeDelta(DEFAULT_FPS));
+			if (FAILED(g_pMainApp->Render()))
 			{
 				MSG_BOX("Client Error", "Failed: pMainApp->Render");
 			}
@@ -176,10 +175,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #ifdef _DEBUG
-	if (pImGui_Manager && pImGui_Manager->WndProcHandler(hWnd, message, wParam, lParam)) return true;
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam)) return true;
 #endif
 	switch (message)
 	{
@@ -211,6 +212,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
+	case WM_MOUSEWHEEL:
+	case WM_MOUSEHWHEEL:
+		if (g_pMainApp) g_pMainApp->WndProcHandler(hWnd, message, wParam, lParam);
+
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}

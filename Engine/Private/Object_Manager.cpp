@@ -7,9 +7,9 @@
 
 HRESULT CObject_Manager::Reserve_Manager(const SCENE _eScene)
 {
-	m_arrPrototypes	= Function::MakeUniqueDynamicArray<Prototype>(IDX(_eScene), false);
-	m_arrLayers		= Function::MakeUniqueDynamicArray<Layer>(IDX(_eScene), false);
-	m_arrPools		= Function::MakeUniqueDynamicArray<Pool>(IDX(_eScene), false);
+	m_arrPrototypes	= Function::CreateDynamicArray<Prototype>(IDX(_eScene), false);
+	m_arrLayers		= Function::CreateDynamicArray<Layer>(IDX(_eScene), false);
+	m_arrPools		= Function::CreateDynamicArray<Pool>(IDX(_eScene), false);
 
 	return S_OK;
 }
