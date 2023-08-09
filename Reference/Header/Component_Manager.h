@@ -5,6 +5,8 @@
 #include "Transform.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Model.h"
+#include "Mesh.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
 

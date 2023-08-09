@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine_Define.h"
+#include "Object_Manager.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
 #include "PipeLine.h"

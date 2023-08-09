@@ -53,6 +53,7 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+#ifdef _DEBUG
 	if (ACTIVATE_IMGUI)
 	{
 		if (CImGui_Manager::Get_Instance()->Is_Enable())
@@ -67,6 +68,7 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 			ImGui::End();
 		}
 	}
+#endif
 
 	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
@@ -85,7 +87,7 @@ void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
 {
 	POINT ptCursorMove{};
 
-	if (!CGameInstance::Get_Instance()->Is_CursorOn() || CGameInstance::Get_Instance()->Key_Hold(VK_RBUTTON))
+	if (!CGameInstance::Get_Instance()->Is_CursorOn() || CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_MOUSE_CONTROL))
 	{
 		ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
 	}
@@ -129,11 +131,11 @@ void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_UP))
 	{
-		vMove += m_pTransformCom->Get_State(CTransform::STATE::UP);
+		vMove += _float3(0.f, 1.f, 0.f);
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_DOWN))
 	{
-		vMove -= m_pTransformCom->Get_State(CTransform::STATE::UP);
+		vMove -= _float3(0.f, 1.f, 0.f);
 	}
 
 	if (vMove != _float3(0.f, 0.f, 0.f))

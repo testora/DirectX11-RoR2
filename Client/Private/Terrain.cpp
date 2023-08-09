@@ -8,7 +8,12 @@ CTerrain::CTerrain(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _p
 }
 
 CTerrain::CTerrain(const CTerrain& _rhs)
-	: CGameObject(_rhs)
+	: CGameObject		(_rhs)
+	, m_pRendererCom	(_rhs.m_pRendererCom)
+	, m_pTransformCom	(_rhs.m_pTransformCom)
+	, m_pShaderCom		(_rhs.m_pShaderCom)
+	, m_pTextureCom		(_rhs.m_pTextureCom)
+	, m_pVIBufferCom	(_rhs.m_pVIBufferCom)
 {
 }
 
@@ -23,28 +28,22 @@ HRESULT CTerrain::Initialize(any _strHeightMapPath)
 
 	if (FAILED(__super::Initialize()))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Failed to __super::Initialize");
+		MSG_RETURN(E_FAIL, "CTerrain::Initialize", "Failed to __super::Initialize");
 	}
 
 	return S_OK;
 }
 
-static int brush = 0;
-_float4 brushPos[32]{};
-
 void CTerrain::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	if (CGameInstance::Get_Instance()->Key_Down(VK_MBUTTON))
+	if (CGameInstance::Get_Instance()->Key_Down(VK_RBUTTON))
 	{
 		_float3 vClickPos;
 
 		if (m_pVIBufferCom->Intersect(vClickPos))
 		{
-			brushPos[brush] = _float4(vClickPos, 1.f);
-			++brush;
-
 //			_float3 vTerrainPos = m_pTransformCom->Get_State(CTransform::POSITION);
 //			_float3 vScale = m_pTransformCom->Get_Scale();
 //			_float2 vTexUV = _float2(1.f - (vClickPos.x - vTerrainPos.x) / vScale.x, (vClickPos.z - vTerrainPos.z) / vScale.z);
@@ -111,52 +110,37 @@ HRESULT CTerrain::Render()
 {
 	if (FAILED(__super::Render()))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to __super::Render");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_iBrushCount", &brush, sizeof brush)))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_VectorArray("g_vBrushPos", brushPos, 32)))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to __super::Render");
 	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_WORLD, m_pTransformCom->Get_Matrix())))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}
 
 	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}
 
 	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, SHADER_TEXTURE_DIFFUSE)))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceView");
-	}
-
-	if (FAILED(m_pTexBrushCom->Bind_ShaderResourceView(m_pShaderCom, SHADER_TEXTURE_BRUSH)))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceView");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_ShaderResourceView");
 	}
 
 	if (FAILED(m_pShaderCom->BeginPass(1)))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to BeginPass");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to BeginPass");
 	}
 
 	if (FAILED(m_pVIBufferCom->Render()))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Render");
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Render");
 	}
 
 	return S_OK;
@@ -166,45 +150,37 @@ HRESULT CTerrain::Ready_Components()
 {
 	if (FAILED(__super::Ready_Components()))
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Ready_Components", "Failed to __super::Ready_Components");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
 	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
 	if (nullptr == m_pTransformCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTransformCom");
 	}
 
 	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
 	if (nullptr == m_pRendererCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pRendererCom");
 	}
 
 	m_pShaderCom = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
 	if (nullptr == m_pShaderCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pShaderCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pShaderCom");
 	}
 
 	m_pTextureCom = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
 	if (nullptr == m_pTextureCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pTextureCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTextureCom");
 	}
 
 	m_pVIBufferCom = dynamic_pointer_cast<CVIBuffer_Terrain>(m_umapComponent[COMPONENT::VIBUFFER_TERRAIN]);
 	if (nullptr == m_pVIBufferCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pVIBufferCom");
-	}
-
-	m_pTexBrushCom =
-		dynamic_pointer_cast<CTexture>(CGameInstance::Get_Instance()->Clone_Component(
-		CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_COMPONENT_TEXTURE_BRUSH));
-	if (nullptr == m_pTexBrushCom)
-	{
-		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pTexBrushCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pVIBufferCom");
 	}
 
 	return S_OK;

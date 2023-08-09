@@ -62,5 +62,24 @@ namespace Engine
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSNORTEX;
 
+	typedef struct ENGINE_DLL tagVertexPositionNormalTangentTexcoord
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vNormal;
+		XMFLOAT3		vTangent;
+		XMFLOAT2		vTexCoord;
+
+		const static unsigned int				iNumElement = 4;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXPOSNORTANTEX, VTXMESH;
+
+#pragma endregion
+#pragma region Model
+	
+	typedef struct tagModelMaterial
+	{
+		shared_ptr<class CTexture>	pMaterial[AI_TEXTURE_TYPE_MAX];
+	} MODELMATERIAL;
+
 #pragma endregion
 }

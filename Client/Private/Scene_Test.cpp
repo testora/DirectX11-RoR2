@@ -12,7 +12,9 @@ CScene_Test::CScene_Test(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 HRESULT CScene_Test::Initialize()
 {
 	CGameInstance::Get_Instance()->Show_Cursor(false);
+#ifdef _DEBUG
 	CImGui_Manager::Get_Instance()->Enable();
+#endif
 
 	if (FAILED(Ready_Camera()))
 	{
@@ -22,6 +24,11 @@ HRESULT CScene_Test::Initialize()
 	if (FAILED(Ready_Terrain()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Terrain");
+	}
+
+	if (FAILED(Ready_Player()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Player");
 	}
 
 	return S_OK;
@@ -71,6 +78,23 @@ HRESULT CScene_Test::Ready_Terrain()
 	if (FAILED(pLayer_Terrain->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TERRAIN))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_TERRAIN");
+	}
+
+	return S_OK;
+}
+#include "RailGunner.h"
+HRESULT CScene_Test::Ready_Player()
+{
+	auto pLayer_Player = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_PLAYER);
+	if (nullptr == pLayer_Player)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Add_Layer: SCENE_TEST_LAYER_PLAYER");
+	}
+
+	if (FAILED(pLayer_Player->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
+
 	}
 
 	return S_OK;

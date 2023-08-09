@@ -7,7 +7,9 @@
 
 CMainApp::CMainApp()
 	: m_pGameInstance	(CGameInstance::Get_Instance())
+#ifdef _DEBUG
 	, m_pImGui_Manager	(CImGui_Manager::Get_Instance())
+#endif
 {
 }
 
@@ -208,6 +210,12 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTEX.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
+	}
+
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESH,
+		CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTANTEX.hlsl"), VTXPOSNORTANTEX::tElements, VTXPOSNORTANTEX::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXMESH");
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_RECT,

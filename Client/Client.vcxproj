@@ -49,6 +49,7 @@
     <ClInclude Include="Public\Shader_Variable.h" />
     <ClInclude Include="Public\Thread_Loader.h" />
     <ClInclude Include="Public\Terrain.h" />
+    <ClInclude Include="Public\RailGunner.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGui\imgui.cpp">
@@ -103,6 +104,7 @@
     <ClCompile Include="Private\Scene_Menu.cpp" />
     <ClCompile Include="Private\Scene_Test.cpp" />
     <ClCompile Include="Private\Terrain.cpp" />
+    <ClCompile Include="Private\RailGunner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -112,6 +114,7 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEX.hlsl" />
     <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl" />
     <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl" />
   </ItemGroup>

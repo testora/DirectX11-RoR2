@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Camera_Main.h"
 #include "Terrain.h"
+#include "Model.h"
+#include "RailGunner.h"
 
 HRESULT CLoader::Load_Test()
 {
@@ -21,6 +23,17 @@ HRESULT CLoader::Load_Test()
 		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/Texture/Brush.png")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP");
+	}
+
+#pragma endregion
+#pragma region Prototype Mesh
+
+//	PROTOTYPE_COMPONENT_MODEL_RAILGUNNER
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
+		CModel::Create(m_pDevice, m_pContext, CModel::NONANIM, "Bin/Resources/_Temp/Model/RailGunner/untitled.fbx"))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
 	}
 
 #pragma endregion
@@ -50,6 +63,12 @@ HRESULT CLoader::Load_Test()
 		CTerrain::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_TERRAIN");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER,
+		CRailGunner::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
 	}
 
 #pragma endregion

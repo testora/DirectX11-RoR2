@@ -8,12 +8,15 @@
 #define CLIENT_PCH_H
 
 // add headers that you want to pre-compile here
-#include "framework.h"
 
+#ifdef _DEBUG
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+#endif
 
 #include "EnginePCH.h"
+
+#include "framework.h"
 
 #endif // CLIENT_PCH_H

@@ -1,6 +1,8 @@
 #include "ClientPCH.h"
 #include "ImGui_Manager.h"
 
+#ifdef _DEBUG
+
 CImGui_Manager::~CImGui_Manager()
 {
 	ImGui_ImplDX11_Shutdown();
@@ -50,3 +52,5 @@ void CImGui_Manager::Render()
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
 }
+
+#endif

@@ -97,31 +97,31 @@ HRESULT CBackground::Ready_Components()
 	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
 	if (nullptr == m_pTransformCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTransformCom");
 	}
 
 	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
 	if (nullptr == m_pRendererCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pRendererCom");
 	}
 
 	m_pShaderCom = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
 	if (nullptr == m_pShaderCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pShaderCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pShaderCom");
 	}
 
 	m_pTextureCom = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
 	if (nullptr == m_pTextureCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTextureCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTextureCom");
 	}
 
 	m_pVIBufferCom = dynamic_pointer_cast<CVIBuffer_Rect>(m_umapComponent[COMPONENT::VIBUFFER_RECT]);
 	if (nullptr == m_pVIBufferCom)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pVIBufferCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pVIBufferCom");
 	}
 
 	return S_OK;

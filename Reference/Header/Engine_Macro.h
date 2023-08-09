@@ -12,6 +12,7 @@
 
 #define MSG_BOX(TITLE, MESSAGE)							MessageBox(0, TEXT(MESSAGE), TEXT(TITLE), MB_OK)
 #define MSG_BREAK(TITLE, MESSAGE)						{ MSG_BOX(TITLE, MESSAGE); break; }
+#define MSG_CONTINUE(TITLE, MESSAGE)					{ MSG_BOX(TITLE, MESSAGE); continue; }
 #define MSG_RETURN(VALUE, TITLE, MESSAGE)				return [&]() { MSG_BOX(TITLE, MESSAGE); return VALUE; }()
 
 #pragma endregion

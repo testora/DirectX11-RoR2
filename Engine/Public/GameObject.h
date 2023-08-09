@@ -19,6 +19,10 @@ public:
 
 	virtual HRESULT												Fetch(any = any());
 
+public:
+	template <typename T>
+	shared_ptr<T>												Get_Component(const COMPONENT);
+
 protected:
 	virtual HRESULT												Ready_Components();
 	virtual HRESULT												Ready_Behaviors();

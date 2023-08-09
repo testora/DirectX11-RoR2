@@ -1,5 +1,7 @@
 #pragma once
 #include "Engine_Define.h"
+#include "ObjectLayer.h"
+#include "ObjectPool.h"
 
 BEGIN(Engine)
 

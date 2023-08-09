@@ -81,24 +81,26 @@ using std::any;
 using std::make_tuple;
 using std::any_cast;
 
-#include <wrl/client.h>
-
-using Microsoft::WRL::ComPtr;
-
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <d3dtypes.h>
-#include <DirectXMath.h>
-#include <DirectXCollision.h>
-#include <DirectXPackedVector.h>
-#include <DirectXColors.h>
-
-using namespace DirectX;
-
+#include "Assimp/Importer.hpp"
+#include "Assimp/scene.h"
+#include "Assimp/postprocess.h"
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/ScreenGrab.h"
 #include "FX11/d3dx11effect.h"
+
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#include <d3dtypes.h>
+
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
+
+using namespace DirectX;
+
+#include <wrl/client.h>
+
+using Microsoft::WRL::ComPtr;
 
 #ifdef _DEBUG
 

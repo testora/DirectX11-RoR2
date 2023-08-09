@@ -50,6 +50,25 @@ HRESULT CTexture::Initialize(const _tchar* _pTexturePath, _uint _iNumTexture)
 	return S_OK;
 }
 
+ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIdx) const
+{
+	if (m_vecTexture.size() <= _iTextureIdx)
+	{
+		MSG_RETURN(nullptr, "CTexture::Get_Texture2D", "Invalid Range");
+	}
+
+	ComPtr<ID3D11Resource> pResource;
+	m_vecTexture[_iTextureIdx]->GetResource(pResource.GetAddressOf());
+
+	ComPtr<ID3D11Texture2D> pTexture2D;
+	if (SUCCEEDED(pResource.As(&pTexture2D)))
+	{
+		return pTexture2D;
+	}
+
+	MSG_RETURN(nullptr, "CTexture::Get_Texture2D", "Failed to As");
+}
+
 HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE2D_DESC _tDesc, _uint _iTextureIdx)
 {
 	if (m_vecTexture.size() <= _iTextureIdx)
@@ -73,25 +92,6 @@ HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE
 	m_vecTexture[_iTextureIdx] = pShaderResourceView;
 
 	return S_OK;
-}
-
-ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIdx) const
-{
-	if (m_vecTexture.size() <= _iTextureIdx)
-	{
-		MSG_RETURN(nullptr, "CTexture::Get_Texture2D", "Invalid Range");
-	}
-
-	ComPtr<ID3D11Resource> pResource;
-	m_vecTexture[_iTextureIdx]->GetResource(pResource.GetAddressOf());
-
-	ComPtr<ID3D11Texture2D> pTexture2D;
-	if (SUCCEEDED(pResource.As(&pTexture2D)))
-	{
-		return pTexture2D;
-	}
-
-	MSG_RETURN(nullptr, "CTexture::Get_Texture2D", "Failed to As");
 }
 
 HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, const char* _pConstantName, _uint _iTextureIdx) const

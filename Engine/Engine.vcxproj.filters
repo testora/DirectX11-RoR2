@@ -88,15 +88,6 @@
     <Filter Include="03. Utility\05. Component\04. Texture">
       <UniqueIdentifier>{ca9a882c-7784-4765-9f4d-cb965a09aacb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\05. VIBuffer">
-      <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. VIBuffer\00. Rect">
-      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. VIBuffer\01. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\06. Behavior">
       <UniqueIdentifier>{900fd513-b64d-4529-8b3f-067adc52ebef}</UniqueIdentifier>
     </Filter>
@@ -117,6 +108,21 @@
     </Filter>
     <Filter Include="03. Utility\07. Light\00. Manager">
       <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer">
+      <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Model">
+      <UniqueIdentifier>{094934b4-8a5e-4350-bf41-d7dd3bf49702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\01. Rect">
+      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\02. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\00. Mesh">
+      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -184,10 +190,10 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Rect.cpp">
-      <Filter>03. Utility\05. Component\05. VIBuffer\00. Rect</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\01. Rect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer.cpp">
-      <Filter>03. Utility\05. Component\05. VIBuffer</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
     </ClCompile>
     <ClCompile Include="Private\Engine_Header.cpp">
       <Filter>00. Header\02. Source</Filter>
@@ -199,7 +205,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
-      <Filter>03. Utility\05. Component\05. VIBuffer\01. Terrain</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\02. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Picker.cpp">
       <Filter>03. Utility\08. Picker</Filter>
@@ -209,6 +215,12 @@
     </ClCompile>
     <ClCompile Include="Private\Light_Manager.cpp">
       <Filter>03. Utility\07. Light\00. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Model.cpp">
+      <Filter>03. Utility\05. Component\05. Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Mesh.cpp">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -303,10 +315,10 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Rect.h">
-      <Filter>03. Utility\05. Component\05. VIBuffer\00. Rect</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\01. Rect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer.h">
-      <Filter>03. Utility\05. Component\05. VIBuffer</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Public\Mouse_Manager.h">
       <Filter>02. System\02. Input\00. Mouse</Filter>
@@ -315,7 +327,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Terrain.h">
-      <Filter>03. Utility\05. Component\05. VIBuffer\01. Terrain</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\02. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>03. Utility\00. RAII</Filter>
@@ -328,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="Public\Light_Manager.h">
       <Filter>03. Utility\07. Light\00. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Model.h">
+      <Filter>03. Utility\05. Component\05. Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Mesh.h">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

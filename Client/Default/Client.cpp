@@ -6,8 +6,9 @@
 #include "Client.h"
 
 #include "MainApp.h"
+#ifdef _DEBUG
 #include "ImGui_Manager.h"
-
+#endif
 #define MAX_LOADSTRING	100
 
 // Global Variables:
@@ -175,8 +176,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
+#ifdef _DEBUG
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
+#endif
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 #ifdef _DEBUG

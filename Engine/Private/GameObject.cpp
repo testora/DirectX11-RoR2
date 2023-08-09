@@ -77,6 +77,17 @@ HRESULT CGameObject::Fetch(any _arg)
 	return S_OK;
 }
 
+template <typename T>
+shared_ptr<T> CGameObject::Get_Component(const COMPONENT _eComponent)
+{
+	if (Function::InRange(_eComponent, static_cast<COMPONENT>(0), COMPONENT::MAX))
+	{
+		return dynamic_pointer_cast<T>(m_umapComponent[_eComponent]);
+	}
+
+	return nullptr;
+}
+
 HRESULT CGameObject::Ready_Components()
 {
 	HRESULT hr = S_OK;
@@ -127,30 +138,20 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 {
 	switch (_eComponent)
 	{
-	case COMPONENT::RENDERER:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
-			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
-		break;
-
 	case COMPONENT::TRANSFORM:
 		m_umapComponent.emplace(_eComponent, CTransform::Create(m_pDevice, m_pContext));
 		break;
 
+	case COMPONENT::RENDERER:
 	case COMPONENT::SHADER:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
-			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
-		break;
-
-	case COMPONENT::TEXTURE:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
-			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
-		break;
-
 	case COMPONENT::VIBUFFER_RECT:
 		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
+	case COMPONENT::TEXTURE:
+	case COMPONENT::MODEL:
+	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_TERRAIN:
 		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));

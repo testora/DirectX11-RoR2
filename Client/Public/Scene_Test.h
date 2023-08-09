@@ -19,6 +19,7 @@ public:
 public:
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Terrain();
+	HRESULT							Ready_Player();
 
 public:
 	static shared_ptr<CScene_Test>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

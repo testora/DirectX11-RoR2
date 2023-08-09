@@ -35,8 +35,6 @@ private:
 	shared_ptr<CTexture>			m_pTextureCom;
 	shared_ptr<CVIBuffer_Terrain>	m_pVIBufferCom;
 
-	shared_ptr<CTexture>			m_pTexBrushCom;
-
 public:
 	static shared_ptr<CTerrain>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>	Clone(any = any()) override;
