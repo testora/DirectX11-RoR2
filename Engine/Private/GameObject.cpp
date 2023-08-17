@@ -25,10 +25,12 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 }
 
 CGameObject::CGameObject(const CGameObject& _rhs)
-	: m_pDevice		(_rhs.m_pDevice)
-	, m_pContext	(_rhs.m_pContext)
-	, m_bitComponent(_rhs.m_bitComponent)
-	, m_bitBehavior	(_rhs.m_bitBehavior)
+	: m_pDevice			(_rhs.m_pDevice)
+	, m_pContext		(_rhs.m_pContext)
+	, m_bitComponent	(_rhs.m_bitComponent)
+	, m_bitBehavior		(_rhs.m_bitBehavior)
+	, m_umapComponentArg(_rhs.m_umapComponentArg)
+	, m_umapBehaviorArg	(_rhs.m_umapBehaviorArg)
 {
 }
 

@@ -26,12 +26,12 @@ HRESULT CLoader::Load_Test()
 	}
 
 #pragma endregion
-#pragma region Prototype Mesh
+#pragma region Prototype Model
 
 //	PROTOTYPE_COMPONENT_MODEL_RAILGUNNER
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
-		CModel::Create(m_pDevice, m_pContext, CModel::NONANIM, "Bin/Resources/_Temp/Model/RailGunner/untitled.fbx"))))
+		CModel::Create(m_pDevice, m_pContext, CModel::ANIM, "Bin/Resources/_Temp/Model/RailGunner/untitled.fbx"))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
 	}

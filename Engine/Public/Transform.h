@@ -31,7 +31,7 @@ public:
 	void							LookTo(const _vectorf vDirection);
 
 private:
-	_float4x4						m_mWorld{};
+	_float4x4						m_mWorld;
 
 public:
 	static shared_ptr<CTransform>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

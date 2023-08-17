@@ -13,6 +13,8 @@ vector		g_vLightSpecular	= vector(1.f, 0.0f, 0.f, 1.f);
 vector		g_vMtrlAmbient		= vector(0.4f, 0.4f, 0.4f, 1.f);
 vector		g_vMtrlSpecular		= vector(1.f, 1.f, 1.f, 1.f);
 
+matrix		g_mBones[256];
+
 sampler LinearSampler = sampler_state
 {
 	Filter		= MIN_MAG_MIP_LINEAR;
@@ -29,33 +31,43 @@ sampler PointSampler = sampler_state
 
 struct VS_IN
 {
-	float3 vPosition	: POSITION;
-	float3 vNormal		: NORMAL;
-	float2 vTexCoord	: TEXCOORD0;
-	float3 vTangent		: TANGENT;
+	float3	vPosition		: POSITION;
+	float3	vNormal			: NORMAL;
+	float2	vTexCoord		: TEXCOORD0;
+	float3	vTangent		: TANGENT;
+	uint4	vBlendIndices	: BLENDINDEX;
+	float4	vBlendWeights	: BLENDWEIGHT;
 };
 
 struct VS_OUT
 {
-	float4 vPosition	: SV_POSITION;
-	float4 vNormal		: NORMAL;
-	float2 vTexCoord	: TEXCOORD0;
-	float4 vWorldPos	: TEXCOORD1;
+	float4	vPosition		: SV_POSITION;
+	float4	vNormal			: NORMAL;
+	float2	vTexCoord		: TEXCOORD0;
+	float4	vWorldPos		: TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT	Out;
-
+	
 	matrix	mWV, mWVP;
 
     mWV		= mul(g_mWorld, g_mView);
     mWVP	= mul(mWV, g_mProj);
+	
+    matrix mBone =
+		mul(g_mBones[In.vBlendIndices.x], In.vBlendWeights.x) +
+		mul(g_mBones[In.vBlendIndices.y], In.vBlendWeights.y) +
+		mul(g_mBones[In.vBlendIndices.z], In.vBlendWeights.z) +
+		mul(g_mBones[In.vBlendIndices.w], (1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z)));
+	
+    vector vPosition = mul(vector(In.vPosition, 1.f), mBone);
 
-    Out.vPosition	= mul(vector(In.vPosition, 1.f), mWVP);
+    Out.vPosition	= mul(vPosition, mWVP);
     Out.vNormal		= mul(vector(In.vNormal, 0.f), g_mWorld);
 	Out.vTexCoord	= In.vTexCoord;
-    Out.vWorldPos	= mul(vector(In.vPosition, 1.f), g_mWorld);
+    Out.vWorldPos	= mul(vPosition, g_mWorld);
 
 	return Out;
 }

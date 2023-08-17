@@ -15,34 +15,47 @@ private:
 	virtual ~CModel() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize(const char* pModelPath, _matrixf mPivot = XMMatrixIdentity());
-	HRESULT								Render(_uint iMeshIndex);
+	virtual HRESULT							Initialize(const char* pModelPath, _matrixf mPivot = g_mUnit);
+	HRESULT									Render(_uint iMeshIndex);
 
 public:
-	HRESULT								Bind_ShaderResourceView(shared_ptr<class CShader>, _uint iPassIndex, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
-	HRESULT								Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
-	HRESULT								Bind_ShaderResourceViews(shared_ptr<class CShader>, _uint iPassIndex, aiTextureType, const char* pConstantName);
-	HRESULT								Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
-
-private:
-	HRESULT								Ready_Meshes(_matrixf mPivot);
-	HRESULT								Ready_Materials(const char* pModelPath);
-
-private:
-	Assimp::Importer					m_Importer;
-	const aiScene*						m_pAIScene		= nullptr;
-
-	const TYPE							m_eType			= TYPE::MAX;
-
-	_uint								m_iNumMeshes	= 0;
-	vector<shared_ptr<class CMesh>>		m_vecMeshes;
-
-	_uint								m_iNumMaterials	= 0;
-	vector<MODELMATERIAL>				m_vecMaterials;
+	_uint									Get_NumMeshes() const	{ return m_iNumMeshes; }
+	_uint									Get_BoneIndex(const char* pBoneName);
 
 public:
-	static shared_ptr<CModel>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const TYPE, const char* pModelFilePath, _matrixf mPivot = XMMatrixIdentity());
-	virtual shared_ptr<CComponent>		Clone(any = any()) override;
+	void									Play_Animation(_float fTimeDelta);
+
+	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
+	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
+	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const char* pConstantName);
+
+private:
+	HRESULT									Ready_Meshes(_matrixf mPivot);
+	HRESULT									Ready_Materials(const char* pModelPath);
+	HRESULT									Ready_Bones(const aiNode* pAINode, _uint iParentBoneIndex);
+	HRESULT									Ready_Animations();
+
+private:
+	Assimp::Importer						m_Importer;
+	const aiScene*							m_pAIScene			= nullptr;
+
+	const TYPE								m_eType				= TYPE::MAX;
+
+	_uint									m_iNumMeshes		= 0;
+	vector<shared_ptr<class CMesh>>			m_vecMeshes;
+
+	_uint									m_iNumMaterials		= 0;
+	vector<MODELMATERIAL>					m_vecMaterials;
+
+	vector<shared_ptr<class CBone>>			m_vecBones;
+
+	_uint									m_iCurrentAnimIdx	= 0;
+	_uint									m_iNumAnimations	= 0;
+	vector<shared_ptr<class CAnimation>>	m_vecAnimations;
+
+public:
+	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const TYPE, const char* pModelFilePath, _matrixf mPivot = g_mUnit);
+	virtual shared_ptr<CComponent>			Clone(any = any()) override;
 };
 
 END

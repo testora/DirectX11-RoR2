@@ -1,3 +1,4 @@
+#include "Engine_Function.h"
 namespace Function
 {
 	_float Lerp(_float _fStart, _float _fEnd, _float _fRatio)
@@ -5,11 +6,17 @@ namespace Function
 		return (_fStart * (1.f - _fRatio)) + (_fEnd * _fRatio);
 	}
 
-	_float Clamp(_float _fValue, _float _fMin, _float _fMax)
+	_float Clamp(_float _fMin, _float _fMax, _float _fValue)
 	{
 		if (_fValue < _fMin) return _fMin;
 		if (_fValue > _fMax) return _fMax;
 		return _fValue;
+	}
+
+	_float ProportionalRatio(_float _fMin, _float _fMax, _float _fValue)
+	{
+		if (_fMin == _fMax) return 0.f;
+		else return (_fValue - _fMin) / (_fMax - _fMin);
 	}
 
 	_bool NearZero(_float _fValue)

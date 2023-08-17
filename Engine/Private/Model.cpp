@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "Model.h"
 #include "Mesh.h"
+#include "Bone.h"
+#include "Animation.h"
 #include "Texture.h"
 #include "Shader.h"
 
@@ -15,9 +17,20 @@ CModel::CModel(const CModel& _rhs)
 	, m_eType			(_rhs.m_eType)
 	, m_iNumMeshes		(_rhs.m_iNumMeshes)
 	, m_iNumMaterials	(_rhs.m_iNumMaterials)
+	, m_iNumAnimations	(_rhs.m_iNumAnimations)
 	, m_vecMeshes		(_rhs.m_vecMeshes)
 	, m_vecMaterials	(_rhs.m_vecMaterials)
+	, m_iCurrentAnimIdx	(_rhs.m_iCurrentAnimIdx)
 {
+	for (auto pOriginal : _rhs.m_vecAnimations)
+	{
+		m_vecAnimations.push_back(pOriginal->Clone());
+	}
+
+	for (auto pOriginal : _rhs.m_vecBones)
+	{
+		m_vecBones.push_back(pOriginal->Clone());
+	}
 }
 
 HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
@@ -34,6 +47,11 @@ HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to ReadFile");
 	}
 
+	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, g_iMaxBones)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Bones");
+	}
+
 	if (FAILED(Ready_Meshes(_mPivot)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Meshes");
@@ -42,6 +60,11 @@ HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
 	if (FAILED(Ready_Materials(_pModelPath)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Materials");
+	}
+
+	if (FAILED(Ready_Animations()))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Animations");
 	}
 
 	return S_OK;
@@ -63,27 +86,27 @@ HRESULT CModel::Render(_uint _iMeshIndex)
 	return hr;
 }
 
-HRESULT CModel::Bind_ShaderResourceView(shared_ptr<class CShader> _pShader, _uint _iPassIndex, aiTextureType _eAIType, const char* _pConstantName, _uint _iTextureIdx)
+_uint CModel::Get_BoneIndex(const char* _pBoneName)
 {
-	HRESULT hr = S_OK;
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	for (_uint i = 0; i < m_vecBones.size(); ++i)
 	{
-		if (FAILED(Bind_ShaderResourceView(i, _pShader, _eAIType, _pConstantName, _iTextureIdx)))
+		if (!strcmp(m_vecBones[i]->Get_Name(), _pBoneName))
 		{
-			MSG_BOX("CModel::Bind_ShaderResourceView", "Failed to CModel::Bind_ShaderResourceView");
-			hr = E_FAIL;
-		}
-
-		_pShader->BeginPass(_iPassIndex);
-
-		if (FAILED(Render(i)))
-		{
-			hr = E_FAIL;
+			return i;
 		}
 	}
 
-	return hr;
+	return static_cast<_uint>(m_vecBones.size());
+}
+
+void CModel::Play_Animation(_float _fTimeDelta)
+{
+	m_vecAnimations[m_iCurrentAnimIdx]->Update(_fTimeDelta, m_vecBones);
+
+	for (auto pBone : m_vecBones)
+	{
+		pBone->Update_CombinedTransformation(m_vecBones);
+	}
 }
 
 HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName, _uint _iTextureIdx)
@@ -98,7 +121,7 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->m_iMaterialIndex;
+	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->Get_MaterialIndex();
 	if (iMaterialIndex >= m_iNumMaterials)
 	{
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
@@ -113,29 +136,6 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 	return pMaterial->Bind_ShaderResourceView(_pShader, _pConstantName, _iTextureIdx);
 }
 
-HRESULT CModel::Bind_ShaderResourceViews(shared_ptr<class CShader> _pShader, _uint _iPassIndex, aiTextureType _eAIType, const char* _pConstantName)
-{
-	HRESULT hr = S_OK;
-
-	for (_uint i = 0; i < m_iNumMeshes; ++i)
-	{
-		if (FAILED(Bind_ShaderResourceViews(i, _pShader, _eAIType, _pConstantName)))
-		{
-			MSG_BOX("CModel::Bind_ShaderResourceViews", "Failed to CModel::Bind_ShaderResourceViews");
-			hr = E_FAIL;
-		}
-
-		_pShader->BeginPass(_iPassIndex);
-
-		if (FAILED(Render(i)))
-		{
-			hr = E_FAIL;
-		}
-	}
-
-	return hr;
-}
-
 HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
@@ -148,7 +148,7 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->m_iMaterialIndex;
+	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->Get_MaterialIndex();
 	if (iMaterialIndex >= m_iNumMaterials)
 	{
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
@@ -163,16 +163,40 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 	return pMaterial->Bind_ShaderResourceViews(_pShader, _pConstantName);
 }
 
+HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const char* _pConstantName)
+{
+	if (_iMeshIndex >= m_iNumMeshes)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
+	}
+
+	if (nullptr == m_vecMeshes[_iMeshIndex])
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
+	}
+
+	return _pShader->Bind_MatrixArray(_pConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones), g_iMaxBones);
+}
+
 HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
 {
+	HRESULT hr = S_OK;
+
 	m_iNumMeshes = m_pAIScene->mNumMeshes;
 
 	for (size_t i = 0; i < m_iNumMeshes; ++i)
 	{
-		m_vecMeshes.emplace_back(CMesh::Create(m_pDevice, m_pContext, m_pAIScene->mMeshes[i], _mPivot));
+		shared_ptr<CMesh> pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, m_pAIScene->mMeshes[i], shared_from_this(), _mPivot);
+		if (nullptr == pMesh)
+		{
+			hr = E_FAIL;
+			MSG_CONTINUE("CModel::Ready_Meshes", "Failed to CMesh::Create");
+		}
+
+		m_vecMeshes.emplace_back(pMesh);
 	}
 
-	return S_OK;
+	return hr;
 }
 
 HRESULT CModel::Ready_Materials(const char* _pModelPath)
@@ -229,6 +253,48 @@ HRESULT CModel::Ready_Materials(const char* _pModelPath)
 	return hr;
 }
 
+HRESULT CModel::Ready_Bones(const aiNode* _pAINode, _uint _iParentBoneIndex)
+{
+	shared_ptr<CBone> pBone = CBone::Create(_pAINode, _iParentBoneIndex);
+	if (nullptr == pBone)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Ready_Bones", "Failed to CBone::Create");
+	}
+
+	m_vecBones.emplace_back(pBone);
+
+	for (size_t i = 0; i < _pAINode->mNumChildren; ++i)
+	{
+		if (FAILED(Ready_Bones(_pAINode->mChildren[i], Get_BoneIndex(pBone->Get_Name()))))
+		{
+			MSG_RETURN(E_FAIL, "CModel::Ready_Bones", "Failed to Ready_Bones");
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Animations()
+{
+	HRESULT hr = S_OK;
+
+	m_iNumAnimations = m_pAIScene->mNumAnimations;
+
+	for (size_t i = 0; i < m_iNumAnimations; ++i)
+	{
+		shared_ptr<CAnimation> pAnimation = CAnimation::Create(m_pAIScene->mAnimations[i], shared_from_this());
+		if (nullptr == pAnimation)
+		{
+			hr = E_FAIL;
+			MSG_CONTINUE("CModel::Ready_Animations", "Failed to CAnimation::Create");
+		}
+
+		m_vecAnimations.emplace_back(pAnimation);
+	}
+
+	return hr;
+}
+
 shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const TYPE _eType, const char* _pModelFilePath, _matrixf _mPivot)
 {
 	shared_ptr<CModel> pInstance = make_private_shared(CModel, _pDevice, _pContext, _eType);
@@ -243,5 +309,5 @@ shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11De
 
 shared_ptr<CComponent> CModel::Clone(any)
 {
-	return shared_from_this();
+	return make_private_shared_copy(CModel, *this);
 }

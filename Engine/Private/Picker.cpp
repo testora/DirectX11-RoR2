@@ -31,7 +31,7 @@ void CPicker::Tick()
 _bool CPicker::Intersect(_Out_ _float3& _vOut, const _float3 _vA, const _float3 _vB, const _float3 _vC, _In_opt_ const _float4x4 _mWorld)
 {
 	_vOut = _float3(0.f, 0.f, 0.f);
-	STATE eSystem = _mWorld == XMMatrixIdentity() ? STATE::WORLD : STATE::LOCAL;
+	STATE eSystem = _mWorld == g_mUnit ? STATE::WORLD : STATE::LOCAL;
 
 	if (STATE::WORLD == eSystem)
 	{

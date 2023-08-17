@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEX.hlsl" />
+    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEXBONE.hlsl" />
     <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl" />
     <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl" />
   </ItemGroup>
@@ -202,6 +203,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;ImGuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -237,6 +239,7 @@ call "UpdateResources.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -268,6 +271,7 @@ call "UpdateResources.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;ImGuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -303,6 +307,7 @@ call "UpdateResources.bat"</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Reference/Library/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>

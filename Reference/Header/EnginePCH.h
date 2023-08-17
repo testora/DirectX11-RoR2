@@ -45,6 +45,7 @@ using std::pair;
 using std::make_pair;
 
 #include <string>
+#include <array>
 #include <vector>
 #include <list>
 #include <map>
@@ -64,6 +65,7 @@ using std::make_pair;
 
 using std::string;
 using std::wstring;
+using std::array;
 using std::vector;
 using std::list;
 using std::map;

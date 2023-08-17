@@ -82,7 +82,7 @@ HRESULT CScene_Test::Ready_Terrain()
 
 	return S_OK;
 }
-#include "RailGunner.h"
+
 HRESULT CScene_Test::Ready_Player()
 {
 	auto pLayer_Player = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_PLAYER);

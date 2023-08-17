@@ -7,8 +7,8 @@
 CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject	(_pDevice, _pContext)
 	, m_pPipeLine	(CPipeLine::Get_Instance())
-	, m_mView		(XMMatrixIdentity())
-	, m_mProj		(XMMatrixIdentity())
+	, m_mView		(g_mUnit)
+	, m_mProj		(g_mUnit)
 {
 }
 

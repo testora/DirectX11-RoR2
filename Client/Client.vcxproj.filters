@@ -73,7 +73,7 @@
     <Filter Include="03. Tool\00. ImGui\02. Source">
       <UniqueIdentifier>{9fcd03a0-2392-4375-a152-67d982431874}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\02. Player">
+    <Filter Include="06. GameObject\02. Player_Character">
       <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -169,7 +169,7 @@
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner.h">
-      <Filter>06. GameObject\02. Player</Filter>
+      <Filter>06. GameObject\02. Player_Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -225,7 +225,7 @@
       <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner.cpp">
-      <Filter>06. GameObject\02. Player</Filter>
+      <Filter>06. GameObject\02. Player_Character</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,6 +249,9 @@
       <Filter>04. Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEX.hlsl">
+      <Filter>04. Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEXBONE.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
   </ItemGroup>

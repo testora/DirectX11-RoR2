@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Animation.h" />
+    <ClInclude Include="Public\Channel.h" />
+    <ClInclude Include="Public\Bone.h" />
     <ClInclude Include="Public\Mesh.h" />
     <ClInclude Include="Public\Model.h" />
     <ClInclude Include="Public\Light.h" />
@@ -62,6 +65,9 @@
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Animation.cpp" />
+    <ClCompile Include="Private\Channel.cpp" />
+    <ClCompile Include="Private\Bone.cpp" />
     <ClCompile Include="Private\Mesh.cpp" />
     <ClCompile Include="Private\Model.cpp" />
     <ClCompile Include="Private\Light.cpp" />
@@ -189,6 +195,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -219,6 +226,7 @@ call "UpdateLib.bat"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -245,6 +253,7 @@ call "UpdateLib.bat"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;assimp-vc143-mtd.lib;DirectXTKd.lib;Effects11d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>
@@ -275,6 +284,7 @@ call "UpdateLib.bat"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>ThirdPartyLib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;assimp-vc143-mt.lib;DirectXTK.lib;Effects11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreBuildEvent />
     <PostBuildEvent>

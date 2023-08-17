@@ -9,21 +9,22 @@ CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 
 CRailGunner::CRailGunner(const CRailGunner& _rhs)
 	: CGameObject		(_rhs)
-	, m_pRendererCom	(_rhs.m_pRendererCom)
-	, m_pTransformCom	(_rhs.m_pTransformCom)
-	, m_pShaderCom		(_rhs.m_pShaderCom)
-	, m_pModelCom		(_rhs.m_pModelCom)
 {
 }
 
-HRESULT CRailGunner::Initialize(any)
+HRESULT CRailGunner::Initialize_Prototype()
 {
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::MODEL);
 
 	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
-	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESH, any());
+	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM, any());
 	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_RAILGUNNER, any());
 
+	return S_OK;
+}
+
+HRESULT CRailGunner::Initialize(any)
+{
 	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
@@ -34,7 +35,9 @@ HRESULT CRailGunner::Initialize(any)
 
 void CRailGunner::Tick(_float _fTimeDelta)
 {
-	__super::Late_Tick(_fTimeDelta);
+	__super::Tick(_fTimeDelta);
+
+	m_pModelCom->Play_Animation(_fTimeDelta);
 }
 
 void CRailGunner::Late_Tick(_float _fTimeDelta)
@@ -66,9 +69,27 @@ HRESULT CRailGunner::Render()
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pModelCom->Bind_ShaderResourceView(m_pShaderCom, 0, aiTextureType_DIFFUSE, SHADER_TEXTURE_DIFFUSE)))
+	for (_uint i = 0; i < m_pModelCom->Get_NumMeshes(); ++i)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_ShaderResourceView");
+		if (FAILED(m_pModelCom->Bind_ShaderResourceViews(i, m_pShaderCom, aiTextureType_DIFFUSE, "g_texDiffuse")))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_ShaderResourceViews");
+		}
+
+		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_mBones")))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_BoneMatrices");
+		}
+
+		if (FAILED(m_pShaderCom->BeginPass(0)))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to BeginPass");
+		}
+
+		if (FAILED(m_pModelCom->Render(i)))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Render");
+		}
 	}
 
 	return S_OK;
@@ -112,7 +133,7 @@ shared_ptr<CRailGunner> CRailGunner::Create(ComPtr<ID3D11Device> _pDevice, ComPt
 {
 	shared_ptr<CRailGunner> pInstance = make_private_shared(CRailGunner, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
 		MSG_RETURN(nullptr, "CTerrain::Create", "Failed to Initialize_Prototype");
 	}
@@ -120,7 +141,14 @@ shared_ptr<CRailGunner> CRailGunner::Create(ComPtr<ID3D11Device> _pDevice, ComPt
 	return pInstance;
 }
 
-shared_ptr<CGameObject> CRailGunner::Clone(any)
+shared_ptr<CGameObject> CRailGunner::Clone(any _arg)
 {
-	return shared_from_this();
+	shared_ptr<CRailGunner> pInstance = make_private_shared_copy(CRailGunner, *this);
+
+	if (FAILED(pInstance->Initialize(_arg)))
+	{
+		MSG_RETURN(nullptr, "CTerrain::Create", "Failed to Initialize");
+	}
+
+	return pInstance;
 }

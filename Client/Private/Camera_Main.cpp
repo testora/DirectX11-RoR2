@@ -102,7 +102,7 @@ void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
 		_float3	vLook		= m_pTransformCom->Get_State(CTransform::STATE::LOOK);
 		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
 		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
-		_float	fNewPitch	= Function::Clamp(fCurPitch + fChgPitch, XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX));
+		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 		_float	fFinal		= fNewPitch - fCurPitch;
 
 		m_pTransformCom->Rotate(m_pTransformCom->Get_State(CTransform::STATE::RIGHT), fFinal);

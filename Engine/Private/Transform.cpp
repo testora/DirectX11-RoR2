@@ -3,8 +3,8 @@
 
 CTransform::CTransform(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::TRANSFORM)
+	, m_mWorld	(g_mUnit)
 {
-	m_mWorld = XMMatrixIdentity();
 }
 
 CTransform::CTransform(const CTransform& _rhs)

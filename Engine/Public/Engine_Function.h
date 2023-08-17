@@ -3,14 +3,42 @@
 namespace Function
 {
 	inline _float						Lerp(_float fStart, _float fEnd, _float fRatio);
-	inline _float						Clamp(_float fValue, _float fMin, _float fMax);
+	inline _float						Clamp(_float fMin, _float fMax, _float fValue);
+	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);
 
 	inline _bool						NearZero(_float fValue);
 
 #pragma region Template
 
-	template<typename T, std::enable_if_t<std::is_arithmetic_v<T> || std::is_enum_v<T>, int> = 0>
-	_bool InRange(T value, T low, T high, const string & range)
+	template <typename T>
+	typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+	Min(T value)
+	{
+		return value;
+	}
+	template <typename T, typename... Args>
+	typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+	Min(T first, Args&&... args)
+	{
+		return min(first, Min(args...));
+	}
+	
+	template <typename T>
+	typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+	Max(T value)
+	{
+		return value;
+	}
+	template <typename T, typename... Args>
+	typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+	Max(T first, Args&&... args)
+	{
+		return max(first, Max(args...));
+	}
+
+	template<typename T>
+	typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, _bool>::type
+	InRange(T value, T low, T high, const string & range)
 	{
 		if (range == "()") {
 			return value > low && value < high;

@@ -15,8 +15,8 @@ public:
 	HRESULT							Render();
 
 public:
-	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = XMMatrixIdentity()) const;
-	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = XMMatrixIdentity()) const;
+	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;
+	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 
 protected:
 	ComPtr<ID3D11Buffer>			m_pVB;

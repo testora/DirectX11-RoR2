@@ -124,6 +124,15 @@
     <Filter Include="03. Utility\05. Component\06. VIBuffer\00. Mesh">
       <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\05. Component\05. Model\00. Bone">
+      <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Model\01. Animation">
+      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Model\01. Animation\00. Channel">
+      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\GraphicDevice.cpp">
@@ -221,6 +230,15 @@
     </ClCompile>
     <ClCompile Include="Private\Mesh.cpp">
       <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Bone.cpp">
+      <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Animation.cpp">
+      <Filter>03. Utility\05. Component\05. Model\01. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Channel.cpp">
+      <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -346,6 +364,15 @@
     </ClInclude>
     <ClInclude Include="Public\Mesh.h">
       <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Bone.h">
+      <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Animation.h">
+      <Filter>03. Utility\05. Component\05. Model\01. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Channel.h">
+      <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
