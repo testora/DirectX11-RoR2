@@ -28,6 +28,16 @@ HRESULT CVIBuffer::Render()
 	return S_OK;
 }
 
+pair<_float3*, _uint> CVIBuffer::Get_Vertices() const
+{
+	return make_pair(m_pVertices.get(), m_iNumVertices);
+}
+
+pair<_uint*, _uint> CVIBuffer::Get_Indices() const
+{
+	return make_pair(m_pIndices.get(), m_iNumIndices);
+}
+
 _bool CVIBuffer::Intersect(_In_opt_ const _float4x4 _mWorld) const
 {
 	_float3 vOut;
@@ -37,8 +47,6 @@ _bool CVIBuffer::Intersect(_In_opt_ const _float4x4 _mWorld) const
 _bool CVIBuffer::Intersect(_Out_ _float3& _vOut, _In_opt_ const _float4x4 _mWorld) const
 {
 	_bool bCollide = false;
-
-	union { _ushort* _16; _uint* _32; } pIndices = { nullptr };
 
 	auto lambda = [this, &_vOut, _mWorld](auto* ptr)
 	{
@@ -58,9 +66,51 @@ _bool CVIBuffer::Intersect(_Out_ _float3& _vOut, _In_opt_ const _float4x4 _mWorl
 		return false;
 	};
 
-	m_eIndexFormat == DXGI_FORMAT_R16_UINT ?
-		bCollide = lambda(pIndices._16 = Function::CreateDynamicArray<_ushort>(3).get()) :
-		bCollide = lambda(pIndices._32 = Function::CreateDynamicArray<_uint>(3).get());
+	switch (m_eIndexFormat)
+	{
+	case DXGI_FORMAT_R16_UINT:
+	{
+		auto arr = Function::CreateDynamicArray<_ushort>(3);
+		bCollide = lambda(arr.get());
+			break;
+	}
+		
+	case DXGI_FORMAT_R32_UINT:
+	{
+		auto arr = Function::CreateDynamicArray<_uint>(3);
+		bCollide = lambda(arr.get());
+		break;
+	}
+
+	default:
+		MSG_RETURN(false, "CVIBuffer::Intersect", "Invalid Index Format");
+	}
 
 	return bCollide;
+}
+
+void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _fn)
+{
+	for (size_t i = 0; i < m_iNumIndices; i += 3)
+	{
+		_float3 v0 = m_pVertices[m_pIndices[i + 0]];
+		_float3 v1 = m_pVertices[m_pIndices[i + 1]];
+		_float3 v2 = m_pVertices[m_pIndices[i + 2]];
+
+		if (_fn(v0, v1, v2))
+		{
+			return;
+		}
+	}
+}
+
+void CVIBuffer::Iterate_Indices(function<_bool(_uint, _uint, _uint)> _fn)
+{
+	for (size_t i = 0; i < m_iNumIndices; i += 3)
+	{
+		if (_fn(m_pIndices[i], m_pIndices[i + 1], m_pIndices[i + 2]))
+		{
+			return;
+		}
+	}
 }

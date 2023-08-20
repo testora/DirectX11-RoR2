@@ -6,9 +6,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CTransform final : public CComponent
 {
-public:
-	enum STATE	{ RIGHT, UP, LOOK, POSITION, MAX };
-
 private:
 	explicit CTransform(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	explicit CTransform(const CTransform&);
@@ -16,10 +13,10 @@ private:
 
 public:
 	_float4x4						Get_Matrix() const;
-	_float3							Get_State(const STATE eState) const;
+	_float3							Get_State(const TRANSFORM eState) const;
 	_float3							Get_Scale() const;
 
-	void							Set_State(const STATE eState, const _vectorf vState);
+	void							Set_State(const TRANSFORM eState, const _vectorf vState);
 	void							Set_Scale(const _vectorf vScale);
 
 public:

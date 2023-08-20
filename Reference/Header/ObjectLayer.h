@@ -17,6 +17,8 @@ public:
 	HRESULT											Add(shared_ptr<class CGameObject>);
 	HRESULT											Delete(shared_ptr<class CGameObject>);
 
+	void											Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)>);
+
 private:
 	unordered_set<shared_ptr<class CGameObject>>	m_usetObject;
 

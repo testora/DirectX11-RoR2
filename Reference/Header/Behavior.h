@@ -11,19 +11,21 @@ protected:
 	virtual ~CBehavior() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(any = any());
+	HRESULT							Initialize(any pOwner);
 	virtual void					Tick(_float fTimeDelta);
 	virtual void					Late_Tick(_float fTimeDelta);
 
 public:
 	const BEHAVIOR					Type() const	{ return m_eType; }
 
-private:
-	const BEHAVIOR					m_eType;
-
 protected:
+	shared_ptr<class CGameObject>	m_pOwner;
+
 	ComPtr<ID3D11Device>			m_pDevice;
 	ComPtr<ID3D11DeviceContext>		m_pContext;
+
+private:
+	const BEHAVIOR					m_eType;
 
 public:
 	virtual shared_ptr<CBehavior>	Clone(any = any())	PURE;

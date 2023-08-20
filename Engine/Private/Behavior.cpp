@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Behavior.h"
+#include "GameObject.h"
 
 CBehavior::CBehavior(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const BEHAVIOR _eType)
 	: m_pDevice	(_pDevice)
@@ -15,9 +16,22 @@ CBehavior::CBehavior(const CBehavior& _rhs)
 {
 }
 
-HRESULT CBehavior::Initialize(any)
+HRESULT CBehavior::Initialize(any _pOwner)
 {
-	return E_NOTIMPL;
+	if (!_pOwner.has_value())
+	{
+		MSG_RETURN(E_FAIL, "CBehavior::Initialize", "Invalid Parameter");
+	}
+
+	shared_ptr<CGameObject> pOwner = any_cast<shared_ptr<CGameObject>>(_pOwner);
+	if (nullptr == pOwner)
+	{
+		MSG_RETURN(E_FAIL, "CBehavior::Initialize", "Failed to any_cast");
+	}
+
+	m_pOwner = pOwner;
+
+	return S_OK;
 }
 
 void CBehavior::Tick(_float _fTimeDelta)

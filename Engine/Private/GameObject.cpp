@@ -3,6 +3,7 @@
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
 #include "Scene_Manager.h"
+#include "Object_Manager.h"
 
 CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: m_pDevice	(_pDevice)
@@ -27,6 +28,7 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 CGameObject::CGameObject(const CGameObject& _rhs)
 	: m_pDevice			(_rhs.m_pDevice)
 	, m_pContext		(_rhs.m_pContext)
+	, m_tCharacterDesc	(_rhs.m_tCharacterDesc)
 	, m_bitComponent	(_rhs.m_bitComponent)
 	, m_bitBehavior		(_rhs.m_bitBehavior)
 	, m_umapComponentArg(_rhs.m_umapComponentArg)
@@ -77,17 +79,6 @@ HRESULT CGameObject::Render()
 HRESULT CGameObject::Fetch(any _arg)
 {
 	return S_OK;
-}
-
-template <typename T>
-shared_ptr<T> CGameObject::Get_Component(const COMPONENT _eComponent)
-{
-	if (Function::InRange(_eComponent, static_cast<COMPONENT>(0), COMPONENT::MAX))
-	{
-		return dynamic_pointer_cast<T>(m_umapComponent[_eComponent]);
-	}
-
-	return nullptr;
 }
 
 HRESULT CGameObject::Ready_Components()
@@ -163,6 +154,16 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 		MSG_RETURN(E_FAIL, "CGameObject::Add_Component", "Invalid Range");
 	}
 
+	switch (_eComponent)
+	{
+	case COMPONENT::MESH:
+	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_TERRAIN:
+		m_umapComponent.emplace(COMPONENT::VIBUFFER, m_umapComponent[_eComponent]);
+		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), true);
+		break;
+	}
+
 	m_bitComponent.set(IDX(_eComponent), true);
 
 	return S_OK;
@@ -173,7 +174,15 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext));
+		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext, shared_from_this()));
+		break;
+
+	case BEHAVIOR::CONTROL:
+		m_umapBehavior.emplace(_eBehavior, CControl::Create(m_pDevice, m_pContext, shared_from_this(), &m_tCharacterDesc));
+		break;
+
+	case BEHAVIOR::GROUNDING:
+		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(m_pDevice, m_pContext, shared_from_this()));
 		break;
 
 	default:
@@ -193,8 +202,19 @@ HRESULT CGameObject::Delete_Component(const COMPONENT _eComponent)
 		return S_FALSE;
 	}
 
-	m_umapComponent.erase(iter);
-	m_bitComponent.set(IDX(_eComponent), false);
+	switch (_eComponent)
+	{
+	case COMPONENT::MESH:
+	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_TERRAIN:
+		m_umapComponent.erase(m_umapComponent.find(COMPONENT::VIBUFFER));
+		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), false);
+
+	default:
+		m_umapComponent.erase(iter);
+		m_bitComponent.set(IDX(_eComponent), false);
+		break;
+	}
 
 	return S_OK;
 }

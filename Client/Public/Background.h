@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 
-class CBackground final : public CGameObject, public std::enable_shared_from_this<CBackground>
+class CBackground final : public CGameObject
 {
 private:
 	explicit CBackground(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

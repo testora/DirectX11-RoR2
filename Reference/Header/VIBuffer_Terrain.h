@@ -11,7 +11,7 @@ private:
 	virtual ~CVIBuffer_Terrain() DEFAULT;
 
 public: 
-	virtual HRESULT							Initialize(any strHeightMapPath) override;
+	HRESULT									Initialize(any strHeightMapPath);
 
 private:
 	_float2									m_vNumVertices{};

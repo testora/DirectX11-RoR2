@@ -6,7 +6,7 @@
 #include "Texture.h"
 #include "Shader.h"
 
-CModel::CModel(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const TYPE _eType)
+CModel::CModel(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType)
 	: CComponent(_pDevice, _pContext, COMPONENT::MODEL)
 	, m_eType	(_eType)
 {
@@ -36,7 +36,7 @@ CModel::CModel(const CModel& _rhs)
 HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
 {
 	_uint iFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
-	if (NONANIM == m_eType)
+	if (MODEL::NONANIM == m_eType)
 	{
 		iFlag |= aiProcess_PreTransformVertices;
 	}
@@ -295,7 +295,7 @@ HRESULT CModel::Ready_Animations()
 	return hr;
 }
 
-shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const TYPE _eType, const char* _pModelFilePath, _matrixf _mPivot)
+shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const char* _pModelFilePath, _matrixf _mPivot)
 {
 	shared_ptr<CModel> pInstance = make_private_shared(CModel, _pDevice, _pContext, _eType);
 

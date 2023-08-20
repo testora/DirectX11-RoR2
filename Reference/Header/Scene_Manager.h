@@ -27,10 +27,10 @@ public:
 
 private:
 	shared_ptr<class CScene>	m_pScene;
-	SCENE						m_eScene;
+	SCENE						m_eScene		= static_cast<SCENE>(0);
 
-	SCENE						m_eSceneStatic;
-	SCENE						m_eSceneMax;
+	SCENE						m_eSceneStatic	= static_cast<SCENE>(0);
+	SCENE						m_eSceneMax		= static_cast<SCENE>(0);
 
 	friend CSingleton<CScene_Manager>;
 };

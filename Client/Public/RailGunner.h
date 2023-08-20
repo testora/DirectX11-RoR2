@@ -11,7 +11,7 @@ END
 
 BEGIN(Client)
 
-class CRailGunner final : public CGameObject, public std::enable_shared_from_this<CRailGunner>
+class CRailGunner final : public CGameObject
 {
 private:
 	explicit CRailGunner(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

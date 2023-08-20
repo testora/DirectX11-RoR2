@@ -12,12 +12,12 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	m_iNumVertices	= 4;
 	m_iVertexStride	= sizeof(VTXPOSTEX);
 	m_iNumIndices	= 6;
-	m_iIndexStride	= sizeof(_ushort);
-	m_eIndexFormat	= DXGI_FORMAT_R16_UINT;
+	m_iIndexStride	= sizeof(_uint);
+	m_eIndexFormat	= DXGI_FORMAT_R32_UINT;
 	m_eTopology		= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_pVertices		= Function::CreateDynamicArray<_float3>(m_iNumVertices);
-	m_pIndices		= Function::CreateDynamicArray<_byte>(m_iNumIndices * m_iIndexStride);
+	m_pIndices		= Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
 #pragma region VERTEX_BUFFER
 
@@ -63,7 +63,7 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pIndices = Function::CreateDynamicArray<_ushort>(m_iNumIndices);
+	auto pIndices = Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
 	pIndices[0]	= 0;
 	pIndices[1]	= 1;

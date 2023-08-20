@@ -1,10 +1,10 @@
 #pragma once
 
-enum class	KEY_STATE { DOWN, HOLD, UP, NONE, MAX };
-
-enum class	SCENE;
-
-enum class	RENDER_GROUP
+enum class KEY_STATE { DOWN, HOLD, UP, NONE, MAX };
+		   
+enum class SCENE;
+		   
+enum class RENDER_GROUP
 {
 	PRIORITY,
 	NONBLEND,
@@ -13,21 +13,29 @@ enum class	RENDER_GROUP
 	MAX
 };
 
-enum class	COMPONENT
+enum class COMPONENT
 {
 	RENDERER,
 	TRANSFORM,
 	SHADER,
 	TEXTURE,
 	MODEL,
+	VIBUFFER,
 	MESH,
 	VIBUFFER_RECT,
 	VIBUFFER_TERRAIN,
 	MAX
 };
 
-enum class	BEHAVIOR
+enum class BEHAVIOR
 {
 	PHYSICS,
+	CONTROL,
+	GROUNDING,
 	MAX
 };
+
+enum class PIPELINE		{ WORLD, VIEW, PROJ, MAX };
+enum class TRANSFORM	{ RIGHT, UP, LOOK, POSITION, MAX };
+enum class MODEL		{ NONANIM, ANIM, MAX };
+enum class PICKER		{ LOCAL, WORLD, MAX };

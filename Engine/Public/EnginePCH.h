@@ -18,6 +18,7 @@
 
 #include <typeinfo>
 #include <typeindex>
+#include <type_traits>
 
 using std::type_info;
 using std::type_index;

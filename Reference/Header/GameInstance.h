@@ -93,6 +93,16 @@ public:
 	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& strPrototypeTag, any = any());
 
 #pragma endregion
+#pragma region Grid Manager
+
+	_float3										Get_GridSize();
+
+	void										Register_VIBuffer(shared_ptr<class CGameObject>);
+	void										Reset_Grids();
+
+	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
+
+#pragma endregion
 
 private:
 	shared_ptr<class CGraphicDevice>			m_pGraphic_Device;
@@ -103,6 +113,7 @@ private:
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
 	shared_ptr<class CBehavior_Manager>			m_pBehavior_Manager;
+	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
 	shared_ptr<class CPicker>					m_pPicker;
 
 private:

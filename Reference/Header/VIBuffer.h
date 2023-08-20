@@ -11,12 +11,19 @@ protected:
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(any = any())	PURE;
+	virtual HRESULT					Initialize(any = any());
 	HRESULT							Render();
+
+public:
+	pair<_float3*, _uint>			Get_Vertices() const;
+	pair<_uint*, _uint>				Get_Indices() const;
 
 public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = g_mUnit) const;
+
+	void							Iterate_Polygons(function<_bool(_float3 v0, _float3 v1, _float3 v2)>);
+	void							Iterate_Indices(function<_bool(_uint i0, _uint i1, _uint i2)>);
 
 protected:
 	ComPtr<ID3D11Buffer>			m_pVB;
@@ -38,7 +45,7 @@ protected:
 	vector<_uint>					m_vecVertexOffset;
 
 	unique_ptr<_float3[]>			m_pVertices;
-	unique_ptr<_byte[]>				m_pIndices;
+	unique_ptr<_uint[]>				m_pIndices;
 
 public:
 	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;

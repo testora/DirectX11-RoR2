@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Mesh.h"
+#include "Model.h"
 #include "Bone.h"
 
 CMesh::CMesh(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -7,7 +8,7 @@ CMesh::CMesh(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContex
 {
 }
 
-HRESULT CMesh::Initialize(CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
+HRESULT CMesh::Initialize(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
 {
 	strcpy_s(m_szName, _pAIMesh->mName.data);
 
@@ -21,13 +22,14 @@ HRESULT CMesh::Initialize(CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_pt
 	m_eIndexFormat		= DXGI_FORMAT_R32_UINT;
 	m_eTopology			= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-	m_pIndices			= Function::CreateDynamicArray<_byte>(m_iNumIndices * m_iIndexStride);
+	m_pVertices			= Function::CreateDynamicArray<_float3>(m_iNumVertices);
+	m_pIndices			= Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
 #pragma region VERTEX_BUFFER
 
 	switch (_eType)
 	{
-	case CModel::NONANIM:
+	case MODEL::NONANIM:
 		m_iVertexStride = sizeof(VTXMESH);
 		if (FAILED(Ready_VertexBuffer_NonAnim(_pAIMesh)))
 		{
@@ -35,7 +37,7 @@ HRESULT CMesh::Initialize(CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_pt
 		}
 		break;
 
-	case CModel::ANIM:
+	case MODEL::ANIM:
 		m_iVertexStride = sizeof(VTXMESHANIM);
 		if (FAILED(Ready_VertexBuffer_Anim(_pAIMesh, _pModel)))
 		{
@@ -44,7 +46,7 @@ HRESULT CMesh::Initialize(CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_pt
 		break;
 
 	default:
-		MSG_RETURN(E_FAIL, "CMesh::Initialize", "Invalid CModel::TYPE");
+		MSG_RETURN(E_FAIL, "CMesh::Initialize", "Invalid MODEL");
 	}
 
 #pragma endregion
@@ -85,14 +87,9 @@ HRESULT CMesh::Initialize(CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_pt
 
 	if (FAILED(__super::Initialize()))
 	{
-		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to Initialize");
+		MSG_RETURN(E_FAIL, "CMesh::Initialize", "Failed to __super::Initialize");
 	}
 
-	return S_OK;
-}
-
-HRESULT CMesh::Initialize(any _pAIMesh_mPivot)
-{
 	return S_OK;
 }
 
@@ -224,7 +221,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 	return S_OK;
 }
 
-shared_ptr<CMesh> CMesh::Create(ComPtr<ID3D11Device>_pDevice, ComPtr<ID3D11DeviceContext> _pContext, CModel::TYPE _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
+shared_ptr<CMesh> CMesh::Create(ComPtr<ID3D11Device>_pDevice, ComPtr<ID3D11DeviceContext> _pContext, MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
 {
 	shared_ptr<CMesh> pInstance = make_private_shared(CMesh, _pDevice, _pContext);
 

@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Grid_Manager.h" />
+    <ClInclude Include="Public\Grid.h" />
+    <ClInclude Include="Public\Grounding.h" />
+    <ClInclude Include="Public\Control.h" />
     <ClInclude Include="Public\Animation.h" />
     <ClInclude Include="Public\Channel.h" />
     <ClInclude Include="Public\Bone.h" />
@@ -65,6 +69,10 @@
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Grid_Manager.cpp" />
+    <ClCompile Include="Private\Grid.cpp" />
+    <ClCompile Include="Private\Grounding.cpp" />
+    <ClCompile Include="Private\Control.cpp" />
     <ClCompile Include="Private\Animation.cpp" />
     <ClCompile Include="Private\Channel.cpp" />
     <ClCompile Include="Private\Bone.cpp" />
@@ -109,6 +117,7 @@
   <ItemGroup>
     <None Include="Public\Engine_Function.inl" />
     <None Include="Public\Engine_Typedef.inl" />
+    <None Include="Public\GameObject.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

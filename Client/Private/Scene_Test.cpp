@@ -80,6 +80,15 @@ HRESULT CScene_Test::Ready_Terrain()
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_TERRAIN");
 	}
 
+	pLayer_Terrain->Iterate_Objects(
+		[&](shared_ptr<CGameObject> _pTerrain)->_bool
+		{
+			CGameInstance::Get_Instance()->Register_VIBuffer(_pTerrain);
+
+			return false;
+		}
+	);
+
 	return S_OK;
 }
 

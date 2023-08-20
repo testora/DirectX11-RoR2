@@ -49,7 +49,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	m_eTopology			= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	m_pVertices			= Function::CreateDynamicArray<_float3>(m_iNumVertices);
-	m_pIndices			= Function::CreateDynamicArray<_byte>(m_iNumIndices * m_iIndexStride);
+	m_pIndices			= Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
 #pragma region VERTEX_BUFFER
 

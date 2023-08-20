@@ -27,10 +27,10 @@ HRESULT CBackground::Initialize(any _arg)
 	}
 
 	m_pTransformCom->Set_Scale(_float3(g_iWinCX, g_iWinCY, 1.f));
-	m_pTransformCom->Set_State(CTransform::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+	m_pTransformCom->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
-	CPipeLine::Get_Instance()->Set_Transform(CPipeLine::VIEW, XMMatrixIdentity());
-	CPipeLine::Get_Instance()->Set_Transform(CPipeLine::PROJ, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
+	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::VIEW, XMMatrixIdentity());
+	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::PROJ, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
 
 	return S_OK;
 }
@@ -59,12 +59,12 @@ HRESULT CBackground::Render()
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
 	}

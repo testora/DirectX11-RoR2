@@ -4,15 +4,13 @@
 
 namespace Engine
 {
-	typedef DirectX::XMVECTOR			_vector;
-	typedef DirectX::FXMVECTOR			_vectorf;
-	typedef DirectX::GXMVECTOR			_vectorg;
-	typedef DirectX::HXMVECTOR			_vectorh;
-	typedef DirectX::CXMVECTOR			_vectorc;
+	typedef DirectX::XMINT2		_int2;
+	typedef DirectX::XMINT3		_int3;
+	typedef DirectX::XMINT4		_int4;
 
-	typedef DirectX::XMMATRIX			_matrix;
-	typedef DirectX::FXMMATRIX			_matrixf;
-	typedef DirectX::CXMMATRIX			_matrixc;
+	typedef DirectX::XMUINT2	_uint2;
+	typedef DirectX::XMUINT3	_uint3;
+	typedef DirectX::XMUINT4	_uint4;
 
 	typedef struct ENGINE_DLL	float2 : public DirectX::XMFLOAT2
 	{
@@ -222,6 +220,16 @@ namespace Engine
 
 		operator XMMATRIX() const noexcept;
 	} _float4x4;
+
+	typedef DirectX::XMVECTOR	_vector;
+	typedef DirectX::FXMVECTOR	_vectorf;
+	typedef DirectX::GXMVECTOR	_vectorg;
+	typedef DirectX::HXMVECTOR	_vectorh;
+	typedef DirectX::CXMVECTOR	_vectorc;
+								
+	typedef DirectX::XMMATRIX	_matrix;
+	typedef DirectX::FXMMATRIX	_matrixf;
+	typedef DirectX::CXMMATRIX	_matrixc;
 }
 
 #include "Engine_Typedef.inl"

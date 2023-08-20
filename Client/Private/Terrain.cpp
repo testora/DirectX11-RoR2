@@ -118,12 +118,12 @@ HRESULT CTerrain::Render()
 		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
 	{
 		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
 	{
 		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
 	}

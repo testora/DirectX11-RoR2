@@ -48,6 +48,17 @@ HRESULT CObjectLayer::Delete(shared_ptr<class CGameObject> _pObject)
 	return S_OK;
 }
 
+void CObjectLayer::Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)> _fn)
+{
+	for (auto iter : m_usetObject)
+	{
+		if (_fn(iter))
+		{
+			return;
+		};
+	}
+}
+
 shared_ptr<CObjectLayer> CObjectLayer::Create(const SCENE _eScene)
 {
 	return make_private_shared(CObjectLayer, _eScene);

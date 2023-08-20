@@ -12,7 +12,7 @@ END
 
 BEGIN(Engine)
 
-class CTerrain final : public CGameObject, public std::enable_shared_from_this<CTerrain>
+class CTerrain final : public CGameObject
 {
 private:
 	explicit CTerrain(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

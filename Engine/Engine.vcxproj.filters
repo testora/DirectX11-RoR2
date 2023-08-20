@@ -115,15 +115,6 @@
     <Filter Include="03. Utility\05. Component\05. Model">
       <UniqueIdentifier>{094934b4-8a5e-4350-bf41-d7dd3bf49702}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\01. Rect">
-      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\02. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\00. Mesh">
-      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\05. Component\05. Model\00. Bone">
       <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
     </Filter>
@@ -132,6 +123,27 @@
     </Filter>
     <Filter Include="03. Utility\05. Component\05. Model\01. Animation\00. Channel">
       <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\02. Control">
+      <UniqueIdentifier>{2bb2c07c-fa92-4888-a425-9121d78e90db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\03. Grounding">
+      <UniqueIdentifier>{795556ed-4e73-4ccd-a1f7-e60c891249e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\01. Mesh">
+      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\02. Rect">
+      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\03. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\00. Grid">
+      <UniqueIdentifier>{bdc1269e-e7a7-4581-b8a4-18bc520be8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. VIBuffer\00. Grid\00. Manager">
+      <UniqueIdentifier>{34355839-4a07-4717-a464-78af22a140f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -199,7 +211,7 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Rect.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\01. Rect</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\02. Rect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer.cpp">
       <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
@@ -214,7 +226,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\02. Terrain</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\03. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Picker.cpp">
       <Filter>03. Utility\08. Picker</Filter>
@@ -229,7 +241,7 @@
       <Filter>03. Utility\05. Component\05. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Mesh.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\01. Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Private\Bone.cpp">
       <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
@@ -239,6 +251,18 @@
     </ClCompile>
     <ClCompile Include="Private\Channel.cpp">
       <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Control.cpp">
+      <Filter>03. Utility\06. Behavior\02. Control</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Grounding.cpp">
+      <Filter>03. Utility\06. Behavior\03. Grounding</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Grid.cpp">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Grid_Manager.cpp">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Grid\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -333,7 +357,7 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Rect.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\01. Rect</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\02. Rect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer.h">
       <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
@@ -345,7 +369,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Terrain.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\02. Terrain</Filter>
+      <Filter>03. Utility\05. Component\06. VIBuffer\03. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>03. Utility\00. RAII</Filter>
@@ -362,9 +386,6 @@
     <ClInclude Include="Public\Model.h">
       <Filter>03. Utility\05. Component\05. Model</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Mesh.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\00. Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Bone.h">
       <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
     </ClInclude>
@@ -374,6 +395,21 @@
     <ClInclude Include="Public\Channel.h">
       <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Control.h">
+      <Filter>03. Utility\06. Behavior\02. Control</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Grounding.h">
+      <Filter>03. Utility\06. Behavior\03. Grounding</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Mesh.h">
+      <Filter>03. Utility\05. Component\06. VIBuffer\01. Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Grid.h">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Grid_Manager.h">
+      <Filter>03. Utility\05. Component\06. VIBuffer\00. Grid\00. Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Typedef.inl">
@@ -381,6 +417,9 @@
     </None>
     <None Include="Public\Engine_Function.inl">
       <Filter>00. Header\01. Inline</Filter>
+    </None>
+    <None Include="Public\GameObject.inl">
+      <Filter>03. Utility\04. GameObject</Filter>
     </None>
   </ItemGroup>
 </Project>

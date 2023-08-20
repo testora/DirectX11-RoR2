@@ -11,7 +11,7 @@ private:
 	virtual ~CVIBuffer_Rect() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize(any = any()) override;
+	HRESULT								Initialize(any = any());
 
 public:
 	static shared_ptr<CVIBuffer_Rect>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

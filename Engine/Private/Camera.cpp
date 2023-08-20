@@ -32,7 +32,7 @@ HRESULT CCamera::Initialize(any _arg)
 		break;
 	}
 
-	m_pTransformCom->Set_State(CTransform::POSITION, m_tCameraDesc.vEye);
+	m_pTransformCom->Set_State(TRANSFORM::POSITION, m_tCameraDesc.vEye);
 	m_pTransformCom->LookAt(m_tCameraDesc.vAt);
 
 	return S_OK;
@@ -53,9 +53,9 @@ HRESULT CCamera::Render()
 	switch (m_tCameraDesc.eType)
 	{
 	case TYPE::PERSPECTIVE:
-		m_pPipeLine->Set_Transform(CPipeLine::WORLD, m_pTransformCom->Get_Matrix());
-		m_pPipeLine->Set_Transform(CPipeLine::VIEW, m_pTransformCom->Get_Matrix().inverse());
-		m_pPipeLine->Set_Transform(CPipeLine::PROJ, m_mProj);
+		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransformCom->Get_Matrix());
+		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransformCom->Get_Matrix().inverse());
+		m_pPipeLine->Set_Transform(PIPELINE::PROJ, m_mProj);
 		break;
 	}
 

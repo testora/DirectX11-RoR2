@@ -8,6 +8,7 @@
 #include "Object_Manager.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
+#include "Grid_Manager.h"
 #include "Picker.h"
 
 CGameInstance::CGameInstance()
@@ -19,6 +20,7 @@ CGameInstance::CGameInstance()
 	, m_pObject_Manager		(CObject_Manager::Get_Instance())
 	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
 	, m_pBehavior_Manager	(CBehavior_Manager::Get_Instance())
+	, m_pGrid_Manager		(CGrid_Manager::Get_Instance())
 	, m_pPicker				(CPicker::Get_Instance())
 {
 }
@@ -65,6 +67,11 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 	if (FAILED(m_pBehavior_Manager->Reserve_Manager(_eMax)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pBehavior_Manager->Reserve_Manager");
+	}
+
+	if (FAILED(m_pGrid_Manager->Initialize(GRID_SIZE)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Initialize");
 	}
 
 #ifdef _DEBUG
@@ -465,11 +472,55 @@ shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const SCENE _eScene, const w
 }
 
 #pragma endregion
+#pragma region Grid Manager
+
+_float3 CGameInstance::Get_GridSize()
+{
+	if (nullptr == m_pGrid_Manager)
+	{
+		MSG_RETURN(_float3{}, "CGameInstance::Get_GridSize", "Null Exception: m_pGrid_Manager");
+	}
+
+	return m_pGrid_Manager->Get_GridSize();
+}
+
+void CGameInstance::Register_VIBuffer(shared_ptr<class CGameObject> _pGameObject)
+{
+	if (nullptr == m_pGrid_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Register_VIBuffer", "Null Exception: m_pGrid_Manager");
+	}
+
+	return m_pGrid_Manager->Register_VIBuffer(_pGameObject);
+}
+
+void CGameInstance::Reset_Grids()
+{
+	if (nullptr == m_pGrid_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Reset_Grids", "Null Exception: m_pGrid_Manager");
+	}
+
+	return m_pGrid_Manager->Reset_Grids();
+}
+
+_float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
+{
+	if (nullptr == m_pGrid_Manager)
+	{
+		MSG_RETURN(_vRayOrigin, "CGameInstance::Raycast", "Null Exception: m_pGrid_Manager");
+	}
+
+	return m_pGrid_Manager->Raycast(_vRayOrigin, _vRayDirection);
+}
+
+#pragma endregion
 
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::Destroy_Instance();
 	CPicker::Destroy_Instance();
+	CGrid_Manager::Destroy_Instance();
 	CBehavior_Manager::Destroy_Instance();
 	CComponent_Manager::Destroy_Instance();
 	CObject_Manager::Destroy_Instance();

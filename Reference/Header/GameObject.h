@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CGameObject abstract
+class ENGINE_DLL CGameObject abstract : public std::enable_shared_from_this<CGameObject>
 {
 protected:
 	explicit CGameObject(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -22,6 +22,8 @@ public:
 public:
 	template <typename T>
 	shared_ptr<T>												Get_Component(const COMPONENT);
+	template <typename T>
+	shared_ptr<T>												Get_Behavior(const BEHAVIOR);
 
 protected:
 	virtual HRESULT												Ready_Components();
@@ -33,6 +35,8 @@ protected:
 	virtual HRESULT												Delete_Behavior(const BEHAVIOR);
 
 protected:
+	CHARACTERDESC												m_tCharacterDesc{};
+
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
 	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;
 	bitset<IDX(COMPONENT::MAX)>									m_bitComponent;
@@ -47,5 +51,7 @@ protected:
 public:
 	virtual shared_ptr<CGameObject>								Clone(any = any())	PURE;
 };
+
+#include "GameObject.inl"
 
 END

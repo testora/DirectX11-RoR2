@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "RailGunner.h"
 #include "GameInstance.h"
+#include "ImGui_Manager.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -8,17 +9,23 @@ CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 }
 
 CRailGunner::CRailGunner(const CRailGunner& _rhs)
-	: CGameObject		(_rhs)
+	: CGameObject(_rhs)
 {
 }
 
 HRESULT CRailGunner::Initialize_Prototype()
 {
-	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::MODEL);
+	m_bitComponent	|= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::MODEL);
+	m_bitBehavior	|= BIT(BEHAVIOR::PHYSICS) | BIT(BEHAVIOR::CONTROL) | BIT(BEHAVIOR::GROUNDING);
 
 	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
 	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM, any());
 	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_RAILGUNNER, any());
+
+	m_tCharacterDesc.fForwardSpeed			= 10.f;
+	m_tCharacterDesc.fBackwardSpeed			= 10.f;
+	m_tCharacterDesc.fLeftSpeed				= 10.f;
+	m_tCharacterDesc.fRightSpeed			= 10.f;
 
 	return S_OK;
 }
@@ -29,6 +36,10 @@ HRESULT CRailGunner::Initialize(any)
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
 	}
+
+	Get_Component<CTransform>(COMPONENT::TRANSFORM)->Set_State(TRANSFORM::POSITION, _float4(1.f, 5.f, 1.f, 1.f));
+	Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS)->Set_MaxSpeed(_float3(0.1f, 0.1f, 0.1f));
+	Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS)->Set_Resist(_float3(0.01f, 0.01f, 0.01f));
 
 	return S_OK;
 }
@@ -43,6 +54,25 @@ void CRailGunner::Tick(_float _fTimeDelta)
 void CRailGunner::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
+
+#ifdef _DEBUG
+	if (ACTIVATE_IMGUI)
+	{
+		if (CImGui_Manager::Get_Instance()->Is_Enable())
+		{
+			ImGui::Begin("RailGunner");
+			ImGui::Text("Position: ");
+			ImGui::Text("X: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).x);
+			ImGui::SameLine();
+			ImGui::Text("Y: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).y);
+			ImGui::SameLine();
+			ImGui::Text("Z: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).z);
+			ImGui::SameLine();
+			ImGui::Text("W: %f\t", m_pTransformCom->Get_Matrix()._44);
+			ImGui::End();
+		}
+	}
+#endif
 
 	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
@@ -59,12 +89,12 @@ HRESULT CRailGunner::Render()
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::VIEW))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
 	}
 
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(CPipeLine::PROJ))))
+	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
 	}

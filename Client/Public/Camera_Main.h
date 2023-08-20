@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 
-class CCamera_Main final : public CCamera, public std::enable_shared_from_this<CCamera_Main>
+class CCamera_Main final : public CCamera
 {
 public:
 	typedef struct tagCameraMainDesc

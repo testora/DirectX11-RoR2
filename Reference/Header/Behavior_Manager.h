@@ -2,6 +2,8 @@
 #include "Engine_Define.h"
 
 #include "Physics.h"
+#include "Control.h"
+#include "Grounding.h"
 
 BEGIN(Engine)
 

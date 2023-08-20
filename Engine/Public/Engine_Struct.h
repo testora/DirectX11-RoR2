@@ -106,4 +106,35 @@ namespace Engine
 	} KEYFRAME;
 
 #pragma endregion
+#pragma region Character
+
+	typedef struct tagCharacterDesc
+	{
+		float		fForwardSpeed;
+		float		fLeftSpeed;
+		float		fBackwardSpeed;
+		float		fRightSpeed;
+
+	} CHARACTERDESC;
+
+#pragma endregion
+#pragma region Etc
+
+	typedef struct tagXMFLOAT3Hash
+	{
+		size_t operator()(const DirectX::XMFLOAT3& k) const
+		{
+			return std::hash<float>()(k.x) ^ std::hash<float>()(k.y) ^ std::hash<float>()(k.z);
+		}
+	} XMFLOAT3HASH, FLOAT3HASH;
+
+	typedef struct tagXMFLOAT3Equal
+	{
+		bool operator()(const DirectX::XMFLOAT3& lhs, const DirectX::XMFLOAT3& rhs) const
+		{
+			return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+		}
+	} XMFLOAT3EQUAL, FLOAT3EQUAL;
+
+#pragma endregion
 }

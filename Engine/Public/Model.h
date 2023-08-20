@@ -6,11 +6,8 @@ BEGIN(Engine)
 
 class ENGINE_DLL CModel final : public CComponent, public std::enable_shared_from_this<CModel>
 {
-public:
-	enum TYPE	{ NONANIM, ANIM, MAX };
-
 private:
-	explicit CModel(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const TYPE);
+	explicit CModel(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL);
 	explicit CModel(const CModel&);
 	virtual ~CModel() DEFAULT;
 
@@ -39,7 +36,7 @@ private:
 	Assimp::Importer						m_Importer;
 	const aiScene*							m_pAIScene			= nullptr;
 
-	const TYPE								m_eType				= TYPE::MAX;
+	const MODEL								m_eType				= MODEL::MAX;
 
 	_uint									m_iNumMeshes		= 0;
 	vector<shared_ptr<class CMesh>>			m_vecMeshes;
@@ -54,7 +51,7 @@ private:
 	vector<shared_ptr<class CAnimation>>	m_vecAnimations;
 
 public:
-	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const TYPE, const char* pModelFilePath, _matrixf mPivot = g_mUnit);
+	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const char* pModelFilePath, _matrixf mPivot = g_mUnit);
 	virtual shared_ptr<CComponent>			Clone(any = any()) override;
 };
 

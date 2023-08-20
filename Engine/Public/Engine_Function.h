@@ -38,19 +38,23 @@ namespace Function
 
 	template<typename T>
 	typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, _bool>::type
-	InRange(T value, T low, T high, const string & range)
+	InRange(T value, T low, T high, const string& range = "[)")
 	{
+		_uint iValue	= static_cast<_uint>(value);
+		_uint iLow		= static_cast<_uint>(low);
+		_uint iHigh		= static_cast<_uint>(high);
+
 		if (range == "()") {
-			return value > low && value < high;
+			return iValue > iLow && iValue < iHigh;
 		}
 		else if (range == "(]") {
-			return value > low && value <= high;
+			return iValue > iLow && iValue <= iHigh;
 		}
 		else if (range == "[)") {
-			return value >= low && value < high;
+			return iValue >= iLow && iValue < iHigh;
 		}
 		else if (range == "[]") {
-			return value >= low && value <= high;
+			return iValue >= iLow && iValue <= iHigh;
 		}
 		else
 		{

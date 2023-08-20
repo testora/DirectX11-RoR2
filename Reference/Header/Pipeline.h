@@ -5,20 +5,17 @@ BEGIN(Engine)
 
 class ENGINE_DLL CPipeLine final : public CSingleton<CPipeLine>
 {
-public:
-	enum STATE	{ WORLD, VIEW, PROJ, MAX };
-
 private:
 	explicit CPipeLine() DEFAULT;
 	virtual ~CPipeLine() DEFAULT;
 
 public:
-	_float4x4	Get_Transform(const STATE eState)						{ return m_mTransform[eState]; }
+	_float4x4	Get_Transform(const PIPELINE eState)						{ return m_mTransform[IDX(eState)]; }
 
-	void		Set_Transform(const STATE eState, _float4x4 mTransform)	{ m_mTransform[eState] = mTransform; }
+	void		Set_Transform(const PIPELINE eState, _float4x4 mTransform)	{ m_mTransform[IDX(eState)] = mTransform; }
 
 private:
-	_float4x4	m_mTransform[STATE::MAX];
+	_float4x4	m_mTransform[IDX(PIPELINE::MAX)];
 
 	friend CSingleton<CPipeLine>;
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include "Engine_Define.h"
 #include "VIBuffer.h"
-#include "Model.h"
 
 BEGIN(Engine)
 
@@ -12,8 +11,7 @@ private:
 	virtual ~CMesh() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(CModel::TYPE, const aiMesh*, shared_ptr<CModel> pModel, _matrixf mPivot);
-	virtual HRESULT					Initialize(any pAIMesh) override;
+	virtual HRESULT					Initialize(MODEL, const aiMesh*, shared_ptr<class CModel> pModel, _matrixf mPivot);
 
 public:
 	_uint							Get_MaterialIndex() const	{ return m_iMaterialIndex; }
@@ -21,7 +19,7 @@ public:
 
 public:
 	HRESULT							Ready_VertexBuffer_NonAnim(const aiMesh*);
-	HRESULT							Ready_VertexBuffer_Anim(const aiMesh*, shared_ptr<CModel> pModel);
+	HRESULT							Ready_VertexBuffer_Anim(const aiMesh*, shared_ptr<class CModel> pModel);
 
 private:
 	char							m_szName[MAX_PATH]	= "";
@@ -36,7 +34,7 @@ private:
 	array<_float4x4, g_iMaxBones>	m_arrBones;
 
 public:
-	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, CModel::TYPE, const aiMesh*, shared_ptr<CModel>, _matrixf mPivot);
+	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
 	virtual shared_ptr<CComponent>	Clone(any = any()) override;
 };
 

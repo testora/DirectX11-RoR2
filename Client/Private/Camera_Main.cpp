@@ -60,11 +60,11 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 		{
 			ImGui::Begin("MainCam");
 			ImGui::Text("Position: ");
-			ImGui::Text("X: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).x);
+			ImGui::Text("X: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).x);
 			ImGui::SameLine();
-			ImGui::Text("Y: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).y);
+			ImGui::Text("Y: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).y);
 			ImGui::SameLine();
-			ImGui::Text("Z: %f\t", m_pTransformCom->Get_State(CTransform::POSITION).z);
+			ImGui::Text("Z: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).z);
 			ImGui::End();
 		}
 	}
@@ -99,13 +99,13 @@ void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
 
 	if (ptCursorMove.y)
 	{
-		_float3	vLook		= m_pTransformCom->Get_State(CTransform::STATE::LOOK);
+		_float3	vLook		= m_pTransformCom->Get_State(TRANSFORM::LOOK);
 		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
 		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
 		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 		_float	fFinal		= fNewPitch - fCurPitch;
 
-		m_pTransformCom->Rotate(m_pTransformCom->Get_State(CTransform::STATE::RIGHT), fFinal);
+		m_pTransformCom->Rotate(m_pTransformCom->Get_State(TRANSFORM::RIGHT), fFinal);
 	}
 }
 
@@ -115,19 +115,19 @@ void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_FORWARD))
 	{
-		vMove += m_pTransformCom->Get_State(CTransform::STATE::LOOK);
+		vMove += m_pTransformCom->Get_State(TRANSFORM::LOOK);
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_BACKWARD))
 	{
-		vMove -= m_pTransformCom->Get_State(CTransform::STATE::LOOK);
+		vMove -= m_pTransformCom->Get_State(TRANSFORM::LOOK);
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_LEFT))
 	{
-		vMove -= m_pTransformCom->Get_State(CTransform::STATE::RIGHT);
+		vMove -= m_pTransformCom->Get_State(TRANSFORM::RIGHT);
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_RIGHT))
 	{
-		vMove += m_pTransformCom->Get_State(CTransform::STATE::RIGHT);
+		vMove += m_pTransformCom->Get_State(TRANSFORM::RIGHT);
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_UP))
 	{
