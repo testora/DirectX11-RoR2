@@ -165,9 +165,6 @@
     <ClInclude Include="Public\ImGui_Manager.h">
       <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Shader_Variable.h">
-      <Filter>00. Header</Filter>
-    </ClInclude>
     <ClInclude Include="Public\RailGunner.h">
       <Filter>06. GameObject\02. Player_Character</Filter>
     </ClInclude>

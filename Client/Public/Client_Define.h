@@ -17,5 +17,3 @@ extern HWND		g_hWnd;
 #include "Client_Settings.h"
 #include "Client_Enum.h"
 #include "Client_Variable.h"
-
-#include "Shader_Variable.h"

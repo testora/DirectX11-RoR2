@@ -73,7 +73,12 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 
 	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, GRID_SIZE)))
 	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Initialize");
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Reserve_Manager");
+	}
+
+	if (FAILED(m_pLight_Manager->Reserve_Manager(_eMax)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pLight_Manager->Reserve_Manager");
 	}
 
 #ifdef _DEBUG
@@ -490,21 +495,21 @@ _float3 CGameInstance::Get_GridSize()
 	return m_pGrid_Manager->Get_GridSize();
 }
 
-void CGameInstance::Register_VIBuffer(const SCENE _eScene, shared_ptr<class CGameObject> _pGameObject)
+HRESULT CGameInstance::Register_VIBuffer(const SCENE _eScene, shared_ptr<class CGameObject> _pGameObject)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
-		MSG_RETURN(, "CGameInstance::Register_VIBuffer", "Null Exception: m_pGrid_Manager");
+		MSG_RETURN(E_FAIL, "CGameInstance::Register_VIBuffer", "Null Exception: m_pGrid_Manager");
 	}
 
 	return m_pGrid_Manager->Register_VIBuffer(_eScene, _pGameObject);
 }
 
-void CGameInstance::Reset_Grids(const SCENE _eScene)
+HRESULT CGameInstance::Reset_Grids(const SCENE _eScene)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
-		MSG_RETURN(, "CGameInstance::Reset_Grids", "Null Exception: m_pGrid_Manager");
+		MSG_RETURN(E_FAIL, "CGameInstance::Reset_Grids", "Null Exception: m_pGrid_Manager");
 	}
 
 	return m_pGrid_Manager->Reset_Grids(_eScene);

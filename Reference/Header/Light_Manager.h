@@ -10,7 +10,7 @@ private:
 	virtual ~CLight_Manager() DEFAULT;
 
 public:
-	HRESULT											Reserve_Lights(const SCENE);
+	HRESULT											Reserve_Manager(const SCENE);
 	void											Tick();
 	void											Late_Tick();
 
@@ -41,7 +41,7 @@ private:
 	array<_float, g_iMaxLights>						m_arrAttenuation1;
 	array<_float, g_iMaxLights>						m_arrAttenuation2;
 
-	SCENE											m_eSceneMax;
+	SCENE											m_eSceneMax	= static_cast<SCENE>(0);
 
 	friend CSingleton<CLight_Manager>;
 };

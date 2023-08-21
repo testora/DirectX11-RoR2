@@ -30,11 +30,21 @@ HRESULT CScene_Manager::Initialize(_In_ const SCENE _eStatic, _In_ const SCENE _
 
 HRESULT CScene_Manager::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pScene)
 {
-	CObject_Manager::Get_Instance()->Clear_Scene_Object(m_eScene);
-	CGrid_Manager::Get_Instance()->Reset_Grids(m_eScene);
+	HRESULT hr = S_OK;
+
+	if (FAILED(CObject_Manager::Get_Instance()->Clear_Scene_Object(m_eScene)))
+	{
+		hr = S_FALSE;
+		MSG_BOX("CScene_Manager::Open_Scene", "Failed: Clear_Scene_Object");
+	}
+	if (FAILED(CGrid_Manager::Get_Instance()->Reset_Grids(m_eScene)))
+	{
+		hr = S_FALSE;
+		MSG_BOX("CScene_Manager::Open_Scene", "Failed: Clear_Scene_Object");
+	}
 
 	m_eScene = _eScene;
 	m_pScene = _pScene;
 
-	return S_OK;
+	return hr;
 }

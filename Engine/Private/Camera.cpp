@@ -32,8 +32,8 @@ HRESULT CCamera::Initialize(any _arg)
 		break;
 	}
 
-	m_pTransformCom->Set_State(TRANSFORM::POSITION, m_tCameraDesc.vEye);
-	m_pTransformCom->LookAt(m_tCameraDesc.vAt);
+	m_pTransform->Set_State(TRANSFORM::POSITION, m_tCameraDesc.vEye);
+	m_pTransform->LookAt(m_tCameraDesc.vAt);
 
 	return S_OK;
 }
@@ -48,13 +48,13 @@ void CCamera::Late_Tick(_float _fTimeDelta)
 	__super::Late_Tick(_fTimeDelta);
 }
 
-HRESULT CCamera::Render()
+HRESULT CCamera::Render(_uint _iPassIndex)
 {
 	switch (m_tCameraDesc.eType)
 	{
 	case TYPE::PERSPECTIVE:
-		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransformCom->Get_Matrix());
-		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransformCom->Get_Matrix().inverse());
+		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransform->Get_Matrix());
+		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransform->Get_Matrix().inverse());
 		m_pPipeLine->Set_Transform(PIPELINE::PROJ, m_mProj);
 		break;
 	}
@@ -69,16 +69,16 @@ HRESULT CCamera::Ready_Components()
 		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransformCom)
+	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransform");
 	}
 
-	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
-	if (nullptr == m_pRendererCom)
+	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	if (nullptr == m_pRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pRenderer");
 	}
 
 	return S_OK;

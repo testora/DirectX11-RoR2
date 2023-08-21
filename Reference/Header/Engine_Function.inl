@@ -23,6 +23,16 @@ namespace Function
 	{
 		return fabsf(_fValue) <= g_fTolorance;
 	}
+
+	_bool NearZero3(XMVECTOR _fVector3)
+	{
+		return XMVector3NearEqual(XMVectorZero(), _fVector3, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
+	}
+
+	_bool NearZero4(XMVECTOR _fVector4)
+	{
+		return XMVector4NearEqual(XMVectorZero(), _fVector4, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
+	}
 }
 
 namespace DirectX

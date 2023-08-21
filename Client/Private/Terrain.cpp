@@ -8,12 +8,7 @@ CTerrain::CTerrain(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _p
 }
 
 CTerrain::CTerrain(const CTerrain& _rhs)
-	: CGameObject		(_rhs)
-	, m_pRendererCom	(_rhs.m_pRendererCom)
-	, m_pTransformCom	(_rhs.m_pTransformCom)
-	, m_pShaderCom		(_rhs.m_pShaderCom)
-	, m_pTextureCom		(_rhs.m_pTextureCom)
-	, m_pVIBufferCom	(_rhs.m_pVIBufferCom)
+	: CGameObject	(_rhs)
 {
 }
 
@@ -38,12 +33,12 @@ void CTerrain::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	if (CGameInstance::Get_Instance()->Key_Down(VK_RBUTTON))
-	{
-		_float3 vClickPos;
-
-		if (m_pVIBufferCom->Intersect(vClickPos))
-		{
+//	if (CGameInstance::Get_Instance()->Key_Down(VK_RBUTTON))
+//	{
+//		_float3 vClickPos;
+//
+//		if (m_pVIBufferCom->Intersect(vClickPos))
+//		{
 //			_float3 vTerrainPos = m_pTransformCom->Get_State(CTransform::POSITION);
 //			_float3 vScale = m_pTransformCom->Get_Scale();
 //			_float2 vTexUV = _float2(1.f - (vClickPos.x - vTerrainPos.x) / vScale.x, (vClickPos.z - vTerrainPos.z) / vScale.z);
@@ -95,52 +90,27 @@ void CTerrain::Tick(_float _fTimeDelta)
 //			{
 //				MSG_RETURN(, "CTerrain::Tick", "Failed to Map");
 //			}
-		}
-	}
+//		}
+//	}
 }
 
 void CTerrain::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CTerrain::Render()
+HRESULT CTerrain::Render(_uint _iPassIndex)
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, SHADER_TEXDIF)))
+	{
+		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_ShaderResourceViews");
+	}
+
+	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to __super::Render");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_WORLD, m_pTransformCom->Get_Matrix())))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, SHADER_TEXTURE_DIFFUSE)))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Bind_ShaderResourceView");
-	}
-
-	if (FAILED(m_pShaderCom->BeginPass(1)))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to BeginPass");
-	}
-
-	if (FAILED(m_pVIBufferCom->Render()))
-	{
-		MSG_RETURN(E_FAIL, "CTerrain::Render", "Failed to Render");
 	}
 
 	return S_OK;
@@ -153,34 +123,34 @@ HRESULT CTerrain::Ready_Components()
 		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransformCom)
+	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTransform");
 	}
 
-	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
-	if (nullptr == m_pRendererCom)
+	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	if (nullptr == m_pRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pRenderer");
 	}
 
-	m_pShaderCom = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
-	if (nullptr == m_pShaderCom)
+	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
+	if (nullptr == m_pShader)
 	{
-		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pShaderCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pShader");
 	}
 
-	m_pTextureCom = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
-	if (nullptr == m_pTextureCom)
+	m_pTexture = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
+	if (nullptr == m_pTexture)
 	{
-		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTextureCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pTexture");
 	}
 
-	m_pVIBufferCom = dynamic_pointer_cast<CVIBuffer_Terrain>(m_umapComponent[COMPONENT::VIBUFFER_TERRAIN]);
-	if (nullptr == m_pVIBufferCom)
+	m_pVIBuffer = dynamic_pointer_cast<CVIBuffer_Terrain>(m_umapComponent[COMPONENT::VIBUFFER_TERRAIN]);
+	if (nullptr == m_pVIBuffer)
 	{
-		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pVIBufferCom");
+		MSG_RETURN(E_FAIL, "CTerrain::Ready_Components", "Nullptr Exception: m_pVIBuffer");
 	}
 
 	return S_OK;

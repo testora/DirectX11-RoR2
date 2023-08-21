@@ -20,7 +20,7 @@ public:
 	virtual HRESULT					Initialize(any = any()) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT					Render() override;
+	virtual HRESULT					Render(_uint iPassIndex) override;
 
 private:
 	void							Debug_MouseControl(_float fTimeDelta);

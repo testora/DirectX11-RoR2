@@ -19,8 +19,6 @@
 #define SHADER_ATT1				"g_fLightAttenuation1"
 #define SHADER_ATT2				"g_fLightAttenuation2"
 
-#define SHADER_SPCPOWER			"g_fLightSpecularPower"
-
 #define SHADER_MTRLDIF			"g_vMtrlDiffuse"
 #define SHADER_MTRLAMB			"g_vMtrlAmbient"
 #define SHADER_MTRLSPC			"g_vMtrlSpecular"

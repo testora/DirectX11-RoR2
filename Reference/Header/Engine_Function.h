@@ -7,6 +7,8 @@ namespace Function
 	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);
 
 	inline _bool						NearZero(_float fValue);
+	inline _bool						NearZero3(XMVECTOR fVector3);
+	inline _bool						NearZero4(XMVECTOR fVector4);
 
 #pragma region Template
 

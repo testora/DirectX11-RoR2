@@ -34,6 +34,8 @@
 #pragma region Layer
 
 #define SCENE_MENU_LAYER_BACKGROUND							TEXT("Scene:Menu:Layers:Background")
+
+#define SCENE_TEST_LAYER_LIGHT								TEXT("Scene:Test:Layers:Light")
 #define SCENE_TEST_LAYER_CAMERA								TEXT("Scene:Test:Layers:Camera")
 #define SCENE_TEST_LAYER_TERRAIN							TEXT("Scene:Test:Layers:Terrain")
 #define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layers:Player")

@@ -4,6 +4,12 @@
 #include "Behavior_Manager.h"
 #include "Scene_Manager.h"
 #include "Object_Manager.h"
+#include "PipeLine.h"
+#include "Shader.h"
+#include "Transform.h"
+#include "Texture.h"
+#include "VIBuffer.h"
+#include "Model.h"
 
 CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: m_pDevice	(_pDevice)
@@ -23,6 +29,12 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 	{
 		m_umapBehaviorArg[static_cast<BEHAVIOR>(i)] = make_pair(wstring(), any());
 	}
+
+	m_tMaterialDesc.vDiffuse	= _color(1.f, 1.f, 1.f, 1.f);
+	m_tMaterialDesc.vAmbient	= _color(1.f, 1.f, 1.f, 1.f);
+	m_tMaterialDesc.vSpecular	= _color(1.f, 1.f, 1.f, 1.f);
+	m_tMaterialDesc.vEmissive	= _color(0.f, 0.f, 0.f, 0.f);
+	m_tMaterialDesc.fShininess	= 32.f;
 }
 
 CGameObject::CGameObject(const CGameObject& _rhs)
@@ -47,6 +59,7 @@ HRESULT CGameObject::Initialize(any _arg)
 	{
 		MSG_RETURN(E_FAIL, "CGameObject::Initialize", "Failed to Ready_Components");
 	}
+
 	if (FAILED(Ready_Behaviors()))
 	{
 		MSG_RETURN(E_FAIL, "CGameObject::Initialize", "Failed to Ready_Behaviors");
@@ -71,8 +84,90 @@ void CGameObject::Late_Tick(_float _fTimeDelta)
 	}
 }
 
-HRESULT CGameObject::Render()
+HRESULT CGameObject::Render(_uint _iPassIndex)
 {
+	if (shared_ptr<CShader> pShader = m_pShader.lock())
+	{
+		if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
+		{
+			if (FAILED(pShader->Bind_Matrix(SHADER_MATWORLD, pTransform->Get_Matrix())))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+			}
+			if (FAILED(pShader->Bind_Matrix(SHADER_MATVIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+			}
+			if (FAILED(pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+			}
+		}
+
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLAMB, m_tMaterialDesc.vAmbient)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLSPC, m_tMaterialDesc.vSpecular)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLEMS, m_tMaterialDesc.vEmissive)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_RawValue(SHADER_MTRLSHN, &m_tMaterialDesc.fShininess, sizeof m_tMaterialDesc.fShininess)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_RawValue: SHADER_MTRLSHN");
+		}
+
+		if (shared_ptr<CModel> pModel = m_pModel.lock())
+		{
+			for (_uint i = 0; i < pModel->Get_NumMeshes(); ++i)
+			{
+				if (FAILED(pModel->Bind_ShaderResourceViews(i, pShader, aiTextureType_DIFFUSE, SHADER_TEXDIF)))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_ShaderResourceViews");
+				}
+
+				if (FAILED(pModel->Bind_BoneMatrices(i, pShader, SHADER_BONE)))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_BoneMatrices");
+				}
+
+				if (FAILED(pShader->BeginPass(_iPassIndex)))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to BeginPass");
+				}
+
+				if (FAILED(pModel->Render(i)))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Render");
+				}
+			}
+		}
+		else
+		{
+			if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
+			{
+				if (FAILED(pShader->BeginPass(_iPassIndex)))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to BeginPass");
+				}
+
+				if (FAILED(pVIBuffer->Render()))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Render");
+				}
+			}
+
+		}
+	}
+
 	return S_OK;
 }
 
@@ -161,6 +256,24 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::VIBUFFER_TERRAIN:
 		m_umapComponent.emplace(COMPONENT::VIBUFFER, m_umapComponent[_eComponent]);
 		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), true);
+		break;
+	}
+
+	switch (_eComponent)
+	{
+	case COMPONENT::SHADER:
+		m_pShader		= Get_Component<CShader>(_eComponent);
+		break;
+	case COMPONENT::TRANSFORM:
+		m_pTransform	= Get_Component<CTransform>(_eComponent);
+		break;
+	case COMPONENT::MESH:
+	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_TERRAIN:
+		m_pVIBuffer		= Get_Component<CVIBuffer>(_eComponent);
+		break;
+	case COMPONENT::MODEL:
+		m_pModel		= Get_Component<CModel>(_eComponent);
 		break;
 	}
 

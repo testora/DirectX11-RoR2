@@ -49,6 +49,10 @@ void CPhysics::Tick(_float _fTimeDelta)
 
 void CPhysics::Late_Tick(_float _fTimeDelta)
 {
+	if (Function::NearZero3(m_vDirection))
+	{
+		m_vDirection = _float3(0.f, 0.f, 0.f);
+	}
 }
 
 void CPhysics::Force(_vectorf _vDirection, _float _fMagnitude, _float _fTimeDelta)

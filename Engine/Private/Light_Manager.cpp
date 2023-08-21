@@ -3,7 +3,7 @@
 #include "Light.h"
 #include "Shader.h"
 
-HRESULT CLight_Manager::Reserve_Lights(const SCENE _eSceneMax)
+HRESULT CLight_Manager::Reserve_Manager(const SCENE _eSceneMax)
 {
 	m_arrLights	= Function::CreateDynamicArray<Lights>(IDX(_eSceneMax), false);
 
@@ -24,6 +24,7 @@ void CLight_Manager::Tick()
 			}
 			else
 			{
+				(*iter)->Tick();
 				++iter;
 			}
 		}
@@ -70,27 +71,37 @@ HRESULT CLight_Manager::Add_Shaders(shared_ptr<class CShader> _pShader)
 
 HRESULT CLight_Manager::Add_Lights(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<CTransform> _pTransform)
 {
-	if (nullptr == _pTransform)
+	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
 	{
-		MSG_RETURN(E_FAIL, "CLight_Manager::Add_Lights", "Nullptr Exception");
+		MSG_RETURN(E_FAIL, "CLight_Manager::Add_Lights", "Invalid Range: SCENE");
 	}
 
-	if (m_iLightCount - 1 < g_iMaxLights)
-	{
-		++m_iLightCount;
-	}
-	else
+	if (m_iLightCount >= g_iMaxLights - 2)
 	{
 		MSG_RETURN(E_FAIL, "CLight_Manager::Add_Lights", "Out of Range: m_iLightCount");
 	}
 
-	m_arrLights[IDX(_eScene)].emplace_back(CLight::Create(_tLightDesc, _pTransform));
+	shared_ptr<CLight> pLight = CLight::Create(_tLightDesc, _pTransform);
+
+	if (nullptr == pLight)
+	{
+		MSG_RETURN(E_FAIL, "CLight_Manager::Add_Lights", "Failed to Create: CLight");
+	}
+
+	m_arrLights[IDX(_eScene)].emplace_back(pLight);
+
+	++m_iLightCount;
 
     return S_OK;
 }
 
 HRESULT CLight_Manager::Clear_Lights(const SCENE _eScene)
 {
+	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
+	{
+		MSG_RETURN(E_FAIL, "CLight_Manager::Clear_Lights", "Invalid Range: SCENE");
+	}
+
 	m_iLightCount -= static_cast<_uint>(m_arrLights[IDX(_eScene)].size());
 
 	m_arrLights[IDX(_eScene)].clear();

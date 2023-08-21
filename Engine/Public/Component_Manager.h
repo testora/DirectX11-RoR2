@@ -33,6 +33,8 @@ private:
 	typedef unordered_map<wstring, shared_ptr<CComponent>>	ComponentPrototype;
 	unique_ptr<ComponentPrototype[]>						m_arrComponentPrototypes;
 
+	SCENE													m_eSceneMax	= static_cast<SCENE>(0);
+
 	friend CSingleton<CComponent_Manager>;
 };
 

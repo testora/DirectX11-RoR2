@@ -16,11 +16,16 @@ HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSiz
 	return S_OK;
 }
 
-void CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameObject> _pGameObject)
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameObject> _pGameObject)
 {
+	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
+	{
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Invalid Range: SCENE");
+	}
+
 	if (nullptr == _pGameObject)
 	{
-		MSG_RETURN(, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception");
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception");
 	}
 
 	shared_ptr<CTransform>	pTransform	= _pGameObject->Get_Component<CTransform>(COMPONENT::TRANSFORM);
@@ -82,11 +87,20 @@ void CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameObjec
 			return false;
 		}
 	);
+
+	return S_OK;
 }
 
-void CGrid_Manager::Reset_Grids(const SCENE _eScene)
+HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene)
 {
+	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
+	{
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Reset_Grids", "Invalid Range: SCENE");
+	}
+
 	m_arrGrids[IDX(_eScene)].clear();
+
+	return S_OK;
 }
 
 _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)

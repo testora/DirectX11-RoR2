@@ -46,7 +46,6 @@
     <ClInclude Include="Public\Scene_Load.h" />
     <ClInclude Include="Public\Scene_Menu.h" />
     <ClInclude Include="Public\Scene_Test.h" />
-    <ClInclude Include="Public\Shader_Variable.h" />
     <ClInclude Include="Public\Thread_Loader.h" />
     <ClInclude Include="Public\Terrain.h" />
     <ClInclude Include="Public\RailGunner.h" />

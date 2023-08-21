@@ -16,8 +16,8 @@ public:
 	_float3																Get_GridSize() const	{ return m_vGridSize; }
 
 public:
-	void																Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
-	void																Reset_Grids(const SCENE);
+	HRESULT																Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
+	HRESULT																Reset_Grids(const SCENE);
 
 	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
 

@@ -28,6 +28,8 @@ private:
 	typedef unordered_map<wstring, shared_ptr<CBehavior>>	BehaviorPrototype;
 	unique_ptr<BehaviorPrototype[]>							m_arrBehaviorPrototypes;
 
+	SCENE													m_eSceneMax	= static_cast<SCENE>(0);
+
 	friend CSingleton<CBehavior_Manager>;
 };
 

@@ -17,6 +17,7 @@ public:
 	virtual HRESULT					Render() override;
 
 public:
+	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Terrain();
 	HRESULT							Ready_Player();

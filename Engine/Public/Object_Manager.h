@@ -44,6 +44,8 @@ private:
 	unique_ptr<Layers[]>											m_arrLayers;
 	unique_ptr<Pools[]>												m_arrPools;
 
+	SCENE															m_eSceneMax	= static_cast<SCENE>(0);
+
 	friend CSingleton<CObject_Manager>;
 };
 

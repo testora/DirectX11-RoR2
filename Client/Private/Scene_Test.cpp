@@ -21,6 +21,11 @@ HRESULT CScene_Test::Initialize()
 	CImGui_Manager::Get_Instance()->Enable();
 #endif
 
+	if (FAILED(Ready_Light()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Light");
+	}
+
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Camera");
@@ -56,15 +61,35 @@ HRESULT CScene_Test::Render()
 	return S_OK;
 }
 
+HRESULT CScene_Test::Ready_Light()
+{
+	LIGHTDESC				tLightDesc{};
+	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
+	tLightDesc.vDirection	= _float3(1.f, -2.f, 1.f);
+	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
+	tLightDesc.vSpecular	= _color(0.f, 0.f, 0.f, 1.f);
+	tLightDesc.vAmbient		= _color(.5f, .5f, .5f, 1.f);
+
+	shared_ptr<CTransform>	pTransform;
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Lights(SCENE::TEST, tLightDesc, nullptr)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Light", "Failed to Add_Lights");
+	}
+
+	return S_OK;
+}
+
 HRESULT CScene_Test::Ready_Camera()
 {
-	auto pLayer_Camera = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_CAMERA);
-	if (nullptr == pLayer_Camera)
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_CAMERA);
+
+	if (nullptr == pLayer)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Camera", "Failed to Add_Layer: SCENE_TEST_LAYER_CAMERA");
 	}
 
-	if (FAILED(pLayer_Camera->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN))))
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Camera", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
 	}
@@ -74,18 +99,19 @@ HRESULT CScene_Test::Ready_Camera()
 
 HRESULT CScene_Test::Ready_Terrain()
 {
-	auto pLayer_Terrain = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_TERRAIN);
-	if (nullptr == pLayer_Terrain)
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_TERRAIN);
+
+	if (nullptr == pLayer)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Add_Layer: SCENE_TEST_LAYER_TERRAIN");
 	}
 
-	if (FAILED(pLayer_Terrain->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TERRAIN))))
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TERRAIN))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_TERRAIN");
 	}
 
-	pLayer_Terrain->Iterate_Objects(
+	pLayer->Iterate_Objects(
 		[&](shared_ptr<CGameObject> _pTerrain)->_bool
 		{
 			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, _pTerrain);
@@ -99,13 +125,14 @@ HRESULT CScene_Test::Ready_Terrain()
 
 HRESULT CScene_Test::Ready_Player()
 {
-	auto pLayer_Player = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_PLAYER);
-	if (nullptr == pLayer_Player)
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_PLAYER);
+
+	if (nullptr == pLayer)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Add_Layer: SCENE_TEST_LAYER_PLAYER");
 	}
 
-	if (FAILED(pLayer_Player->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER))))
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
 

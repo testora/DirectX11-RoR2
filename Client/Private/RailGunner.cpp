@@ -15,8 +15,8 @@ CRailGunner::CRailGunner(const CRailGunner& _rhs)
 
 HRESULT CRailGunner::Initialize_Prototype()
 {
-	m_bitComponent	|= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::MODEL);
-	m_bitBehavior	|= BIT(BEHAVIOR::PHYSICS) | BIT(BEHAVIOR::CONTROL) | BIT(BEHAVIOR::GROUNDING);
+	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::MODEL);
+	m_bitBehavior	|= BIT(BEHAVIOR::PHYSICS)	| BIT(BEHAVIOR::CONTROL)	| BIT(BEHAVIOR::GROUNDING);
 
 	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
 	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM, any());
@@ -48,7 +48,7 @@ void CRailGunner::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	m_pModelCom->Play_Animation(_fTimeDelta);
+	m_pModel->Play_Animation(_fTimeDelta);
 }
 
 void CRailGunner::Late_Tick(_float _fTimeDelta)
@@ -62,64 +62,26 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 		{
 			ImGui::Begin("RailGunner");
 			ImGui::Text("Position: ");
-			ImGui::Text("X: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).x);
+			ImGui::Text("X: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).x);
 			ImGui::SameLine();
-			ImGui::Text("Y: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).y);
+			ImGui::Text("Y: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).y);
 			ImGui::SameLine();
-			ImGui::Text("Z: %f\t", m_pTransformCom->Get_State(TRANSFORM::POSITION).z);
+			ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
 			ImGui::SameLine();
-			ImGui::Text("W: %f\t", m_pTransformCom->Get_Matrix()._44);
+			ImGui::Text("W: %f\t", m_pTransform->Get_Matrix()._44);
 			ImGui::End();
 		}
 	}
 #endif
 
-	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CRailGunner::Render()
+HRESULT CRailGunner::Render(_uint _iPassIndex)
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to __super::Render");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_WORLD, m_pTransformCom->Get_Matrix())))
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_Matrix");
-	}
-
-	for (_uint i = 0; i < m_pModelCom->Get_NumMeshes(); ++i)
-	{
-		if (FAILED(m_pModelCom->Bind_ShaderResourceViews(i, m_pShaderCom, aiTextureType_DIFFUSE, "g_texDiffuse")))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_ShaderResourceViews");
-		}
-
-		if (FAILED(m_pModelCom->Bind_BoneMatrices(i, m_pShaderCom, "g_mBones")))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Bind_BoneMatrices");
-		}
-
-		if (FAILED(m_pShaderCom->BeginPass(0)))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to BeginPass");
-		}
-
-		if (FAILED(m_pModelCom->Render(i)))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to Render");
-		}
 	}
 
 	return S_OK;
@@ -132,28 +94,28 @@ HRESULT CRailGunner::Ready_Components()
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransformCom)
+	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pTransform");
 	}
 
-	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
-	if (nullptr == m_pRendererCom)
+	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	if (nullptr == m_pRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pRenderer");
 	}
 
-	m_pShaderCom = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
-	if (nullptr == m_pShaderCom)
+	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
+	if (nullptr == m_pShader)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pShaderCom");
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pShader");
 	}
 
-	m_pModelCom = dynamic_pointer_cast<CModel>(m_umapComponent[COMPONENT::MODEL]);
-	if (nullptr == m_pModelCom)
+	m_pModel = dynamic_pointer_cast<CModel>(m_umapComponent[COMPONENT::MODEL]);
+	if (nullptr == m_pModel)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pModelCom");
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pModel");
 	}
 
 	return S_OK;

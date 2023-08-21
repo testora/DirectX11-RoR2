@@ -26,8 +26,8 @@ HRESULT CBackground::Initialize(any _arg)
 		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Failed to __super::Initialize");
 	}
 
-	m_pTransformCom->Set_Scale(_float3(g_iWinCX, g_iWinCY, 1.f));
-	m_pTransformCom->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+	m_pTransform->Set_Scale(_float3(g_iWinCX, g_iWinCY, 1.f));
+	m_pTransform->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
 	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::VIEW, XMMatrixIdentity());
 	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::PROJ, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
@@ -44,44 +44,19 @@ void CBackground::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRendererCom->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CBackground::Render()
+HRESULT CBackground::Render(_uint _iPassIndex)
 {
-	if (FAILED(__super::Render()))
+	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, SHADER_TEXDIF)))
+	{
+		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceViews");
+	}
+
+	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to __super::Render");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_WORLD, m_pTransformCom->Get_Matrix())))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_VIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pShaderCom->Bind_Matrix(SHADER_MATRIX_PROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_Matrix");
-	}
-
-	if (FAILED(m_pTextureCom->Bind_ShaderResourceView(m_pShaderCom, SHADER_TEXTURE_DIFFUSE, 0)))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceView");
-	}
-
-	if (FAILED(m_pShaderCom->BeginPass(0)))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to BeginPass");
-	}
-
-	if (FAILED(m_pVIBufferCom->Render()))
-	{
-		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Render");
 	}
 
 	return S_OK;
@@ -94,34 +69,34 @@ HRESULT CBackground::Ready_Components()
 		MSG_RETURN(E_FAIL, "CBackground::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	m_pTransformCom = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransformCom)
+	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTransformCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTransform");
 	}
 
-	m_pRendererCom = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
-	if (nullptr == m_pRendererCom)
+	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	if (nullptr == m_pRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pRendererCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pRenderer");
 	}
 
-	m_pShaderCom = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
-	if (nullptr == m_pShaderCom)
+	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
+	if (nullptr == m_pShader)
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pShaderCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pShader");
 	}
 
-	m_pTextureCom = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
-	if (nullptr == m_pTextureCom)
+	m_pTexture = dynamic_pointer_cast<CTexture>(m_umapComponent[COMPONENT::TEXTURE]);
+	if (nullptr == m_pTexture)
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTextureCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pTexture");
 	}
 
-	m_pVIBufferCom = dynamic_pointer_cast<CVIBuffer_Rect>(m_umapComponent[COMPONENT::VIBUFFER_RECT]);
-	if (nullptr == m_pVIBufferCom)
+	m_pVIBuffer = dynamic_pointer_cast<CVIBuffer_Rect>(m_umapComponent[COMPONENT::VIBUFFER_RECT]);
+	if (nullptr == m_pVIBuffer)
 	{
-		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pVIBufferCom");
+		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Nullptr Exception: m_pVIBuffer");
 	}
 
 	return S_OK;

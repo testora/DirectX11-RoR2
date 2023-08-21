@@ -335,9 +335,6 @@
     <ClInclude Include="Public\Renderer.h">
       <Filter>03. Utility\05. Component\01. Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Camera.h">
-      <Filter>03. Utility\04. GameObject\01. Camera</Filter>
-    </ClInclude>
     <ClInclude Include="Public\PipeLine.h">
       <Filter>03. Utility\02. PipeLine</Filter>
     </ClInclude>
@@ -409,6 +406,9 @@
     </ClInclude>
     <ClInclude Include="Public\Grid_Manager.h">
       <Filter>03. Utility\05. Component\06. VIBuffer\00. Grid\00. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Camera.h">
+      <Filter>03. Utility\04. GameObject\01. Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

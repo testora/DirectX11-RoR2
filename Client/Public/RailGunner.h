@@ -23,16 +23,16 @@ public:
 	virtual HRESULT					Initialize(any = any()) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT					Render() override;
+	virtual HRESULT					Render(_uint iPassIndex) override;
 
 private:
 	virtual HRESULT					Ready_Components() override;
 
 public:
-	shared_ptr<CRenderer>			m_pRendererCom;
-	shared_ptr<CTransform>			m_pTransformCom;
-	shared_ptr<CShader>				m_pShaderCom;
-	shared_ptr<CModel>				m_pModelCom;
+	shared_ptr<CRenderer>			m_pRenderer;
+	shared_ptr<CTransform>			m_pTransform;
+	shared_ptr<CShader>				m_pShader;
+	shared_ptr<CModel>				m_pModel;
 
 public:
 	static shared_ptr<CRailGunner>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

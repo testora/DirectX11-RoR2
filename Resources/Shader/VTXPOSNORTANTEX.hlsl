@@ -1,8 +1,8 @@
 #define	MAX_LIGHT	32
 #define MAX_BONE	256
 
+#define DIRECTIONAL	0
 #define POINT		1
-#define DIRECTIONAL	2
 
 sampler LinearSampler = sampler_state
 {
@@ -37,13 +37,11 @@ float		g_fLightAttenuation0	[MAX_LIGHT];
 float		g_fLightAttenuation1	[MAX_LIGHT];
 float		g_fLightAttenuation2	[MAX_LIGHT];
 
-float	    g_fLightSpecularPower	= 16.f;
-
 vector		g_vMtrlDiffuse			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlAmbient			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlSpecular			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlEmissive			= vector(0.f, 0.f, 0.f, 0.f);
-float		g_fMtrlShininess		= 30.f;
+float		g_fMtrlShininess		= 32.f;
 
 struct VS_IN
 {
@@ -122,7 +120,7 @@ PS_OUT PS_MAIN(PS_IN In)
 		
 		// Specular
         float3	vHalfDir	= normalize(vViewDir - vLightDir);
-        float	fSpc		= pow(max(dot(vViewDir, vHalfDir), 0.f), g_fLightSpecularPower);
+        float	fSpc		= pow(max(dot(vViewDir, vHalfDir), 0.f), g_fMtrlShininess);
 		
 		// Attenuation
         float	fSmoothAtt	= 1.f;

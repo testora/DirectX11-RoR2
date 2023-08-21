@@ -15,7 +15,7 @@ public:
 	virtual HRESULT												Initialize(any = any());
 	virtual void												Tick(_float fTimeDelta);
 	virtual void												Late_Tick(_float fTimeDelta);
-	virtual HRESULT												Render();
+	virtual HRESULT												Render(_uint iPassIndex = 0);
 
 	virtual HRESULT												Fetch(any = any());
 
@@ -36,6 +36,7 @@ protected:
 
 protected:
 	CHARACTERDESC												m_tCharacterDesc{};
+	MATERIALDESC												m_tMaterialDesc{};
 
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
 	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;
@@ -47,6 +48,12 @@ protected:
 
 	ComPtr<ID3D11Device>										m_pDevice;
 	ComPtr<ID3D11DeviceContext>									m_pContext;
+
+private:
+	weak_ptr<class CShader>										m_pShader;
+	weak_ptr<class CTransform>									m_pTransform;
+	weak_ptr<class CVIBuffer>									m_pVIBuffer;
+	weak_ptr<class CModel>										m_pModel;
 
 public:
 	virtual shared_ptr<CGameObject>								Clone(any = any())	PURE;

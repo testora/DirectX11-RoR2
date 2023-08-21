@@ -1,9 +1,11 @@
 #include "EnginePCH.h"
 #include "Component_Manager.h"
 
-HRESULT CComponent_Manager::Reserve_Manager(const SCENE _eScene)
+HRESULT CComponent_Manager::Reserve_Manager(const SCENE _eSceneMax)
 {
-	m_arrComponentPrototypes = Function::CreateDynamicArray<ComponentPrototype>(IDX(_eScene), false);
+	m_arrComponentPrototypes	= Function::CreateDynamicArray<ComponentPrototype>(IDX(_eSceneMax), false);
+
+	m_eSceneMax					= _eSceneMax;
 
 	return S_OK;
 }
@@ -33,6 +35,11 @@ shared_ptr<CComponent> CComponent_Manager::Clone_Component(const SCENE _eScene, 
 
 shared_ptr<CComponent> CComponent_Manager::Find_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag)
 {
+	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
+	{
+		MSG_RETURN(nullptr, "CComponent_Manager::Find_Prototype", "Invalid Range: SCENE");
+	}
+
 	auto& ComponentPrototype = m_arrComponentPrototypes[IDX(_eScene)];
 	auto iter = ComponentPrototype.find(_strPrototypeTag);
 	if (iter == ComponentPrototype.end())
