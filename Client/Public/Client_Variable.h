@@ -33,9 +33,9 @@
 #pragma endregion
 #pragma region Layer
 
-#define SCENE_MENU_LAYER_BACKGROUND							TEXT("Scene:Menu:Layer:Background")
-#define SCENE_TEST_LAYER_CAMERA								TEXT("Scene:Test:Layer:Camera")
-#define SCENE_TEST_LAYER_TERRAIN							TEXT("Scene:Test:Layer:Terrain")
-#define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layer:Player")
+#define SCENE_MENU_LAYER_BACKGROUND							TEXT("Scene:Menu:Layers:Background")
+#define SCENE_TEST_LAYER_CAMERA								TEXT("Scene:Test:Layers:Camera")
+#define SCENE_TEST_LAYER_TERRAIN							TEXT("Scene:Test:Layers:Terrain")
+#define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layers:Player")
 
 #pragma endregion

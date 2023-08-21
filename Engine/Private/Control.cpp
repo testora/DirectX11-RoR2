@@ -21,13 +21,18 @@ HRESULT CControl::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDES
 		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to __super::Initialize");
 	}
 
-	shared_ptr<CTransform> pTargetTransform = m_pOwner->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	if (m_pOwner.expired())
+	{
+		MSG_RETURN(E_FAIL, "CControl::Initialize", "weak_ptr Expired: m_pOwner");
+	}
+
+	shared_ptr<CTransform> pTargetTransform = m_pOwner.lock()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 	if (nullptr == pTargetTransform)
 	{
 		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Component");
 	}
 
-	shared_ptr<CPhysics> pTargetPhysics = m_pOwner->Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS);
+	shared_ptr<CPhysics> pTargetPhysics = m_pOwner.lock()->Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS);
 	if (nullptr == pTargetTransform)
 	{
 		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Component");

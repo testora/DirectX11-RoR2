@@ -10,23 +10,27 @@ private:
 	virtual ~CGrid_Manager() DEFAULT;
 
 public:
-	HRESULT														Initialize(_float3 vGridSize);
+	HRESULT																Reserve_Manager(const SCENE, _float3 vGridSize);
 
 public:
-	_float3														Get_GridSize() const	{ return m_vGridSize; }
+	_float3																Get_GridSize() const	{ return m_vGridSize; }
 
 public:
-	void														Register_VIBuffer(shared_ptr<class CGameObject>);
-	void														Reset_Grids();
+	void																Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
+	void																Reset_Grids(const SCENE);
 
-	_float3														Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
+	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
 
 private:
-	unordered_map<_float3, shared_ptr<class CGrid>, FLOAT3HASH>	m_umapGrid;
+	typedef unordered_map<_float3, shared_ptr<class CGrid>, FLOAT3HASH>	Grids;
 
-	map<_float, shared_ptr<class CGrid>>						m_mapRaycastGrid;
+	unique_ptr<Grids[]>													m_arrGrids;
 
-	_float3														m_vGridSize;
+	multimap<_float, shared_ptr<class CGrid>>							m_mmapRaycastGrid;
+
+	_float3																m_vGridSize;
+
+	SCENE																m_eSceneMax	= static_cast<SCENE>(0);
 
 	friend CSingleton<CGrid_Manager>;
 };

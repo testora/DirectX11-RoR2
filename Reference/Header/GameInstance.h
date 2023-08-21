@@ -97,10 +97,18 @@ public:
 
 	_float3										Get_GridSize();
 
-	void										Register_VIBuffer(shared_ptr<class CGameObject>);
-	void										Reset_Grids();
+	void										Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
+	void										Reset_Grids(const SCENE);
 
 	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
+
+#pragma endregion
+#pragma region Grid Manager
+
+	HRESULT										Add_BindShaders(shared_ptr<class CShader>);
+	HRESULT										Add_Lights(const SCENE, LIGHTDESC, shared_ptr<class CTransform>);
+	HRESULT										Clear_Lights(const SCENE);
+
 
 #pragma endregion
 
@@ -114,6 +122,7 @@ private:
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
 	shared_ptr<class CBehavior_Manager>			m_pBehavior_Manager;
 	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
+	shared_ptr<class CLight_Manager>			m_pLight_Manager;
 	shared_ptr<class CPicker>					m_pPicker;
 
 private:

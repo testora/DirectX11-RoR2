@@ -9,6 +9,7 @@
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
 #include "Grid_Manager.h"
+#include "Light_Manager.h"
 #include "Picker.h"
 
 CGameInstance::CGameInstance()
@@ -21,6 +22,7 @@ CGameInstance::CGameInstance()
 	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
 	, m_pBehavior_Manager	(CBehavior_Manager::Get_Instance())
 	, m_pGrid_Manager		(CGrid_Manager::Get_Instance())
+	, m_pLight_Manager		(CLight_Manager::Get_Instance())
 	, m_pPicker				(CPicker::Get_Instance())
 {
 }
@@ -69,7 +71,7 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pBehavior_Manager->Reserve_Manager");
 	}
 
-	if (FAILED(m_pGrid_Manager->Initialize(GRID_SIZE)))
+	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, GRID_SIZE)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Initialize");
 	}
@@ -106,10 +108,14 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pScene_Manager->Tick(_fTimeDelta);
 	m_pObject_Manager->Tick(_fTimeDelta);
 
+	m_pLight_Manager->Tick();
+
 	m_pPicker->Tick();
 
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
+
+	m_pLight_Manager->Late_Tick();
 }
 
 LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
@@ -484,24 +490,24 @@ _float3 CGameInstance::Get_GridSize()
 	return m_pGrid_Manager->Get_GridSize();
 }
 
-void CGameInstance::Register_VIBuffer(shared_ptr<class CGameObject> _pGameObject)
+void CGameInstance::Register_VIBuffer(const SCENE _eScene, shared_ptr<class CGameObject> _pGameObject)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(, "CGameInstance::Register_VIBuffer", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Register_VIBuffer(_pGameObject);
+	return m_pGrid_Manager->Register_VIBuffer(_eScene, _pGameObject);
 }
 
-void CGameInstance::Reset_Grids()
+void CGameInstance::Reset_Grids(const SCENE _eScene)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(, "CGameInstance::Reset_Grids", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Reset_Grids();
+	return m_pGrid_Manager->Reset_Grids(_eScene);
 }
 
 _float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
@@ -515,11 +521,45 @@ _float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
 }
 
 #pragma endregion
+#pragma region Light Manager
+
+HRESULT CGameInstance::Add_BindShaders(shared_ptr<class CShader> _pShader)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Add_BindShaders", "Null Exception: m_pLight_Manager");
+	}
+
+	return m_pLight_Manager->Add_Shaders(_pShader);
+}
+
+HRESULT CGameInstance::Add_Lights(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<class CTransform> _pTransform)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Add_Lights", "Null Exception: m_pLight_Manager");
+	}
+
+	return m_pLight_Manager->Add_Lights(_eScene, _tLightDesc, _pTransform);
+}
+
+HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Clear_Lights", "Null Exception: m_pLight_Manager");
+	}
+
+	return m_pLight_Manager->Clear_Lights(_eScene);
+}
+
+#pragma endregion
 
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::Destroy_Instance();
 	CPicker::Destroy_Instance();
+	CLight_Manager::Destroy_Instance();
 	CGrid_Manager::Destroy_Instance();
 	CBehavior_Manager::Destroy_Instance();
 	CComponent_Manager::Destroy_Instance();

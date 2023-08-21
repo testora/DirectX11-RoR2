@@ -5,14 +5,18 @@
 #include "VIBuffer.h"
 #include "Transform.h"
 
-HRESULT CGrid_Manager::Initialize(_float3 _vGridSize)
+HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSize)
 {
-	m_vGridSize = _vGridSize;
+	m_arrGrids	= Function::CreateDynamicArray<Grids>(IDX(_eSceneMax), false);
+
+	m_vGridSize	= _vGridSize;
+
+	m_eSceneMax	= _eSceneMax;
 
 	return S_OK;
 }
 
-void CGrid_Manager::Register_VIBuffer(shared_ptr<CGameObject> _pGameObject)
+void CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameObject> _pGameObject)
 {
 	if (nullptr == _pGameObject)
 	{
@@ -64,12 +68,13 @@ void CGrid_Manager::Register_VIBuffer(shared_ptr<CGameObject> _pGameObject)
 				{
 					for (_float z = vMinKey.z; z <= vMaxKey.z; z += m_vGridSize.z)
 					{
-						if (nullptr == m_umapGrid[_float3(x, y, z)])
+						auto& Grids = m_arrGrids[IDX(_eScene)];
+						if (Grids.end() == Grids.find(_float3(x, y, z)))
 						{
-							m_umapGrid[_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
+							Grids[_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
 						}
-					
-						m_umapGrid[_float3(x, y, z)]->Add_Polygon(pairVertices.first, _uint3(_i0, _i1, _i2));
+
+						Grids[_float3(x, y, z)]->Add_Polygon(pairVertices.first, _uint3(_i0, _i1, _i2));
 					}
 				}
 			}
@@ -79,29 +84,32 @@ void CGrid_Manager::Register_VIBuffer(shared_ptr<CGameObject> _pGameObject)
 	);
 }
 
-void CGrid_Manager::Reset_Grids()
+void CGrid_Manager::Reset_Grids(const SCENE _eScene)
 {
-	m_umapGrid.clear();
+	m_arrGrids[IDX(_eScene)].clear();
 }
 
 _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
 {
-	_vector vRayDirection	= XMVector3Normalize(_vRayDirection);
+	_vector vRayDirection = XMVector3Normalize(_vRayDirection);
 
-	for (auto& pair : m_umapGrid)
+	for (size_t i = 0; i < IDX(m_eSceneMax); ++i)
 	{
-		DirectX::BoundingBox aabbGrid(pair.first + m_vGridSize * .5f, m_vGridSize * .5f);
-
-		_float fDist = 0.f;
-		if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
+		for (auto& pair : m_arrGrids[i])
 		{
-			m_mapRaycastGrid.emplace(fDist, pair.second);
+			DirectX::BoundingBox aabbGrid(pair.first + m_vGridSize * .5f, m_vGridSize * .5f);
+
+			_float fDist = 0.f;
+			if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
+			{
+				m_mmapRaycastGrid.emplace(fDist, pair.second);
+			}
 		}
 	}
 
 	_float fFinalDist = FLT_MAX;
 
-	for (auto& pair : m_mapRaycastGrid)
+	for (auto& pair : m_mmapRaycastGrid)
 	{
 		pair.second->Iterate_Polygon(
 			[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
@@ -125,7 +133,7 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
 		}
 	}
 
-	m_mapRaycastGrid.clear();
+	m_mmapRaycastGrid.clear();
 
 	return _vRayOrigin + vRayDirection * (fFinalDist == FLT_MAX ? 0.f : fFinalDist);
 }

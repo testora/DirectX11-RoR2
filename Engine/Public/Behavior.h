@@ -19,7 +19,7 @@ public:
 	const BEHAVIOR					Type() const	{ return m_eType; }
 
 protected:
-	shared_ptr<class CGameObject>	m_pOwner;
+	weak_ptr<class CGameObject>		m_pOwner;
 
 	ComPtr<ID3D11Device>			m_pDevice;
 	ComPtr<ID3D11DeviceContext>		m_pContext;

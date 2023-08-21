@@ -22,23 +22,34 @@ namespace Engine
 	} WNDPROCDESC;
 	
 #pragma endregion
-#pragma region Light
+#pragma region Shader
 
 	typedef struct tagLightDesc
 	{
 		enum LIGHTTYPE	{ DIRECTIONAL, POINT, MAX };
-		XMFLOAT4	vDifuse;
-		XMFLOAT4	vSpecular;
-		XMFLOAT4	vAmbient;
+		LIGHTTYPE		eLightType;
 
-		XMFLOAT3	vPosition;
-		XMFLOAT3	vDirection;
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vDirection;
 
-		float		fRange;
-		float		fAttenuation0;
-		float		fAttenuation1;
-		float		fAttenuation2;
+		XMFLOAT4		vDiffuse;
+		XMFLOAT4		vSpecular;
+		XMFLOAT4		vAmbient;
+
+		float			fRange;
+		float			fAttenuation0;
+		float			fAttenuation1;
+		float			fAttenuation2;
 	} LIGHTDESC;
+
+	typedef struct tagMaterialDesc
+	{
+		XMFLOAT4		vDiffuse;
+		XMFLOAT4		vAmbient;
+		XMFLOAT4		vSpecular;
+		XMFLOAT4		vEmissive;
+		float			fShininess;
+	} MATERIALDESC;
 
 #pragma endregion
 #pragma region Vertex

@@ -36,13 +36,13 @@ private:
 	shared_ptr<class CGameObject>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
 
 private:
-	typedef unordered_map<wstring, shared_ptr<class CGameObject>>	Prototype;
-	typedef unordered_map<wstring, shared_ptr<class CObjectLayer>>	Layer;
-	typedef unordered_map<wstring, shared_ptr<class CObjectPool>>	Pool;
+	typedef unordered_map<wstring, shared_ptr<class CGameObject>>	Prototypes;
+	typedef unordered_map<wstring, shared_ptr<class CObjectLayer>>	Layers;
+	typedef unordered_map<wstring, shared_ptr<class CObjectPool>>	Pools;
 
-	unique_ptr<Prototype[]>											m_arrPrototypes;
-	unique_ptr<Layer[]>												m_arrLayers;
-	unique_ptr<Pool[]>												m_arrPools;
+	unique_ptr<Prototypes[]>										m_arrPrototypes;
+	unique_ptr<Layers[]>											m_arrLayers;
+	unique_ptr<Pools[]>												m_arrPools;
 
 	friend CSingleton<CObject_Manager>;
 };

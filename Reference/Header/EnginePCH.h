@@ -15,6 +15,7 @@
 #include <cmath>
 #include <memory>
 #include <iostream>
+#include <fstream>
 
 #include <typeinfo>
 #include <typeindex>
@@ -70,8 +71,10 @@ using std::array;
 using std::vector;
 using std::list;
 using std::map;
-using std::set;
+using std::multimap;
 using std::unordered_map;
+using std::set;
+using std::multiset;
 using std::unordered_set;
 using std::queue;
 using std::deque;

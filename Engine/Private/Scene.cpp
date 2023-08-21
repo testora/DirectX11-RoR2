@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Scene.h"
+#include "Grid_Manager.h"
 #include "Factory.h"
 
 CScene::CScene(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const SCENE _eScene)
@@ -7,4 +8,9 @@ CScene::CScene(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCont
 	, m_pContext(_pContext)
 	, m_eScene	(_eScene)
 {
+}
+
+HRESULT CScene::Initialize()
+{
+	return S_OK;
 }

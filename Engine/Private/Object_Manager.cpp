@@ -5,11 +5,11 @@
 #include "GameObject.h"
 #include "Scene_Manager.h"
 
-HRESULT CObject_Manager::Reserve_Manager(const SCENE _eScene)
+HRESULT CObject_Manager::Reserve_Manager(const SCENE _eSceneMax)
 {
-	m_arrPrototypes	= Function::CreateDynamicArray<Prototype>(IDX(_eScene), false);
-	m_arrLayers		= Function::CreateDynamicArray<Layer>(IDX(_eScene), false);
-	m_arrPools		= Function::CreateDynamicArray<Pool>(IDX(_eScene), false);
+	m_arrPrototypes	= Function::CreateDynamicArray<Prototypes>(IDX(_eSceneMax), false);
+	m_arrLayers		= Function::CreateDynamicArray<Layers>(IDX(_eSceneMax), false);
+	m_arrPools		= Function::CreateDynamicArray<Pools>(IDX(_eSceneMax), false);
 
 	return S_OK;
 }
@@ -133,9 +133,9 @@ HRESULT CObject_Manager::Clear_Scene_Object(const SCENE _eScene)
 
 shared_ptr<CGameObject> CObject_Manager::Find_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag)
 {
-	auto& Prototype = m_arrPrototypes[IDX(_eScene)];
-	auto iter = Prototype.find(_strPrototypeTag);
-	if (iter == Prototype.end())
+	auto& Prototypes = m_arrPrototypes[IDX(_eScene)];
+	auto iter = Prototypes.find(_strPrototypeTag);
+	if (iter == Prototypes.end())
 	{
 		return nullptr;
 	}

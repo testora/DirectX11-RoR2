@@ -71,5 +71,3 @@ void CMouse_Manager::MessageProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPAR
 		break;
 	}
 }
-
-

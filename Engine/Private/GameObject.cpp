@@ -186,7 +186,7 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 		break;
 
 	default:
-		MSG_RETURN(E_FAIL, "CGameObject::Add_Component", "Invalid Range");
+		MSG_RETURN(E_FAIL, "CGameObject::Add_Behavior", "Invalid Range");
 	}
 
 	m_bitBehavior.set(IDX(_eBehavior), true);

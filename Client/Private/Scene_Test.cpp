@@ -11,6 +11,11 @@ CScene_Test::CScene_Test(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 
 HRESULT CScene_Test::Initialize()
 {
+	if (FAILED(__super::Initialize()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to __super::Initialize");
+	}
+
 	CGameInstance::Get_Instance()->Show_Cursor(false);
 #ifdef _DEBUG
 	CImGui_Manager::Get_Instance()->Enable();
@@ -83,7 +88,7 @@ HRESULT CScene_Test::Ready_Terrain()
 	pLayer_Terrain->Iterate_Objects(
 		[&](shared_ptr<CGameObject> _pTerrain)->_bool
 		{
-			CGameInstance::Get_Instance()->Register_VIBuffer(_pTerrain);
+			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, _pTerrain);
 
 			return false;
 		}

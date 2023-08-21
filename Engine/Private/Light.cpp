@@ -1,20 +1,25 @@
 #include "EnginePCH.h"
 #include "Light.h"
+#include "Transform.h"
 
-CLight::CLight(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
+HRESULT CLight::Initialize(const LIGHTDESC _tLightDesc, shared_ptr<CTransform> _pTransform)
 {
-}
+	m_tLightDesc = _tLightDesc;
+	m_pTransform = _pTransform;
 
-HRESULT CLight::Initialize(const LIGHTDESC&)
-{
 	return S_OK;
 }
 
-shared_ptr<CLight> CLight::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const LIGHTDESC& _tLightDesc)
+_bool CLight::Is_Expired() const
 {
-	shared_ptr<CLight> pInstance = make_private_shared(CLight, _pDevice, _pContext);
+	return m_pTransform.expired();
+}
 
-	if (FAILED(pInstance->Initialize(_tLightDesc)))
+shared_ptr<CLight> CLight::Create(const LIGHTDESC _tLightDesc, shared_ptr<CTransform> _pTransform)
+{
+	shared_ptr<CLight> pInstance = make_private_shared(CLight);
+
+	if (FAILED(pInstance->Initialize(_tLightDesc, _pTransform)))
 	{
 		MSG_RETURN(nullptr, "CLight::Create", "Failed to Initialize");
 	}

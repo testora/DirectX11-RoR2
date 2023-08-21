@@ -11546,7 +11546,7 @@ void ImGui::NavInitRequestApplyResult()
 
     // Apply result from previous navigation init request (will typically select the first item, unless SetItemDefaultFocus() has been called)
     // FIXME-NAV: On _NavFlattened windows, g.NavWindow will only be updated during subsequent frame. Not a problem currently.
-    IMGUI_DEBUG_LOG_NAV("[nav] NavInitRequest: ApplyResult: NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g.NavLayer, g.NavWindow->Name);
+    IMGUI_DEBUG_LOG_NAV("[nav] NavInitRequest: ApplyResult: NavID 0x%08X in Layers %d Window \"%s\"\n", result->ID, g.NavLayer, g.NavWindow->Name);
     SetNavID(result->ID, g.NavLayer, result->FocusScopeId, result->RectRel);
     g.NavIdIsAlive = true; // Mark as alive from previous frame as we got a result
     if (g.NavInitRequestFromMove)
@@ -11795,7 +11795,7 @@ void ImGui::NavMoveRequestApplyResult()
     }
 
     // Apply new NavID/Focus
-    IMGUI_DEBUG_LOG_NAV("[nav] NavMoveRequest: result NavID 0x%08X in Layer %d Window \"%s\"\n", result->ID, g.NavLayer, g.NavWindow->Name);
+    IMGUI_DEBUG_LOG_NAV("[nav] NavMoveRequest: result NavID 0x%08X in Layers %d Window \"%s\"\n", result->ID, g.NavLayer, g.NavWindow->Name);
     ImVec2 preferred_scoring_pos_rel = g.NavWindow->RootWindowForNav->NavPreferredScoringPosRel[g.NavLayer];
     SetNavID(result->ID, g.NavLayer, result->FocusScopeId, result->RectRel);
 

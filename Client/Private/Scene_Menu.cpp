@@ -11,6 +11,11 @@ CScene_Menu::CScene_Menu(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 
 HRESULT CScene_Menu::Initialize()
 {
+	if (FAILED(__super::Initialize()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to __super::Initialize");
+	}
+
 	if (FAILED(Ready_Background()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Initialize", "Failed to Ready_Background");

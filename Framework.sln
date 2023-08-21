@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00. Header", "00. Header", 
 		Public\Header\Public_Macro.h = Public\Header\Public_Macro.h
 		Public\Header\Public_Settings.h = Public\Header\Public_Settings.h
 		Public\Header\Public_Typedef.h = Public\Header\Public_Typedef.h
+		Public\Header\Public_Shader.h = Public\Header\Public_Shader.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Public", "Public", "{F2832D67-1A78-42FC-901C-F77E424EF0F0}"

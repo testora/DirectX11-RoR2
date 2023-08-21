@@ -23,7 +23,12 @@ HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner)
 		MSG_RETURN(E_FAIL, "CGrounding::Initialize", "Failed to __super::Initialize");
 	}
 
-	shared_ptr<CTransform> pOwnerTransform = m_pOwner->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	if (m_pOwner.expired())
+	{
+		MSG_RETURN(E_FAIL, "CGrounding::Initialize", "weak_ptr Expired: m_pOwner");
+	}
+
+	shared_ptr<CTransform> pOwnerTransform = m_pOwner.lock()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 	if (nullptr == pOwnerTransform)
 	{
 		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Component");
