@@ -20,6 +20,7 @@ namespace Engine
 		float2(XMFLOAT2 _rhs) : XMFLOAT2(_rhs) {}
 		float2(XMVECTOR _vector) { XMStoreFloat2(this, _vector); }
 
+		_float length() const noexcept;
 		float2 normalize() const noexcept;
 
 		// assignment operators
@@ -72,6 +73,7 @@ namespace Engine
 		float3(XMFLOAT3 _rhs) : XMFLOAT3(_rhs) {}
 		float3(XMVECTOR _vector) { XMStoreFloat3(this, _vector); }
 
+		_float length() const noexcept;
 		float3 normalize() const noexcept;
 
 		// assignment operators
@@ -125,6 +127,7 @@ namespace Engine
 		float4(XMFLOAT4 _rhs) : XMFLOAT4(_rhs) {}
 		float4(XMVECTOR _vector) { XMStoreFloat4(this, _vector); }
 
+		_float length() const noexcept;
 		float4 normalize() const noexcept;
 
 		// assignment operators

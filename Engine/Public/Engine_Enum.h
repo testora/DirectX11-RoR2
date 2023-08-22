@@ -30,8 +30,8 @@ enum class COMPONENT
 enum class BEHAVIOR
 {
 	PHYSICS,
-	CONTROL,
 	GROUNDING,
+	CONTROL,
 	MAX
 };
 

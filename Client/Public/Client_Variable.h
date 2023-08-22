@@ -41,3 +41,8 @@
 #define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layers:Player")
 
 #pragma endregion
+#pragma region Grid Layer
+
+#define GRID_TERRAIN										TEXT("Grid:Terrain")
+
+#pragma endregion

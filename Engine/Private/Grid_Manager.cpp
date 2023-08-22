@@ -7,7 +7,7 @@
 
 HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSize)
 {
-	m_arrGrids	= Function::CreateDynamicArray<Grids>(IDX(_eSceneMax), false);
+	m_arrGridLayers	= Function::CreateDynamicArray<GridLayers>(IDX(_eSceneMax), false);
 
 	m_vGridSize	= _vGridSize;
 
@@ -16,7 +16,7 @@ HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSiz
 	return S_OK;
 }
 
-HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameObject> _pGameObject)
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<CGameObject> _pGameObject)
 {
 	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
 	{
@@ -73,13 +73,13 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameOb
 				{
 					for (_float z = vMinKey.z; z <= vMaxKey.z; z += m_vGridSize.z)
 					{
-						auto& Grids = m_arrGrids[IDX(_eScene)];
-						if (Grids.end() == Grids.find(_float3(x, y, z)))
+						auto& GridLayer = m_arrGridLayers[IDX(_eScene)];
+						if (GridLayer[_strGridLayerTag].end() == GridLayer[_strGridLayerTag].find(_float3(x, y, z)))
 						{
-							Grids[_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
+							GridLayer[_strGridLayerTag][_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
 						}
 
-						Grids[_float3(x, y, z)]->Add_Polygon(pairVertices.first, _uint3(_i0, _i1, _i2));
+						GridLayer[_strGridLayerTag][_float3(x, y, z)]->Add_Polygon(pairVertices.first, _uint3(_i0, _i1, _i2));
 					}
 				}
 			}
@@ -91,36 +91,82 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, shared_ptr<CGameOb
 	return S_OK;
 }
 
-HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene)
+HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene, const wstring& _strGridLayerTag)
 {
 	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
 	{
 		MSG_RETURN(E_FAIL, "CGrid_Manager::Reset_Grids", "Invalid Range: SCENE");
 	}
 
-	m_arrGrids[IDX(_eScene)].clear();
+	if (_strGridLayerTag.empty())
+	{
+		m_arrGridLayers[IDX(_eScene)].clear();
+	}
+	else
+	{
+		m_arrGridLayers[IDX(_eScene)][_strGridLayerTag].clear();
+	}
 
 	return S_OK;
 }
 
-_float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
+_float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
 {
+	m_mmapRaycastGrid.clear();
+
 	_vector vRayDirection = XMVector3Normalize(_vRayDirection);
 
 	for (size_t i = 0; i < IDX(m_eSceneMax); ++i)
 	{
-		for (auto& pair : m_arrGrids[i])
+		for (auto& layer : m_arrGridLayers[i])
+		{
+			for (auto& grid : layer.second)
+			{
+				DirectX::BoundingBox aabbGrid(grid.first + m_vGridSize * .5f, m_vGridSize * .5f);
+
+				_float fDist = 0.f;
+				if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
+				{
+					if (fDist < _fRange)
+					{
+						m_mmapRaycastGrid.emplace(fDist, grid.second);
+					}
+				}
+			}
+		}
+	}
+
+	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange);
+}
+
+_float3 CGrid_Manager::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+{
+	m_mmapRaycastGrid.clear();
+
+	_vector vRayDirection = XMVector3Normalize(_vRayDirection);
+
+	for (size_t i = 0; i < IDX(m_eSceneMax); ++i)
+	{
+		for (auto& pair : m_arrGridLayers[i][_strGridLayerTag])
 		{
 			DirectX::BoundingBox aabbGrid(pair.first + m_vGridSize * .5f, m_vGridSize * .5f);
 
 			_float fDist = 0.f;
 			if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
 			{
-				m_mmapRaycastGrid.emplace(fDist, pair.second);
+				if (fDist < _fRange)
+				{
+					m_mmapRaycastGrid.emplace(fDist, pair.second);
+				}
 			}
 		}
 	}
 
+	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange);
+}
+
+_float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+{
 	_float fFinalDist = FLT_MAX;
 
 	for (auto& pair : m_mmapRaycastGrid)
@@ -129,9 +175,9 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
 			[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
 			{
 				_float fDist = 0.f;
-				if (TriangleTests::Intersects(_vRayOrigin, vRayDirection, _v0, _v1, _v2, fDist))
+				if (TriangleTests::Intersects(_vRayOrigin, _vRayDirection, _v0, _v1, _v2, fDist))
 				{
-					if (fDist < fFinalDist)
+					if (fDist < _fRange && fDist < fFinalDist)
 					{
 						fFinalDist = fDist;
 					};
@@ -147,7 +193,5 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
 		}
 	}
 
-	m_mmapRaycastGrid.clear();
-
-	return _vRayOrigin + vRayDirection * (fFinalDist == FLT_MAX ? 0.f : fFinalDist);
+	return fFinalDist == FLT_MAX ? 0.f : fFinalDist;
 }

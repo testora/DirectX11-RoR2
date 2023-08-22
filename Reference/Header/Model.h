@@ -20,7 +20,7 @@ public:
 	_uint									Get_BoneIndex(const char* pBoneName);
 
 public:
-	void									Play_Animation(_float fTimeDelta);
+	void									Tick_Animation(_float fTimeDelta);
 
 	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
 	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);

@@ -3,6 +3,12 @@ namespace Engine
 {
 #pragma region _float2
 
+	__forceinline _float
+	float2::length() const noexcept
+	{
+		return XMVectorGetX(XMVector2Length(*this));
+	}
+
 	__forceinline float2
 	float2::normalize() const noexcept
 	{
@@ -257,6 +263,12 @@ namespace Engine
 
 #pragma region _float3
 	
+	__forceinline _float
+	float3::length() const noexcept
+	{
+		return XMVectorGetX(XMVector3Length(*this));
+	}
+
 	__forceinline float3
 	float3::normalize() const noexcept
 	{
@@ -510,6 +522,12 @@ namespace Engine
 #pragma endregion
 
 #pragma region _float4
+
+	__forceinline _float
+	float4::length() const noexcept
+	{
+		return XMVectorGetX(XMVector4Length(*this));
+	}
 
 	__forceinline float4
 	float4::normalize() const noexcept

@@ -99,8 +99,13 @@ _uint CModel::Get_BoneIndex(const char* _pBoneName)
 	return static_cast<_uint>(m_vecBones.size());
 }
 
-void CModel::Play_Animation(_float _fTimeDelta)
+void CModel::Tick_Animation(_float _fTimeDelta)
 {
+	if (MODEL::NONANIM == m_eType)
+	{
+		return;
+	}
+
 	m_vecAnimations[m_iCurrentAnimIdx]->Update(_fTimeDelta, m_vecBones);
 
 	for (auto pBone : m_vecBones)

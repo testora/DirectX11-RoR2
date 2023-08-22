@@ -4,7 +4,7 @@
 #include "ObjectLayer.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include "VIBuffer.h"
+#include "Physics.h"
 
 CGrounding::CGrounding(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CBehavior(_pDevice, _pContext, BEHAVIOR::GROUNDING)
@@ -16,7 +16,7 @@ CGrounding::CGrounding(const CGrounding& _rhs)
 {
 }
 
-HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner)
+HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner, const wstring& _strTerrainGridLayerTag)
 {
 	if (FAILED(__super::Initialize(_pOwner)))
 	{
@@ -31,10 +31,18 @@ HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner)
 	shared_ptr<CTransform> pOwnerTransform = m_pOwner.lock()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 	if (nullptr == pOwnerTransform)
 	{
-		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Component");
+		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Component: CTransform");
 	}
 
-	m_pOwnerTransform = pOwnerTransform;
+	shared_ptr<CPhysics> pOwnerPhysics = m_pOwner.lock()->Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS);
+	if (nullptr == pOwnerPhysics)
+	{
+		MSG_RETURN(E_FAIL, "CControl::Initialize", "Failed to Get_Behavior: CPhysics");
+	}
+
+	m_pOwnerTransform			= pOwnerTransform;
+	m_pOwnerPhysics				= pOwnerPhysics;
+	m_strTerrainGridLayerTag	= _strTerrainGridLayerTag;
 
 	return S_OK;
 }
@@ -42,12 +50,13 @@ HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner)
 void CGrounding::Tick(_float _fTimeDelta)
 {
 	_float3 vPosition = Intersect_Terrain();
-	if (vPosition == m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 2.f, 0.f))
+	if (vPosition == m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 1.f, 0.f))
 	{
 		return;
 	}
 
 	m_pOwnerTransform->Set_State(TRANSFORM::POSITION, _float4(vPosition, 1.f));
+	m_pOwnerPhysics->Flattern(false, true, false);
 }
 
 void CGrounding::Late_Tick(_float _fTimeDelta)
@@ -56,14 +65,14 @@ void CGrounding::Late_Tick(_float _fTimeDelta)
 
 _float3 CGrounding::Intersect_Terrain()
 {
-	return CGrid_Manager::Get_Instance()->Raycast(m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 2.f, 0.f), _float3(0.f, -1.f, 0.f));
+	return CGrid_Manager::Get_Instance()->Raycast(m_strTerrainGridLayerTag, m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 1.f, 0.f), _float3(0.f, -1.f, 0.f), 1.f);
 }
 
-shared_ptr<CGrounding> CGrounding::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<class CGameObject> _pOwner)
+shared_ptr<CGrounding> CGrounding::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<class CGameObject> _pOwner, const wstring& _strTerrainGridLayerTag)
 {
 	shared_ptr<CGrounding> pInstance = make_private_shared(CGrounding, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_pOwner)))
+	if (FAILED(pInstance->Initialize(_pOwner, _strTerrainGridLayerTag)))
 	{
 		MSG_RETURN(nullptr, "CGrounding::Create", "Failed to Initialize");
 	}

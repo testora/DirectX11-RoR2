@@ -114,7 +114,7 @@ HRESULT CScene_Test::Ready_Terrain()
 	pLayer->Iterate_Objects(
 		[&](shared_ptr<CGameObject> _pTerrain)->_bool
 		{
-			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, _pTerrain);
+			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, GRID_TERRAIN, _pTerrain);
 
 			return false;
 		}

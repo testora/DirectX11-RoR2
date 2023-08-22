@@ -100,6 +100,13 @@ void CControl::Handle_Input(_float _fTimeDelta)
 			m_pTargetTransform->Translate(m_pTargetTransform->Get_State(TRANSFORM::RIGHT).normalize() * m_pCharacterDesc->fRightSpeed * _fTimeDelta);
 		}
 	}
+	if (CGameInstance::Get_Instance()->Key_Down(CONTROL_JUMP))
+	{
+		if (m_pTargetPhysics)
+		{
+			m_pTargetPhysics->Force(_float3(0.f, 1.f, 0.f), m_pCharacterDesc->fJumpPower);
+		}
+	}
 }
  
 shared_ptr<CControl> CControl::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)

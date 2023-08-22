@@ -70,7 +70,12 @@ HRESULT CGameObject::Initialize(any _arg)
 
 void CGameObject::Tick(_float _fTimeDelta)
 {
-	for(auto& iter : m_umapBehavior)
+	if (shared_ptr<CModel> pModel = m_pModel.lock())
+	{
+		pModel->Tick_Animation(_fTimeDelta);
+	}
+
+	for (auto& iter : m_umapBehavior)
 	{
 		iter.second->Tick(_fTimeDelta);
 	}
@@ -287,15 +292,15 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext, shared_from_this()));
+		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext, shared_from_this(), &m_tCharacterDesc));
+		break;
+
+	case BEHAVIOR::GROUNDING:
+		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(m_pDevice, m_pContext, shared_from_this(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
 		break;
 
 	case BEHAVIOR::CONTROL:
 		m_umapBehavior.emplace(_eBehavior, CControl::Create(m_pDevice, m_pContext, shared_from_this(), &m_tCharacterDesc));
-		break;
-
-	case BEHAVIOR::GROUNDING:
-		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(m_pDevice, m_pContext, shared_from_this()));
 		break;
 
 	default:

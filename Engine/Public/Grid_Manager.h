@@ -16,15 +16,20 @@ public:
 	_float3																Get_GridSize() const	{ return m_vGridSize; }
 
 public:
-	HRESULT																Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
-	HRESULT																Reset_Grids(const SCENE);
+	HRESULT																Register_VIBuffer(const SCENE, const wstring& strGridLayerTag, shared_ptr<class CGameObject>);
+	HRESULT																Reset_Grids(const SCENE, const wstring& strGridLayerTag = wstring());
 
-	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
+	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float3																Raycast(const wstring& strGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+
+private:
+	_float																Raycast_Distance(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
 
 private:
 	typedef unordered_map<_float3, shared_ptr<class CGrid>, FLOAT3HASH>	Grids;
+	typedef unordered_map<wstring, Grids>								GridLayers;
 
-	unique_ptr<Grids[]>													m_arrGrids;
+	unique_ptr<GridLayers[]>											m_arrGridLayers;
 
 	multimap<_float, shared_ptr<class CGrid>>							m_mmapRaycastGrid;
 

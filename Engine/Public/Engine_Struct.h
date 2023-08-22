@@ -125,7 +125,10 @@ namespace Engine
 		float		fLeftSpeed;
 		float		fBackwardSpeed;
 		float		fRightSpeed;
+		float		fJumpPower;
 
+		XMFLOAT3	vMaxSpeed;
+		XMFLOAT3	vResist;
 	} CHARACTERDESC;
 
 #pragma endregion

@@ -97,10 +97,11 @@ public:
 
 	_float3										Get_GridSize();
 
-	HRESULT										Register_VIBuffer(const SCENE, shared_ptr<class CGameObject>);
-	HRESULT										Reset_Grids(const SCENE);
+	HRESULT										Register_VIBuffer(const SCENE, const wstring& strGridLayerTag, shared_ptr<class CGameObject>);
+	HRESULT										Reset_Grids(const SCENE, const wstring& strGridLayerTag = wstring());
 
-	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection);
+	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float3										Raycast(const wstring& strGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
 
 #pragma endregion
 #pragma region Grid Manager

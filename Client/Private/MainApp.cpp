@@ -20,9 +20,9 @@ CMainApp::~CMainApp()
 	CMainApp::Destroy_Instance();
 
 #ifdef _DEBUG
-
-	if (ACTIVATE_IMGUI) CImGui_Manager::Destroy_Instance();
-
+#if ACTIVATE_IMGUI
+	CImGui_Manager::Destroy_Instance();
+#endif
 #endif
 
 #ifdef D3D11_LIVE_OBJECT_REF_COUNTER_CHECKER
@@ -72,15 +72,12 @@ HRESULT CMainApp::Initialize()
 	}
 
 #ifdef _DEBUG
-
-	if (ACTIVATE_IMGUI)
+#if	ACTIVATE_IMGUI
+	if (FAILED(m_pImGui_Manager->Initialize(g_hWnd, m_pDevice, m_pContext)))
 	{
-		if (FAILED(m_pImGui_Manager->Initialize(g_hWnd, m_pDevice, m_pContext)))
-		{
-			MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pImGui_Manager->Initialize");
-		}
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pImGui_Manager->Initialize");
 	}
-
+#endif
 #endif
 
 	if (FAILED(Default_Settings()))

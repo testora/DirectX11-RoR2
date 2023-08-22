@@ -83,7 +83,7 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 
 #ifdef _DEBUG
 
-	if (::AllocConsole() == TRUE && ACTIVATE_CONSOLE)
+	if (ACTIVATE_CONSOLE && ::AllocConsole() == TRUE)
 	{
 		FILE* nfp[3];
 		freopen_s(nfp + 0, "CONOUT$", "rb", stdin);
@@ -495,34 +495,44 @@ _float3 CGameInstance::Get_GridSize()
 	return m_pGrid_Manager->Get_GridSize();
 }
 
-HRESULT CGameInstance::Register_VIBuffer(const SCENE _eScene, shared_ptr<class CGameObject> _pGameObject)
+HRESULT CGameInstance::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<class CGameObject> _pObject)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Register_VIBuffer", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Register_VIBuffer(_eScene, _pGameObject);
+	return m_pGrid_Manager->Register_VIBuffer(_eScene, _strGridLayerTag, _pObject);
 }
 
-HRESULT CGameInstance::Reset_Grids(const SCENE _eScene)
+HRESULT CGameInstance::Reset_Grids(const SCENE _eScene, const wstring& _strGridLayerTag)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Reset_Grids", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Reset_Grids(_eScene);
+	return m_pGrid_Manager->Reset_Grids(_eScene, _strGridLayerTag);
 }
 
-_float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection)
+_float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(_vRayOrigin, "CGameInstance::Raycast", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Raycast(_vRayOrigin, _vRayDirection);
+	return m_pGrid_Manager->Raycast(_vRayOrigin, _vRayDirection, _fRange);
+}
+
+_float3 CGameInstance::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+{
+	if (nullptr == m_pGrid_Manager)
+	{
+		MSG_RETURN(_vRayOrigin, "CGameInstance::Raycast", "Null Exception: m_pGrid_Manager");
+	}
+
+	return m_pGrid_Manager->Raycast(_strGridLayerTag, _vRayOrigin, _vRayDirection, _fRange);
 }
 
 #pragma endregion

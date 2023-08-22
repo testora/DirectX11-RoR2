@@ -18,6 +18,10 @@
 
 #pragma endregion
 
+#pragma region INGAME - System
+
+#pragma endregion
+
 #pragma region INGAME - Camera
 
 #define MAINCAM_SENSITIVITY_PITCH		75.0f

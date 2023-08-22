@@ -54,20 +54,19 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 	__super::Late_Tick(_fTimeDelta);
 
 #ifdef _DEBUG
-	if (ACTIVATE_IMGUI)
+#if ACTIVATE_IMGUI
+	if (CImGui_Manager::Get_Instance()->Is_Enable())
 	{
-		if (CImGui_Manager::Get_Instance()->Is_Enable())
-		{
-			ImGui::Begin("MainCam");
-			ImGui::Text("Position: ");
-			ImGui::Text("X: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).x);
-			ImGui::SameLine();
-			ImGui::Text("Y: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).y);
-			ImGui::SameLine();
-			ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
-			ImGui::End();
-		}
+		ImGui::Begin("MainCam");
+		ImGui::Text("Position: ");
+		ImGui::Text("X: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).x);
+		ImGui::SameLine();
+		ImGui::Text("Y: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).y);
+		ImGui::SameLine();
+		ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
+		ImGui::End();
 	}
+#endif
 #endif
 
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
@@ -112,6 +111,11 @@ void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
 void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
 {
 	_float3 vMove{};
+
+	if (CGameInstance::Get_Instance()->Is_CursorOn())
+	{
+		return;
+	}
 
 	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_FORWARD))
 	{
