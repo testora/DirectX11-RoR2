@@ -3,8 +3,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-CPhysics::CPhysics(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CBehavior(_pDevice, _pContext, BEHAVIOR::PHYSICS)
+CPhysics::CPhysics()
+	: CBehavior(BEHAVIOR::PHYSICS)
 {
 }
 
@@ -93,9 +93,9 @@ void CPhysics::Terminate()
 	m_vVelocity = XMVectorClamp(m_vVelocity, -_float3(m_pCharacterDesc->vMaxSpeed), _float3(m_pCharacterDesc->vMaxSpeed));
 }
 
-shared_ptr<CPhysics> CPhysics::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+shared_ptr<CPhysics> CPhysics::Create(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
 {
-	shared_ptr<CPhysics> pInstance = make_private_shared(CPhysics, _pDevice, _pContext);
+	shared_ptr<CPhysics> pInstance = make_private_shared(CPhysics);
 
 	if (FAILED(pInstance->Initialize(_pOwner, _pCharacterDesc)))
 	{

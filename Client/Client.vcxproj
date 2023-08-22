@@ -49,6 +49,7 @@
     <ClInclude Include="Public\Thread_Loader.h" />
     <ClInclude Include="Public\Terrain.h" />
     <ClInclude Include="Public\RailGunner.h" />
+    <ClInclude Include="Public\TitanicPlains.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGui\imgui.cpp">
@@ -104,6 +105,7 @@
     <ClCompile Include="Private\Scene_Test.cpp" />
     <ClCompile Include="Private\Terrain.cpp" />
     <ClCompile Include="Private\RailGunner.cpp" />
+    <ClCompile Include="Private\TitanicPlains.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

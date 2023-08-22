@@ -77,12 +77,13 @@ VS_OUT VS_MAIN(VS_IN In)
 		mul(g_mBones[In.vBlendIndices.z], In.vBlendWeights.z) +
 		mul(g_mBones[In.vBlendIndices.w], (1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z)));
 	
-	vector vPosition = mul(vector(In.vPosition, 1.f), mBone);
+	vector vPosition	= mul(vector(In.vPosition, 1.f), mBone);
+	vector vNormal		= mul(vector(In.vNormal, 0.f), mBone);
 
-	Out.vPosition	= mul(vPosition, mWVP);
-	Out.vNormal		= mul(vector(In.vNormal, 0.f), g_mWorld);
-	Out.vTexCoord	= In.vTexCoord;
-	Out.vWorldPos	= mul(vPosition, g_mWorld);
+	Out.vPosition		= mul(vPosition, mWVP);
+	Out.vNormal			= mul(vNormal, g_mWorld);
+	Out.vTexCoord		= In.vTexCoord;
+	Out.vWorldPos		= mul(vPosition, g_mWorld);
 
 	return Out;
 }

@@ -109,7 +109,7 @@ shared_ptr<CTransform> CTransform::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<
 	return make_private_shared(CTransform, _pDevice, _pContext);
 }
 
-shared_ptr<CComponent> CTransform::Clone(any _arg)
+shared_ptr<CComponent> CTransform::Clone(any)
 {
 	return make_private_shared_copy(CTransform, *this);
 }

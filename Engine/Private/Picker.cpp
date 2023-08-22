@@ -22,7 +22,7 @@ void CPicker::Tick()
 	_float3		vCursor(2.f * ptCursor.x / rcClient.right - 1.f, -2.f * ptCursor.y / rcClient.bottom + 1.f, 0.f);
 
 	_float4x4	mView = CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW);
-	_float4x4	mProj = CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ);
+	_float4x4	mProj = CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION);
 
 	m_vRay[IDX(PICKER::WORLD)] = _float3(XMVector3TransformNormal(XMVector3TransformCoord(vCursor, mProj.inverse()), mView.inverse())).normalize();
 	m_vOrg[IDX(PICKER::WORLD)] = XMVector3TransformCoord(_float3(0.f, 0.f, 0.f), mView.inverse());

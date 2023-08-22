@@ -192,7 +192,7 @@ HRESULT CMainApp::Default_Settings()
 HRESULT CMainApp::Ready_Component_Prototype()
 {
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN,
-		CRenderer::Create(m_pDevice, m_pContext))))
+		m_pMainRenderer = CRenderer::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_RENDERER_MAIN");
 	}
@@ -233,10 +233,10 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_RECT");
 	}
 
-	m_pMainRenderer = dynamic_pointer_cast<CRenderer>(m_pGameInstance->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
-	if (nullptr == m_pMainRenderer)
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_COLLIDER,
+		CCollider::Create(m_pDevice, m_pContext))))
 	{
-		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Clone_Component: CRenderer");
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_COLLIDER");
 	}
 
 	return S_OK;

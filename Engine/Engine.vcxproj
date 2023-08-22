@@ -19,6 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Bounding.h" />
+    <ClInclude Include="Public\Bounding_AABB.h" />
+    <ClInclude Include="Public\Bounding_OBB.h" />
+    <ClInclude Include="Public\Bounding_Sphere.h" />
+    <ClInclude Include="Public\Collider.h" />
+    <ClInclude Include="Public\DebugDraw.h" />
     <ClInclude Include="Public\Grid_Manager.h" />
     <ClInclude Include="Public\Grid.h" />
     <ClInclude Include="Public\Grounding.h" />
@@ -69,6 +75,12 @@
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Bounding.cpp" />
+    <ClCompile Include="Private\Bounding_AABB.cpp" />
+    <ClCompile Include="Private\Bounding_OBB.cpp" />
+    <ClCompile Include="Private\Bounding_Sphere.cpp" />
+    <ClCompile Include="Private\Collider.cpp" />
+    <ClCompile Include="Private\DebugDraw.cpp" />
     <ClCompile Include="Private\Grid_Manager.cpp" />
     <ClCompile Include="Private\Grid.cpp" />
     <ClCompile Include="Private\Grounding.cpp" />

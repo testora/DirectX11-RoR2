@@ -117,6 +117,19 @@ namespace Engine
 	} KEYFRAME;
 
 #pragma endregion
+#pragma region Collider
+
+	typedef struct tagColliderDesc
+	{
+		COLLIDER	eType;
+
+		XMFLOAT3	vPosition;
+		XMFLOAT3	vSize;
+		XMFLOAT3	vRotation;
+		float		fRadius;
+	} COLLIDERDESC;
+
+#pragma endregion
 #pragma region Character
 
 	typedef struct tagCharacterDesc

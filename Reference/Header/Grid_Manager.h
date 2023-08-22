@@ -17,6 +17,7 @@ public:
 
 public:
 	HRESULT																Register_VIBuffer(const SCENE, const wstring& strGridLayerTag, shared_ptr<class CGameObject>);
+	HRESULT																Register_VIBuffer(const SCENE, const wstring& strGridLayerTag, shared_ptr<class CVIBuffer>, shared_ptr<class CTransform>);
 	HRESULT																Reset_Grids(const SCENE, const wstring& strGridLayerTag = wstring());
 
 	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);

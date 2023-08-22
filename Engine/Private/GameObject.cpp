@@ -75,6 +75,14 @@ void CGameObject::Tick(_float _fTimeDelta)
 		pModel->Tick_Animation(_fTimeDelta);
 	}
 
+	if (shared_ptr<CTransform> pTransrom = m_pTransform.lock())
+	{
+		if (shared_ptr<CCollider> pCollider = m_pCollider.lock())
+		{
+			pCollider->Tick_Transformation(pTransrom->Get_Matrix());
+		}
+	}
+
 	for (auto& iter : m_umapBehavior)
 	{
 		iter.second->Tick(_fTimeDelta);
@@ -103,7 +111,7 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 			{
 				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
 			}
-			if (FAILED(pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJ))))
+			if (FAILED(pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION))))
 			{
 				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
 			}
@@ -229,6 +237,7 @@ HRESULT CGameObject::Ready_Behaviors()
 
 HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 {
+#pragma region Add
 	switch (_eComponent)
 	{
 	case COMPONENT::TRANSFORM:
@@ -237,6 +246,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 
 	case COMPONENT::RENDERER:
 	case COMPONENT::SHADER:
+	case COMPONENT::COLLIDER:
 	case COMPONENT::VIBUFFER_RECT:
 		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
@@ -253,7 +263,8 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	default:
 		MSG_RETURN(E_FAIL, "CGameObject::Add_Component", "Invalid Range");
 	}
-
+#pragma endregion
+#pragma region VIBuffer
 	switch (_eComponent)
 	{
 	case COMPONENT::MESH:
@@ -263,14 +274,18 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), true);
 		break;
 	}
-
+#pragma endregion
+#pragma region Weak Pointer
 	switch (_eComponent)
 	{
+	case COMPONENT::TRANSFORM:
+		m_pTransform = Get_Component<CTransform>(_eComponent);
+		break;
 	case COMPONENT::SHADER:
 		m_pShader		= Get_Component<CShader>(_eComponent);
 		break;
-	case COMPONENT::TRANSFORM:
-		m_pTransform	= Get_Component<CTransform>(_eComponent);
+	case COMPONENT::COLLIDER:
+		m_pCollider		= Get_Component<CCollider>(_eComponent);
 		break;
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
@@ -281,6 +296,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 		m_pModel		= Get_Component<CModel>(_eComponent);
 		break;
 	}
+#pragma endregion
 
 	m_bitComponent.set(IDX(_eComponent), true);
 
@@ -292,15 +308,15 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(m_pDevice, m_pContext, shared_from_this(), &m_tCharacterDesc));
+		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(shared_from_this(), &m_tCharacterDesc));
 		break;
 
 	case BEHAVIOR::GROUNDING:
-		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(m_pDevice, m_pContext, shared_from_this(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
+		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(shared_from_this(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
 		break;
 
 	case BEHAVIOR::CONTROL:
-		m_umapBehavior.emplace(_eBehavior, CControl::Create(m_pDevice, m_pContext, shared_from_this(), &m_tCharacterDesc));
+		m_umapBehavior.emplace(_eBehavior, CControl::Create(shared_from_this(), &m_tCharacterDesc));
 		break;
 
 	default:

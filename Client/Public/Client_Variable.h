@@ -6,6 +6,7 @@
 
 #define PROTOTYPE_GAMEOBJECT_BACKGROUND						TEXT("Prototype:GameObject:Background")
 #define PROTOTYPE_GAMEOBJECT_TERRAIN						TEXT("Prototype:GameObject:Terrain")
+#define PROTOTYPE_GAMEOBJECT_TITANICPLAINS					TEXT("Prototype:GameObject:TitanicPlains")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER						TEXT("Prototype:GameObject:RailGunner")
 
 #pragma	endregion
@@ -25,10 +26,13 @@
 #define PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP				TEXT("Prototype:Component:Texture:HeightMap")
 #define PROTOTYPE_COMPONENT_TEXTURE_BRUSH					TEXT("Prototype:Component:Texture:Brush")
 
+#define PROTOTYPE_COMPONENT_COLLIDER						TEXT("Prototype:Component:Collider")
+
 #define PROTOTYPE_COMPONENT_VIBUFFER_RECT					TEXT("Prototype:Component:VIBuffer:Rect")
 #define PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN				TEXT("Prototype:Component:VIBuffer:Terrain")
 
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER				TEXT("Prototype:Component:Model:RailGunner")
+#define PROTOTYPE_COMPONENT_MODEL_TITANICPLAINS				TEXT("Prototype:Component:Model:TitanicPlains")
 
 #pragma endregion
 #pragma region Layer

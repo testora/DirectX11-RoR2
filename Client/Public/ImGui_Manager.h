@@ -2,6 +2,7 @@
 #include "Client_Define.h"
 
 #ifdef _DEBUG
+
 BEGIN(Client)
 
 class CImGui_Manager final : public CSingleton<CImGui_Manager>
@@ -29,4 +30,5 @@ private:
 };
 
 END
+
 #endif

@@ -30,7 +30,7 @@ HRESULT CBackground::Initialize(any _arg)
 	m_pTransform->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
 	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::VIEW, XMMatrixIdentity());
-	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::PROJ, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
+	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::PROJECTION, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
 
 	return S_OK;
 }
@@ -47,7 +47,7 @@ void CBackground::Late_Tick(_float _fTimeDelta)
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CBackground::Render(_uint _iPassIndex)
+HRESULT CBackground::Render(_uint)
 {
 	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, SHADER_TEXDIF)))
 	{

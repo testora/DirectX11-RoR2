@@ -82,8 +82,8 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 	}
 
 #ifdef _DEBUG
-
-	if (ACTIVATE_CONSOLE && ::AllocConsole() == TRUE)
+#if ACTIVATE_CONSOLE
+	if (::AllocConsole() == TRUE)
 	{
 		FILE* nfp[3];
 		freopen_s(nfp + 0, "CONOUT$", "rb", stdin);
@@ -91,7 +91,7 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		freopen_s(nfp + 2, "CONOUT$", "wb", stderr);
 		std::ios::sync_with_stdio();
 	}
-
+#endif
 #endif
 
 	return S_OK;
@@ -586,6 +586,8 @@ void CGameInstance::Release_Engine()
 	CTimer_Manager::Destroy_Instance();
 
 #ifdef _DEBUG
-	if (ACTIVATE_CONSOLE)	FreeConsole();
+#if ACTIVATE_CONSOLE
+	FreeConsole();
+#endif
 #endif
 }

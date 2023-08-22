@@ -183,6 +183,17 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 	return _pShader->Bind_MatrixArray(_pConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones), g_iMaxBones);
 }
 
+void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _fn)
+{
+	for (size_t i = 0; i < m_iNumMeshes; ++i)
+	{
+		if (_fn(m_vecMeshes[i]))
+		{
+			return;
+		}
+	}
+}
+
 HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
 {
 	HRESULT hr = S_OK;

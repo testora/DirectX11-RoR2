@@ -92,7 +92,7 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CRailGunner::Render(_uint _iPassIndex)
+HRESULT CRailGunner::Render(_uint)
 {
 	if (FAILED(__super::Render(0)))
 	{
@@ -109,28 +109,16 @@ HRESULT CRailGunner::Ready_Components()
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
-	if (nullptr == m_pTransform)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pTransform");
-	}
-
-	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
+	m_pRenderer = Get_Component<CRenderer>(COMPONENT::RENDERER);
 	if (nullptr == m_pRenderer)
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pRenderer");
 	}
 
-	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
-	if (nullptr == m_pShader)
+	m_pTransform = Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pShader");
-	}
-
-	m_pModel = dynamic_pointer_cast<CModel>(m_umapComponent[COMPONENT::MODEL]);
-	if (nullptr == m_pModel)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pModel");
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pTransform");
 	}
 
 	return S_OK;
@@ -142,19 +130,19 @@ shared_ptr<CRailGunner> CRailGunner::Create(ComPtr<ID3D11Device> _pDevice, ComPt
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_RETURN(nullptr, "CTerrain::Create", "Failed to Initialize_Prototype");
+		MSG_RETURN(nullptr, "CRailGunner::Create", "Failed to Initialize_Prototype");
 	}
 
 	return pInstance;
 }
 
-shared_ptr<CGameObject> CRailGunner::Clone(any _arg)
+shared_ptr<CGameObject> CRailGunner::Clone(any)
 {
 	shared_ptr<CRailGunner> pInstance = make_private_shared_copy(CRailGunner, *this);
 
-	if (FAILED(pInstance->Initialize(_arg)))
+	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_RETURN(nullptr, "CTerrain::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CRailGunner::Create", "Failed to Initialize");
 	}
 
 	return pInstance;

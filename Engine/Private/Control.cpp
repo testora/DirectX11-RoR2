@@ -3,8 +3,8 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 
-CControl::CControl(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CBehavior(_pDevice, _pContext, BEHAVIOR::CONTROL)
+CControl::CControl()
+	: CBehavior(BEHAVIOR::CONTROL)
 {
 }
 
@@ -109,9 +109,9 @@ void CControl::Handle_Input(_float _fTimeDelta)
 	}
 }
  
-shared_ptr<CControl> CControl::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+shared_ptr<CControl> CControl::Create(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
 {
-	shared_ptr<CControl> pInstance = make_private_shared(CControl, _pDevice, _pContext);
+	shared_ptr<CControl> pInstance = make_private_shared(CControl);
 
 	if (FAILED(pInstance->Initialize(_pOwner, _pCharacterDesc)))
 	{

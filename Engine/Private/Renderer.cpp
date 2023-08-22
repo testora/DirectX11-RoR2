@@ -147,7 +147,7 @@ shared_ptr<CRenderer> CRenderer::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID
 	return pInstance;
 }
 
-shared_ptr<CComponent> CRenderer::Clone(any _arg)
+shared_ptr<CComponent> CRenderer::Clone(any)
 {
 	return shared_from_this();
 }

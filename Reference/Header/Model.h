@@ -26,6 +26,8 @@ public:
 	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
 	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const char* pConstantName);
 
+	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
+
 private:
 	HRESULT									Ready_Meshes(_matrixf mPivot);
 	HRESULT									Ready_Materials(const char* pModelPath);

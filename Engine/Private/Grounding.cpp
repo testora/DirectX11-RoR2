@@ -6,8 +6,8 @@
 #include "Transform.h"
 #include "Physics.h"
 
-CGrounding::CGrounding(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CBehavior(_pDevice, _pContext, BEHAVIOR::GROUNDING)
+CGrounding::CGrounding()
+	: CBehavior(BEHAVIOR::GROUNDING)
 {
 }
 
@@ -68,9 +68,9 @@ _float3 CGrounding::Intersect_Terrain()
 	return CGrid_Manager::Get_Instance()->Raycast(m_strTerrainGridLayerTag, m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 1.f, 0.f), _float3(0.f, -1.f, 0.f), 1.f);
 }
 
-shared_ptr<CGrounding> CGrounding::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, shared_ptr<class CGameObject> _pOwner, const wstring& _strTerrainGridLayerTag)
+shared_ptr<CGrounding> CGrounding::Create(shared_ptr<class CGameObject> _pOwner, const wstring& _strTerrainGridLayerTag)
 {
-	shared_ptr<CGrounding> pInstance = make_private_shared(CGrounding, _pDevice, _pContext);
+	shared_ptr<CGrounding> pInstance = make_private_shared(CGrounding);
 
 	if (FAILED(pInstance->Initialize(_pOwner, _strTerrainGridLayerTag)))
 	{

@@ -256,7 +256,7 @@ shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11
 	return pInstance;
 }
 
-shared_ptr<CComponent> CShader::Clone(any _arg)
+shared_ptr<CComponent> CShader::Clone(any)
 {
 	return shared_from_this();
 }

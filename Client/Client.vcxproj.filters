@@ -73,8 +73,14 @@
     <Filter Include="03. Tool\00. ImGui\02. Source">
       <UniqueIdentifier>{9fcd03a0-2392-4375-a152-67d982431874}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\02. Player_Character">
+    <Filter Include="06. GameObject\03. Player_Character">
       <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\02. Terrain">
+      <UniqueIdentifier>{e68124d5-8f8d-4403-9c7a-cd676bc95e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\02. Terrain\01. GolemPlains">
+      <UniqueIdentifier>{4733f48e-72a4-4f07-8a84-45f846e319d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -166,7 +172,10 @@
       <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner.h">
-      <Filter>06. GameObject\02. Player_Character</Filter>
+      <Filter>06. GameObject\03. Player_Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\TitanicPlains.h">
+      <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -222,7 +231,10 @@
       <Filter>03. Tool\00. ImGui\00. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner.cpp">
-      <Filter>06. GameObject\02. Player_Character</Filter>
+      <Filter>06. GameObject\03. Player_Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\TitanicPlains.cpp">
+      <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

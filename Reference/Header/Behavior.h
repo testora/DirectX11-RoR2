@@ -6,7 +6,7 @@ BEGIN(Engine)
 class ENGINE_DLL CBehavior abstract
 {
 protected:
-	explicit CBehavior(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const BEHAVIOR);
+	explicit CBehavior(const BEHAVIOR);
 	explicit CBehavior(const CBehavior&);
 	virtual ~CBehavior() DEFAULT;
 
@@ -20,9 +20,6 @@ public:
 
 protected:
 	weak_ptr<class CGameObject>		m_pOwner;
-
-	ComPtr<ID3D11Device>			m_pDevice;
-	ComPtr<ID3D11DeviceContext>		m_pContext;
 
 private:
 	const BEHAVIOR					m_eType;

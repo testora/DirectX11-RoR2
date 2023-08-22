@@ -19,6 +19,7 @@ enum class COMPONENT
 	TRANSFORM,
 	SHADER,
 	TEXTURE,
+	COLLIDER,
 	MODEL,
 	VIBUFFER,
 	MESH,
@@ -35,7 +36,8 @@ enum class BEHAVIOR
 	MAX
 };
 
-enum class PIPELINE		{ WORLD, VIEW, PROJ, MAX };
+enum class PIPELINE		{ WORLD, VIEW, PROJECTION, MAX };
 enum class TRANSFORM	{ RIGHT, UP, LOOK, POSITION, MAX };
 enum class MODEL		{ NONANIM, ANIM, MAX };
+enum class COLLIDER		{ SPHERE, AABB, OBB, MAX };
 enum class PICKER		{ LOCAL, WORLD, MAX };

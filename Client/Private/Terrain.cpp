@@ -101,7 +101,7 @@ void CTerrain::Late_Tick(_float _fTimeDelta)
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CTerrain::Render(_uint _iPassIndex)
+HRESULT CTerrain::Render(_uint)
 {
 	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, SHADER_TEXDIF)))
 	{

@@ -2,8 +2,10 @@
 #include "Grid_Manager.h"
 #include "Grid.h"
 #include "GameObject.h"
-#include "VIBuffer.h"
 #include "Transform.h"
+#include "VIBuffer.h"
+#include "Model.h"
+#include "Mesh.h"
 
 HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSize)
 {
@@ -18,6 +20,8 @@ HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSiz
 
 HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<CGameObject> _pGameObject)
 {
+	HRESULT hr = S_OK;
+
 	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
 	{
 		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Invalid Range: SCENE");
@@ -28,19 +32,58 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception");
 	}
 
-	shared_ptr<CTransform>	pTransform	= _pGameObject->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	shared_ptr<CVIBuffer>	pVIBuffer	= _pGameObject->Get_Component<CVIBuffer>(COMPONENT::VIBUFFER);
+	shared_ptr<CTransform> pTransform = _pGameObject->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	if (nullptr == pTransform)
+	{
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception: CTransform");
+	}
 
-	pVIBuffer->Iterate_Indices(
+	if (shared_ptr<CVIBuffer> pVIBuffer = _pGameObject->Get_Component<CVIBuffer>(COMPONENT::VIBUFFER))
+	{
+		if (FAILED(Register_VIBuffer(_eScene, _strGridLayerTag, pVIBuffer, pTransform)))
+		{
+			MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Failed to Register_VIBuffer");
+		}
+	}
+	else if (shared_ptr<CModel> pModel = _pGameObject->Get_Component<CModel>(COMPONENT::MODEL))
+	{
+		pModel->Iterate_Meshes(
+			[&](shared_ptr<CMesh> _pMesh)
+			{
+				if (FAILED(Register_VIBuffer(_eScene, _strGridLayerTag, _pMesh, pTransform)))
+				{
+					hr = E_FAIL;
+				}
+
+				return false;
+			}
+		);
+	}
+
+	return hr;
+}
+
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<class CVIBuffer> _pVIBuffer, shared_ptr<class CTransform> _pTransform)
+{
+	if (nullptr == _pTransform)
+	{
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception: CTransform");
+	}
+	if (nullptr == _pVIBuffer)
+	{
+		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception: CVIBuffer");
+	}
+
+	_pVIBuffer->Iterate_Indices(
 		[&](_uint _i0, _uint _i1, _uint _i2)->_bool
 		{
-			pair<_float3*, _uint> pairVertices = pVIBuffer->Get_Vertices();
+			pair<_float3*, _uint> pairVertices = _pVIBuffer->Get_Vertices();
 
 			_float3 arrVertex[3] =
 			{
-				 XMVector3TransformCoord(pairVertices.first[_i0], pTransform->Get_Matrix()),
-				 XMVector3TransformCoord(pairVertices.first[_i1], pTransform->Get_Matrix()),
-				 XMVector3TransformCoord(pairVertices.first[_i2], pTransform->Get_Matrix())
+				 XMVector3TransformCoord(pairVertices.first[_i0], _pTransform->Get_Matrix()),
+				 XMVector3TransformCoord(pairVertices.first[_i1], _pTransform->Get_Matrix()),
+				 XMVector3TransformCoord(pairVertices.first[_i2], _pTransform->Get_Matrix())
 			};
 
 			_float3 vMinBound = _float3(
@@ -104,6 +147,11 @@ HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene, const wstring& _strGridL
 	}
 	else
 	{
+		if (m_arrGridLayers[IDX(_eScene)].end() == m_arrGridLayers[IDX(_eScene)].find(_strGridLayerTag))
+		{
+			return S_FALSE;
+		}
+
 		m_arrGridLayers[IDX(_eScene)][_strGridLayerTag].clear();
 	}
 
@@ -147,6 +195,11 @@ _float3 CGrid_Manager::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOr
 
 	for (size_t i = 0; i < IDX(m_eSceneMax); ++i)
 	{
+		if (m_arrGridLayers[i].end() == m_arrGridLayers[i].find(_strGridLayerTag))
+		{
+			continue;
+		}
+
 		for (auto& pair : m_arrGridLayers[i][_strGridLayerTag])
 		{
 			DirectX::BoundingBox aabbGrid(pair.first + m_vGridSize * .5f, m_vGridSize * .5f);

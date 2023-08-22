@@ -7,7 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CGrounding final : public CBehavior
 {
 private:
-	explicit CGrounding(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	explicit CGrounding();
 	explicit CGrounding(const CGrounding&);
 	virtual ~CGrounding() DEFAULT;
 
@@ -26,7 +26,7 @@ private:
 	shared_ptr<class CPhysics>		m_pOwnerPhysics;
 
 public:
-	static shared_ptr<CGrounding>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, shared_ptr<class CGameObject> pOwner, const wstring& strTerrainGridLayerTag);
+	static shared_ptr<CGrounding>	Create(shared_ptr<class CGameObject> pOwner, const wstring& strTerrainGridLayerTag);
 	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
 };
 

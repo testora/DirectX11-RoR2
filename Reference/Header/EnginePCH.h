@@ -93,6 +93,9 @@ using std::any_cast;
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/ScreenGrab.h"
+#include "DirectXTK/Effects.h"
+#include "DirectXTK/PrimitiveBatch.h"
+#include "DirectXTK/VertexTypes.h"
 #include "FX11/d3dx11effect.h"
 
 #include <d3d11.h>
@@ -100,6 +103,7 @@ using std::any_cast;
 #include <d3dtypes.h>
 
 #include <DirectXMath.h>
+#include <DirectXColors.h>
 #include <DirectXCollision.h>
 
 using namespace DirectX;

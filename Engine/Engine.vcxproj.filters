@@ -106,30 +106,6 @@
     <Filter Include="03. Utility\07. Light\00. Manager">
       <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer">
-      <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. Model">
-      <UniqueIdentifier>{094934b4-8a5e-4350-bf41-d7dd3bf49702}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. Model\00. Bone">
-      <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. Model\01. Animation">
-      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\05. Model\01. Animation\00. Channel">
-      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\01. Mesh">
-      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\02. Rect">
-      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. VIBuffer\03. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\06. Behavior\03. Control">
       <UniqueIdentifier>{2bb2c07c-fa92-4888-a425-9121d78e90db}</UniqueIdentifier>
     </Filter>
@@ -144,6 +120,51 @@
     </Filter>
     <Filter Include="03. Utility\08. Grid\00. Manager">
       <UniqueIdentifier>{34355839-4a07-4717-a464-78af22a140f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model">
+      <UniqueIdentifier>{094934b4-8a5e-4350-bf41-d7dd3bf49702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model\00. Bone">
+      <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model\01. Animation">
+      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model\01. Animation\00. Channel">
+      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer">
+      <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider">
+      <UniqueIdentifier>{162da921-7bd5-4be2-b1e3-c35ad7c18572}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\01. Bounding">
+      <UniqueIdentifier>{f0fd9ddb-11f4-405f-a071-0af47a4ac01c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\01. Bounding\01. AABB">
+      <UniqueIdentifier>{84c1139c-b57f-423a-9681-526154c2e522}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\01. Bounding\00. Sphere">
+      <UniqueIdentifier>{a4ea9cb3-a337-439e-b18d-74afaeefe61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\01. Bounding\02. OBB">
+      <UniqueIdentifier>{ced9f2d6-2e7c-4816-bbe3-84b92a33d25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\00. Manager">
+      <UniqueIdentifier>{a4e5a8be-87d0-4d61-b435-442b8c591b24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\05. Collider\02. DebugDraw">
+      <UniqueIdentifier>{c549d126-1a5a-48f6-a849-a083129e7c4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\00. Mesh">
+      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\01. Rect">
+      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\02. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -211,10 +232,10 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Rect.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\02. Rect</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\01. Rect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer</Filter>
     </ClCompile>
     <ClCompile Include="Private\Engine_Header.cpp">
       <Filter>00. Header\02. Source</Filter>
@@ -226,7 +247,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\03. Terrain</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\02. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Picker.cpp">
       <Filter>03. Utility\09. Picker</Filter>
@@ -238,19 +259,19 @@
       <Filter>03. Utility\07. Light\00. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\Model.cpp">
-      <Filter>03. Utility\05. Component\05. Model</Filter>
+      <Filter>03. Utility\05. Component\06. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Mesh.cpp">
-      <Filter>03. Utility\05. Component\06. VIBuffer\01. Mesh</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\00. Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Private\Bone.cpp">
-      <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
+      <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClCompile>
     <ClCompile Include="Private\Animation.cpp">
-      <Filter>03. Utility\05. Component\05. Model\01. Animation</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
     </ClCompile>
     <ClCompile Include="Private\Channel.cpp">
-      <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation\00. Channel</Filter>
     </ClCompile>
     <ClCompile Include="Private\Control.cpp">
       <Filter>03. Utility\06. Behavior\03. Control</Filter>
@@ -263,6 +284,24 @@
     </ClCompile>
     <ClCompile Include="Private\Grid_Manager.cpp">
       <Filter>03. Utility\08. Grid\00. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Collider.cpp">
+      <Filter>03. Utility\05. Component\05. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Bounding_Sphere.cpp">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\00. Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Bounding_AABB.cpp">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\01. AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Bounding_OBB.cpp">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\02. OBB</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\DebugDraw.cpp">
+      <Filter>03. Utility\05. Component\05. Collider\02. DebugDraw</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Bounding.cpp">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -354,10 +393,10 @@
       <Filter>03. Utility\05. Component\04. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Rect.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\02. Rect</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\01. Rect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Public\Mouse_Manager.h">
       <Filter>02. System\02. Input\00. Mouse</Filter>
@@ -366,7 +405,7 @@
       <Filter>02. System\02. Input\01. Keyboard</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Terrain.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\03. Terrain</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\02. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>03. Utility\00. RAII</Filter>
@@ -381,16 +420,16 @@
       <Filter>03. Utility\07. Light\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\Model.h">
-      <Filter>03. Utility\05. Component\05. Model</Filter>
+      <Filter>03. Utility\05. Component\06. Model</Filter>
     </ClInclude>
     <ClInclude Include="Public\Bone.h">
-      <Filter>03. Utility\05. Component\05. Model\00. Bone</Filter>
+      <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClInclude>
     <ClInclude Include="Public\Animation.h">
-      <Filter>03. Utility\05. Component\05. Model\01. Animation</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
     </ClInclude>
     <ClInclude Include="Public\Channel.h">
-      <Filter>03. Utility\05. Component\05. Model\01. Animation\00. Channel</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation\00. Channel</Filter>
     </ClInclude>
     <ClInclude Include="Public\Control.h">
       <Filter>03. Utility\06. Behavior\03. Control</Filter>
@@ -399,7 +438,7 @@
       <Filter>03. Utility\06. Behavior\02. Grounding</Filter>
     </ClInclude>
     <ClInclude Include="Public\Mesh.h">
-      <Filter>03. Utility\05. Component\06. VIBuffer\01. Mesh</Filter>
+      <Filter>03. Utility\05. Component\07. VIBuffer\00. Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Public\Grid.h">
       <Filter>03. Utility\08. Grid</Filter>
@@ -409,6 +448,24 @@
     </ClInclude>
     <ClInclude Include="Public\Camera.h">
       <Filter>03. Utility\04. GameObject\01. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Collider.h">
+      <Filter>03. Utility\05. Component\05. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Bounding.h">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Bounding_Sphere.h">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\00. Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Bounding_AABB.h">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\01. AABB</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Bounding_OBB.h">
+      <Filter>03. Utility\05. Component\05. Collider\01. Bounding\02. OBB</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\DebugDraw.h">
+      <Filter>03. Utility\05. Component\05. Collider\02. DebugDraw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

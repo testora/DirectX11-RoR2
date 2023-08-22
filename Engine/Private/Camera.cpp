@@ -55,7 +55,7 @@ HRESULT CCamera::Render(_uint _iPassIndex)
 	case TYPE::PERSPECTIVE:
 		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransform->Get_Matrix());
 		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransform->Get_Matrix().inverse());
-		m_pPipeLine->Set_Transform(PIPELINE::PROJ, m_mProj);
+		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION, m_mProj);
 		break;
 	}
 
