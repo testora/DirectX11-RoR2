@@ -18,8 +18,8 @@ public:
 	ComPtr<ID3D11Texture2D>						Get_Texture2D(_uint iTextureIdx = 0) const;
 	HRESULT										Set_Texture2D(ComPtr<ID3D11Texture2D>, D3D11_TEXTURE2D_DESC, _uint iTextureIdx = 0);
 
-	HRESULT										Bind_ShaderResourceView(shared_ptr<class CShader>, const char* pConstantName, _uint iTextureIdx = 0) const;
-	HRESULT										Bind_ShaderResourceViews(shared_ptr<class CShader>, const char* pConstantName);
+	HRESULT										Bind_ShaderResourceView(shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0) const;
+	HRESULT										Bind_ShaderResourceViews(shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
 
 private:
 	vector<ComPtr<ID3D11ShaderResourceView>>	m_vecTexture;

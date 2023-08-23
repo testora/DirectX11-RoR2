@@ -174,7 +174,7 @@
     <ClInclude Include="Public\RailGunner.h">
       <Filter>06. GameObject\03. Player_Character</Filter>
     </ClInclude>
-    <ClInclude Include="Public\TitanicPlains.h">
+    <ClInclude Include="Public\GolemPlains.h">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClInclude>
   </ItemGroup>
@@ -233,7 +233,7 @@
     <ClCompile Include="Private\RailGunner.cpp">
       <Filter>06. GameObject\03. Player_Character</Filter>
     </ClCompile>
-    <ClCompile Include="Private\TitanicPlains.cpp">
+    <ClCompile Include="Private\GolemPlains.cpp">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClCompile>
   </ItemGroup>

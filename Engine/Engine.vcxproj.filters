@@ -467,6 +467,9 @@
     <ClInclude Include="Public\DebugDraw.h">
       <Filter>03. Utility\05. Component\05. Collider\02. DebugDraw</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Engine_Shader.h">
+      <Filter>00. Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Typedef.inl">

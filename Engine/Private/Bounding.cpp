@@ -3,7 +3,7 @@
 
 HRESULT CBounding::Initialize(any _pColliderDesc)
 {
-	m_pColliderDesc = any_cast<const COLLIDERDESC*>(_pColliderDesc);
+	m_pColliderDesc = any_cast<COLLIDERDESC*>(_pColliderDesc);
 
 	return S_OK;
 }

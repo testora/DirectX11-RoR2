@@ -1,8 +1,11 @@
-#define	MAX_LIGHT	32
-#define MAX_BONE	256
+#define	MAX_LIGHT			32
+#define MAX_BONE			256
 
-#define DIRECTIONAL	0
-#define POINT		1
+#define DIRECTIONAL			0
+#define POINT				1
+
+#define STATUS_TEXDIFFUSE	0x01
+#define STATUS_TEXNORMAL	0x02
 
 sampler LinearSampler = sampler_state
 {
@@ -18,7 +21,10 @@ sampler PointSampler = sampler_state
 	AddressV	= wrap;
 };
 
+int			g_iFlag;
+
 Texture2D	g_texDiffuse;
+Texture2D	g_texNormal;
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;
@@ -89,7 +95,6 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	return Out;
 }
-
 
 technique11 DefaultTechnique
 {

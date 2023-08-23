@@ -51,15 +51,15 @@ HRESULT CCollider::Initialize(any _tColliderDesc)
 	switch (m_tColliderDesc.eType)
 	{
 	case COLLIDER::SPHERE:
-		m_pBounding = CBounding_Sphere::Create(m_tColliderDesc);
+		m_pBounding = CBounding_Sphere::Create(&m_tColliderDesc);
 		break;
 
 	case COLLIDER::AABB:
-		m_pBounding = CBounding_AABB::Create(m_tColliderDesc);
+		m_pBounding = CBounding_AABB::Create(&m_tColliderDesc);
 		break;
 
 	case COLLIDER::OBB:
-		m_pBounding = CBounding_OBB::Create(m_tColliderDesc);
+		m_pBounding = CBounding_OBB::Create(&m_tColliderDesc);
 		break;
 	}
 

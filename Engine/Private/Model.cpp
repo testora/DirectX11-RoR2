@@ -70,20 +70,27 @@ HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
 	return S_OK;
 }
 
-HRESULT CModel::Render(_uint _iMeshIndex)
+HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 {
-	HRESULT hr = S_OK;
-
-	if (m_vecMeshes[_iMeshIndex])
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		if (FAILED(m_vecMeshes[_iMeshIndex]->Render()))
+		if (FAILED(Bind_ShaderResourceViews(i, _pShader)))
 		{
-			MSG_BOX("CModel::Render", "Failed to CMesh::Render");
-			hr = E_FAIL;
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_ShaderResourceViews");
+		}
+
+		if (FAILED(Bind_BoneMatrices(i, _pShader, SHADER_BONE)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_BoneMatrices");
+		}
+
+		if (FAILED(Render(i, _pShader, _iPassIndex)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Render");
 		}
 	}
 
-	return hr;
+	return S_OK;
 }
 
 _uint CModel::Get_BoneIndex(const char* _pBoneName)
@@ -99,6 +106,22 @@ _uint CModel::Get_BoneIndex(const char* _pBoneName)
 	return static_cast<_uint>(m_vecBones.size());
 }
 
+HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _iPassIndex)
+{
+	HRESULT hr = S_OK;
+
+	if (m_vecMeshes[_iMeshIndex])
+	{
+		if (FAILED(m_vecMeshes[_iMeshIndex]->Render(_pShader, _iPassIndex)))
+		{
+			MSG_BOX("CModel::Render", "Failed to CMesh::Render");
+			hr = E_FAIL;
+		}
+	}
+
+	return hr;
+}
+
 void CModel::Tick_Animation(_float _fTimeDelta)
 {
 	if (MODEL::NONANIM == m_eType)
@@ -112,6 +135,56 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 	{
 		pBone->Update_CombinedTransformation(m_vecBones);
 	}
+}
+
+HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, _uint _iTextureIdx)
+{
+	if (_iMeshIndex >= m_iNumMeshes)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
+	}
+
+	if (nullptr == m_vecMeshes[_iMeshIndex])
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
+	}
+
+	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->Get_MaterialIndex();
+	if (iMaterialIndex >= m_iNumMaterials)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
+	}
+	
+	HRESULT hr = S_OK;
+
+	for (_uint i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+	{
+		if (nullptr == m_vecMaterials[iMaterialIndex].pMaterial[i])
+		{
+			continue;
+		}
+
+		switch (i)
+		{
+		case aiTextureType_DIFFUSE:
+			if (FAILED(m_vecMaterials[iMaterialIndex].pMaterial[i]->Bind_ShaderResourceView(_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE, _iTextureIdx)))
+			{
+				hr = E_FAIL;
+				MSG_CONTINUE("CModel::Bind_ShaderResourceView", "Failed to CTexture::Bind_ShaderResourceView")
+			}
+			break;
+
+		case aiTextureType_NORMALS:
+			if (FAILED(m_vecMaterials[iMaterialIndex].pMaterial[i]->Bind_ShaderResourceView(_pShader, aiTextureType_NORMALS, SHADER_TEXNORMAL, _iTextureIdx)))
+			{
+				hr = E_FAIL;
+				MSG_CONTINUE("CModel::Bind_ShaderResourceView", "Failed to CTexture::Bind_ShaderResourceView")
+			}
+			break;
+		}
+	}
+
+	return hr;
 }
 
 HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName, _uint _iTextureIdx)
@@ -138,7 +211,57 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return pMaterial->Bind_ShaderResourceView(_pShader, _pConstantName, _iTextureIdx);
+	return pMaterial->Bind_ShaderResourceView(_pShader, _eAIType, _pConstantName, _iTextureIdx);
+}
+
+HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader)
+{
+	if (_iMeshIndex >= m_iNumMeshes)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceViews", "Invalid Range");
+	}
+
+	if (nullptr == m_vecMeshes[_iMeshIndex])
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceViews", "Null Exception");
+	}
+
+	_uint iMaterialIndex = m_vecMeshes[_iMeshIndex]->Get_MaterialIndex();
+	if (iMaterialIndex >= m_iNumMaterials)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceViews", "Invalid Range");
+	}
+
+	HRESULT hr = S_OK;
+
+	for (size_t i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
+	{
+		if (nullptr == m_vecMaterials[iMaterialIndex].pMaterial[i])
+		{
+			continue;
+		}
+
+		switch (i)
+		{
+		case aiTextureType_DIFFUSE:
+			if (FAILED(m_vecMaterials[iMaterialIndex].pMaterial[i]->Bind_ShaderResourceViews(_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
+			{
+				hr = E_FAIL;
+				MSG_CONTINUE("CModel::Bind_ShaderResourceViews", "Failed to CTexture::Bind_ShaderResourceViews")
+			}
+			break;
+
+		case aiTextureType_NORMALS:
+			if (FAILED(m_vecMaterials[iMaterialIndex].pMaterial[i]->Bind_ShaderResourceViews(_pShader, aiTextureType_NORMALS, SHADER_TEXNORMAL)))
+			{
+				hr = E_FAIL;
+				MSG_CONTINUE("CModel::Bind_ShaderResourceViews", "Failed to CTexture::Bind_ShaderResourceViews")
+			}
+			break;
+		}
+	}
+
+	return hr;
 }
 
 HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName)
@@ -165,7 +288,7 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return pMaterial->Bind_ShaderResourceViews(_pShader, _pConstantName);
+	return pMaterial->Bind_ShaderResourceViews(_pShader, _eAIType, _pConstantName);
 }
 
 HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const char* _pConstantName)

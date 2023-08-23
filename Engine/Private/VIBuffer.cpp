@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "VIBuffer.h"
+#include "Shader.h"
 #include "Picker.h"
 
 CVIBuffer::CVIBuffer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const COMPONENT _eComponent)
@@ -18,8 +19,13 @@ HRESULT CVIBuffer::Initialize(any)
 	return S_OK;
 }
 
-HRESULT CVIBuffer::Render()
+HRESULT CVIBuffer::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 {
+	if (FAILED(_pShader->BeginPass(_iPassIndex)))
+	{
+		MSG_RETURN(E_FAIL, "CVIBuffer::Render", "Failed to CShader::BeginPass");
+	}
+
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
 	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::ConvertToRawPtrVector(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
 	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);

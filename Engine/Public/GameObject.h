@@ -46,15 +46,15 @@ protected:
 	unordered_map<BEHAVIOR, pair<wstring, any>>					m_umapBehaviorArg;
 	bitset<IDX(BEHAVIOR::MAX)>									m_bitBehavior;
 
-	ComPtr<ID3D11Device>										m_pDevice;
-	ComPtr<ID3D11DeviceContext>									m_pContext;
-
 private:
 	weak_ptr<class CTransform>									m_pTransform;
 	weak_ptr<class CShader>										m_pShader;
 	weak_ptr<class CCollider>									m_pCollider;
 	weak_ptr<class CModel>										m_pModel;
 	weak_ptr<class CVIBuffer>									m_pVIBuffer;
+
+	ComPtr<ID3D11Device>										m_pDevice;
+	ComPtr<ID3D11DeviceContext>									m_pContext;
 
 public:
 	virtual shared_ptr<CGameObject>								Clone(any = any())	PURE;

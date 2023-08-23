@@ -33,13 +33,6 @@ void CImGui_Manager::Tick()
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
-
-#pragma region Text
-
-		ImGui::Begin("Test");
-		ImGui::End();
-
-#pragma endregion
 	}
 }
 

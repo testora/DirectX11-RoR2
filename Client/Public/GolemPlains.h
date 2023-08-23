@@ -9,12 +9,12 @@ END
 
 BEGIN(Client)
 
-class CTitanicPlains final : public CGameObject
+class CGolemPlains final : public CGameObject
 {
 private:
-	explicit CTitanicPlains(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	explicit CTitanicPlains(const CTitanicPlains&);
-	virtual ~CTitanicPlains() DEFAULT;
+	explicit CGolemPlains(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	explicit CGolemPlains(const CGolemPlains&);
+	virtual ~CGolemPlains() DEFAULT;
 
 public:
 	virtual HRESULT						Initialize_Prototype() override;
@@ -31,7 +31,7 @@ public:
 	shared_ptr<CTransform>				m_pTransform;
 
 public:
-	static shared_ptr<CTitanicPlains>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	static shared_ptr<CGolemPlains>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>		Clone(any = any()) override;
 };
 

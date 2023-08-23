@@ -68,6 +68,11 @@ HRESULT CShader::Initialize(const _tchar* _pShaderFilePath, const D3D11_INPUT_EL
 	return S_OK;
 }
 
+void CShader::Set_Flag(_uint _iStatus)
+{
+	m_iShaderFlag |= _iStatus;
+}
+
 HRESULT CShader::BeginPass(const _uint _iPassIndex)
 {
 	if (nullptr == m_pEffect)
@@ -79,6 +84,12 @@ HRESULT CShader::BeginPass(const _uint _iPassIndex)
 	{
 		MSG_RETURN(E_FAIL, "CShader::BeginPass", "Invalid Range");
 	}
+
+	if (FAILED(Bind_RawValue(SHADER_FLAG, &m_iShaderFlag, sizeof m_iShaderFlag)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::BeginPass", "Failed to Bind_RawValue");
+	}
+	m_iShaderFlag = 0;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)

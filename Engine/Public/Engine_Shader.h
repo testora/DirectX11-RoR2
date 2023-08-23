@@ -1,6 +1,11 @@
 #pragma once
 
-#define SHADER_TEXDIF			"g_texDiffuse"
+#define SHADER_FLAG				"g_iFlag"
+#define SHADER_FLAG_TEXDIFFUSE	0b0000'0001
+#define SHADER_FLAG_TEXNORMAL	0b0000'0010
+
+#define SHADER_TEXDIFFUSE		"g_texDiffuse"
+#define SHADER_TEXNORMAL		"g_texNormal"
 
 #define SHADER_MATWORLD			"g_mWorld"
 #define SHADER_MATVIEW			"g_mView"

@@ -25,6 +25,7 @@
     <ClInclude Include="Public\Bounding_Sphere.h" />
     <ClInclude Include="Public\Collider.h" />
     <ClInclude Include="Public\DebugDraw.h" />
+    <ClInclude Include="Public\Engine_Shader.h" />
     <ClInclude Include="Public\Grid_Manager.h" />
     <ClInclude Include="Public\Grid.h" />
     <ClInclude Include="Public\Grounding.h" />

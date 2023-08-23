@@ -49,7 +49,7 @@ void CBackground::Late_Tick(_float _fTimeDelta)
 
 HRESULT CBackground::Render(_uint)
 {
-	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, SHADER_TEXDIF)))
+	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceViews");
 	}

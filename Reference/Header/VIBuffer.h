@@ -12,7 +12,7 @@ protected:
 
 public:
 	virtual HRESULT					Initialize(any = any());
-	HRESULT							Render();
+	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex);
 
 public:
 	pair<_float3*, _uint>			Get_Vertices() const;

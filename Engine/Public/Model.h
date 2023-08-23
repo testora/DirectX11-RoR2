@@ -13,7 +13,8 @@ private:
 
 public:
 	virtual HRESULT							Initialize(const char* pModelPath, _matrixf mPivot = g_mUnit);
-	HRESULT									Render(_uint iMeshIndex);
+	HRESULT									Render(shared_ptr<class CShader>, _uint iPassIndex);
+	HRESULT									Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
 
 public:
 	_uint									Get_NumMeshes() const	{ return m_iNumMeshes; }
@@ -22,7 +23,9 @@ public:
 public:
 	void									Tick_Animation(_float fTimeDelta);
 
+	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIdx = 0);
 	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
+	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>);
 	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
 	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const char* pConstantName);
 

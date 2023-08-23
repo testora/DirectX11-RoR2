@@ -105,81 +105,64 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 		{
 			if (FAILED(pShader->Bind_Matrix(SHADER_MATWORLD, pTransform->Get_Matrix())))
 			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
 			}
 			if (FAILED(pShader->Bind_Matrix(SHADER_MATVIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
 			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
 			}
 			if (FAILED(pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION))))
 			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Matrix");
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
 			}
 		}
 
 		if (FAILED(pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
 		}
 		if (FAILED(pShader->Bind_Vector(SHADER_MTRLAMB, m_tMaterialDesc.vAmbient)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
 		}
 		if (FAILED(pShader->Bind_Vector(SHADER_MTRLSPC, m_tMaterialDesc.vSpecular)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
 		}
 		if (FAILED(pShader->Bind_Vector(SHADER_MTRLEMS, m_tMaterialDesc.vEmissive)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_Vector: SHADER_MTRLDIF");
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
 		}
 		if (FAILED(pShader->Bind_RawValue(SHADER_MTRLSHN, &m_tMaterialDesc.fShininess, sizeof m_tMaterialDesc.fShininess)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_RawValue: SHADER_MTRLSHN");
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
 		}
 
+		if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
+		{
+			if (FAILED(pVIBuffer->Render(pShader, _iPassIndex)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CVIBuffer::Render");
+			}
+		}
 		if (shared_ptr<CModel> pModel = m_pModel.lock())
 		{
-			for (_uint i = 0; i < pModel->Get_NumMeshes(); ++i)
+			if (FAILED(pModel->Render(pShader, _iPassIndex)))
 			{
-				if (FAILED(pModel->Bind_ShaderResourceViews(i, pShader, aiTextureType_DIFFUSE, SHADER_TEXDIF)))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_ShaderResourceViews");
-				}
-
-				if (FAILED(pModel->Bind_BoneMatrices(i, pShader, SHADER_BONE)))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_BoneMatrices");
-				}
-
-				if (FAILED(pShader->BeginPass(_iPassIndex)))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to BeginPass");
-				}
-
-				if (FAILED(pModel->Render(i)))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Render");
-				}
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Model::Render");
 			}
-		}
-		else
-		{
-			if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
-			{
-				if (FAILED(pShader->BeginPass(_iPassIndex)))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to BeginPass");
-				}
-
-				if (FAILED(pVIBuffer->Render()))
-				{
-					MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Render");
-				}
-			}
-
 		}
 	}
+
+#ifdef _DEBUG
+	if (shared_ptr<CCollider> pCollider = m_pCollider.lock())
+	{
+		if (FAILED(pCollider->Render()))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CCollider::Render");
+		}
+	}
+#endif
 
 	return S_OK;
 }

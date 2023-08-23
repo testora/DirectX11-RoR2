@@ -9,5 +9,7 @@ Render Functions Parameter is only used at Derived Classes
 
 Behaviors have Dependencies Based on Order
 
-## ECS
+Add case to Model Shader Binding Functions if Shader Texture Variables are Added
+
+## Requirements
 Engine Requires C++17

@@ -16,7 +16,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00. Header", "00. Header", 
 		Public\Header\Public_Macro.h = Public\Header\Public_Macro.h
 		Public\Header\Public_Settings.h = Public\Header\Public_Settings.h
 		Public\Header\Public_Typedef.h = Public\Header\Public_Typedef.h
-		Public\Header\Public_Shader.h = Public\Header\Public_Shader.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Public", "Public", "{F2832D67-1A78-42FC-901C-F77E424EF0F0}"
@@ -77,9 +76,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility", "Utility", "{7D9D
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Code Snippet", "Code Snippet", "{9084204D-2900-450F-B5BE-B954D83E411F}"
-	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

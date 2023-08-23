@@ -4,7 +4,7 @@
 #include "Camera_Main.h"
 #include "Terrain.h"
 #include "Model.h"
-#include "TitanicPlains.h"
+#include "GolemPlains.h"
 #include "RailGunner.h"
 
 HRESULT CLoader::Load_Test()
@@ -29,7 +29,7 @@ HRESULT CLoader::Load_Test()
 #pragma region Prototype Model
 
 //	PROTOTYPE_COMPONENT_MODEL_RAILGUNNER
-//	PROTOTYPE_COMPONENT_MODEL_TITANICPLAINS
+//	PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "Bin/Resources/_Temp/Model/RailGunner/untitled.fbx", XMMatrixRotationY(XMConvertToRadians(180.0f))))))
@@ -37,11 +37,11 @@ HRESULT CLoader::Load_Test()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
 	}
 
-//	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_TITANICPLAINS,
-//		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "Bin/Resources/_Temp/Map/Set 3_ Golemplains.fbx", XMMatrixRotationY(XMConvertToRadians(180.0f))))))
-//	{
-//		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_TITANICPLAINS");
-//	}
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS,
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "Bin/Resources/_Temp/Map/GPRuinedRing2Half (1).fbx", XMMatrixRotationY(XMConvertToRadians(180.0f))))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS");
+	}
 
 #pragma endregion
 #pragma region Prototype VIBuffer
@@ -59,7 +59,7 @@ HRESULT CLoader::Load_Test()
 
 //	PROTOTYPE_GAMEOBJECT_CAMERA_MAIN
 //	PROTOTYPE_GAMEOBJECT_TERRAIN
-//	PROTOTYPE_GAMEOBJECT_TITANICPLAINS
+//	PROTOTYPE_GAMEOBJECT_GOLEMPLAINS
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
@@ -74,11 +74,11 @@ HRESULT CLoader::Load_Test()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_TERRAIN");
 	}
 
-//	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TITANICPLAINS,
-//		CTitanicPlains::Create(m_pDevice, m_pContext))))
-//	{
-//		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_TITANICPLAINS");
-//	}
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_GOLEMPLAINS,
+		CGolemPlains::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_GOLEMPLAINS");
+	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER,
 		CRailGunner::Create(m_pDevice, m_pContext))))

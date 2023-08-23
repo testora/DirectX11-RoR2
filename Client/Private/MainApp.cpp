@@ -100,11 +100,22 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Tick(_float _fTimeDelta)
 {
+
 #ifdef _DEBUG
+#if ACTIVATE_IMGUI
 	if (m_pImGui_Manager)
 	{
 		m_pImGui_Manager->Tick();
 	}
+	if (m_pImGui_Manager->Is_Enable())
+	{
+		ImGui::Begin("Game Status");
+
+		ImGui::Text("FPS: %f", 1.f / _fTimeDelta);
+
+		ImGui::End();
+	}
+#endif
 #endif
 
 	if (m_pGameInstance)

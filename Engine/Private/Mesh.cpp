@@ -128,7 +128,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 
 		memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
 
-	//	memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 	}
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
@@ -163,7 +163,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 		memcpy(&pVertices[i].vPosition,	&_pAIMesh->mVertices[i],			sizeof(_float3));
 		memcpy(&pVertices[i].vNormal,	&_pAIMesh->mNormals[i],				sizeof(_float3));
 		memcpy(&pVertices[i].vTangent,	&_pAIMesh->mTangents[i],			sizeof(_float3));
-	//	memcpy(&pVertices[i].vTexCoord,	&_pAIMesh->mTextureCoords[0][i],	sizeof(_float2));
+		memcpy(&pVertices[i].vTexCoord,	&_pAIMesh->mTextureCoords[0][i],	sizeof(_float2));
 	}
 
 	for (_uint i = 0; i < m_iNumBones; ++i)

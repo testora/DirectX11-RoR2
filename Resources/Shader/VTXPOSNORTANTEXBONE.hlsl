@@ -1,8 +1,11 @@
-#define	MAX_LIGHT	32
-#define MAX_BONE	256
+#define	MAX_LIGHT			32
+#define MAX_BONE			256
 
-#define DIRECTIONAL	0
-#define POINT		1
+#define DIRECTIONAL			0
+#define POINT				1
+
+#define STATUS_TEXDIFFUSE	0x01
+#define STATUS_TEXNORMAL	0x02
 
 sampler LinearSampler = sampler_state
 {
@@ -18,7 +21,10 @@ sampler PointSampler = sampler_state
 	AddressV	= wrap;
 };
 
+int			g_iFlag;
+
 Texture2D	g_texDiffuse;
+Texture2D	g_texNormal;
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;
@@ -57,9 +63,9 @@ struct VS_OUT
 {
 	float4	vPosition		: SV_POSITION;
 	float4	vNormal			: NORMAL;
+	float3	vTangent		: TANGENT;
 	float2	vTexCoord		: TEXCOORD0;
 	float4	vWorldPos		: TEXCOORD1;
-//	float3	vTangent		: TANGENT;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -79,9 +85,11 @@ VS_OUT VS_MAIN(VS_IN In)
 	
 	vector vPosition	= mul(vector(In.vPosition, 1.f), mBone);
 	vector vNormal		= mul(vector(In.vNormal, 0.f), mBone);
+	vector vTangent		= mul(vector(In.vTangent, 0.f), mBone);
 
 	Out.vPosition		= mul(vPosition, mWVP);
 	Out.vNormal			= mul(vNormal, g_mWorld);
+	Out.vTangent		= mul(vTangent, g_mWorld);
 	Out.vTexCoord		= In.vTexCoord;
 	Out.vWorldPos		= mul(vPosition, g_mWorld);
 
@@ -90,11 +98,11 @@ VS_OUT VS_MAIN(VS_IN In)
 
 struct PS_IN
 {
-	float4 vPosition	: SV_POSITION;
-	float4 vNormal		: NORMAL;
-	float2 vTexCoord	: TEXCOORD0;
-	float4 vWorldPos	: TEXCOORD1;
-//	float3	vTangent	: TANGENT;
+	float4	vPosition	: SV_POSITION;
+	float4	vNormal		: NORMAL;
+	float3	vTangent	: TANGENT;
+	float2	vTexCoord	: TEXCOORD0;
+	float4	vWorldPos	: TEXCOORD1;
 };
 
 struct PS_OUT
@@ -104,16 +112,23 @@ struct PS_OUT
 
 PS_OUT PS_MAIN(PS_IN In)
 {
-	PS_OUT	Out;
+	PS_OUT		Out;
 	
-	float4	vTexColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord);
-	float3	vFinalColor;
+	float3		vFinalColor;
+	float4		vTexColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord);
 	
-	// Lighting
-	float3	vNormal		= In.vNormal;
+	// Normal
+	float3		vNormal		= In.vNormal;
+	
+    if (g_iFlag & STATUS_TEXNORMAL)
+    {
+		float3x3	vTBN		= float3x3(In.vTangent, cross(In.vNormal.xyz, In.vTangent), In.vNormal.xyz);
+		float3		vNormalMap	= g_texNormal.Sample(LinearSampler, In.vTexCoord).xyz * 2.f - 1.f;
+		vNormal					= mul(vNormalMap, vTBN);
+    }
 	
 	// Specular
-	float3	vViewDir	= normalize(g_vCamPosition - In.vWorldPos);
+	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos);
 	
 	for (int i = 0; i < g_iLightCount; ++i)
 	{

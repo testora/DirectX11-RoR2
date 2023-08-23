@@ -94,7 +94,7 @@ HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE
 	return S_OK;
 }
 
-HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, const char* _pConstantName, _uint _iTextureIdx) const
+HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const char* _pConstantName, _uint _iTextureIdx) const
 {
 	if (m_vecTexture.size() <= _iTextureIdx)
 	{
@@ -106,14 +106,42 @@ HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, const ch
 		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Failed to Bind_ShaderResourceView");
 	}
 
+	switch (_eAiType)
+	{
+	case aiTextureType_DIFFUSE:
+		_pShader->Set_Flag(SHADER_FLAG_TEXDIFFUSE);
+		break;
+
+	case aiTextureType_NORMALS:
+		_pShader->Set_Flag(SHADER_FLAG_TEXNORMAL);
+		break;
+
+	default:
+		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Invalid aiTextureType");
+	}
+
 	return S_OK;
 }
 
-HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, const char* _pConstantName)
+HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const char* _pConstantName)
 {
 	if (FAILED(_pShader->Bind_ShaderResourceViews(_pConstantName, m_vecTexture)))
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Failed to Bind_ShaderResourceView");
+	}
+
+	switch (_eAiType)
+	{
+	case aiTextureType_DIFFUSE:
+		_pShader->Set_Flag(SHADER_FLAG_TEXDIFFUSE);
+		break;
+
+	case aiTextureType_NORMALS:
+		_pShader->Set_Flag(SHADER_FLAG_TEXNORMAL);
+		break;
+
+	default:
+		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceViews", "Invalid aiTextureType");
 	}
 
 	return S_OK;
