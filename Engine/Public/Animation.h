@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT								Initialize(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
-	void								Update(_float fTimeDelta, vector<shared_ptr<class CBone>>);
+	void								Update(_float fTimeDelta, vector<shared_ptr<class CBone>>, _bool bLoop = true);
 
 private:
 	_float								m_fDuration			= 0.f;

@@ -22,6 +22,8 @@ public:
 
 public:
 	void									Tick_Animation(_float fTimeDelta);
+	void									Set_Animation(_uint iAnimIdx, _bool bLoop = true);
+
 	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 
 	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIdx = 0);
@@ -53,6 +55,8 @@ private:
 	_uint									m_iCurrentAnimIdx	= 0;
 	_uint									m_iNumAnimations	= 0;
 	vector<shared_ptr<class CAnimation>>	m_vecAnimations;
+
+	_bool									m_bAnimLoop			= true;
 
 public:
 	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const char* pModelFilePath, _matrixf mPivot = g_mUnit);

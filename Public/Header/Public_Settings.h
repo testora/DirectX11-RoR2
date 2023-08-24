@@ -28,6 +28,7 @@
 #define CONTROL_LEFT					'A'
 #define CONTROL_BACKWARD				'S'
 #define CONTROL_RIGHT					'D'
+#define CONTROL_SPRINT					VK_SHIFT
 #define CONTROL_JUMP					VK_SPACE
 
 #pragma endregion

@@ -22,7 +22,6 @@ void CObject_Manager::Tick(_float _fTimeDelta)
 	{
 		iter.second->Tick(_fTimeDelta);
 	}
-	
 	for (auto& iter : m_arrPools[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Tick(_fTimeDelta);
@@ -35,7 +34,7 @@ void CObject_Manager::Late_Tick(_float _fTimeDelta)
 	{
 		iter.second->Late_Tick(_fTimeDelta);
 	}
-		for (auto& iter : m_arrPools[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
+	for (auto& iter : m_arrPools[IDX(CScene_Manager::Get_Instance()->Current_Scene())])
 	{
 		iter.second->Late_Tick(_fTimeDelta);
 	}

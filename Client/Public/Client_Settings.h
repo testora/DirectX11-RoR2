@@ -43,3 +43,18 @@
 #define MAINCAM_DEBUG_MOUSE_CONTROL		VK_MBUTTON
 
 #pragma endregion
+
+#pragma region INGAME - Player
+
+#define PLAYER_CAMERA_OFFSET			_float4(0.f, 4.f, -10.f, 1.f)
+
+#define PLAYER_SPEED_FORWARD			240.f;
+#define PLAYER_SPEED_BACKWARD			160.f;
+#define PLAYER_SPEED_LEFT				200.f;
+#define PLAYER_SPEED_RIGHT				200.f;
+#define PLAYER_JUMP_POWER				60.f;
+
+#define PLAYER_SPEED_TERMINAL			_float3(200.f, 200.f, 200.f);
+#define PLAYER_SPEED_RESIST				_float3(0.001f, 0.2f, 0.001f);
+
+#pragma endregion

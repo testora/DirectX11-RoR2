@@ -4,7 +4,7 @@
 constexpr _float	g_fEpsilon		= std::numeric_limits<float>::epsilon();
 constexpr _float	g_fTolorance	= 1e-5f;
 
-constexpr _float	g_fGravity		= 9.8f * 5.f;
+constexpr _float	g_fGravity		= 9.8f * 6.f;
 constexpr XMFLOAT3	g_vGridSize		= XMFLOAT3(100.f, 100.f, 100.f);
 
 constexpr _uint		g_iMaxTextures	= 8;

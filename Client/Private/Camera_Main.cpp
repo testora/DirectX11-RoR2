@@ -45,8 +45,13 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	Debug_MouseControl(_fTimeDelta);
-	Debug_KeyControl(_fTimeDelta);
+	if (nullptr != m_pTargetTransform)
+	{
+		m_pTransform->Set_Matrix(m_vOffset * m_pTargetTransform->Get_Matrix());
+	}
+
+//	Debug_MouseControl(_fTimeDelta);
+//	Debug_KeyControl(_fTimeDelta);
 }
 
 void CCamera_Main::Late_Tick(_float _fTimeDelta)
@@ -78,6 +83,19 @@ HRESULT CCamera_Main::Render(_uint _iPassIndex)
 	{
 		MSG_RETURN(E_FAIL, "CCamera_Main::Render", "Failed to __super::Render");
 	}
+
+	return S_OK;
+}
+
+HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _float4x4 _mOffset)
+{
+	if (nullptr == _pTargetTransform)
+	{
+		MSG_RETURN(E_FAIL, "CCamera_Main::Attach", "Null Exception: CTransform");
+	}
+
+	m_pTargetTransform	= _pTargetTransform;
+	m_vOffset			= _mOffset;
 
 	return S_OK;
 }

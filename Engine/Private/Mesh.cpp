@@ -126,9 +126,15 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 		memcpy(&pVertices[i].vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
 		pVertices[i].vNormal = _float3(XMVector3TransformNormal(_float3(pVertices[i].vNormal), m_mPivot)).normalize();
 
-		memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
+		if (!_pAIMesh->mTangents)
+		{
+			memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
+		}
 
-		memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		if (!_pAIMesh->mTextureCoords)
+		{
+			memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		}
 	}
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);

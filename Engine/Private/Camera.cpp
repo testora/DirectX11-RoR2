@@ -35,6 +35,10 @@ HRESULT CCamera::Initialize(any _arg)
 	m_pTransform->Set_State(TRANSFORM::POSITION, m_tCameraDesc.vEye);
 	m_pTransform->LookAt(m_tCameraDesc.vAt);
 
+#if WIP_FRUSTRUM_CULLING
+	m_pPipeLine->Update_Frustum();
+#endif
+
 	return S_OK;
 }
 
@@ -56,7 +60,6 @@ HRESULT CCamera::Render(_uint _iPassIndex)
 		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransform->Get_Matrix());
 		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransform->Get_Matrix().inverse());
 		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION, m_mProjection);
-		m_pPipeLine->Update_Frustum();
 		break;
 	}
 

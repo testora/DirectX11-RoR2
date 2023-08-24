@@ -32,6 +32,7 @@ enum class BEHAVIOR
 {
 	PHYSICS,
 	GROUNDING,
+	ANIMATOR,
 	CONTROL,
 	MAX
 };

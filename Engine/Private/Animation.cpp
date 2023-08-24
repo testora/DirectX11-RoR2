@@ -28,11 +28,11 @@ HRESULT CAnimation::Initialize(const aiAnimation* _pAIAnimation, shared_ptr<clas
 	return hr;
 }
 
-void CAnimation::Update(_float _fTimeDelta, vector<shared_ptr<class CBone>> _pModelBones)
+void CAnimation::Update(_float _fTimeDelta, vector<shared_ptr<class CBone>> _pModelBones, _bool _bLoop)
 {
 	m_fTrackPosition += m_fTicksPerSecond * _fTimeDelta;
 
-	if (m_fTrackPosition > m_fDuration)
+	if (_bLoop && m_fTrackPosition > m_fDuration)
 	{
 		m_fTrackPosition = 0.f;
 	}

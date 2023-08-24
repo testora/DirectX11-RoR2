@@ -1,5 +1,7 @@
 #include "EnginePCH.h"
 #include "Transform.h"
+#include "Shader.h"
+#include "PipeLine.h"
 
 CTransform::CTransform(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::TRANSFORM)
@@ -30,6 +32,11 @@ _float3 CTransform::Get_Scale() const
 		XMVectorGetY(XMVector3Length(Get_State(TRANSFORM::UP))),
 		XMVectorGetZ(XMVector3Length(Get_State(TRANSFORM::LOOK)))
 	);
+}
+
+void CTransform::Set_Matrix(const _matrixf _mMatrix)
+{
+	m_mWorld = _mMatrix;
 }
 
 void CTransform::Set_State(const TRANSFORM _eState, const _vectorf _vState)
@@ -102,6 +109,22 @@ void CTransform::LookAt(const _vectorf _vPosition)
 void CTransform::LookTo(const _vectorf _vDirection)
 {
 	Set_State(TRANSFORM::LOOK, _vDirection);
+}
+
+HRESULT CTransform::Bind_OnShader(shared_ptr<class CShader> _pShader)
+{
+	if (FAILED(_pShader->Bind_Matrix(SHADER_MATWORLD, m_mWorld)))
+	{
+		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Matrix");
+	}
+	if (FAILED(_pShader->Bind_Matrix(SHADER_MATVIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
+	{
+		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Matrix");
+	}
+	if (FAILED(_pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION))))
+	{
+		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Matrix");
+	}
 }
 
 shared_ptr<CTransform> CTransform::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

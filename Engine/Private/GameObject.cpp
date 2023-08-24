@@ -70,16 +70,11 @@ HRESULT CGameObject::Initialize(any _arg)
 
 void CGameObject::Tick(_float _fTimeDelta)
 {
-	if (shared_ptr<CModel> pModel = m_pModel.lock())
-	{
-		pModel->Tick_Animation(_fTimeDelta);
-	}
-
-	if (shared_ptr<CTransform> pTransrom = m_pTransform.lock())
+	if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
 	{
 		if (shared_ptr<CCollider> pCollider = m_pCollider.lock())
 		{
-			pCollider->Tick_Transformation(pTransrom->Get_Matrix());
+			pCollider->Tick_Transformation(pTransform->Get_Matrix());
 		}
 	}
 
@@ -101,22 +96,6 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 {
 	if (shared_ptr<CShader> pShader = m_pShader.lock())
 	{
-		if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
-		{
-			if (FAILED(pShader->Bind_Matrix(SHADER_MATWORLD, pTransform->Get_Matrix())))
-			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
-			}
-			if (FAILED(pShader->Bind_Matrix(SHADER_MATVIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
-			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
-			}
-			if (FAILED(pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION))))
-			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix");
-			}
-		}
-
 		if (FAILED(pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
 		{
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
@@ -138,6 +117,13 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
 		}
 
+		if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
+		{
+			if (FAILED(pTransform->Bind_OnShader(pShader)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix: SHADER_MATRIX::MTX_WORLD");
+			}
+		}
 		if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
 		{
 			if (FAILED(pVIBuffer->Render(pShader, _iPassIndex)))
@@ -296,6 +282,10 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 
 	case BEHAVIOR::GROUNDING:
 		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(shared_from_this(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
+		break;
+
+	case BEHAVIOR::ANIMATOR:
+		m_umapBehavior.emplace(_eBehavior, CAnimator::Create(shared_from_this()));
 		break;
 
 	case BEHAVIOR::CONTROL:

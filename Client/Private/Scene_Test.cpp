@@ -2,7 +2,7 @@
 #include "Scene_Test.h"
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
-#include "ObjectLayer.h"
+#include "Camera_Main.h"
 
 CScene_Test::CScene_Test(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::TEST)
@@ -132,11 +132,22 @@ HRESULT CScene_Test::Ready_Player()
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Add_Layer: SCENE_TEST_LAYER_PLAYER");
 	}
 
-	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER))))
+	shared_ptr<CGameObject> pPlayer;
+	if (SUCCEEDED(pLayer->Add(pPlayer = CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER))))
+	{
+		shared_ptr<CCamera_Main> pMainCam = dynamic_pointer_cast<CCamera_Main>(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN));
+		if (nullptr == pMainCam)
+		{
+			MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
+		}
+
+		pMainCam->Attach(pPlayer->Get_Component<CTransform>(COMPONENT::TRANSFORM), XMMatrixTranslationFromVector(PLAYER_CAMERA_OFFSET));
+	}
+	else
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
-
 	}
+
 
 	return S_OK;
 }

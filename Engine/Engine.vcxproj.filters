@@ -106,9 +106,6 @@
     <Filter Include="03. Utility\07. Light\00. Manager">
       <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. Behavior\03. Control">
-      <UniqueIdentifier>{2bb2c07c-fa92-4888-a425-9121d78e90db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\06. Behavior\02. Grounding">
       <UniqueIdentifier>{795556ed-4e73-4ccd-a1f7-e60c891249e3}</UniqueIdentifier>
     </Filter>
@@ -126,12 +123,6 @@
     </Filter>
     <Filter Include="03. Utility\05. Component\06. Model\00. Bone">
       <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. Model\01. Animation">
-      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\05. Component\06. Model\01. Animation\00. Channel">
-      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. Component\07. VIBuffer">
       <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
@@ -165,6 +156,18 @@
     </Filter>
     <Filter Include="03. Utility\05. Component\07. VIBuffer\02. Terrain">
       <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\03. Animator">
+      <UniqueIdentifier>{04d417f6-14c0-425b-ae92-aa1e0fe48351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\03. Animator\00. Animation">
+      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\03. Animator\01. Channel">
+      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\04. Control">
+      <UniqueIdentifier>{2bb2c07c-fa92-4888-a425-9121d78e90db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -268,13 +271,13 @@
       <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClCompile>
     <ClCompile Include="Private\Animation.cpp">
-      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
+      <Filter>03. Utility\06. Behavior\03. Animator\00. Animation</Filter>
     </ClCompile>
     <ClCompile Include="Private\Channel.cpp">
-      <Filter>03. Utility\05. Component\06. Model\01. Animation\00. Channel</Filter>
+      <Filter>03. Utility\06. Behavior\03. Animator\01. Channel</Filter>
     </ClCompile>
     <ClCompile Include="Private\Control.cpp">
-      <Filter>03. Utility\06. Behavior\03. Control</Filter>
+      <Filter>03. Utility\06. Behavior\04. Control</Filter>
     </ClCompile>
     <ClCompile Include="Private\Grounding.cpp">
       <Filter>03. Utility\06. Behavior\02. Grounding</Filter>
@@ -302,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="Private\Bounding.cpp">
       <Filter>03. Utility\05. Component\05. Collider\01. Bounding</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Animator.cpp">
+      <Filter>03. Utility\06. Behavior\03. Animator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -426,13 +432,13 @@
       <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClInclude>
     <ClInclude Include="Public\Animation.h">
-      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
+      <Filter>03. Utility\06. Behavior\03. Animator\00. Animation</Filter>
     </ClInclude>
     <ClInclude Include="Public\Channel.h">
-      <Filter>03. Utility\05. Component\06. Model\01. Animation\00. Channel</Filter>
+      <Filter>03. Utility\06. Behavior\03. Animator\01. Channel</Filter>
     </ClInclude>
     <ClInclude Include="Public\Control.h">
-      <Filter>03. Utility\06. Behavior\03. Control</Filter>
+      <Filter>03. Utility\06. Behavior\04. Control</Filter>
     </ClInclude>
     <ClInclude Include="Public\Grounding.h">
       <Filter>03. Utility\06. Behavior\02. Grounding</Filter>
@@ -469,6 +475,9 @@
     </ClInclude>
     <ClInclude Include="Public\Engine_Shader.h">
       <Filter>00. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Animator.h">
+      <Filter>03. Utility\06. Behavior\03. Animator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

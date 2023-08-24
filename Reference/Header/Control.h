@@ -17,13 +17,15 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 public:
-	void							Handle_Input(_float fTimeDelta);
+	void							Handle_MouseInput(_float fTimeDelta);
+	void							Handle_KeyInput(_float fTimeDelta);
 
 private:
 	const CHARACTERDESC*			m_pCharacterDesc	= nullptr;
 	
 	shared_ptr<class CTransform>	m_pTargetTransform;
 	shared_ptr<class CPhysics>		m_pTargetPhysics;
+	shared_ptr<class CAnimator>		m_pTargetAnimator;
 
 public:
 	static shared_ptr<CControl>		Create(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*);

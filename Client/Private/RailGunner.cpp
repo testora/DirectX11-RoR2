@@ -16,7 +16,7 @@ CRailGunner::CRailGunner(const CRailGunner& _rhs)
 HRESULT CRailGunner::Initialize_Prototype()
 {
 	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::COLLIDER)	| BIT(COMPONENT::MODEL);
-	m_bitBehavior	|= BIT(BEHAVIOR::PHYSICS)	| BIT(BEHAVIOR::CONTROL)	| BIT(BEHAVIOR::GROUNDING);
+	m_bitBehavior	|= BIT(BEHAVIOR::PHYSICS)	| BIT(BEHAVIOR::GROUNDING)	| BIT(BEHAVIOR::ANIMATOR)	| BIT(BEHAVIOR::CONTROL);
 
 	COLLIDERDESC tColliderDesc{};
 	tColliderDesc.eType		= COLLIDER::AABB;
@@ -30,14 +30,14 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
-	m_tCharacterDesc.fForwardSpeed			= 100.f;
-	m_tCharacterDesc.fBackwardSpeed			= 100.f;
-	m_tCharacterDesc.fLeftSpeed				= 100.f;
-	m_tCharacterDesc.fRightSpeed			= 100.f;
-	m_tCharacterDesc.fJumpPower				= 30.f;
+	m_tCharacterDesc.fForwardSpeed			= PLAYER_SPEED_FORWARD;
+	m_tCharacterDesc.fBackwardSpeed			= PLAYER_SPEED_BACKWARD;
+	m_tCharacterDesc.fLeftSpeed				= PLAYER_SPEED_LEFT;
+	m_tCharacterDesc.fRightSpeed			= PLAYER_SPEED_RIGHT;
+	m_tCharacterDesc.fJumpPower				= PLAYER_JUMP_POWER;
 
-	m_tCharacterDesc.vMaxSpeed				= _float3(200.f, 200.f, 200.f);
-	m_tCharacterDesc.vResist				= _float3(0.005f, 0.1f, 0.005f);
+	m_tCharacterDesc.vMaxSpeed				= PLAYER_SPEED_TERMINAL;
+	m_tCharacterDesc.vResist				= PLAYER_SPEED_RESIST;
 
 	return S_OK;
 }
@@ -50,6 +50,7 @@ HRESULT CRailGunner::Initialize(any)
 	}
 
 	Get_Component<CTransform>(COMPONENT::TRANSFORM)->Set_State(TRANSFORM::POSITION, _float4(1.f, 5.f, 1.f, 1.f));
+	Get_Component<CTransform>(COMPONENT::TRANSFORM)->Set_Scale(_float3(2.f, 2.f, 2.f));
 
 	return S_OK;
 }
@@ -88,7 +89,7 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 		ImGui::SliderFloat("RightSpeed", &m_tCharacterDesc.fRightSpeed, 0.f, 1000.f);
 		ImGui::SliderFloat("JumpPower", &m_tCharacterDesc.fJumpPower, 0.f, 1000.f);
 		ImGui::SliderFloat3("MaxSpeed", reinterpret_cast<_float*>(&m_tCharacterDesc.vMaxSpeed), 0.f, 1000.f);
-		ImGui::SliderFloat3("Resist", reinterpret_cast<_float*>(&m_tCharacterDesc.vResist), 0.f, 0.1f);
+		ImGui::SliderFloat3("Resist", reinterpret_cast<_float*>(&m_tCharacterDesc.vResist), 0.f, 0.5f);
 
 		ImGui::End();
 	}

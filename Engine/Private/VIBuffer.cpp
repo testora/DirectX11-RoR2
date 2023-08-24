@@ -20,18 +20,20 @@ HRESULT CVIBuffer::Initialize(any)
 	m_vecVertexStride.emplace_back(m_iVertexStride);
 	m_vecVertexOffset.emplace_back(0);
 
-//	_vector vMin = XMVectorSet(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
-//	_vector vMax = XMVectorSet(-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX);
-//	Iterate_Polygons(
-//		[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
-//		{
-//			vMin = XMVectorMin(vMin, XMVectorMin(_v0, XMVectorMin(_v1, _v2)));
-//			vMax = XMVectorMax(vMax, XMVectorMax(_v0, XMVectorMax(_v1, _v2)));
-//			return false;
-//		}
-//	);
-//
-//	BoundingBox::CreateFromPoints(m_tBoundingBox, vMin, vMax);
+#if WIP_FRUSTRUM_CULLING
+	_vector vMin = XMVectorSet(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+	_vector vMax = XMVectorSet(-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX);
+	Iterate_Polygons(
+		[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
+		{
+			vMin = XMVectorMin(vMin, XMVectorMin(_v0, XMVectorMin(_v1, _v2)));
+			vMax = XMVectorMax(vMax, XMVectorMax(_v0, XMVectorMax(_v1, _v2)));
+			return false;
+		}
+	);
+
+	BoundingBox::CreateFromPoints(m_tBoundingBox, vMin, vMax);
+#endif
 
 	return S_OK;
 }

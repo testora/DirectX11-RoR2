@@ -33,6 +33,32 @@ void CImGui_Manager::Tick()
 		ImGui_ImplDX11_NewFrame();
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
+
+		ImGui::Begin("Hierarchy");
+		if (ImGui::TreeNode("Root"))
+		{
+			// 첫 번째 자식 노드입니다.
+			if (ImGui::TreeNode("Child 1"))
+			{
+				ImGui::Text("Child 1 Content");
+				ImGui::TreePop();
+			}
+
+			// 두 번째 자식 노드입니다.
+			if (ImGui::TreeNode("Child 2"))
+			{
+				// 두 번째 자식 노드의 자식 노드입니다.
+				if (ImGui::TreeNode("Subchild"))
+				{
+					ImGui::Text("Subchild Content");
+					ImGui::TreePop();
+				}
+				ImGui::TreePop();
+			}
+
+			ImGui::TreePop(); // Root 노드를 닫습니다.
+		}
+		ImGui::End();
 	}
 }
 
