@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CShader final : public CComponent, public std::enable_shared_from_this<CShader>
+class ENGINE_DLL CShader final : public CComponent
 {
 private:
 	explicit CShader(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

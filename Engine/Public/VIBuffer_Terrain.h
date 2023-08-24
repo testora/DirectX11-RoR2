@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CVIBuffer_Terrain final : public CVIBuffer, public std::enable_shared_from_this<CVIBuffer_Terrain>
+class ENGINE_DLL CVIBuffer_Terrain final : public CVIBuffer
 {
 private:
 	explicit CVIBuffer_Terrain(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

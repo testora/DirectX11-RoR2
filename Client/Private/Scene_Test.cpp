@@ -67,8 +67,8 @@ HRESULT CScene_Test::Ready_Light()
 	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
 	tLightDesc.vDirection	= _float3(1.f, -2.f, 1.f);
 	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.f, 0.f, 0.f, 1.f);
-	tLightDesc.vAmbient		= _color(.5f, .5f, .5f, 1.f);
+	tLightDesc.vSpecular	= _color(1.f, 1.f, 1.f, 1.f);
+	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 1.f);
 
 	shared_ptr<CTransform>	pTransform;
 
@@ -106,9 +106,9 @@ HRESULT CScene_Test::Ready_Terrain()
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Add_Layer: SCENE_TEST_LAYER_TERRAIN");
 	}
 
-	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TERRAIN))))
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_GOLEMPLAINS))))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_TERRAIN");
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_GOLEMPLAINS");
 	}
 
 	pLayer->Iterate_Objects(

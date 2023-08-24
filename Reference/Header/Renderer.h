@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CRenderer final : public CComponent, public std::enable_shared_from_this<CRenderer>
+class ENGINE_DLL CRenderer final : public CComponent
 {
 private:
 	explicit CRenderer(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

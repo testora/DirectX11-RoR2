@@ -71,7 +71,7 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pBehavior_Manager->Reserve_Manager");
 	}
 
-	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, GRID_SIZE)))
+	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, g_vGridSize)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Reserve_Manager");
 	}

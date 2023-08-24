@@ -52,7 +52,7 @@ private:
 	weak_ptr<class CCollider>									m_pCollider;
 	weak_ptr<class CModel>										m_pModel;
 	weak_ptr<class CVIBuffer>									m_pVIBuffer;
-
+protected:
 	ComPtr<ID3D11Device>										m_pDevice;
 	ComPtr<ID3D11DeviceContext>									m_pContext;
 

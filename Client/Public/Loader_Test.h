@@ -38,7 +38,7 @@ HRESULT CLoader::Load_Test()
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS,
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "Bin/Resources/_Temp/Map/GPRuinedRing2Half (1).fbx", XMMatrixRotationY(XMConvertToRadians(180.0f))))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "Bin/Resources/_Temp/Map/Set 3_ Golemplains.fbx", XMMatrixRotationY(XMConvertToRadians(180.0f))))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS");
 	}

@@ -1,7 +1,11 @@
 #include "EnginePCH.h"
 #include "VIBuffer.h"
 #include "Shader.h"
+#include "PipeLine.h"
 #include "Picker.h"
+#include "Bounding_AABB.h"
+#include "Component_Manager.h"
+#include "Scene_Manager.h"
 
 CVIBuffer::CVIBuffer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const COMPONENT _eComponent)
 	: CComponent(_pDevice, _pContext, _eComponent)
@@ -15,6 +19,19 @@ HRESULT CVIBuffer::Initialize(any)
 	m_vecVB.emplace_back(m_pVB);
 	m_vecVertexStride.emplace_back(m_iVertexStride);
 	m_vecVertexOffset.emplace_back(0);
+
+//	_vector vMin = XMVectorSet(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
+//	_vector vMax = XMVectorSet(-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX);
+//	Iterate_Polygons(
+//		[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
+//		{
+//			vMin = XMVectorMin(vMin, XMVectorMin(_v0, XMVectorMin(_v1, _v2)));
+//			vMax = XMVectorMax(vMax, XMVectorMax(_v0, XMVectorMax(_v1, _v2)));
+//			return false;
+//		}
+//	);
+//
+//	BoundingBox::CreateFromPoints(m_tBoundingBox, vMin, vMax);
 
 	return S_OK;
 }

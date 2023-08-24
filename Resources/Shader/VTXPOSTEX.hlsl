@@ -23,8 +23,8 @@ sampler PointSampler = sampler_state
 
 int			g_iFlag;
 
-Texture2D	g_texDiffuse;
-Texture2D	g_texNormal;
+Texture2D	g_texDiffuse[8];
+Texture2D	g_texNormal[8];
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;
@@ -48,6 +48,51 @@ vector		g_vMtrlAmbient			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlSpecular			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlEmissive			= vector(0.f, 0.f, 0.f, 0.f);
 float		g_fMtrlShininess		= 32.f;
+
+float		g_fTiling				= 0.02f;
+float		g_fTPSharpness			= 1.f;
+
+float4 TriPlanar_Diffuse(Texture2D texX, Texture2D texY, Texture2D texZ, float3 vBlendFactor, float3 vWorldPos)
+{
+	float4 vColorX			= texX.Sample(LinearSampler, vWorldPos.zy * g_fTiling);
+	float4 vColorY			= texY.Sample(LinearSampler, vWorldPos.zx * g_fTiling);
+	float4 vColorZ			= texZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling);
+	
+	float4 vFinalColor		= vColorX * vBlendFactor.x + vColorY * vBlendFactor.y + vColorZ * vBlendFactor.z;
+	
+	return vFinalColor;
+}
+float4 TriPlanar_Diffuse(Texture2D texXZ, Texture2D texY, float3 vBlendFactor, float3 vWorldPos)
+{
+	float4 vColorXZ			= texXZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling);
+	float4 vColorY			= texY.Sample(LinearSampler, vWorldPos.xz * g_fTiling);
+	
+	float4 vFinalColor		= vColorXZ * (vBlendFactor.x + vBlendFactor.z) + vColorY * vBlendFactor.y;
+	
+	return vFinalColor;
+}
+
+float3 TriPlanar_Normal(Texture2D texX, Texture2D texY, Texture2D texZ, float3x3 vTBN, float3 vBlendFactor, float3 vWorldPos)
+{
+	float3 vNormalMapX		= texX.Sample(LinearSampler, vWorldPos.zy * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapY		= texY.Sample(LinearSampler, vWorldPos.zx * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapZ		= texZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling).xyz * 2.f - 1.f;
+	
+	float3 vFinalNormalMap	= vNormalMapX * vBlendFactor.x + vNormalMapY * vBlendFactor.y + vNormalMapZ * vBlendFactor.z;
+	float3 vFinalNormal		= mul(vFinalNormalMap, vTBN);
+
+	return vFinalNormal;
+}
+float3 TriPlanar_Normal(Texture2D texXZ, Texture2D texY, float3x3 vTBN, float3 vBlendFactor, float3 vWorldPos)
+{
+	float3 vNormalMapXZ		= texXZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapY		= texY.Sample(LinearSampler, vWorldPos.xz * g_fTiling).xyz * 2.f - 1.f;
+	
+	float3 vFinalNormalMap	= vNormalMapXZ * (vBlendFactor.x + vBlendFactor.z) + vNormalMapY * vBlendFactor.y;
+	float3 vFinalNormal		= mul(vFinalNormalMap, vTBN);
+
+	return vFinalNormal;
+}
 
 struct VS_IN
 {
@@ -91,7 +136,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT Out;
 
-	Out.vColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord);
+	Out.vColor	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
 
 	return Out;
 }

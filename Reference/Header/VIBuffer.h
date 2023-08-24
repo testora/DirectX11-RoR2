@@ -47,6 +47,9 @@ protected:
 	unique_ptr<_float3[]>			m_pVertices;
 	unique_ptr<_uint[]>				m_pIndices;
 
+private:
+	BoundingBox						m_tBoundingBox;
+
 public:
 	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;
 };

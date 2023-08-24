@@ -32,15 +32,16 @@ public:
 	virtual HRESULT						Ready_Components() override;
 
 protected:
-	shared_ptr<class CTransform>		m_pTransform;
+	shared_ptr<class CPipeLine>			m_pPipeLine;
+
 	shared_ptr<class CRenderer>			m_pRenderer;
+	shared_ptr<class CTransform>		m_pTransform;
 
 private:
 	CAMERA_DESC							m_tCameraDesc;
 
-	_float4x4							m_mView, m_mProj;
-
-	shared_ptr<class CPipeLine>			m_pPipeLine;
+	_float4x4							m_mView;
+	_float4x4							m_mProjection;
 
 public:
 	virtual shared_ptr<CGameObject>		Clone(any = any()) override	PURE;

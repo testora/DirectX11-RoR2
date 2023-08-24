@@ -29,6 +29,12 @@ HRESULT CGolemPlains::Initialize(any)
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Initialize", "Failed to __super::Initialize");
 	}
+	
+#if TEMP_TRIPLANER
+	m_pTriPlanerShd = Get_Component<CShader>(COMPONENT::SHADER);
+	m_pTriPlanerDif = CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/texGPGrassTerrain%d.png"), 2);
+	m_pTriPlanerNor = CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/texGPGrassTerrainNormal%d.png"), 2);
+#endif // TEMP_TRIPLANER
 
 	return S_OK;
 }
@@ -47,7 +53,12 @@ void CGolemPlains::Late_Tick(_float _fTimeDelta)
 
 HRESULT CGolemPlains::Render(_uint)
 {
-	if (FAILED(__super::Render(0)))
+#if TEMP_TRIPLANER
+	m_pTriPlanerDif->Bind_ShaderResourceViews(m_pTriPlanerShd, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE);
+	m_pTriPlanerNor->Bind_ShaderResourceViews(m_pTriPlanerShd, aiTextureType_NORMALS, SHADER_TEXNORMAL);
+#endif // TEMP_TRIPLANER
+
+	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Render", "Failed to __super::Render");
 	}

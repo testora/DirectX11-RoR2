@@ -6,7 +6,10 @@ UINT APIENTRY Thread_Loader_Main(void* _pArg)
 {
 	CLoader* pLoader = static_cast<CLoader*>(_pArg);
 
-	CoInitializeEx(nullptr, 0);
+	if (FAILED(CoInitializeEx(nullptr, 0)))
+	{
+		assert(false);
+	}
 
 	if (FAILED(pLoader->Loading()))
 	{

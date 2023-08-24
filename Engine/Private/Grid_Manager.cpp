@@ -9,11 +9,12 @@
 
 HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSize)
 {
-	m_arrGridLayers	= Function::CreateDynamicArray<GridLayers>(IDX(_eSceneMax), false);
+	m_arrGridLayers		= Function::CreateDynamicArray<GridLayers>(IDX(_eSceneMax), false);
 
-	m_vGridSize	= _vGridSize;
+	m_vGridSize			= _vGridSize;
+	m_fGridDiagonalHalf	= m_vGridSize.length();
 
-	m_eSceneMax	= _eSceneMax;
+	m_eSceneMax			= _eSceneMax;
 
 	return S_OK;
 }
@@ -170,7 +171,14 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _f
 		{
 			for (auto& grid : layer.second)
 			{
-				DirectX::BoundingBox aabbGrid(grid.first + m_vGridSize * .5f, m_vGridSize * .5f);
+				_float3 vGridCenter = grid.first + m_vGridSize * .5f;
+
+				if ((vGridCenter - _vRayOrigin).length() - m_fGridDiagonalHalf >= _fRange)
+				{
+					continue;
+				}
+
+				DirectX::BoundingBox aabbGrid(vGridCenter, m_vGridSize * .5f);
 
 				_float fDist = 0.f;
 				if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
@@ -200,16 +208,23 @@ _float3 CGrid_Manager::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOr
 			continue;
 		}
 
-		for (auto& pair : m_arrGridLayers[i][_strGridLayerTag])
+		for (auto& grid : m_arrGridLayers[i][_strGridLayerTag])
 		{
-			DirectX::BoundingBox aabbGrid(pair.first + m_vGridSize * .5f, m_vGridSize * .5f);
+			_float3 vGridCenter = grid.first + m_vGridSize * .5f;
+
+			if ((vGridCenter - _vRayOrigin).length() - m_fGridDiagonalHalf >= _fRange)
+			{
+				continue;
+			}
+
+			DirectX::BoundingBox aabbGrid(vGridCenter, m_vGridSize * .5f);
 
 			_float fDist = 0.f;
 			if (aabbGrid.Intersects(_vRayOrigin, vRayDirection, fDist))
 			{
 				if (fDist < _fRange)
 				{
-					m_mmapRaycastGrid.emplace(fDist, pair.second);
+					m_mmapRaycastGrid.emplace(fDist, grid.second);
 				}
 			}
 		}

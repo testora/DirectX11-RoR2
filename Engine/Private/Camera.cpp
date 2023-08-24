@@ -8,7 +8,7 @@ CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCo
 	: CGameObject	(_pDevice, _pContext)
 	, m_pPipeLine	(CPipeLine::Get_Instance())
 	, m_mView		(g_mUnit)
-	, m_mProj		(g_mUnit)
+	, m_mProjection		(g_mUnit)
 {
 }
 
@@ -28,7 +28,7 @@ HRESULT CCamera::Initialize(any _arg)
 	switch (m_tCameraDesc.eType)
 	{
 	case TYPE::PERSPECTIVE:
-		m_mProj = XMMatrixPerspectiveFovLH(m_tCameraDesc.fFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+		m_mProjection = XMMatrixPerspectiveFovLH(m_tCameraDesc.fFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
 		break;
 	}
 
@@ -55,7 +55,8 @@ HRESULT CCamera::Render(_uint _iPassIndex)
 	case TYPE::PERSPECTIVE:
 		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransform->Get_Matrix());
 		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransform->Get_Matrix().inverse());
-		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION, m_mProj);
+		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION, m_mProjection);
+		m_pPipeLine->Update_Frustum();
 		break;
 	}
 

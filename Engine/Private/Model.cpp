@@ -33,15 +33,15 @@ CModel::CModel(const CModel& _rhs)
 	}
 }
 
-HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
+HRESULT CModel::Initialize(const char* _szModelPath, _matrixf _mPivot)
 {
-	_uint iFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
+	_uint iAIFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
 	if (MODEL::NONANIM == m_eType)
 	{
-		iFlag |= aiProcess_PreTransformVertices;
+		iAIFlag |= aiProcess_PreTransformVertices;
 	}
 
-	m_pAIScene = m_Importer.ReadFile(_pModelPath, iFlag);
+	m_pAIScene = m_aiImporter.ReadFile(_szModelPath, iAIFlag);
 	if (nullptr == m_pAIScene)
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to ReadFile");
@@ -57,7 +57,7 @@ HRESULT CModel::Initialize(const char* _pModelPath, _matrixf _mPivot)
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Meshes");
 	}
 
-	if (FAILED(Ready_Materials(_pModelPath)))
+	if (FAILED(Ready_Materials(_szModelPath)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Materials");
 	}
@@ -93,11 +93,11 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 	return S_OK;
 }
 
-_uint CModel::Get_BoneIndex(const char* _pBoneName)
+_uint CModel::Get_BoneIndex(const char* _szBoneName)
 {
 	for (_uint i = 0; i < m_vecBones.size(); ++i)
 	{
-		if (!strcmp(m_vecBones[i]->Get_Name(), _pBoneName))
+		if (!strcmp(m_vecBones[i]->Get_Name(), _szBoneName))
 		{
 			return i;
 		}
@@ -134,6 +134,17 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 	for (auto pBone : m_vecBones)
 	{
 		pBone->Update_CombinedTransformation(m_vecBones);
+	}
+}
+
+void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _fn)
+{
+	for (size_t i = 0; i < m_iNumMeshes; ++i)
+	{
+		if (_fn(m_vecMeshes[i]))
+		{
+			return;
+		}
 	}
 }
 
@@ -187,7 +198,7 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 	return hr;
 }
 
-HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName, _uint _iTextureIdx)
+HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _szConstantName, _uint _iTextureIdx)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -211,7 +222,7 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return pMaterial->Bind_ShaderResourceView(_pShader, _eAIType, _pConstantName, _iTextureIdx);
+	return pMaterial->Bind_ShaderResourceView(_pShader, _eAIType, _szConstantName, _iTextureIdx);
 }
 
 HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader)
@@ -264,7 +275,7 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 	return hr;
 }
 
-HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _pConstantName)
+HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _szConstantName)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -288,10 +299,10 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return pMaterial->Bind_ShaderResourceViews(_pShader, _eAIType, _pConstantName);
+	return pMaterial->Bind_ShaderResourceViews(_pShader, _eAIType, _szConstantName);
 }
 
-HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const char* _pConstantName)
+HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const char* _szConstantName)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -303,18 +314,7 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return _pShader->Bind_MatrixArray(_pConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones), g_iMaxBones);
-}
-
-void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _fn)
-{
-	for (size_t i = 0; i < m_iNumMeshes; ++i)
-	{
-		if (_fn(m_vecMeshes[i]))
-		{
-			return;
-		}
-	}
+	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones), g_iMaxBones);
 }
 
 HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
@@ -325,7 +325,7 @@ HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
 
 	for (size_t i = 0; i < m_iNumMeshes; ++i)
 	{
-		shared_ptr<CMesh> pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, m_pAIScene->mMeshes[i], shared_from_this(), _mPivot);
+		shared_ptr<CMesh> pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, m_pAIScene->mMeshes[i], static_pointer_cast<CModel>(shared_from_this()), _mPivot);
 		if (nullptr == pMesh)
 		{
 			hr = E_FAIL;
@@ -338,7 +338,7 @@ HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
 	return hr;
 }
 
-HRESULT CModel::Ready_Materials(const char* _pModelPath)
+HRESULT CModel::Ready_Materials(const char* _szModelPath)
 {
 	m_iNumMaterials = m_pAIScene->mNumMaterials;
 
@@ -352,31 +352,7 @@ HRESULT CModel::Ready_Materials(const char* _pModelPath)
 
 		for (size_t j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 		{
-			_uint iTexCnt = pAIMaterial->GetTextureCount(aiTextureType(j));
-
-			aiString	strPath;
-			if (FAILED(pAIMaterial->GetTexture(aiTextureType(j), 0, &strPath)))
-				continue;
-
-			char	szDrive[MAX_PATH]		= "";
-			char	szDirectory[MAX_PATH]	= "";
-			char	szFileName[MAX_PATH]	= "";
-			char	szExt[MAX_PATH]			= "";
-			char	szFullPath[MAX_PATH]	= "";
-			_tchar	szFinalPath[MAX_PATH]	= L"";
-
-			_splitpath_s(_pModelPath, szDrive, MAX_PATH, szDirectory, MAX_PATH, nullptr, 0, nullptr, 0);
-			_splitpath_s(strPath.data, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
-
-			strcpy_s(szFullPath, szDrive);
-			strcat_s(szFullPath, szDirectory);
-			strcat_s(szFullPath, szFileName);
-			strcat_s(szFullPath, szExt);
-
-			MultiByteToWideChar(CP_ACP, 0, szFullPath, static_cast<int>(strlen(szFullPath)), szFinalPath, MAX_PATH);
-
-			shared_ptr<CTexture> pMaterial = CTexture::Create(m_pDevice, m_pContext, szFinalPath, iTexCnt);
-
+			shared_ptr<CTexture> pMaterial = CTexture::Create(m_pDevice, m_pContext, _szModelPath, pAIMaterial, aiTextureType(j));
 			if (nullptr == pMaterial)
 			{
 				hr = E_FAIL;
@@ -421,7 +397,7 @@ HRESULT CModel::Ready_Animations()
 
 	for (size_t i = 0; i < m_iNumAnimations; ++i)
 	{
-		shared_ptr<CAnimation> pAnimation = CAnimation::Create(m_pAIScene->mAnimations[i], shared_from_this());
+		shared_ptr<CAnimation> pAnimation = CAnimation::Create(m_pAIScene->mAnimations[i], static_pointer_cast<CModel>(shared_from_this()));
 		if (nullptr == pAnimation)
 		{
 			hr = E_FAIL;

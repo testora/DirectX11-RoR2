@@ -3,7 +3,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CComponent abstract
+class ENGINE_DLL CComponent abstract : public std::enable_shared_from_this<CComponent>
 {
 protected:
 	explicit CComponent(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);

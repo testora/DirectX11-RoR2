@@ -243,14 +243,21 @@ HRESULT CShader::Bind_ShaderResourceViews(const char* _pConstantName, vector<Com
 	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = m_pEffect->GetVariableByName(_pConstantName)->AsShaderResource();
 	if (nullptr == pShaderResourceVariable)
 	{
-		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceView", "Failed to GetVariableByName");
+		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to GetVariableByName");
 	}
 
 	auto raw = Function::ConvertToRawPtrVector(_vecShaderResourceView);
 	if (FAILED(pShaderResourceVariable->SetResourceArray(raw.data(), 0, static_cast<_uint>(_vecShaderResourceView.size()))))
 	{
-		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceView", "Failed to SetResource");
+		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to SetResource");
 	}
+
+#if TEMP_TRIPLANER
+	if (FAILED(pShaderResourceVariable->SetResourceArray(raw.data(), 2, static_cast<_uint>(_vecShaderResourceView.size()))))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to SetResource");
+	}
+#endif
 
 	return S_OK;
 }

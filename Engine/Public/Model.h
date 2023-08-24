@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CModel final : public CComponent, public std::enable_shared_from_this<CModel>
+class ENGINE_DLL CModel final : public CComponent
 {
 private:
 	explicit CModel(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL);
@@ -12,33 +12,32 @@ private:
 	virtual ~CModel() DEFAULT;
 
 public:
-	virtual HRESULT							Initialize(const char* pModelPath, _matrixf mPivot = g_mUnit);
+	virtual HRESULT							Initialize(const char* szModelPath, _matrixf mPivot = g_mUnit);
 	HRESULT									Render(shared_ptr<class CShader>, _uint iPassIndex);
 	HRESULT									Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
 
 public:
 	_uint									Get_NumMeshes() const	{ return m_iNumMeshes; }
-	_uint									Get_BoneIndex(const char* pBoneName);
+	_uint									Get_BoneIndex(const char* szBoneName);
 
 public:
 	void									Tick_Animation(_float fTimeDelta);
+	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 
 	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIdx = 0);
-	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName, _uint iTextureIdx = 0);
+	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* szConstantName, _uint iTextureIdx = 0);
 	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>);
-	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* pConstantName);
-	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const char* pConstantName);
-
-	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
+	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const char* szConstantName);
+	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const char* szConstantName);
 
 private:
 	HRESULT									Ready_Meshes(_matrixf mPivot);
-	HRESULT									Ready_Materials(const char* pModelPath);
+	HRESULT									Ready_Materials(const char* szModelPath);
 	HRESULT									Ready_Bones(const aiNode* pAINode, _uint iParentBoneIndex);
 	HRESULT									Ready_Animations();
 
 private:
-	Assimp::Importer						m_Importer;
+	Assimp::Importer						m_aiImporter;
 	const aiScene*							m_pAIScene			= nullptr;
 
 	const MODEL								m_eType				= MODEL::MAX;

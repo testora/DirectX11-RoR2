@@ -23,8 +23,8 @@ sampler PointSampler = sampler_state
 
 int			g_iFlag;
 
-Texture2D	g_texDiffuse;
-Texture2D	g_texNormal;
+Texture2D	g_texDiffuse[8];
+Texture2D	g_texNormal[8];
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;
@@ -48,6 +48,51 @@ vector		g_vMtrlAmbient			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlSpecular			= vector(1.f, 1.f, 1.f, 1.f);
 vector		g_vMtrlEmissive			= vector(0.f, 0.f, 0.f, 0.f);
 float		g_fMtrlShininess		= 32.f;
+
+float		g_fTiling				= 0.02f;
+float		g_fTPSharpness			= 1.f;
+
+float4 TriPlanar_Diffuse(Texture2D texX, Texture2D texY, Texture2D texZ, float3 vBlendFactor, float3 vWorldPos)
+{
+	float4 vColorX			= texX.Sample(LinearSampler, vWorldPos.zy * g_fTiling);
+	float4 vColorY			= texY.Sample(LinearSampler, vWorldPos.zx * g_fTiling);
+	float4 vColorZ			= texZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling);
+	
+	float4 vFinalColor		= vColorX * vBlendFactor.x + vColorY * vBlendFactor.y + vColorZ * vBlendFactor.z;
+	
+	return vFinalColor;
+}
+float4 TriPlanar_Diffuse(Texture2D texXZ, Texture2D texY, float3 vBlendFactor, float3 vWorldPos)
+{
+	float4 vColorXZ			= texXZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling);
+	float4 vColorY			= texY.Sample(LinearSampler, vWorldPos.xz * g_fTiling);
+	
+	float4 vFinalColor		= vColorXZ * (vBlendFactor.x + vBlendFactor.z) + vColorY * vBlendFactor.y;
+	
+	return vFinalColor;
+}
+
+float3 TriPlanar_Normal(Texture2D texX, Texture2D texY, Texture2D texZ, float3x3 vTBN, float3 vBlendFactor, float3 vWorldPos)
+{
+	float3 vNormalMapX		= texX.Sample(LinearSampler, vWorldPos.zy * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapY		= texY.Sample(LinearSampler, vWorldPos.zx * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapZ		= texZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling).xyz * 2.f - 1.f;
+	
+	float3 vFinalNormalMap	= vNormalMapX * vBlendFactor.x + vNormalMapY * vBlendFactor.y + vNormalMapZ * vBlendFactor.z;
+	float3 vFinalNormal		= mul(vFinalNormalMap, vTBN);
+
+	return vFinalNormal;
+}
+float3 TriPlanar_Normal(Texture2D texXZ, Texture2D texY, float3x3 vTBN, float3 vBlendFactor, float3 vWorldPos)
+{
+	float3 vNormalMapXZ		= texXZ.Sample(LinearSampler, vWorldPos.xy * g_fTiling).xyz * 2.f - 1.f;
+	float3 vNormalMapY		= texY.Sample(LinearSampler, vWorldPos.xz * g_fTiling).xyz * 2.f - 1.f;
+	
+	float3 vFinalNormalMap	= vNormalMapXZ * (vBlendFactor.x + vBlendFactor.z) + vNormalMapY * vBlendFactor.y;
+	float3 vFinalNormal		= mul(vFinalNormalMap, vTBN);
+
+	return vFinalNormal;
+}
 
 struct VS_IN
 {
@@ -74,7 +119,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	mWVP			= mul(mWV, g_mProj);
 
 	Out.vPosition	= mul(vector(In.vPosition, 1.f), mWVP);
-    Out.vNormal		= mul(vector(In.vNormal, 0.f), g_mWorld);
+    Out.vNormal		= mul(vector(normalize(In.vNormal), 0.f), g_mWorld);
 	Out.vTexCoord	= In.vTexCoord;
 	Out.vWorldPos	= mul(vector(In.vPosition, 1.f), g_mWorld);
 
@@ -99,25 +144,25 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT	Out;
 	
 	float3		vFinalColor;
-	float4		vTexColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord);
+	float4		vTexColor	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
 	
 	// Normal
-	float3		vNormal		= In.vNormal;
+	float3		vNormal		= In.vNormal.xyz;
 	
 	// Specular
-	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos);
+	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos).xyz;
 	
 	for (int i = 0; i < g_iLightCount; ++i)
 	{
 		// Lighting
-        float3	vLightDir;
+        float3	vLightDir	= float3(0.f, 0.f, 0.f);
 		switch (g_iLightType[i])
 		{
 		case POINT:
-            vLightDir		= normalize(In.vWorldPos - g_vLightDirection[i]);
+            vLightDir		= normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
 			break;
 		case DIRECTIONAL:
-            vLightDir		= normalize(g_vLightDirection[i]);
+            vLightDir		= normalize(g_vLightDirection[i]).xyz;
             break;
         }
 		
@@ -159,25 +204,25 @@ PS_OUT PS_TERRAIN(PS_IN In)
 	PS_OUT		Out;
 	
 	float3		vFinalColor;
-	float4		vTexColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord * 32.f);
+	float4		vTexColor	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord * 32.f);
 	
 	// Normal
-	float3		vNormal		= In.vNormal;
+	float3		vNormal		= In.vNormal.xyz;
 	
 	// Specular
-	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos);
+	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos).xyz;
 	
 	for (int i = 0; i < g_iLightCount; ++i)
 	{
 		// Lighting
-        float3	vLightDir;
+        float3	vLightDir	= float3(0.f, 0.f, 0.f);
 		switch (g_iLightType[i])
 		{
 		case POINT:
-            vLightDir		= normalize(In.vWorldPos - g_vLightDirection[i]);
+            vLightDir		= normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
 			break;
 		case DIRECTIONAL:
-            vLightDir		= normalize(g_vLightDirection[i]);
+            vLightDir		= normalize(g_vLightDirection[i]).xyz;
             break;
         }
 		
@@ -208,8 +253,8 @@ PS_OUT PS_TERRAIN(PS_IN In)
 	vFinalColor			+=	g_vMtrlEmissive.rgb;
 	
 	// Out
-    Out.vColor.rgb		= vFinalColor;
-    Out.vColor.a		= vTexColor.a;
+    Out.vColor.rgb		=	vFinalColor;
+    Out.vColor.a		=	vTexColor.a;
 
 	return Out;
 }
@@ -218,7 +263,7 @@ PS_OUT PS_BRUSH(PS_IN In)
 {
 	PS_OUT Out;
 
-	Out.vColor	= g_texDiffuse.Sample(LinearSampler, In.vTexCoord * 30.f);
+	Out.vColor	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord * 30.f);
 	
 //	for (int i = 0; i < g_iBrushCount; ++i)
 //	{

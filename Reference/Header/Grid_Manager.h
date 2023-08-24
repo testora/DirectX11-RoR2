@@ -35,6 +35,7 @@ private:
 	multimap<_float, shared_ptr<class CGrid>>							m_mmapRaycastGrid;
 
 	_float3																m_vGridSize;
+	_float																m_fGridDiagonalHalf	= 0.f;
 
 	SCENE																m_eSceneMax	= static_cast<SCENE>(0);
 

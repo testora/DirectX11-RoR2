@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CMesh final : public CVIBuffer, public std::enable_shared_from_this<CMesh>
+class ENGINE_DLL CMesh final : public CVIBuffer
 {
 private:
 	explicit CMesh(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
