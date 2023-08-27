@@ -48,7 +48,7 @@ HRESULT CChannel::Initialize(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _
 	return S_OK;
 }
 
-void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _pModelBones, _uint& _iCurrentKeyFrame, _float _fTrackPosition)
+void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _vecModelBones, _uint& _iCurrentKeyFrame, _float _fTrackPosition)
 {
 	if (0.f == _fTrackPosition)
 	{
@@ -78,7 +78,7 @@ void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _pModelBones, _ui
 		vTranslation	= _float4(m_vecKeyFrames.back().vTranslation);
 	}
 
-	_pModelBones[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
+	_vecModelBones[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
 }
 
 shared_ptr<CChannel> CChannel::Create(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _pModel)

@@ -4,6 +4,7 @@
 #include "Timer_Manager.h"
 #include "Mouse_Manager.h"
 #include "Key_Manager.h"
+#include "Event_Handler.h"
 #include "Scene_Manager.h"
 #include "Object_Manager.h"
 #include "Component_Manager.h"
@@ -17,6 +18,7 @@ CGameInstance::CGameInstance()
 	, m_pTimer_Manager		(CTimer_Manager::Get_Instance())
 	, m_pMouse_Manager		(CMouse_Manager::Get_Instance())
 	, m_pKey_Manager		(CKey_Manager::Get_Instance())
+	, m_pEvent_Handler		(CEvent_Handler::Get_Instance())
 	, m_pScene_Manager		(CScene_Manager::Get_Instance())
 	, m_pObject_Manager		(CObject_Manager::Get_Instance())
 	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
@@ -121,6 +123,8 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
 
 	m_pLight_Manager->Late_Tick();
+
+	m_pEvent_Handler->Tick(_fTimeDelta);
 }
 
 LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
@@ -136,6 +140,39 @@ LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam,
 WNDPROCDESC CGameInstance::Get_WndProcDesc() const
 {
 	return m_tWndProcDesc;
+}
+
+#pragma endregion
+#pragma region Graphic Device
+
+HRESULT CGameInstance::Clear_BackBuffer_View(_color _cBackBuffer)
+{
+	if (nullptr == m_pGraphic_Device)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Clear_BackBuffer_View", "Null Exception: m_pGraphic_Device");
+	}
+
+	return m_pGraphic_Device->Clear_BackBuffer_View(_cBackBuffer);
+}
+
+HRESULT CGameInstance::Clear_DepthStencil_View()
+{
+	if (nullptr == m_pGraphic_Device)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Clear_DepthStencil_View", "Null Exception: m_pGraphic_Device");
+	}
+
+	return m_pGraphic_Device->Clear_DepthStencil_View();
+}
+
+HRESULT CGameInstance::Present()
+{
+	if (nullptr == m_pGraphic_Device)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Present", "Null Exception: m_pGraphic_Device");
+	}
+
+	return m_pGraphic_Device->Present();
 }
 
 #pragma endregion
@@ -318,36 +355,16 @@ void CGameInstance::CheckFocus_OnKeyboard(_bool _bCheck)
 }
 
 #pragma endregion
-#pragma region Graphic Device
+#pragma region Event Handler
 
-HRESULT CGameInstance::Clear_BackBuffer_View(_color _cBackBuffer)
+void CGameInstance::Register_TickListener(shared_ptr<CGameObject> _pSubscriber, function<_bool(_float)> _funcListener)
 {
-	if (nullptr == m_pGraphic_Device)
+	if (nullptr == m_pEvent_Handler)
 	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Clear_BackBuffer_View", "Null Exception: m_pGraphic_Device");
+		MSG_RETURN(, "CGameInstance::Register_TickListener", "Null Exception: m_pEvent_Handler");
 	}
 
-	return m_pGraphic_Device->Clear_BackBuffer_View(_cBackBuffer);
-}
-
-HRESULT CGameInstance::Clear_DepthStencil_View()
-{
-	if (nullptr == m_pGraphic_Device)
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Clear_DepthStencil_View", "Null Exception: m_pGraphic_Device");
-	}
-
-	return m_pGraphic_Device->Clear_DepthStencil_View();
-}
-
-HRESULT CGameInstance::Present()
-{
-	if (nullptr == m_pGraphic_Device)
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Present", "Null Exception: m_pGraphic_Device");
-	}
-
-	return m_pGraphic_Device->Present();
+	return m_pEvent_Handler->Register_TickListener(_pSubscriber, _funcListener);
 }
 
 #pragma endregion
@@ -434,6 +451,26 @@ shared_ptr<class CObjectPool> CGameInstance::Find_Pool(const SCENE _eScene, cons
 	}
 
 	return m_pObject_Manager->Find_Pool(_eScene, _strPoolTag);
+}
+
+void CGameInstance::Iterate_Layers(const SCENE _eScene, function<_bool(pair<wstring, shared_ptr<class CObjectLayer>>)> _funcCallback)
+{
+	if (nullptr == m_pObject_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pObject_Manager");
+	}
+
+	return m_pObject_Manager->Iterate_Layers(_eScene, _funcCallback);
+}
+
+void CGameInstance::Iterate_Pools(const SCENE _eScene, function<_bool(pair<wstring, shared_ptr<class CObjectPool>>)> _funcCallback)
+{
+	if (nullptr == m_pObject_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pObject_Manager");
+	}
+
+	return m_pObject_Manager->Iterate_Pools(_eScene, _funcCallback);
 }
 
 #pragma endregion

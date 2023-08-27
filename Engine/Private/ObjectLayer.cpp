@@ -48,14 +48,14 @@ HRESULT CObjectLayer::Delete(shared_ptr<class CGameObject> _pObject)
 	return S_OK;
 }
 
-void CObjectLayer::Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)> _fn)
+void CObjectLayer::Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)> _funcCallback)
 {
 	for (auto iter : m_usetObject)
 	{
-		if (_fn(iter))
+		if (!_funcCallback(iter))
 		{
 			return;
-		};
+		}
 	}
 }
 

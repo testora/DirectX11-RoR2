@@ -28,7 +28,7 @@ HRESULT CAnimation::Initialize(const aiAnimation* _pAIAnimation, shared_ptr<clas
 	return hr;
 }
 
-void CAnimation::Update(_float _fTimeDelta, vector<shared_ptr<class CBone>> _pModelBones, _bool _bLoop)
+void CAnimation::Update(_float _fTimeDelta, vector<shared_ptr<class CBone>> _vecModelBones, _bool _bLoop)
 {
 	m_fTrackPosition += m_fTicksPerSecond * _fTimeDelta;
 
@@ -39,7 +39,7 @@ void CAnimation::Update(_float _fTimeDelta, vector<shared_ptr<class CBone>> _pMo
 
 	for (size_t i = 0; i < m_iNumChannels; ++i)
 	{
-		m_vecChannels[i]->Update_Transformation(_pModelBones, m_vecChannelKeyFrames[i], m_fTrackPosition);
+		m_vecChannels[i]->Update_Transformation(_vecModelBones, m_vecChannelKeyFrames[i], m_fTrackPosition);
 	}
 }
 

@@ -116,7 +116,7 @@ HRESULT CScene_Test::Ready_Terrain()
 		{
 			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, GRID_TERRAIN, _pTerrain);
 
-			return false;
+			return true;
 		}
 	);
 

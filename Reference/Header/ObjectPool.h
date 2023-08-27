@@ -29,7 +29,7 @@ private:
 
 	shared_ptr<class CGameObject>					m_pPrototype;
 
-	std::function<shared_ptr<class CGameObject>()>	m_fnPush;
+	std::function<shared_ptr<class CGameObject>()>	m_funcPush;
 	any												m_fetchArg;
 
 	const SCENE										m_eScene;

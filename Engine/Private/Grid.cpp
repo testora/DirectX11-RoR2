@@ -14,13 +14,13 @@ void CGrid::Add_Polygon(_float3* _pVertices, _uint3 _vIndices)
 	m_umapPolygons[_pVertices].emplace_back(_vIndices);
 }
 
-void CGrid::Iterate_Polygon(function<_bool(_float3, _float3, _float3)> _fn)
+void CGrid::Iterate_Polygon(function<_bool(_float3, _float3, _float3)> _funcCallback)
 {
 	for (auto& pair : m_umapPolygons)
 	{
 		for (auto& vIndices : pair.second)
 		{
-			if (_fn(pair.first[vIndices.x], pair.first[vIndices.y], pair.first[vIndices.z]))
+			if (!_funcCallback(pair.first[vIndices.x], pair.first[vIndices.y], pair.first[vIndices.z]))
 			{
 				return;
 			}

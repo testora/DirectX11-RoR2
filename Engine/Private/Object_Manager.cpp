@@ -157,6 +157,28 @@ HRESULT CObject_Manager::Clear_Scene_Object(const SCENE _eScene)
 	return S_OK;
 }
 
+void CObject_Manager::Iterate_Layers(const SCENE _eScene, function<_bool(pair<wstring, shared_ptr<CObjectLayer>>)> _funcCallback)
+{
+	for (auto& iter : m_arrLayers[IDX(_eScene)])
+	{
+		if (!_funcCallback(iter))
+		{
+			return;
+		}
+	}
+}
+
+void CObject_Manager::Iterate_Pools(const SCENE _eScene, function<_bool(pair<wstring, shared_ptr<CObjectPool>>)> _funcCallback)
+{
+	for (auto& iter : m_arrPools[IDX(_eScene)])
+	{
+		if (!_funcCallback(iter))
+		{
+			return;
+		}
+	}
+}
+
 shared_ptr<CGameObject> CObject_Manager::Find_Prototype(const SCENE _eScene, const wstring& _strPrototypeTag)
 {
 	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))

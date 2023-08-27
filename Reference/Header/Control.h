@@ -16,9 +16,11 @@ public:
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
-public:
+private:
 	void							Handle_MouseInput(_float fTimeDelta);
 	void							Handle_KeyInput(_float fTimeDelta);
+
+	void							Refresh_Animations();
 
 private:
 	const CHARACTERDESC*			m_pCharacterDesc	= nullptr;

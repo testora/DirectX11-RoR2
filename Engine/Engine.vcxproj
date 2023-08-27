@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Event_Handler.h" />
     <ClInclude Include="Public\Animator.h" />
     <ClInclude Include="Public\Bounding.h" />
     <ClInclude Include="Public\Bounding_AABB.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Event_Handler.cpp" />
     <ClCompile Include="Private\Animator.cpp" />
     <ClCompile Include="Private\Bounding.cpp" />
     <ClCompile Include="Private\Bounding_AABB.cpp" />

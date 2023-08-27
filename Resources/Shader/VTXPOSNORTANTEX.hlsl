@@ -1,3 +1,4 @@
+#define MAX_TEXTURE			8
 #define	MAX_LIGHT			32
 #define MAX_BONE			256
 
@@ -23,8 +24,8 @@ sampler PointSampler = sampler_state
 
 int			g_iFlag;
 
-Texture2D	g_texDiffuse[8];
-Texture2D	g_texNormal[8];
+Texture2D	g_texDiffuse			[MAX_TEXTURE];
+Texture2D	g_texNormal				[MAX_TEXTURE];
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;
@@ -230,8 +231,8 @@ PS_OUT PS_TRIPLANER_X_Y_Z(PS_IN In)
 	if (g_iFlag & STATUS_TEXNORMAL)
 	{
 		float3x3	vTBN	= float3x3(In.vTangent.xyz, cross(In.vNormal.xyz, In.vTangent.xyz), In.vNormal.xyz);
-        vNormal				= TriPlanar_Normal(g_texNormal[0], g_texNormal[1], g_texNormal[2], vTBN, vBlendFactor, In.vWorldPos.xyz);
-    }
+		vNormal				= TriPlanar_Normal(g_texNormal[0], g_texNormal[1], g_texNormal[2], vTBN, vBlendFactor, In.vWorldPos.xyz);
+	}
 	
 	// Specular
 	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos).xyz;
@@ -303,8 +304,8 @@ PS_OUT PS_TRIPLANER_XZ_Y(PS_IN In)
 	if (g_iFlag & STATUS_TEXNORMAL)
 	{
 		float3x3	vTBN	= float3x3(In.vTangent.xyz, cross(In.vNormal.xyz, In.vTangent.xyz), In.vNormal.xyz);
-        vNormal				= TriPlanar_Normal(g_texNormal[0], g_texNormal[1], vTBN, vBlendFactor, In.vWorldPos.xyz);
-    }
+		vNormal				= TriPlanar_Normal(g_texNormal[0], g_texNormal[1], vTBN, vBlendFactor, In.vWorldPos.xyz);
+	}
 	
 	// Specular
 	float3		vViewDir	= normalize(g_vCamPosition - In.vWorldPos).xyz;

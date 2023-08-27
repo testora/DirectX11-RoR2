@@ -49,6 +49,9 @@
     <Filter Include="03. Utility\02. PipeLine">
       <UniqueIdentifier>{d698d4e7-289b-46ab-b04f-501ec3ee1124}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\00. RAII">
+      <UniqueIdentifier>{468ae8da-9fd0-46e0-9534-88c1bfc4f533}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\03. Scene">
       <UniqueIdentifier>{346618f4-cf65-4601-908e-c5b067bc8b0a}</UniqueIdentifier>
     </Filter>
@@ -88,44 +91,29 @@
     <Filter Include="03. Utility\05. Component\04. Texture">
       <UniqueIdentifier>{ca9a882c-7784-4765-9f4d-cb965a09aacb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. Behavior">
-      <UniqueIdentifier>{900fd513-b64d-4529-8b3f-067adc52ebef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. Behavior\01. Physics">
-      <UniqueIdentifier>{d8e2bba1-c28b-474a-ba8c-dbb83978425b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. Behavior\00. Manager">
-      <UniqueIdentifier>{f0bb3e66-63a0-41a5-beef-213dd5e2c4ea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\00. RAII">
-      <UniqueIdentifier>{468ae8da-9fd0-46e0-9534-88c1bfc4f533}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\07. Light">
-      <UniqueIdentifier>{4299b019-800d-4b5c-bd81-28a1940f65b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\07. Light\00. Manager">
-      <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. Behavior\02. Grounding">
-      <UniqueIdentifier>{795556ed-4e73-4ccd-a1f7-e60c891249e3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\09. Picker">
-      <UniqueIdentifier>{713b2480-a1eb-4bb9-a945-c678183d4a4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\08. Grid">
-      <UniqueIdentifier>{bdc1269e-e7a7-4581-b8a4-18bc520be8e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\08. Grid\00. Manager">
-      <UniqueIdentifier>{34355839-4a07-4717-a464-78af22a140f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\05. Component\06. Model">
       <UniqueIdentifier>{094934b4-8a5e-4350-bf41-d7dd3bf49702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model\01. Animation">
+      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\06. Model\02. Channel">
+      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. Component\06. Model\00. Bone">
       <UniqueIdentifier>{84e9e99c-052e-40d1-8f61-b53c5e2b507f}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. Component\07. VIBuffer">
       <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\00. Mesh">
+      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\01. Rect">
+      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\05. Component\07. VIBuffer\02. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. Component\05. Collider">
       <UniqueIdentifier>{162da921-7bd5-4be2-b1e3-c35ad7c18572}</UniqueIdentifier>
@@ -148,26 +136,41 @@
     <Filter Include="03. Utility\05. Component\05. Collider\02. DebugDraw">
       <UniqueIdentifier>{c549d126-1a5a-48f6-a849-a083129e7c4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\07. VIBuffer\00. Mesh">
-      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
+    <Filter Include="03. Utility\06. Behavior">
+      <UniqueIdentifier>{900fd513-b64d-4529-8b3f-067adc52ebef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\07. VIBuffer\01. Rect">
-      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    <Filter Include="03. Utility\06. Behavior\01. Physics">
+      <UniqueIdentifier>{d8e2bba1-c28b-474a-ba8c-dbb83978425b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\05. Component\07. VIBuffer\02. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    <Filter Include="03. Utility\06. Behavior\00. Manager">
+      <UniqueIdentifier>{f0bb3e66-63a0-41a5-beef-213dd5e2c4ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\06. Behavior\02. Grounding">
+      <UniqueIdentifier>{795556ed-4e73-4ccd-a1f7-e60c891249e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\06. Behavior\03. Animator">
       <UniqueIdentifier>{04d417f6-14c0-425b-ae92-aa1e0fe48351}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\06. Behavior\03. Animator\00. Animation">
-      <UniqueIdentifier>{b0fda656-a9e0-4da5-95fd-0f780db28a14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\06. Behavior\03. Animator\01. Channel">
-      <UniqueIdentifier>{7c448b05-fa53-486c-b7f0-390ab7ff3848}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\06. Behavior\04. Control">
       <UniqueIdentifier>{2bb2c07c-fa92-4888-a425-9121d78e90db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. Light">
+      <UniqueIdentifier>{4299b019-800d-4b5c-bd81-28a1940f65b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\07. Light\00. Manager">
+      <UniqueIdentifier>{fdb2e072-7a9c-4c8f-8123-93ddccbbf238}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. Grid">
+      <UniqueIdentifier>{bdc1269e-e7a7-4581-b8a4-18bc520be8e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\08. Grid\00. Manager">
+      <UniqueIdentifier>{34355839-4a07-4717-a464-78af22a140f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\09. Picker">
+      <UniqueIdentifier>{713b2480-a1eb-4bb9-a945-c678183d4a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. Event">
+      <UniqueIdentifier>{6c0f6577-3b04-4363-bf88-5173eba135b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -271,10 +274,10 @@
       <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClCompile>
     <ClCompile Include="Private\Animation.cpp">
-      <Filter>03. Utility\06. Behavior\03. Animator\00. Animation</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
     </ClCompile>
     <ClCompile Include="Private\Channel.cpp">
-      <Filter>03. Utility\06. Behavior\03. Animator\01. Channel</Filter>
+      <Filter>03. Utility\05. Component\06. Model\02. Channel</Filter>
     </ClCompile>
     <ClCompile Include="Private\Control.cpp">
       <Filter>03. Utility\06. Behavior\04. Control</Filter>
@@ -308,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="Private\Animator.cpp">
       <Filter>03. Utility\06. Behavior\03. Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Event_Handler.cpp">
+      <Filter>03. Utility\03. Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -432,10 +438,10 @@
       <Filter>03. Utility\05. Component\06. Model\00. Bone</Filter>
     </ClInclude>
     <ClInclude Include="Public\Animation.h">
-      <Filter>03. Utility\06. Behavior\03. Animator\00. Animation</Filter>
+      <Filter>03. Utility\05. Component\06. Model\01. Animation</Filter>
     </ClInclude>
     <ClInclude Include="Public\Channel.h">
-      <Filter>03. Utility\06. Behavior\03. Animator\01. Channel</Filter>
+      <Filter>03. Utility\05. Component\06. Model\02. Channel</Filter>
     </ClInclude>
     <ClInclude Include="Public\Control.h">
       <Filter>03. Utility\06. Behavior\04. Control</Filter>
@@ -478,6 +484,9 @@
     </ClInclude>
     <ClInclude Include="Public\Animator.h">
       <Filter>03. Utility\06. Behavior\03. Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Event_Handler.h">
+      <Filter>03. Utility\03. Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

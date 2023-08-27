@@ -49,8 +49,7 @@ HRESULT CRailGunner::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
 	}
 
-	Get_Component<CTransform>(COMPONENT::TRANSFORM)->Set_State(TRANSFORM::POSITION, _float4(1.f, 5.f, 1.f, 1.f));
-	Get_Component<CTransform>(COMPONENT::TRANSFORM)->Set_Scale(_float3(2.f, 2.f, 2.f));
+	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(IDX(ANIMATION::PLAYER::IDLE::IDLE));
 
 	return S_OK;
 }

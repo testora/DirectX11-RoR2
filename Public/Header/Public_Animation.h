@@ -10,8 +10,8 @@ namespace ANIMATION
 		};
 		enum class MOVE
 		{
-			RUN_FORWARD		= 21,
-			RUN_BACKWARD	= 22,
+			RUN_FORWARD		= 22,
+			RUN_BACKWARD	= 21,
 			RUN_LEFT		= 23,
 			RUN_RIGHT		= 24,
 			SPRINT_FORWARD	= 27,

@@ -45,9 +45,9 @@ void CAnimator::Late_Tick(_float _fTimeDelta)
 {
 }
 
-void CAnimator::Play_Animation(_uint _iAnimIdx, _bool _bLoop)
+void CAnimator::Play_Animation(_uint _iAnimIdx, _float _fInterpolationDuration, _bool _bLoop)
 {
-	m_pTargetModel->Set_Animation(_iAnimIdx, _bLoop);
+	m_pTargetModel->Set_Animation(_iAnimIdx, _fInterpolationDuration, _bLoop);
 }
 
 shared_ptr<CAnimator> CAnimator::Create(shared_ptr<class CGameObject> _pOwner)

@@ -1,9 +1,37 @@
 #include "Engine_Function.h"
+
 namespace Function
 {
 	_float Lerp(_float _fStart, _float _fEnd, _float _fRatio)
 	{
 		return (_fStart * (1.f - _fRatio)) + (_fEnd * _fRatio);
+	}
+
+	XMVECTOR Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float fRatio)
+	{
+		return XMVectorLerp(vStart, vEnd, fRatio);
+	}
+
+	XMMATRIX Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio)
+	{
+		XMVECTOR vStartScale, vStartRotation, vStartTranslation;
+		XMVECTOR vEndScale,	vEndRotation, vEndTranslation;
+
+		if (!XMMatrixDecompose(&vStartScale, &vStartRotation, &vStartTranslation, mStart))
+		{
+			return XMMATRIX{};
+		}
+
+		if (!XMMatrixDecompose(&vEndScale, &vEndRotation, &vEndTranslation, mEnd))
+		{
+			return XMMATRIX{};
+		}
+
+		XMVECTOR vScale			= XMVectorLerp(vStartScale, vEndScale, fRatio);
+		XMVECTOR vRotation		= XMQuaternionSlerp(vStartRotation, vEndRotation, fRatio);
+		XMVECTOR vTranslation	= XMVectorLerp(vStartTranslation, vEndTranslation, fRatio);
+
+		return XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
 	}
 
 	_float Clamp(_float _fMin, _float _fMax, _float _fValue)

@@ -1,3 +1,4 @@
+#define MAX_TEXTURE			8
 #define	MAX_LIGHT			32
 #define MAX_BONE			256
 
@@ -23,8 +24,8 @@ sampler PointSampler = sampler_state
 
 int			g_iFlag;
 
-Texture2D	g_texDiffuse[8];
-Texture2D	g_texNormal[8];
+Texture2D	g_texDiffuse			[MAX_TEXTURE];
+Texture2D	g_texNormal				[MAX_TEXTURE];
 
 matrix		g_mWorld, g_mView, g_mProj;
 vector		g_vCamPosition;

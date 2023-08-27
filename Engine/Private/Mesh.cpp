@@ -2,10 +2,12 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "Bone.h"
+#include "Event_Handler.h"
 
 CMesh::CMesh(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CVIBuffer(_pDevice, _pContext, COMPONENT::MESH)
 {
+	m_arrInterpolationMatrices.fill(g_mUnit);
 }
 
 HRESULT CMesh::Initialize(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
@@ -93,16 +95,48 @@ HRESULT CMesh::Initialize(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CMode
 	return S_OK;
 }
 
-_float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<class CBone>> _pModelBones)
+_float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<class CBone>> _vecModelBones)
 {
 	m_arrBones.fill(g_mUnit);
+	cout << m_fInterpolationRatio << endl;
 
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
-		m_arrBones[i] = m_vecOffsets[i] * _pModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation() * m_mPivot;
+		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _vecModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+		m_arrBones[i] = m_vecOffsets[i] * mInterpolation * m_mPivot;
 	}
 
 	return m_arrBones.data();
+}
+
+void CMesh::Set_Interpolation(vector<shared_ptr<class CBone>> _vecModelBones, _float _fDuration)
+{
+	if (0.f == _fDuration)
+	{
+		return;
+	}
+
+	for (size_t i = 0; i < m_iNumBones; ++i)
+	{
+		m_arrInterpolationMatrices[i] = Function::Lerp(m_arrInterpolationMatrices[i], _vecModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+	}
+
+	m_fInterpolationRatio = 0.f;
+	
+	CEvent_Handler::Get_Instance()->Erase_TickListener(shared_from_this());
+	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+		[this, _fDuration](_float _fDeltaTime)->_bool
+		{
+			m_fInterpolationRatio += _fDeltaTime / _fDuration;
+
+			if (m_fInterpolationRatio >= 1.f)
+			{
+				m_fInterpolationRatio = 1.f;
+				return false;
+			}
+
+			return true;
+		});
 }
 
 HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
@@ -126,12 +160,12 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 		memcpy(&pVertices[i].vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
 		pVertices[i].vNormal = _float3(XMVector3TransformNormal(_float3(pVertices[i].vNormal), m_mPivot)).normalize();
 
-		if (!_pAIMesh->mTangents)
+		if (_pAIMesh->mTangents)
 		{
 			memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
 		}
 
-		if (!_pAIMesh->mTextureCoords)
+		if (_pAIMesh->mTextureCoords[0])
 		{
 			memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 		}

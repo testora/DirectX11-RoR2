@@ -56,7 +56,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 					hr = E_FAIL;
 				}
 
-				return false;
+				return true;
 			}
 		);
 	}
@@ -128,7 +128,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 				}
 			}
 
-			return false;
+			return true;
 		}
 	);
 
@@ -251,7 +251,7 @@ _float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirec
 					};
 				}
 
-				return false;
+				return true;
 			}
 		);
 

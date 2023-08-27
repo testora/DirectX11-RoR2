@@ -137,22 +137,27 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 	}
 }
 
-void CModel::Set_Animation(_uint _iAnimIdx, _bool _bLoop)
+void CModel::Set_Animation(_uint _iAnimIdx, _float _fInterpolationDuration, _bool _bLoop)
 {
 	if (_iAnimIdx >= m_iNumAnimations)
 	{
 		MSG_RETURN(, "CModel::Set_Animation", "Invalid Index");
 	}
 
+	for (auto pMesh : m_vecMeshes)
+	{
+		pMesh->Set_Interpolation(m_vecBones, _fInterpolationDuration);
+	}
+
 	m_iCurrentAnimIdx	= _iAnimIdx;
 	m_bAnimLoop			= _bLoop;
 }
 
-void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _fn)
+void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _funcCallback)
 {
 	for (size_t i = 0; i < m_iNumMeshes; ++i)
 	{
-		if (_fn(m_vecMeshes[i]))
+		if (!_funcCallback(m_vecMeshes[i]))
 		{
 			return;
 		}

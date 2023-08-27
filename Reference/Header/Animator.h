@@ -17,7 +17,7 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 public:
-	void							Play_Animation(_uint iAnimIdx, _bool bLoop = true);
+	void							Play_Animation(_uint iAnimIdx, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
 
 private:
 	shared_ptr<class CModel>		m_pTargetModel;

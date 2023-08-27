@@ -22,7 +22,7 @@ public:
 
 public:
 	void									Tick_Animation(_float fTimeDelta);
-	void									Set_Animation(_uint iAnimIdx, _bool bLoop = true);
+	void									Set_Animation(_uint iAnimIdx, _float fInterpolationDuration, _bool bLoop = true);
 
 	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 

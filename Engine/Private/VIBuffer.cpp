@@ -28,7 +28,7 @@ HRESULT CVIBuffer::Initialize(any)
 		{
 			vMin = XMVectorMin(vMin, XMVectorMin(_v0, XMVectorMin(_v1, _v2)));
 			vMax = XMVectorMax(vMax, XMVectorMax(_v0, XMVectorMax(_v1, _v2)));
-			return false;
+			return true;
 		}
 	);
 
@@ -114,7 +114,7 @@ _bool CVIBuffer::Intersect(_Out_ _float3& _vOut, _In_opt_ const _float4x4 _mWorl
 	return bCollide;
 }
 
-void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _fn)
+void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _funcCallback)
 {
 	for (size_t i = 0; i < m_iNumIndices; i += 3)
 	{
@@ -122,18 +122,18 @@ void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _fn)
 		_float3 v1 = m_pVertices[m_pIndices[i + 1]];
 		_float3 v2 = m_pVertices[m_pIndices[i + 2]];
 
-		if (_fn(v0, v1, v2))
+		if (!_funcCallback(v0, v1, v2))
 		{
 			return;
 		}
 	}
 }
 
-void CVIBuffer::Iterate_Indices(function<_bool(_uint, _uint, _uint)> _fn)
+void CVIBuffer::Iterate_Indices(function<_bool(_uint, _uint, _uint)> _funcCallback)
 {
 	for (size_t i = 0; i < m_iNumIndices; i += 3)
 	{
-		if (_fn(m_pIndices[i], m_pIndices[i + 1], m_pIndices[i + 2]))
+		if (!_funcCallback(m_pIndices[i], m_pIndices[i + 1], m_pIndices[i + 2]))
 		{
 			return;
 		}

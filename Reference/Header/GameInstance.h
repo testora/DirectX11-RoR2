@@ -63,6 +63,11 @@ public:
 	void										CheckFocus_OnKeyboard(_bool bCheck = true);
 
 #pragma endregion
+#pragma region Event Handler
+
+	void										Register_TickListener(shared_ptr<class CGameObject>, function<_bool(_float fTimeDelta)>);
+
+#pragma endregion
 #pragma region Scene Manager
 
 	HRESULT										Open_Scene(SCENE, shared_ptr<class CScene>);
@@ -79,6 +84,9 @@ public:
 
 	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& strLayerTag);
 	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& strPoolTag);
+
+	void										Iterate_Layers(const SCENE, function<_bool(pair<wstring, shared_ptr<class CObjectLayer>>)>);
+	void										Iterate_Pools(const SCENE, function<_bool(pair<wstring, shared_ptr<class CObjectPool>>)>);
 
 #pragma endregion
 #pragma region Component Manager
@@ -118,6 +126,7 @@ private:
 	shared_ptr<class CTimer_Manager>			m_pTimer_Manager;
 	shared_ptr<class CMouse_Manager>			m_pMouse_Manager;
 	shared_ptr<class CKey_Manager>				m_pKey_Manager;
+	shared_ptr<class CEvent_Handler>			m_pEvent_Handler;
 	shared_ptr<class CScene_Manager>			m_pScene_Manager;
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
