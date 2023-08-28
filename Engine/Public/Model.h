@@ -20,10 +20,16 @@ public:
 	_uint									Get_BoneIndex(const _char* szBoneName);
 #ifdef _DEBUG
 #if ACTIVATE_IMGUI
-	vector<shared_ptr<class CBone>>			Get_Bones() const		{ return m_vecBones; }
-	vector<shared_ptr<class CAnimation>>	Get_Animations() const	{ return m_vecAnimations; }
-	vector<shared_ptr<class CMesh>>			Get_Meshes() const		{ return m_vecMeshes; }
-	vector<MATERIAL>						Get_Materials() const	{ return m_vecMaterials; }
+	const MODEL								Get_ModelType() const				{ return m_eType; }
+	const _uint								Get_NumBones() const				{ return m_iNumBones; }
+	const _uint								Get_NumAnimations() const			{ return m_iNumAnimations; }
+	const _uint								Get_NumMeshes() const				{ return m_iNumMeshes; }
+	const _uint								Get_NumMaterials() const			{ return m_iNumMaterials; }
+
+	shared_ptr<class CBone>					Get_Bone(_uint iIndex) const		{ return m_vecBones[iIndex]; }
+	shared_ptr<class CAnimation>			Get_Animation(_uint iIndex) const	{ return m_vecAnimations[iIndex]; }
+	shared_ptr<class CMesh>					Get_Mesh(_uint iIndex) const		{ return m_vecMeshes[iIndex]; }
+	MATERIAL								Get_Material(_uint iIndex) const	{ return m_vecMaterials[iIndex]; }
 #endif
 #endif
 
@@ -51,6 +57,7 @@ private:
 
 	const MODEL								m_eType				= MODEL::MAX;
 
+	_uint									m_iNumBones			= 0;
 	vector<shared_ptr<class CBone>>			m_vecBones;
 
 	_uint									m_iNumAnimations	= 0;

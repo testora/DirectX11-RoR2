@@ -52,6 +52,7 @@ HRESULT CModel::Initialize(const wstring& _strModelPath, _matrixf _mPivot)
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Bones");
 	}
+	m_iNumBones = static_cast<_uint>(m_vecBones.size());
 
 	if (FAILED(Ready_Animations()))
 	{

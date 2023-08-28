@@ -1,8 +1,5 @@
 #pragma once
 
-typedef unsigned char			_ubyte;
-typedef signed char				_byte;
-
 typedef unsigned short			_ushort;
 typedef signed short			_short;
 
@@ -17,5 +14,6 @@ typedef double					_double;
 
 typedef	bool					_bool;
 
+typedef char					_byte;
 typedef char					_char;
 typedef wchar_t					_wchar;

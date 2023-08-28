@@ -46,7 +46,7 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 	m_tInitializeData.pSysMem			= pVertices.get();
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pVB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
@@ -78,7 +78,7 @@ HRESULT CVIBuffer_Rect::Initialize(any)
 
 	memcpy(m_pIndices.get(), pIndices.get(), m_iNumIndices * m_iIndexStride);
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pIB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}

@@ -9,7 +9,7 @@ HRESULT CGrid::Initialize(_float3 _vMinBound, _float3 _vGridSize)
 	return S_OK;
 }
 
-void CGrid::Add_Polygon(_float3* _pVertices, _uint3 _vIndices)
+void CGrid::Add_Polygon(const _float3* _pVertices, _uint3 _vIndices)
 {
 	m_umapPolygons[_pVertices].emplace_back(_vIndices);
 }

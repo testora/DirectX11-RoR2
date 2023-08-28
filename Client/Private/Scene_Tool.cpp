@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Bone.h"
 #include "Animation.h"
+#include "Channel.h"
 #include "Mesh.h"
 #include "Texture.h"
 
@@ -47,17 +48,60 @@ HRESULT CScene_Tool::Render()
 void CScene_Tool::System_Model()
 {
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(360.f, ImGui::GetIO().DisplaySize.y));
+	ImGui::SetNextWindowSize(ImVec2(540.f, ImGui::GetIO().DisplaySize.y));
 
 	ImGui::Begin("System:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
 #pragma region Open Model
 
-	static MODEL eType(MODEL::MAX);
-
-	if (ImGui::Button("Open"))
+	static MODEL eType(MODEL::NONANIM);
+	
+	if (ImGui::Button("Load"))
 	{
-		ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_FBX, "Open FBX", ".fbx", "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+		if (!m_imEmbed_Open.IsOpened())
+		{
+			if (m_imEmbed_Export.IsOpened())
+			{
+				m_imEmbed_Export.Close();
+			}
+
+			m_imEmbed_Open.OpenDialog(DIALOG_OPEN_FBX, "Open FBX", ".fbx", "Bin/Resources/", 1, nullptr,
+				ImGuiFileDialogFlags_HideColumnType			|
+				ImGuiFileDialogFlags_NoDialog				|
+				ImGuiFileDialogFlags_DisableBookmarkMode	|
+				ImGuiFileDialogFlags_ReadOnlyFileNameField);
+		}
+		else
+		{
+			m_imEmbed_Open.Close();
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Export"))
+	{
+		if (!m_imEmbed_Export.IsOpened())
+		{
+			if (m_imEmbed_Open.IsOpened())
+			{
+				m_imEmbed_Open.Close();
+			}
+
+			const _char* szFilters = "Binary (*.mdl){.mdl},Models (*.fbx, *.mdl){*.fbx *.mdl},All files{.*}";
+			m_imEmbed_Export.OpenDialog(DIALOG_EXPORT_MODEL, "Export Model", szFilters, "Bin/Resources/", "",
+				[](const char*, void*, bool*)
+				{
+					ImGui::Text("");
+				},
+				60, 1, nullptr,
+				ImGuiFileDialogFlags_HideColumnType			|
+				ImGuiFileDialogFlags_NoDialog				|
+				ImGuiFileDialogFlags_DisableBookmarkMode	|
+				ImGuiFileDialogFlags_ConfirmOverwrite);
+		}
+		else
+		{
+			m_imEmbed_Export.Close();
+		}
 	}
 	ImGui::SameLine();
 	if (ImGui::RadioButton("Anim", eType == MODEL::ANIM))
@@ -72,7 +116,8 @@ void CScene_Tool::System_Model()
 
 	_float fWindowWidth = ImGui::GetContentRegionAvail().x;
 	_float fButtonWidth = ImGui::CalcTextSize("Pivot").x + ImGui::GetStyle().FramePadding.x * 2.f;
-	ImGui::SameLine(fWindowWidth - fButtonWidth);
+
+	ImGui::SameLine(fWindowWidth - fButtonWidth + ImGui::GetStyle().FramePadding.x);
 
 	static _bool		bShowPivotSettings = false;
 	static _float3		vPivotScale(1.f, 1.f, 1.f);
@@ -85,20 +130,20 @@ void CScene_Tool::System_Model()
 		bShowPivotSettings = !bShowPivotSettings;
 	}
 
+	ImGui::Separator();
+
 	static _uint iTab = 0;
 	if (bShowPivotSettings)
 	{
-		ImGui::Separator();
-
 		if (ImGui::BeginTabBar("Tab:Pivot"))
 		{
 			if (ImGui::BeginTabItem("Value"))
 			{
 				if (ImGui::Button("Reset Pivot"))
 				{
-					vPivotScale = _float3(1.f, 1.f, 1.f);
-					vPivotRotation = _float3(0.f, 0.f, 0.f);
-					vPivotTranslation = _float3(0.f, 0.f, 0.f);
+					vPivotScale			= _float3(1.f, 1.f, 1.f);
+					vPivotRotation		= _float3(0.f, 0.f, 0.f);
+					vPivotTranslation	= _float3(0.f, 0.f, 0.f);
 				}
 
 				if (iTab == 2)
@@ -107,18 +152,18 @@ void CScene_Tool::System_Model()
 					_vector vScale, vQuaternion, vTranslation;
 					if (XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, mPivot))
 					{
-						vPivotScale = vScale;
-						vPivotRotation = Function::QuaternionToEuler(vQuaternion, false);
-						vPivotTranslation = vTranslation;
+						vPivotScale			= vScale;
+						vPivotRotation		= Function::QuaternionToEuler(vQuaternion, false);
+						vPivotTranslation	= vTranslation;
 					}
 					else
 					{
 						MSG_BOX("CScene_Tool:System_Model", "Failed to XMMatrixDecompose");
 					}
 				}
-				ImGui::InputFloat3("Scale", reinterpret_cast<_float*>(&vPivotScale));
-				ImGui::InputFloat3("Rotation(Degree)", reinterpret_cast<_float*>(&vPivotRotation));
-				ImGui::InputFloat3("Translation", reinterpret_cast<_float*>(&vPivotTranslation));
+				ImGui::DragFloat3("Scale",				reinterpret_cast<_float*>(&vPivotScale));
+				ImGui::DragFloat3("Rotation(Degree)",	reinterpret_cast<_float*>(&vPivotRotation));
+				ImGui::DragFloat3("Translation",		reinterpret_cast<_float*>(&vPivotTranslation));
 				ImGui::EndTabItem();
 
 				mPivot = XMMatrixAffineTransformation(vPivotScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
@@ -129,86 +174,113 @@ void CScene_Tool::System_Model()
 			{
 				if (ImGui::Button("Reset Pivot"))
 				{
-					vPivotScale = _float3(1.f, 1.f, 1.f);
-					vPivotRotation = _float3(0.f, 0.f, 0.f);
-					vPivotTranslation = _float3(0.f, 0.f, 0.f);
+					vPivotScale			= _float3(1.f, 1.f, 1.f);
+					vPivotRotation		= _float3(0.f, 0.f, 0.f);
+					vPivotTranslation	= _float3(0.f, 0.f, 0.f);
+					mPivot				= g_mUnit;
 				}
 
 				if (iTab == 1)
 				{
-					iTab = 2;
-					mPivot = XMMatrixAffineTransformation(vPivotScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
+					iTab	= 2;
+					mPivot	= XMMatrixAffineTransformation(vPivotScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
 						_float3(XMConvertToRadians(vPivotRotation.x), XMConvertToRadians(vPivotRotation.y), XMConvertToRadians(vPivotRotation.z))), vPivotTranslation);
 				}
-				ImGui::InputFloat4("Right", reinterpret_cast<_float*>(&mPivot._11));
-				ImGui::InputFloat4("Up", reinterpret_cast<_float*>(&mPivot._21));
-				ImGui::InputFloat4("Look", reinterpret_cast<_float*>(&mPivot._31));
-				ImGui::InputFloat4("Position", reinterpret_cast<_float*>(&mPivot._41));
+				ImGui::DragFloat4("Right",		reinterpret_cast<_float*>(&mPivot._11));
+				ImGui::DragFloat4("Up",			reinterpret_cast<_float*>(&mPivot._21));
+				ImGui::DragFloat4("Look",		reinterpret_cast<_float*>(&mPivot._31));
+				ImGui::DragFloat4("Position",	reinterpret_cast<_float*>(&mPivot._41));
 				ImGui::EndTabItem();
 			}
-
 			ImGui::EndTabBar();
+		}
+		ImGui::Separator();
+	}
+
+	if (m_imEmbed_Open.Display(DIALOG_OPEN_FBX, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	{
+		if (m_imEmbed_Open.IsOk())
+		{
+			if (FAILED(Load_Model(Function::ToWString(m_imEmbed_Open.GetCurrentPath()), Function::ToWString(m_imEmbed_Open.GetCurrentFileName()), eType, mPivot)))
+			{
+				MSG_BOX("CScene_Tool::Tick", "Failed to Load_Model");
+			}
 		}
 	}
 
-	ImGui::Separator();
+	if (m_imEmbed_Export.Display(DIALOG_EXPORT_MODEL, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	{
+		if (m_imEmbed_Export.IsOk())
+		{
+			if (FAILED(Export_BinaryModel(Function::ToWString(m_imEmbed_Export.GetCurrentPath()), Function::ToWString(m_imEmbed_Export.GetCurrentFileName()))))
+			{
+				MSG_BOX("CScene_Tool::Tick", "Failed to Export_Model");
+			}
+		}
+	}
+
+	if (m_imEmbed_Open.IsOpened() || m_imEmbed_Export.IsOpened())
+	{
+		ImGui::Separator();
+	}
 
 #pragma endregion
 #pragma region Model List
 
 	ImGui::SeparatorText("Model List");
 
+	_float fWindowWidth0 = ImGui::GetWindowWidth();
+	_float fButtonWidth0 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+	_float fButtonSpace0 = ImGui::GetStyle().ItemSpacing.x;
+
 	ImGui::Text("Anim: ");
+	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 - fButtonWidth0);
+	if (ImGui::Button("-", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		m_mapAnimModels.erase(m_pairSelectedModel.first);
+		m_pairSelectedModel.first.clear();
+		m_pairSelectedModel.second = nullptr;
+	}
 	if (ImGui::BeginListBox("Anim", ImVec2(-FLT_MIN, 0.f)))
 	{
 		for (auto pair : m_mapAnimModels)
 		{
-			if (ImGui::Selectable(pair.first.c_str(), m_pSelectedModel == pair.second))
+			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
-				m_pSelectedModel = pair.second;
+				m_pairSelectedModel = pair;
 			}
 
-			if (m_pSelectedModel == pair.second)
+			if (m_pairSelectedModel == pair)
 			{
 				ImGui::SetItemDefaultFocus();
 			}
 		}
-
 		ImGui::EndListBox();
 	}
 	
 	ImGui::Text("NonAnim: ");
+	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 - fButtonWidth0);
+	if (ImGui::Button("-", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		m_mapNonAnimModels.erase(m_pairSelectedModel.first);
+		m_pairSelectedModel.first.clear();
+		m_pairSelectedModel.second = nullptr;
+	}
 	if (ImGui::BeginListBox("NonAnim", ImVec2(-FLT_MIN, 0.f)))
 	{
 		for (auto pair : m_mapNonAnimModels)
 		{
-			if (ImGui::Selectable(pair.first.c_str(), m_pSelectedModel == pair.second))
+			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
-				m_pSelectedModel = pair.second;
+				m_pairSelectedModel = pair;
 			}
 
-			if (m_pSelectedModel == pair.second)
+			if (m_pairSelectedModel == pair)
 			{
 				ImGui::SetItemDefaultFocus();
 			}
 		}
-
 		ImGui::EndListBox();
-	}
-
-#pragma endregion
-#pragma region File
-
-	if (ImGuiFileDialog::Instance()->Display(DIALOG_OPEN_FBX))
-	{
-		if (ImGuiFileDialog::Instance()->IsOk())
-		{
-			if (FAILED(Load_Model(Function::ToWString(ImGuiFileDialog::Instance()->GetCurrentPath()), Function::ToWString(ImGuiFileDialog::Instance()->GetCurrentFileName()), eType, mPivot)))
-			{
-				MSG_BOX("CScene_Tool::Tick", "Failed to Load_Model");
-			}
-		}
-		ImGuiFileDialog::Instance()->Close();
 	}
 
 #pragma endregion
@@ -239,7 +311,7 @@ void CScene_Tool::Info_Model()
 
 	static aiTextureType	eTexType(aiTextureType_DIFFUSE);
 
-	if (m_pSelectedModel)
+	if (m_pairSelectedModel.second)
 	{
 		ImGui::SeparatorText("Properties");
 
@@ -250,22 +322,20 @@ void CScene_Tool::Info_Model()
 		{
 			if (ImGui::BeginListBox("Bone: ", ImVec2(-FLT_MIN, 0.f)))
 			{
-				for (auto pBone : m_pSelectedModel->Get_Bones())
+				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumBones(); ++i)
 				{
-					if (ImGui::Selectable(pBone->Get_Name(), iSelectedItem == iItemIdx))
+					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Bone(i)->Get_Name(), iSelectedItem == iItemIdx))
 					{
 						iSelectedItem = iItemIdx;
 					}
-
 					++iItemIdx;
 				}
-
 				ImGui::EndListBox();
 			}
 		}
 		else
 		{
-			iItemIdx += static_cast<_uint>(m_pSelectedModel->Get_Bones().size());
+			iItemIdx += m_pairSelectedModel.second->Get_NumBones();
 		}
 
 		iRangeBone = iItemIdx;
@@ -275,22 +345,20 @@ void CScene_Tool::Info_Model()
 		{
 			if (ImGui::BeginListBox("Animation: ", ImVec2(-FLT_MIN, 0.f)))
 			{
-				for (auto pAnimation : m_pSelectedModel->Get_Animations())
+				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumAnimations(); ++i)
 				{
-					if (ImGui::Selectable(pAnimation->Get_Name(), iSelectedItem == iItemIdx))
+					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Animation(i)->Get_Name(), iSelectedItem == iItemIdx))
 					{
 						iSelectedItem = iItemIdx;
 					}
-
 					++iItemIdx;
 				}
-
 				ImGui::EndListBox();
 			}
 		}
 		else
 		{
-			iItemIdx += static_cast<_uint>(m_pSelectedModel->Get_Animations().size());
+			iItemIdx += m_pairSelectedModel.second->Get_NumAnimations();
 		}
 
 		iRangeAnimation = iItemIdx;
@@ -300,22 +368,20 @@ void CScene_Tool::Info_Model()
 		{
 			if (ImGui::BeginListBox("Mesh: ", ImVec2(-FLT_MIN, 0.f)))
 			{
-				for (auto pMesh : m_pSelectedModel->Get_Meshes())
+				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumMeshes(); ++i)
 				{
-					if (ImGui::Selectable(pMesh->Get_Name(), iSelectedItem == iItemIdx))
+					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Mesh(i)->Get_Name(), iSelectedItem == iItemIdx))
 					{
 						iSelectedItem = iItemIdx;
 					}
-
 					++iItemIdx;
 				}
-
 				ImGui::EndListBox();
 			}
 		}
 		else
 		{
-			iItemIdx += static_cast<_uint>(m_pSelectedModel->Get_Meshes().size());
+			iItemIdx += m_pairSelectedModel.second->Get_NumMeshes();
 		}
 
 		iRangeMesh = iItemIdx;
@@ -326,26 +392,24 @@ void CScene_Tool::Info_Model()
 			if (ImGui::BeginListBox("Material: ", ImVec2(-FLT_MIN, 0.f)))
 			{
 				iMaterialIdx = 0;
-				for (auto tMaterial : m_pSelectedModel->Get_Materials())
+				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumMaterials(); ++i)
 				{
 					if (ImGui::Selectable(string("Material " + std::to_string(iMaterialIdx)).c_str(), iSelectedItem == iItemIdx))
 					{
 						iSelectedItem		= iItemIdx;
 						iSelectedMaterial	= iMaterialIdx;
 						iSelectedTexture	= -1;
-						m_tSelectedMaterial	= tMaterial;
+						m_tSelectedMaterial	= m_pairSelectedModel.second->Get_Material(i);
 					}
-
 					++iItemIdx;
 					++iMaterialIdx;
 				}
-
 				ImGui::EndListBox();
 			}
 		}
 		else
 		{
-			iItemIdx += static_cast<_uint>(m_pSelectedModel->Get_Materials().size());
+			iItemIdx += m_pairSelectedModel.second->Get_NumMaterials();
 		}
 
 		iRangeMaterial = iItemIdx;
@@ -414,12 +478,12 @@ void CScene_Tool::Info_Model()
 				break;
 			}
 
-			_float fWindowWidth	= ImGui::GetWindowWidth();
-			_float fButtonWidth	= ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
-			_float fButtonSpace	= ImGui::GetStyle().ItemSpacing.x;
+			_float fWindowWidth1 = ImGui::GetWindowWidth();
+			_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+			_float fButtonSpace1 = ImGui::GetStyle().ItemSpacing.x;
 		
-			ImGui::SameLine(fWindowWidth - 2.f * fButtonWidth - fButtonSpace - ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("-", ImVec2(fButtonWidth, fButtonWidth)))
+			ImGui::SameLine(fWindowWidth1 - 2.f * fButtonWidth1 - fButtonSpace1 - ImGui::GetStyle().ItemInnerSpacing.y);
+			if (ImGui::Button("-", ImVec2(fButtonWidth1, fButtonWidth1)))
 			{
 				if (iSelectedTexture != -1)
 				{
@@ -434,7 +498,7 @@ void CScene_Tool::Info_Model()
 				}
 			}
 			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("+", ImVec2(fButtonWidth, fButtonWidth)))
+			if (ImGui::Button("+", ImVec2(fButtonWidth1, fButtonWidth1)))
 			{
 				const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
 				ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
@@ -489,7 +553,7 @@ void CScene_Tool::Info_Model()
 		}
 	}
 #pragma endregion
-#pragma region File
+#pragma region File Dialog
 
 	if (ImGuiFileDialog::Instance()->Display(DIALOG_OPEN_TEXTURE))
 	{
@@ -539,6 +603,150 @@ HRESULT CScene_Tool::Load_Model(const wstring& _strFilePath, const wstring& _str
 
 	m_strModelPath = _strFilePath;
 	
+	return S_OK;
+}
+
+HRESULT CScene_Tool::Export_BinaryModel(const wstring& _strFilePath, const wstring& _strFileName)
+{
+	shared_ptr<CModel> pOut = m_pairSelectedModel.second;
+	if (nullptr == pOut)
+	{
+		return S_FALSE;
+	}
+
+	std::ofstream fout(_strFilePath + wstring(TEXT("\\")) + _strFileName, std::ios::binary);
+	if (!fout.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Open File");
+	}
+
+#pragma region Model
+	const MODEL	eType			= pOut->Get_ModelType();
+	const _uint	iNumBones		= pOut->Get_NumBones();
+	const _uint	iNumAnimations	= pOut->Get_NumAnimations();
+	const _uint	iNumMeshes		= pOut->Get_NumMeshes();
+	const _uint	iNumMaterials	= pOut->Get_NumMaterials();
+
+	fout.write(reinterpret_cast<const _byte*>(&eType),			sizeof(MODEL));
+	fout.write(reinterpret_cast<const _byte*>(&iNumBones),		sizeof(_uint));
+	fout.write(reinterpret_cast<const _byte*>(&iNumAnimations),	sizeof(_uint));
+	fout.write(reinterpret_cast<const _byte*>(&iNumMeshes),		sizeof(_uint));
+	fout.write(reinterpret_cast<const _byte*>(&iNumMaterials),	sizeof(_uint));
+
+	if (fout.fail())
+	{
+		fout.clear();
+		fout.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
+	}
+#pragma endregion
+#pragma region Bones
+	for (_uint i = 0; i < iNumBones; ++i)
+	{
+		shared_ptr<CBone>	pBone			= pOut->Get_Bone(i);
+		const _uint			iParrentBoneIdx	= pBone->Get_ParentBoneIndex();
+		const _float4x4		mTransformation	= pBone->Get_Transformation();
+
+		fout.write(pBone->Get_Name(),									MAX_PATH);
+		fout.write(reinterpret_cast<const _byte*>(&iParrentBoneIdx),	sizeof(_uint));
+		fout.write(reinterpret_cast<const _byte*>(&mTransformation),	sizeof(_float4x4));
+	}
+
+	if (fout.fail())
+	{
+		fout.clear();
+		fout.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
+	}
+#pragma endregion
+#pragma region Animations
+	for (_uint i = 0; i < iNumAnimations; ++i)
+	{
+		shared_ptr<CAnimation>		pAnimation		= pOut->Get_Animation(i);
+		const _float 				fDuration		= pAnimation->Get_Duration();
+		const _float 				fTicksPerSecond	= pAnimation->Get_TicksPerSecond();
+		const _uint					iNumChannels	= pAnimation->Get_NumChannels();
+
+		fout.write(pAnimation->Get_Name(),								MAX_PATH);
+		fout.write(reinterpret_cast<const _byte*>(&fDuration),			sizeof(_float));
+		fout.write(reinterpret_cast<const _byte*>(&fTicksPerSecond),	sizeof(_float));
+		fout.write(reinterpret_cast<const _byte*>(&iNumChannels),		sizeof(_uint));
+#pragma region Channels
+		for (_uint j = 0; j < iNumChannels; ++j)
+		{
+			shared_ptr<CChannel>	pChannel		= pAnimation->Get_Channel(j);
+			const _uint				iBoneIndex		= pChannel->Get_BoneIndex();
+			const _uint				iNumKeyFrames	= pChannel->Get_NumKeyFrames();
+
+			fout.write(reinterpret_cast<const _byte*>(&iBoneIndex),		sizeof(_uint));
+			fout.write(reinterpret_cast<const _byte*>(&iNumKeyFrames),	sizeof(_uint));
+#pragma region KeyFrames
+			for (_uint k = 0; k < iNumKeyFrames; ++k)
+			{
+				const KEYFRAME		tKeyFrame		= pChannel->Get_KeyFrame(k);
+				fout.write(reinterpret_cast<const _byte*>(&tKeyFrame),	sizeof(KEYFRAME));
+			}
+#pragma endregion
+		}
+#pragma endregion
+	}
+
+	if (fout.fail())
+	{
+		fout.clear();
+		fout.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
+	}
+#pragma endregion
+#pragma region Meshes
+	for (_uint i = 0; i < iNumMeshes; ++i)
+	{
+		shared_ptr<CMesh>					pMesh				= pOut->Get_Mesh(i);
+		const _float4x4						mPivot				= pMesh->Get_Pivot();
+		const _uint							iMaterialIndex		= pMesh->Get_MaterialIndex();
+		const _uint							iNumVertexBuffers	= pMesh->Get_NumVertexBuffers();
+		const _uint							iNumVertices		= pMesh->Get_NumVertices();
+		const _uint							iNumIndices			= pMesh->Get_NumIndices();
+
+		fout.write(pMesh->Get_Name(),											MAX_PATH);
+		fout.write(reinterpret_cast<const _byte*>(&mPivot),						sizeof(_float4x4));
+		fout.write(reinterpret_cast<const _byte*>(&iMaterialIndex),				sizeof(_uint));
+		fout.write(reinterpret_cast<const _byte*>(&iNumVertexBuffers),			sizeof(_uint));
+		fout.write(reinterpret_cast<const _byte*>(&iNumVertices),				sizeof(_uint));
+		fout.write(reinterpret_cast<const _byte*>(&iNumIndices),				sizeof(_uint));
+		fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices().first),	sizeof(_float3)	* iNumVertices);
+		fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Indices().first),	sizeof(_uint)	* iNumIndices);
+
+		switch (eType)
+		{
+		case MODEL::NONANIM:
+		{
+			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices_NonAnim().first), sizeof(VTXMESH)	* iNumVertices);
+		}
+		break;
+		case MODEL::ANIM:
+		{
+			const _uint	iNumBones	= pMesh->Get_NumBones();
+
+			fout.write(reinterpret_cast<const _byte*>(&iNumBones), sizeof(_uint));
+			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_BoneIndices().first),		sizeof(_uint)		* iNumBones);
+			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_BoneOffsets().first),		sizeof(_float4x4)	* iNumVertices);
+			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices_Anim().first),	sizeof(VTXMESHANIM)	* iNumVertices);
+		}
+		break;
+		};
+	}
+
+	if (fout.fail())
+	{
+		fout.clear();
+		fout.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
+	}
+#pragma endregion
+
+	fout.close();
+
 	return S_OK;
 }
 

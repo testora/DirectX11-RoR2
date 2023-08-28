@@ -15,8 +15,17 @@ public:
 	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex);
 
 public:
-	pair<_float3*, _uint>			Get_Vertices() const;
-	pair<_uint*, _uint>				Get_Indices() const;
+	pair<const _float3*, _uint>		Get_Vertices() const			{ return make_pair(m_pVertices.get(), m_iNumVertices); };
+	pair<const _uint*, _uint>		Get_Indices() const				{ return make_pair(m_pIndices.get(), m_iNumIndices); }
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+	_uint							Get_NumVertexBuffers() const	{ return m_iNumVB; }
+	_uint							Get_NumVertices() const			{ return m_iNumVertices; }
+	_uint							Get_VertexStride() const		{ return m_iVertexStride; }
+	_uint							Get_NumIndices() const			{ return m_iNumIndices; }
+	_uint							Get_IndexStride() const			{ return m_iIndexStride; }
+#endif
+#endif
 
 public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;

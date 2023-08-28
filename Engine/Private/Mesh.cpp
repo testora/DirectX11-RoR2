@@ -80,7 +80,7 @@ HRESULT CMesh::Initialize(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CMode
 
 	memcpy(m_pIndices.get(), pIndices.get(), m_iNumIndices * m_iIndexStride);
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pIB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
@@ -103,7 +103,7 @@ _float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<class CBone>> _vecModelBone
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
 		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _vecModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
-		m_arrBones[i] = m_vecOffsets[i] * mInterpolation * m_mPivot;
+		m_arrBones[i] = m_vecBoneOffsets[i] * mInterpolation * m_mPivot;
 	}
 
 	return m_arrBones.data();
@@ -154,11 +154,8 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 
 	for (size_t i = 0; i < m_iNumVertices; ++i)
 	{
-		memcpy(&pVertices[i].vPosition, &_pAIMesh->mVertices[i], sizeof(_float3));
-		pVertices[i].vPosition = m_pVertices[i] = _float3(XMVector3TransformCoord(_float3(pVertices[i].vPosition), m_mPivot));
-
-		memcpy(&pVertices[i].vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
-		pVertices[i].vNormal = _float3(XMVector3TransformNormal(_float3(pVertices[i].vNormal), m_mPivot)).normalize();
+		memcpy(&pVertices[i].vPosition,	&_pAIMesh->mVertices[i],	sizeof(_float3));
+		memcpy(&pVertices[i].vNormal,	&_pAIMesh->mNormals[i],		sizeof(_float3));
 
 		if (_pAIMesh->mTangents)
 		{
@@ -169,13 +166,21 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 		{
 			memcpy(&pVertices[i].vTexCoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 		}
+
+		pVertices[i].vPosition	= m_pVertices[i]	= _float3(XMVector3TransformCoord(_float3(pVertices[i].vPosition), m_mPivot));
+		pVertices[i].vNormal						= _float3(XMVector3TransformNormal(_float3(pVertices[i].vNormal), m_mPivot)).normalize();
 	}
+
+#ifdef _DEBUG
+	m_pVertices_NonAnim = Function::CreateDynamicArray<VTXMESH>(m_iNumVertices);
+	memcpy(m_pVertices_NonAnim.get(), pVertices.get(), m_iNumVertices * m_iVertexStride);
+#endif
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 
 	m_tInitializeData.pSysMem = pVertices.get();
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pVB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
@@ -186,6 +191,8 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel)
 {
 	m_iNumBones = _pAIMesh->mNumBones;
+	m_vecBoneIndices.reserve(m_iNumBones);
+	m_vecBoneOffsets.reserve(m_iNumBones);
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
 
@@ -213,7 +220,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 
 		_float4x4 mOffset;
 		memcpy(&mOffset, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
-		m_vecOffsets.emplace_back(XMMatrixTranspose(mOffset));
+		m_vecBoneOffsets.emplace_back(XMMatrixTranspose(mOffset));
 
 		for (_uint j = 0; j < pAIBone->mNumWeights; ++j)
 		{
@@ -246,14 +253,19 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 
 		m_vecBoneIndices.emplace_back(_pModel->Get_BoneIndex(m_szName));
 
-		m_vecOffsets.emplace_back(g_mUnit);
+		m_vecBoneOffsets.emplace_back(g_mUnit);
 	}
+
+#ifdef _DEBUG
+	m_pVertices_Anim = Function::CreateDynamicArray<VTXMESHANIM>(m_iNumVertices);
+	memcpy(m_pVertices_Anim.get(), pVertices.get(), m_iNumVertices * m_iVertexStride);
+#endif
 
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 
 	m_tInitializeData.pSysMem = pVertices.get();
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pVB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}

@@ -17,7 +17,12 @@ public:
 #ifdef _DEBUG
 #if ACTIVATE_IMGUI
 public:
-	const _char*						Get_Name() const	{ return m_szName; }
+	const _char*						Get_Name() const				{ return m_szName; }
+	_float								Get_Duration() const			{ return m_fDuration; }
+	_float								Get_TicksPerSecond() const		{ return m_fTicksPerSecond; }
+	_uint								Get_NumChannels() const			{ return m_iNumChannels; }
+
+	shared_ptr<class CChannel>			Get_Channel(_uint iIndex) const	{ return m_vecChannels[iIndex]; }
 #endif
 #endif
 

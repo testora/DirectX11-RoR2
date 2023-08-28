@@ -53,16 +53,6 @@ HRESULT CVIBuffer::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 	return S_OK;
 }
 
-pair<_float3*, _uint> CVIBuffer::Get_Vertices() const
-{
-	return make_pair(m_pVertices.get(), m_iNumVertices);
-}
-
-pair<_uint*, _uint> CVIBuffer::Get_Indices() const
-{
-	return make_pair(m_pIndices.get(), m_iNumIndices);
-}
-
 _bool CVIBuffer::Intersect(_In_opt_ const _float4x4 _mWorld) const
 {
 	_float3 vOut;

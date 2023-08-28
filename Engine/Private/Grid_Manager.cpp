@@ -78,7 +78,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 	_pVIBuffer->Iterate_Indices(
 		[&](_uint _i0, _uint _i1, _uint _i2)->_bool
 		{
-			pair<_float3*, _uint> pairVertices = _pVIBuffer->Get_Vertices();
+			pair<const _float3*, _uint> pairVertices = _pVIBuffer->Get_Vertices();
 
 			_float3 arrVertex[3] =
 			{

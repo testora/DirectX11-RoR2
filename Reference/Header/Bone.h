@@ -16,7 +16,12 @@ public:
 public:
 	const _char*				Get_Name() const								{ return m_szName; }
 	_float4x4					Get_CombinedTransformation() const				{ return m_mCombinedTransformation; }
-
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+	const _uint					Get_ParentBoneIndex() const						{ return m_iParentBoneIndex; }
+	_float4x4					Get_Transformation() const						{ return m_mTransformation; }
+#endif
+#endif
 	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
 
 public:

@@ -13,6 +13,15 @@ public:
 	HRESULT						Initialize(const aiNodeAnim* pAIChannel, shared_ptr<class CModel>);
 	void						Update_Transformation(vector<shared_ptr<class CBone>>, _uint& iCurrentKeyFrame, _float fTrackPosition);
 
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+public:
+	_uint						Get_BoneIndex() const				{ return m_iBoneIndex; }
+	_uint						Get_NumKeyFrames() const			{ return m_iNumKeyFrames; }
+	KEYFRAME					Get_KeyFrame(_uint iIndex) const	{ return m_vecKeyFrames[iIndex]; }
+#endif
+#endif
+
 private:
 	_uint						m_iBoneIndex		= g_iMaxBones;
 

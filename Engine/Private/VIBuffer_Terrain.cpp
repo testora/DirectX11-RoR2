@@ -11,7 +11,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 {
 	wstring strHeightMapPath = any_cast<wstring>(_strHeightMapPath);
 
-	HandleWrapper hFile(CreateFile(strHeightMapPath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
+	HandleRAII hFile(CreateFile(strHeightMapPath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
 	if (!hFile.is_valid())
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Terrain::Initialize", "Failed to CreateFile");
@@ -128,7 +128,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 	m_tInitializeData.pSysMem			= pVertices.get();
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pVB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
@@ -146,7 +146,7 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 
 	memcpy(m_pIndices.get(), pIndices.get(), m_iNumIndices * m_iIndexStride);
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, &m_pIB)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pIB.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Initialize", "Failed to CreateBuffer");
 	}
