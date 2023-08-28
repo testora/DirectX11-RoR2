@@ -3,6 +3,7 @@
 #include "Loader.h"
 #include "Scene_Load.h"
 #include "Scene_Menu.h"
+#include "Scene_Tool.h"
 #include "Scene_Test.h"
 #include "GameInstance.h"
 
@@ -41,6 +42,15 @@ void CScene_Load::Late_Tick(_float _fTimeDelta)
 		case SCENE::MENU:
 			pScene = CScene_Menu::Create(m_pDevice, m_pContext);
 			break;
+
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+		case SCENE::TOOL:
+			pScene = CScene_Tool::Create(m_pDevice, m_pContext);
+			break;
+#endif
+#endif
+
 		case SCENE::TEST:
 			pScene = CScene_Test::Create(m_pDevice, m_pContext);
 			break;

@@ -13,7 +13,7 @@ HRESULT CObjectPool::Initialize(const wstring& _strPrototype, any _arg)
 {
 	m_pPrototype = CObject_Manager::Get_Instance()->Clone_GameObject(m_eScene, _strPrototype);
 
-	m_fnPush = [&]()-> shared_ptr<CGameObject> { return m_pPrototype->Clone(_arg); };
+	m_funcPush = [&]()->shared_ptr<CGameObject> { return m_pPrototype->Clone(_arg); };
 
 	for (size_t i = 0; i < m_iPoolSize; ++i)
 	{
@@ -68,7 +68,7 @@ HRESULT CObjectPool::Push(shared_ptr<CGameObject> _pObject)
 
 void CObjectPool::Add()
 {
-	shared_ptr<CGameObject> pObject = m_fnPush();
+	shared_ptr<CGameObject> pObject = m_funcPush();
 	if (nullptr != pObject)
 	{
 		m_deqPool.emplace_back(pObject);

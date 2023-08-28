@@ -16,6 +16,11 @@ public:
 public:
 	_uint							Get_MaterialIndex() const	{ return m_iMaterialIndex; }
 	_float4x4*						Get_BoneMatrices(vector<shared_ptr<class CBone>>);
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+	const _char*					Get_Name() const			{ return m_szName; }
+#endif
+#endif
 
 	void							Set_Interpolation(vector<shared_ptr<class CBone>>, _float fDuration);
 
@@ -24,7 +29,7 @@ public:
 	HRESULT							Ready_VertexBuffer_Anim(const aiMesh*, shared_ptr<class CModel> pModel);
 
 private:
-	char							m_szName[MAX_PATH]		= "";
+	_char							m_szName[MAX_PATH]		= "";
 
 	_uint							m_iMaterialIndex		= 0;
 	_float4x4						m_mPivot;

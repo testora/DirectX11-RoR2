@@ -37,7 +37,7 @@ public:
 #endif
 
 public:
-	static shared_ptr<CGolemPlains>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	static shared_ptr<CGolemPlains>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>		Clone(any = any()) override;
 };
 

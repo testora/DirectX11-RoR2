@@ -17,10 +17,8 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
-#if ACTIVATE_IMGUI
 public:
 	const _float3					Get_Velocity() const { return m_vVelocity; }
-#endif
 #endif
 
 public:

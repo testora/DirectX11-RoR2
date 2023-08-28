@@ -14,7 +14,7 @@ CShader::CShader(const CShader& _rhs)
 {
 }
 
-HRESULT CShader::Initialize(const _tchar* _pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElements)
+HRESULT CShader::Initialize(const wstring& _strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElements)
 {
 #ifdef _DEBUG
 	_uint iHLSLFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -22,7 +22,7 @@ HRESULT CShader::Initialize(const _tchar* _pShaderFilePath, const D3D11_INPUT_EL
 	_uint iHLSLFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
 #endif
 
-	if (FAILED(D3DX11CompileEffectFromFile(_pShaderFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHLSLFlag, 0, m_pDevice.Get(), m_pEffect.ReleaseAndGetAddressOf(), nullptr)))
+	if (FAILED(D3DX11CompileEffectFromFile(_strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHLSLFlag, 0, m_pDevice.Get(), m_pEffect.ReleaseAndGetAddressOf(), nullptr)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Initialize", "Failed to D3DX11CompileEffectFromFile");
 	}
@@ -107,20 +107,20 @@ HRESULT CShader::BeginPass(const _uint _iPassIndex)
 	return S_OK;
 }
 
-HRESULT CShader::Bind_RawValue(const char* pConstantName, const void* pData, _uint iByteSize)
+HRESULT CShader::Bind_RawValue(const _char* _szConstantName, const void* _pData, _uint _iByteSize)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
+	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(_szConstantName);
 	if (nullptr == pVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_RawValue", "Failed to GetVariableByName");
 	}
 
-	if (FAILED(pVariable->SetRawValue(pData, 0, iByteSize)))
+	if (FAILED(pVariable->SetRawValue(_pData, 0, _iByteSize)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_RawValue", "Failed to SetRawValue");
 	}
@@ -128,14 +128,14 @@ HRESULT CShader::Bind_RawValue(const char* pConstantName, const void* pData, _ui
 	return S_OK;
 }
 
-HRESULT CShader::Bind_Vector(const char* _pConstantName, _float4 _vValue)
+HRESULT CShader::Bind_Vector(const _char* _szConstantName, _float4 _vValue)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_pConstantName)->AsVector();
+	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_szConstantName)->AsVector();
 	if (nullptr == pVectorVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_Vector", "Failed to GetVariableByName::AsVector");
@@ -149,14 +149,14 @@ HRESULT CShader::Bind_Vector(const char* _pConstantName, _float4 _vValue)
 	return S_OK;
 }
 
-HRESULT CShader::Bind_VectorArray(const char* _pConstantName, _float4* _vArray, _uint _iCount)
+HRESULT CShader::Bind_VectorArray(const _char* _szConstantName, _float4* _vArray, _uint _iCount)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_pConstantName)->AsVector();
+	ID3DX11EffectVectorVariable* pVectorVariable = m_pEffect->GetVariableByName(_szConstantName)->AsVector();
 	if (nullptr == pVectorVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to GetVariableByName::AsVector");
@@ -170,14 +170,14 @@ HRESULT CShader::Bind_VectorArray(const char* _pConstantName, _float4* _vArray, 
 	return S_OK;
 }
 
-HRESULT CShader::Bind_Matrix(const char* _pConstantName, _float4x4 _mValue)
+HRESULT CShader::Bind_Matrix(const _char* _szConstantName, _float4x4 _mValue)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_pConstantName)->AsMatrix();
+	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_szConstantName)->AsMatrix();
 	if (nullptr == pMatrixVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to GetVariableByName::AsMatrix");
@@ -191,14 +191,14 @@ HRESULT CShader::Bind_Matrix(const char* _pConstantName, _float4x4 _mValue)
 	return S_OK;
 }
 
-HRESULT CShader::Bind_MatrixArray(const char* _pConstantName, _float4x4* _mArray, _uint _iCount)
+HRESULT CShader::Bind_MatrixArray(const _char* _szConstantName, _float4x4* _mArray, _uint _iCount)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_pConstantName)->AsMatrix();
+	ID3DX11EffectMatrixVariable* pMatrixVariable = m_pEffect->GetVariableByName(_szConstantName)->AsMatrix();
 	if (nullptr == pMatrixVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_MatrixArray", "Failed to GetVariableByName::AsMatrix");
@@ -212,14 +212,14 @@ HRESULT CShader::Bind_MatrixArray(const char* _pConstantName, _float4x4* _mArray
 	return S_OK;
 }
 
-HRESULT CShader::Bind_ShaderResourceView(const char* _pConstantName, ComPtr<ID3D11ShaderResourceView> _pShaderResourceView)
+HRESULT CShader::Bind_ShaderResourceView(const _char* _szConstantName, ComPtr<ID3D11ShaderResourceView> _pShaderResourceView)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = m_pEffect->GetVariableByName(_pConstantName)->AsShaderResource();
+	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = m_pEffect->GetVariableByName(_szConstantName)->AsShaderResource();
 	if (nullptr == pShaderResourceVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceView", "Failed to GetVariableByName");
@@ -233,14 +233,14 @@ HRESULT CShader::Bind_ShaderResourceView(const char* _pConstantName, ComPtr<ID3D
 	return S_OK;
 }
 
-HRESULT CShader::Bind_ShaderResourceViews(const char* _pConstantName, vector<ComPtr<ID3D11ShaderResourceView>>& _vecShaderResourceView)
+HRESULT CShader::Bind_ShaderResourceViews(const _char* _szConstantName, vector<ComPtr<ID3D11ShaderResourceView>>& _vecShaderResourceView)
 {
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
 	}
 
-	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = m_pEffect->GetVariableByName(_pConstantName)->AsShaderResource();
+	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = m_pEffect->GetVariableByName(_szConstantName)->AsShaderResource();
 	if (nullptr == pShaderResourceVariable)
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to GetVariableByName");
@@ -262,11 +262,11 @@ HRESULT CShader::Bind_ShaderResourceViews(const char* _pConstantName, vector<Com
 	return S_OK;
 }
 
-shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const _tchar* _pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElement)
+shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElement)
 {
 	shared_ptr<CShader> pInstance = make_private_shared(CShader, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_pShaderFilePath, _pElememts, _iNumElement)))
+	if (FAILED(pInstance->Initialize(_strShaderFilePath, _pElememts, _iNumElement)))
 	{
 		MSG_RETURN(nullptr, "CShader::Create", "Failed to Initialize");
 	}

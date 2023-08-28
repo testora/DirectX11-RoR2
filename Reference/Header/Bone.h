@@ -14,7 +14,7 @@ public:
 	HRESULT						Initialize(const aiNode* pAINode);
 
 public:
-	const char*					Get_Name() const								{ return m_szName; }
+	const _char*				Get_Name() const								{ return m_szName; }
 	_float4x4					Get_CombinedTransformation() const				{ return m_mCombinedTransformation; }
 
 	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
@@ -23,7 +23,7 @@ public:
 	void						Update_CombinedTransformation(vector<shared_ptr<CBone>>);
 
 private:
-	char						m_szName[MAX_PATH]			= "";
+	_char						m_szName[MAX_PATH]			= "";
 	const _uint					m_iParentBoneIndex			= g_iMaxBones;
 
 	_float4x4					m_mTransformation;

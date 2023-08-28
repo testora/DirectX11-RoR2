@@ -14,7 +14,16 @@ public:
 	HRESULT								Initialize(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
 	void								Update(_float fTimeDelta, vector<shared_ptr<class CBone>>, _bool bLoop = true);
 
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+public:
+	const _char*						Get_Name() const	{ return m_szName; }
+#endif
+#endif
+
 private:
+	_char								m_szName[MAX_PATH] = "";
+
 	_float								m_fDuration			= 0.f;
 	_float								m_fTicksPerSecond	= 0.f;
 	_float								m_fTrackPosition	= 0.f;

@@ -33,7 +33,7 @@ CModel::CModel(const CModel& _rhs)
 	}
 }
 
-HRESULT CModel::Initialize(const char* _szModelPath, _matrixf _mPivot)
+HRESULT CModel::Initialize(const wstring& _strModelPath, _matrixf _mPivot)
 {
 	_uint iAIFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
 	if (MODEL::NONANIM == m_eType)
@@ -41,7 +41,8 @@ HRESULT CModel::Initialize(const char* _szModelPath, _matrixf _mPivot)
 		iAIFlag |= aiProcess_PreTransformVertices;
 	}
 
-	m_pAIScene = m_aiImporter.ReadFile(_szModelPath, iAIFlag);
+	m_pAIScene = m_aiImporter.ReadFile(Function::ToString(_strModelPath).c_str(), iAIFlag);
+
 	if (nullptr == m_pAIScene)
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to ReadFile");
@@ -52,19 +53,19 @@ HRESULT CModel::Initialize(const char* _szModelPath, _matrixf _mPivot)
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Bones");
 	}
 
+	if (FAILED(Ready_Animations()))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Animations");
+	}
+
 	if (FAILED(Ready_Meshes(_mPivot)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Meshes");
 	}
 
-	if (FAILED(Ready_Materials(_szModelPath)))
+	if (FAILED(Ready_Materials(_strModelPath)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Materials");
-	}
-
-	if (FAILED(Ready_Animations()))
-	{
-		MSG_RETURN(E_FAIL, "CModel::Initialize", "Failed to Ready_Animations");
 	}
 
 	return S_OK;
@@ -93,7 +94,7 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 	return S_OK;
 }
 
-_uint CModel::Get_BoneIndex(const char* _szBoneName)
+_uint CModel::Get_BoneIndex(const _char* _szBoneName)
 {
 	for (_uint i = 0; i < m_vecBones.size(); ++i)
 	{
@@ -214,7 +215,7 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 	return hr;
 }
 
-HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _szConstantName, _uint _iTextureIdx)
+HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const _char* _szConstantName, _uint _iTextureIdx)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -291,7 +292,7 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 	return hr;
 }
 
-HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const char* _szConstantName)
+HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, aiTextureType _eAIType, const _char* _szConstantName)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -318,7 +319,7 @@ HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CSh
 	return pMaterial->Bind_ShaderResourceViews(_pShader, _eAIType, _szConstantName);
 }
 
-HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const char* _szConstantName)
+HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, const _char* _szConstantName)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -354,7 +355,7 @@ HRESULT CModel::Ready_Meshes(_matrixf _mPivot)
 	return hr;
 }
 
-HRESULT CModel::Ready_Materials(const char* _szModelPath)
+HRESULT CModel::Ready_Materials(const wstring& _strModelPath)
 {
 	m_iNumMaterials = m_pAIScene->mNumMaterials;
 
@@ -362,13 +363,13 @@ HRESULT CModel::Ready_Materials(const char* _szModelPath)
 
 	for (size_t i = 0; i < m_iNumMaterials; i++)
 	{
-		MODELMATERIAL tModelMaterial{};
+		MATERIAL tModelMaterial{};
 
 		aiMaterial* pAIMaterial = m_pAIScene->mMaterials[i];
 
 		for (size_t j = 0; j < AI_TEXTURE_TYPE_MAX; j++)
 		{
-			shared_ptr<CTexture> pMaterial = CTexture::Create(m_pDevice, m_pContext, _szModelPath, pAIMaterial, aiTextureType(j));
+			shared_ptr<CTexture> pMaterial = CTexture::Create(m_pDevice, m_pContext, _strModelPath, pAIMaterial, aiTextureType(j));
 			if (nullptr == pMaterial)
 			{
 				hr = E_FAIL;
@@ -426,11 +427,11 @@ HRESULT CModel::Ready_Animations()
 	return hr;
 }
 
-shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const char* _pModelFilePath, _matrixf _mPivot)
+shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const wstring& _strModelPath, _matrixf _mPivot)
 {
 	shared_ptr<CModel> pInstance = make_private_shared(CModel, _pDevice, _pContext, _eType);
 
-	if (FAILED(pInstance->Initialize(_pModelFilePath, _mPivot)))
+	if (FAILED(pInstance->Initialize(_strModelPath, _mPivot)))
 	{
 		MSG_RETURN(nullptr, "CModel::Create", "Failed to Initialize");
 	}

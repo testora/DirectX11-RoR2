@@ -35,12 +35,19 @@ public:
 private:
 	HRESULT								Default_Settings();
 	HRESULT								Ready_Component_Prototype();
+#ifdef _DEBUG
+#if ACTIVATE_IMGUI
+	void								ImGui_GameStatus(_float fTimeDelta, _bool* pOpen);
+#endif
+#endif
 
 private:
 	shared_ptr<CRenderer>				m_pMainRenderer;
 	shared_ptr<CGameInstance>			m_pGameInstance;
 #ifdef _DEBUG
+#if ACTIVATE_IMGUI
 	shared_ptr<class CImGui_Manager>	m_pImGui_Manager;
+#endif
 #endif
 
 	ComPtr<ID3D11Device>				m_pDevice;

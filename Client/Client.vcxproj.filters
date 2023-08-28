@@ -37,9 +37,6 @@
     <Filter Include="05. Scene\01. Menu">
       <UniqueIdentifier>{8b4ea43b-340d-4d56-bff6-37d52b1df41f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Scene\02. Test">
-      <UniqueIdentifier>{62df2cd4-1c96-4869-a45d-ad688667d8c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject">
       <UniqueIdentifier>{c180f1a1-862f-423d-92ac-bf1b70c8cb06}</UniqueIdentifier>
     </Filter>
@@ -61,18 +58,6 @@
     <Filter Include="03. Tool">
       <UniqueIdentifier>{014cff2c-5918-4902-9760-25b35651850a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Tool\00. ImGui">
-      <UniqueIdentifier>{cdb4e014-721c-4724-9f05-a9f6c43f5bea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tool\00. ImGui\00. Manager">
-      <UniqueIdentifier>{e9ff588c-200f-4c81-8694-957f4011a305}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tool\00. ImGui\01. Header">
-      <UniqueIdentifier>{78fa90c1-b78e-47ff-b30d-a051a22d7f4f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Tool\00. ImGui\02. Source">
-      <UniqueIdentifier>{9fcd03a0-2392-4375-a152-67d982431874}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\03. Player_Character">
       <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
     </Filter>
@@ -81,6 +66,45 @@
     </Filter>
     <Filter Include="06. GameObject\02. Terrain\01. GolemPlains">
       <UniqueIdentifier>{4733f48e-72a4-4f07-8a84-45f846e319d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\03. Test">
+      <UniqueIdentifier>{62df2cd4-1c96-4869-a45d-ad688667d8c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Scene\02. Tool">
+      <UniqueIdentifier>{3da9f1a6-4bb5-4fea-b864-d4140e608800}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\01. ImGui">
+      <UniqueIdentifier>{cdb4e014-721c-4724-9f05-a9f6c43f5bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\01. ImGui\01. Header">
+      <UniqueIdentifier>{78fa90c1-b78e-47ff-b30d-a051a22d7f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\01. ImGui\02. Source">
+      <UniqueIdentifier>{9fcd03a0-2392-4375-a152-67d982431874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\00. Manager">
+      <UniqueIdentifier>{e9ff588c-200f-4c81-8694-957f4011a305}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. Header\01. Tool">
+      <UniqueIdentifier>{f2f50fbe-0bc0-46cb-9842-df561502b0a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\02. ImGuizmo">
+      <UniqueIdentifier>{3341e528-1a3c-420e-830f-42bf3fbe5472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\03. ImGuiFileDialog">
+      <UniqueIdentifier>{7ec85bb3-5b82-4c0c-9fa4-3edd1a2058f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\03. ImGuiFileDialog\01. Header">
+      <UniqueIdentifier>{62e73340-2bb0-47b4-95ba-233838d13320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\03. ImGuiFileDialog\02. Source">
+      <UniqueIdentifier>{4d592b8e-225a-406e-b0f3-66699accd012}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\02. ImGuizmo\01. Header">
+      <UniqueIdentifier>{d7e7b724-d6f6-4128-ae80-b2dc16762a62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Tool\02. ImGuizmo\02. Source">
+      <UniqueIdentifier>{e0dfafc4-1ca2-4087-ab1c-0e9e2030eec1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,7 +136,7 @@
       <Filter>05. Scene\01. Menu</Filter>
     </ClInclude>
     <ClInclude Include="Public\Loader_Test.h">
-      <Filter>05. Scene\02. Test</Filter>
+      <Filter>05. Scene\03. Test</Filter>
     </ClInclude>
     <ClInclude Include="Public\Loader.h">
       <Filter>05. Scene\00. Load\00. Loader</Filter>
@@ -121,7 +145,7 @@
       <Filter>05. Scene\00. Load</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Test.h">
-      <Filter>05. Scene\02. Test</Filter>
+      <Filter>05. Scene\03. Test</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Menu.h">
       <Filter>05. Scene\01. Menu</Filter>
@@ -145,37 +169,67 @@
       <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imconfig.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imgui.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_dx11.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imgui_impl_win32.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imgui_internal.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h">
-      <Filter>03. Tool\00. ImGui\01. Header</Filter>
+      <Filter>03. Tool\01. ImGui\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\ImGui_Manager.h">
-      <Filter>03. Tool\00. ImGui\00. Manager</Filter>
+      <Filter>03. Tool\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner.h">
       <Filter>06. GameObject\03. Player_Character</Filter>
     </ClInclude>
     <ClInclude Include="Public\GolemPlains.h">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scene_Tool.h">
+      <Filter>05. Scene\02. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuiFileDialog\ImGuiFileDialog.h">
+      <Filter>03. Tool\03. ImGuiFileDialog\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuiFileDialog\ImGuiFileDialogConfig.h">
+      <Filter>03. Tool\03. ImGuiFileDialog\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Tool_Define.h">
+      <Filter>00. Header\01. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\GraphEditor.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\ImCurveEdit.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\ImGradient.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\ImGuizmo.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\ImSequencer.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Reference\Header\ImGuizmo\ImZoomSlider.h">
+      <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -195,7 +249,7 @@
       <Filter>05. Scene\00. Load\00. Loader</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Test.cpp">
-      <Filter>05. Scene\02. Test</Filter>
+      <Filter>05. Scene\03. Test</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Menu.cpp">
       <Filter>05. Scene\01. Menu</Filter>
@@ -210,31 +264,52 @@
       <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui_draw.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui_impl_dx11.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui_impl_win32.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui_tables.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui_widgets.cpp">
-      <Filter>03. Tool\00. ImGui\02. Source</Filter>
+      <Filter>03. Tool\01. ImGui\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="Private\ImGui_Manager.cpp">
-      <Filter>03. Tool\00. ImGui\00. Manager</Filter>
+      <Filter>03. Tool\00. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner.cpp">
       <Filter>06. GameObject\03. Player_Character</Filter>
     </ClCompile>
     <ClCompile Include="Private\GolemPlains.cpp">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Scene_Tool.cpp">
+      <Filter>05. Scene\02. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
+      <Filter>03. Tool\03. ImGuiFileDialog\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuizmo\GraphEditor.cpp">
+      <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuizmo\ImGradient.cpp">
+      <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuizmo\ImGuizmo.cpp">
+      <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Reference\Source\ImGuizmo\ImSequencer.cpp">
+      <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

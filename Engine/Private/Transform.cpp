@@ -125,6 +125,8 @@ HRESULT CTransform::Bind_OnShader(shared_ptr<class CShader> _pShader)
 	{
 		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Matrix");
 	}
+
+	return S_OK;
 }
 
 shared_ptr<CTransform> CTransform::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

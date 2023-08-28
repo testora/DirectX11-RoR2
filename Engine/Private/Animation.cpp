@@ -6,6 +6,8 @@ HRESULT CAnimation::Initialize(const aiAnimation* _pAIAnimation, shared_ptr<clas
 {
 	HRESULT hr = S_OK;
 
+	strcpy_s(m_szName, _pAIAnimation->mName.data);
+
 	m_fDuration			= static_cast<_float>(_pAIAnimation->mDuration);
 	m_fTicksPerSecond	= static_cast<_float>(_pAIAnimation->mTicksPerSecond);
 

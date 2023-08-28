@@ -10,8 +10,16 @@ namespace Function
 	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);
 
 	inline _bool						NearZero(_float fValue);
+	inline _bool						NearZero2(XMVECTOR fVector2);
 	inline _bool						NearZero3(XMVECTOR fVector3);
 	inline _bool						NearZero4(XMVECTOR fVector4);
+
+	inline XMVECTOR						QuaternionToEuler(XMVECTOR vQuaternion, _bool bToRadians = true);
+	inline XMVECTOR						DegreesToRadians(XMVECTOR vDegrees);
+	inline XMVECTOR						RadiansToDegrees(XMVECTOR vRadians);
+
+	inline string						ToString(const wstring& wstr);
+	inline wstring						ToWString(const string& str);
 
 #pragma region Template
 

@@ -100,10 +100,10 @@ namespace Engine
 #pragma endregion
 #pragma region Model
 	
-	typedef struct tagModelMaterial
+	typedef struct tagMaterial
 	{
 		shared_ptr<class CTexture>	pMaterial[AI_TEXTURE_TYPE_MAX];
-	} MODELMATERIAL;
+	} MATERIAL;
 
 #pragma endregion
 #pragma region Animation
