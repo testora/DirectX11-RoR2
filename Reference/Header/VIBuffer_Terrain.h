@@ -11,13 +11,13 @@ private:
 	virtual ~CVIBuffer_Terrain() DEFAULT;
 
 public: 
-	HRESULT									Initialize(any strHeightMapPath);
+	HRESULT									Initialize(any wstrHeightMapPath);
 
 private:
 	_float2									m_vNumVertices{};
 
 public:
-	static shared_ptr<CVIBuffer_Terrain>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& strHeightMapPath);
+	static shared_ptr<CVIBuffer_Terrain>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrHeightMapPath);
 	virtual shared_ptr<CComponent>			Clone(any = any()) override;
 public:
 };

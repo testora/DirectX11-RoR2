@@ -19,7 +19,7 @@ HRESULT CGrid_Manager::Reserve_Manager(const SCENE _eSceneMax, _float3 _vGridSiz
 	return S_OK;
 }
 
-HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<CGameObject> _pGameObject)
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<CGameObject> _pGameObject)
 {
 	HRESULT hr = S_OK;
 
@@ -41,7 +41,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 
 	if (shared_ptr<CVIBuffer> pVIBuffer = _pGameObject->Get_Component<CVIBuffer>(COMPONENT::VIBUFFER))
 	{
-		if (FAILED(Register_VIBuffer(_eScene, _strGridLayerTag, pVIBuffer, pTransform)))
+		if (FAILED(Register_VIBuffer(_eScene, _wstrGridLayerTag, pVIBuffer, pTransform)))
 		{
 			MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Failed to Register_VIBuffer");
 		}
@@ -51,7 +51,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 		pModel->Iterate_Meshes(
 			[&](shared_ptr<CMesh> _pMesh)
 			{
-				if (FAILED(Register_VIBuffer(_eScene, _strGridLayerTag, _pMesh, pTransform)))
+				if (FAILED(Register_VIBuffer(_eScene, _wstrGridLayerTag, _pMesh, pTransform)))
 				{
 					hr = E_FAIL;
 				}
@@ -64,7 +64,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 	return hr;
 }
 
-HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _strGridLayerTag, shared_ptr<class CVIBuffer> _pVIBuffer, shared_ptr<class CTransform> _pTransform)
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<class CVIBuffer> _pVIBuffer, shared_ptr<class CTransform> _pTransform)
 {
 	if (nullptr == _pTransform)
 	{
@@ -75,16 +75,14 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 		MSG_RETURN(E_FAIL, "CGrid_Manager::Register_VIBuffer", "Nullptr Exception: CVIBuffer");
 	}
 
-	_pVIBuffer->Iterate_Indices(
-		[&](_uint _i0, _uint _i1, _uint _i2)->_bool
+	_pVIBuffer->Iterate_Polygons(
+		[&](POLYGON _polygon)->_bool
 		{
-			pair<const _float3*, _uint> pairVertices = _pVIBuffer->Get_Vertices();
-
 			_float3 arrVertex[3] =
 			{
-				 XMVector3TransformCoord(pairVertices.first[_i0], _pTransform->Get_Matrix()),
-				 XMVector3TransformCoord(pairVertices.first[_i1], _pTransform->Get_Matrix()),
-				 XMVector3TransformCoord(pairVertices.first[_i2], _pTransform->Get_Matrix())
+				 XMVector3TransformCoord(_polygon[0], _pTransform->Get_Matrix()),
+				 XMVector3TransformCoord(_polygon[1], _pTransform->Get_Matrix()),
+				 XMVector3TransformCoord(_polygon[2], _pTransform->Get_Matrix())
 			};
 
 			_float3 vMinBound = _float3(
@@ -118,12 +116,12 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 					for (_float z = vMinKey.z; z <= vMaxKey.z; z += m_vGridSize.z)
 					{
 						auto& GridLayer = m_arrGridLayers[IDX(_eScene)];
-						if (GridLayer[_strGridLayerTag].end() == GridLayer[_strGridLayerTag].find(_float3(x, y, z)))
+						if (GridLayer[_wstrGridLayerTag].end() == GridLayer[_wstrGridLayerTag].find(_float3(x, y, z)))
 						{
-							GridLayer[_strGridLayerTag][_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
+							GridLayer[_wstrGridLayerTag][_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
 						}
 
-						GridLayer[_strGridLayerTag][_float3(x, y, z)]->Add_Polygon(pairVertices.first, _uint3(_i0, _i1, _i2));
+						GridLayer[_wstrGridLayerTag][_float3(x, y, z)]->Add_Polygon(_polygon);
 					}
 				}
 			}
@@ -135,25 +133,25 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _st
 	return S_OK;
 }
 
-HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene, const wstring& _strGridLayerTag)
+HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene, const wstring& _wstrGridLayerTag)
 {
 	if (!Function::InRange(_eScene, static_cast<SCENE>(0), m_eSceneMax))
 	{
 		MSG_RETURN(E_FAIL, "CGrid_Manager::Reset_Grids", "Invalid Range: SCENE");
 	}
 
-	if (_strGridLayerTag.empty())
+	if (_wstrGridLayerTag.empty())
 	{
 		m_arrGridLayers[IDX(_eScene)].clear();
 	}
 	else
 	{
-		if (m_arrGridLayers[IDX(_eScene)].end() == m_arrGridLayers[IDX(_eScene)].find(_strGridLayerTag))
+		if (m_arrGridLayers[IDX(_eScene)].end() == m_arrGridLayers[IDX(_eScene)].find(_wstrGridLayerTag))
 		{
 			return S_FALSE;
 		}
 
-		m_arrGridLayers[IDX(_eScene)][_strGridLayerTag].clear();
+		m_arrGridLayers[IDX(_eScene)][_wstrGridLayerTag].clear();
 	}
 
 	return S_OK;
@@ -195,7 +193,7 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _f
 	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange);
 }
 
-_float3 CGrid_Manager::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float3 CGrid_Manager::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
 {
 	m_mmapRaycastGrid.clear();
 
@@ -203,12 +201,12 @@ _float3 CGrid_Manager::Raycast(const wstring& _strGridLayerTag, _vectorf _vRayOr
 
 	for (size_t i = 0; i < IDX(m_eSceneMax); ++i)
 	{
-		if (m_arrGridLayers[i].end() == m_arrGridLayers[i].find(_strGridLayerTag))
+		if (m_arrGridLayers[i].end() == m_arrGridLayers[i].find(_wstrGridLayerTag))
 		{
 			continue;
 		}
 
-		for (auto& grid : m_arrGridLayers[i][_strGridLayerTag])
+		for (auto& grid : m_arrGridLayers[i][_wstrGridLayerTag])
 		{
 			_float3 vGridCenter = grid.first + m_vGridSize * .5f;
 
@@ -240,10 +238,10 @@ _float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirec
 	for (auto& pair : m_mmapRaycastGrid)
 	{
 		pair.second->Iterate_Polygon(
-			[&](_float3 _v0, _float3 _v1, _float3 _v2)->_bool
+			[&](POLYGON _polygon)->_bool
 			{
 				_float fDist = 0.f;
-				if (TriangleTests::Intersects(_vRayOrigin, _vRayDirection, _v0, _v1, _v2, fDist))
+				if (TriangleTests::Intersects(_vRayOrigin, _vRayDirection, _polygon[0], _polygon[1], _polygon[2], fDist))
 				{
 					if (fDist < _fRange && fDist < fFinalDist)
 					{

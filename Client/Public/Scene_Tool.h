@@ -2,8 +2,7 @@
 #include "Client_Define.h"
 #include "Scene.h"
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 
 BEGIN(Engine)
 class CModel;
@@ -27,14 +26,14 @@ private:
 	void								System_Model();
 	void								Info_Model();
 
-	HRESULT								Load_Model(const wstring& strFilePath, const wstring& strFileName, const MODEL, _matrixf mPivot);
-	HRESULT								Export_BinaryModel(const wstring& strFilePath, const wstring& strFileName);
+	HRESULT								Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);
+	HRESULT								Export_BinaryModel(const wstring& wstrPath);
 
 private:
 	ImGuiFileDialog						m_imEmbed_Open;
 	ImGuiFileDialog						m_imEmbed_Export;
 
-	wstring								m_strModelPath;
+	wstring								m_wstrModelPath;
 
 	map<string, shared_ptr<CModel>>		m_mapAnimModels;
 	map<string, shared_ptr<CModel>>		m_mapNonAnimModels;
@@ -47,5 +46,4 @@ public:
 
 END
 
-#endif
 #endif

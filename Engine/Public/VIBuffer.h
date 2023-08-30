@@ -11,27 +11,14 @@ protected:
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(any = any());
+	HRESULT							Initialize(any = any());
 	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex);
-
-public:
-	pair<const _float3*, _uint>		Get_Vertices() const			{ return make_pair(m_pVertices.get(), m_iNumVertices); };
-	pair<const _uint*, _uint>		Get_Indices() const				{ return make_pair(m_pIndices.get(), m_iNumIndices); }
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	_uint							Get_NumVertexBuffers() const	{ return m_iNumVB; }
-	_uint							Get_NumVertices() const			{ return m_iNumVertices; }
-	_uint							Get_VertexStride() const		{ return m_iVertexStride; }
-	_uint							Get_NumIndices() const			{ return m_iNumIndices; }
-	_uint							Get_IndexStride() const			{ return m_iIndexStride; }
-#endif
-#endif
 
 public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 
-	void							Iterate_Polygons(function<_bool(_float3 v0, _float3 v1, _float3 v2)>);
+	void							Iterate_Polygons(function<_bool(POLYGON)>);
 	void							Iterate_Indices(function<_bool(_uint i0, _uint i1, _uint i2)>);
 
 protected:

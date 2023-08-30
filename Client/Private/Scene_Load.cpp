@@ -43,12 +43,10 @@ void CScene_Load::Late_Tick(_float _fTimeDelta)
 			pScene = CScene_Menu::Create(m_pDevice, m_pContext);
 			break;
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 		case SCENE::TOOL:
 			pScene = CScene_Tool::Create(m_pDevice, m_pContext);
 			break;
-#endif
 #endif
 
 		case SCENE::TEST:

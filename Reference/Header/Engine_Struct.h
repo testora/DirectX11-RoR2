@@ -102,7 +102,7 @@ namespace Engine
 	
 	typedef struct tagMaterial
 	{
-		shared_ptr<class CTexture>	pMaterial[AI_TEXTURE_TYPE_MAX];
+		shared_ptr<class CTexture>	pTexture[AI_TEXTURE_TYPE_MAX];
 	} MATERIAL;
 
 #pragma endregion

@@ -18,12 +18,12 @@ public:
 	HRESULT													Reserve_Manager(const SCENE);
 
 public:
-	HRESULT													Add_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<CBehavior> pPrototype);
+	HRESULT													Add_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<CBehavior> pPrototype);
 
-	shared_ptr<CBehavior>									Clone_Behavior(const SCENE, const wstring& strPrototypeTag, any = any());
+	shared_ptr<CBehavior>									Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = any());
 
 private:
-	shared_ptr<CBehavior>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
+	shared_ptr<CBehavior>									Find_Prototype(const SCENE, const wstring& wstrPrototypeTag);
 
 private:
 	typedef unordered_map<wstring, shared_ptr<CBehavior>>	BehaviorPrototype;

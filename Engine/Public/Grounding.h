@@ -12,7 +12,7 @@ private:
 	virtual ~CGrounding() DEFAULT;
 
 public:
-	HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const wstring& strTerrainGridLayerTag);
+	HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const wstring& wstrTerrainGridLayerTag);
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
@@ -20,13 +20,13 @@ private:
 	_float3							Intersect_Terrain();
 
 private:
-	wstring							m_strTerrainGridLayerTag;
+	wstring							m_wstrTerrainGridLayerTag;
 
 	shared_ptr<class CTransform>	m_pOwnerTransform;
 	shared_ptr<class CPhysics>		m_pOwnerPhysics;
 
 public:
-	static shared_ptr<CGrounding>	Create(shared_ptr<class CGameObject> pOwner, const wstring& strTerrainGridLayerTag);
+	static shared_ptr<CGrounding>	Create(shared_ptr<class CGameObject> pOwner, const wstring& wstrTerrainGridLayerTag);
 	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
 };
 

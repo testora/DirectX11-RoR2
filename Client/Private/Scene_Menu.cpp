@@ -26,8 +26,7 @@ HRESULT CScene_Menu::Initialize()
 
 void CScene_Menu::Tick(_float _fTimeDelta)
 {
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 	if (CGameInstance::Get_Instance()->Key_Down('2'))
 	{
 		if (FAILED(CGameInstance::Get_Instance()->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::TOOL))))
@@ -35,7 +34,6 @@ void CScene_Menu::Tick(_float _fTimeDelta)
 			MSG_BOX("CScene_Menu::Tick", "Failed to Open_Scene: TOOL");
 		}
 	}
-#endif
 #endif
 
 	if (CGameInstance::Get_Instance()->Key_Down('3'))

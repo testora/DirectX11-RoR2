@@ -17,7 +17,7 @@ HRESULT CScene_Test::Initialize()
 	}
 
 	CGameInstance::Get_Instance()->Show_Cursor(false);
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 	CImGui_Manager::Get_Instance()->Enable();
 #endif
 

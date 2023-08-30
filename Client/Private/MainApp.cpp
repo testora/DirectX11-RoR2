@@ -7,7 +7,7 @@
 
 CMainApp::CMainApp()
 	: m_pGameInstance	(CGameInstance::Get_Instance())
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 	, m_pImGui_Manager	(CImGui_Manager::Get_Instance())
 #endif
 {
@@ -19,10 +19,8 @@ CMainApp::~CMainApp()
 
 	CMainApp::Destroy_Instance();
 
-#ifdef _DEBUG
 #if ACTIVATE_IMGUI
 	CImGui_Manager::Destroy_Instance();
-#endif
 #endif
 
 #ifdef D3D11_LIVE_OBJECT_REF_COUNTER_CHECKER
@@ -71,13 +69,11 @@ HRESULT CMainApp::Initialize()
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: m_pGameInstance->Initialize_Engine");
 	}
 
-#ifdef _DEBUG
 #if	ACTIVATE_IMGUI
 	if (FAILED(m_pImGui_Manager->Initialize(g_hWnd, m_pDevice, m_pContext)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pImGui_Manager->Initialize");
 	}
-#endif
 #endif
 
 	if (FAILED(Default_Settings()))
@@ -100,7 +96,6 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Tick(_float _fTimeDelta)
 {
-#ifdef _DEBUG
 #if ACTIVATE_IMGUI
 	if (m_pImGui_Manager)
 	{
@@ -111,7 +106,6 @@ void CMainApp::Tick(_float _fTimeDelta)
 		static _bool bGameStatus = true;
 		ImGui_GameStatus(_fTimeDelta , &bGameStatus);
 	}
-#endif
 #endif
 	if (m_pGameInstance)
 	{
@@ -131,7 +125,7 @@ HRESULT CMainApp::Render()
 
 	m_pMainRenderer->Draw_RenderGroup();
 
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 	m_pImGui_Manager->Render();
 #endif
 
@@ -248,6 +242,7 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	return S_OK;
 }
 
+#if ACTIVATE_IMGUI
 void CMainApp::ImGui_GameStatus(_float _fTimeDelta, bool* _pOpen)
 {
 	static int location = 0;
@@ -295,3 +290,4 @@ void CMainApp::ImGui_GameStatus(_float _fTimeDelta, bool* _pOpen)
 	}
 	ImGui::End();
 }
+#endif

@@ -4,12 +4,14 @@
 // However, files listed here are ALL re-compiled if any one of them is updated between builds.
 // Do not add files here that you will be updating frequently as this negates the performance advantage.
 
+#include "Client_Settings.h"
+
 #ifndef CLIENT_PCH_H
 #define CLIENT_PCH_H
 
 // add headers that you want to pre-compile here
 
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"

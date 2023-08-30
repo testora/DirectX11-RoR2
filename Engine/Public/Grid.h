@@ -13,13 +13,12 @@ public:
 	HRESULT									Initialize(_float3 vMinBound, _float3 vGridSize);
 
 public:
-	void									Add_Polygon(const _float3* pVertices, _uint3 vIndices);
+	void									Add_Polygon(POLYGON);
 
-	void									Iterate_Polygon(function<_bool(_float3 v0, _float3 v1, _float3 v2)>);
+	void									Iterate_Polygon(function<_bool(POLYGON)>);
 
 private:
-	typedef vector<_uint3>					POLYGONS;
-	unordered_map<const _float3*, POLYGONS>	m_umapPolygons;
+	vector<POLYGON>							m_vecPolygons;
 
 	_float3									m_vMinBound;
 	_float3									m_vGridSize;

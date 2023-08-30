@@ -12,7 +12,7 @@ private:
 	virtual ~CShader() DEFAULT;
 
 public:
-	HRESULT								Initialize(const wstring& strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElements);
+	HRESULT								Initialize(const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElements);
 
 public:
 	void								Set_Flag(_uint iStatus);
@@ -38,7 +38,7 @@ private:
 	_uint 								m_iShaderFlag	= 0;
 
 public:
-	static shared_ptr<CShader>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElement);
+	static shared_ptr<CShader>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElement);
 	virtual shared_ptr<CComponent>		Clone(any = any()) override;
 };
 

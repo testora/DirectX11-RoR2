@@ -126,9 +126,6 @@
     <ClInclude Include="Public\MainApp.h">
       <Filter>02. MainApp</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Client_Settings.h">
-      <Filter>00. Header</Filter>
-    </ClInclude>
     <ClInclude Include="Public\ClientPCH.h">
       <Filter>00. Header\00. PCH</Filter>
     </ClInclude>
@@ -230,6 +227,9 @@
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGuizmo\ImZoomSlider.h">
       <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Client_Settings.h">
+      <Filter>00. Header\00. PCH</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

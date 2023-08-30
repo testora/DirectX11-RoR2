@@ -371,9 +371,6 @@
     <ClInclude Include="Public\Physics.h">
       <Filter>03. Utility\06. Behavior\01. Physics</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Engine_Settings.h">
-      <Filter>00. Header</Filter>
-    </ClInclude>
     <ClInclude Include="Public\ObjectLayer.h">
       <Filter>03. Utility\04. GameObject\00. Manager\00. Layer</Filter>
     </ClInclude>
@@ -487,6 +484,9 @@
     </ClInclude>
     <ClInclude Include="Public\Event_Handler.h">
       <Filter>03. Utility\03. Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Engine_Settings.h">
+      <Filter>00. Header\00. PCH</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

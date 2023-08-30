@@ -10,17 +10,13 @@ private:
 	virtual ~CChannel() DEFAULT;
 
 public:
-	HRESULT						Initialize(const aiNodeAnim* pAIChannel, shared_ptr<class CModel>);
-	void						Update_Transformation(vector<shared_ptr<class CBone>>, _uint& iCurrentKeyFrame, _float fTrackPosition);
+#if ACTIVATE_TOOL
+	HRESULT						Initialize_FromAssimp(const aiNodeAnim* pAIChannel, shared_ptr<class CModel>);
+#endif
+	HRESULT						Initialize_FromBinary(std::ifstream&);
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
 public:
-	_uint						Get_BoneIndex() const				{ return m_iBoneIndex; }
-	_uint						Get_NumKeyFrames() const			{ return m_iNumKeyFrames; }
-	KEYFRAME					Get_KeyFrame(_uint iIndex) const	{ return m_vecKeyFrames[iIndex]; }
-#endif
-#endif
+	void						Update_Transformation(vector<shared_ptr<class CBone>>, _uint& iCurrentKeyFrame, _float fTrackPosition);
 
 private:
 	_uint						m_iBoneIndex		= g_iMaxBones;
@@ -29,7 +25,14 @@ private:
 	vector<KEYFRAME>			m_vecKeyFrames;
 
 public:
+#if ACTIVATE_TOOL
 	static shared_ptr<CChannel>	Create(const aiNodeAnim* pAIChannel, shared_ptr<class CModel>);
+#endif
+	static shared_ptr<CChannel>	Read(std::ifstream&);
+
+#if ACTIVATE_TOOL
+	void						Export(std::ofstream&);
+#endif
 };
 
 END

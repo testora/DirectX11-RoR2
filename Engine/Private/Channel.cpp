@@ -3,10 +3,13 @@
 #include "Model.h"
 #include "Bone.h"
 
-HRESULT CChannel::Initialize(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _pModel)
+#if ACTIVATE_TOOL
+HRESULT CChannel::Initialize_FromAssimp(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _pModel)
 {
-	m_iBoneIndex	= _pModel->Get_BoneIndex(_pAIChannel->mNodeName.data);
+	m_iBoneIndex	= _pModel->Get_BoneIndex(_pAIChannel->mNodeName.C_Str());
 	m_iNumKeyFrames	= Function::Max(_pAIChannel->mNumScalingKeys, _pAIChannel->mNumRotationKeys, _pAIChannel->mNumPositionKeys);
+
+	m_vecKeyFrames.reserve(m_iNumKeyFrames);
 
 	_float3	vScale;
 	_float4	vRotation;
@@ -47,6 +50,19 @@ HRESULT CChannel::Initialize(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _
 		
 	return S_OK;
 }
+#endif
+
+HRESULT CChannel::Initialize_FromBinary(std::ifstream& _inFile)
+{
+	_inFile.read(reinterpret_cast<_byte*>(&m_iBoneIndex),			sizeof(_uint));
+	_inFile.read(reinterpret_cast<_byte*>(&m_iNumKeyFrames),		sizeof(_uint));
+
+	m_vecKeyFrames.resize(m_iNumKeyFrames);
+
+	_inFile.read(reinterpret_cast<_byte*>(m_vecKeyFrames.data()),	sizeof(KEYFRAME) * m_iNumKeyFrames);
+
+	return S_OK;
+}
 
 void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _vecModelBones, _uint& _iCurrentKeyFrame, _float _fTrackPosition)
 {
@@ -81,14 +97,37 @@ void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _vecModelBones, _
 	_vecModelBones[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
 }
 
+#if ACTIVATE_TOOL
 shared_ptr<CChannel> CChannel::Create(const aiNodeAnim* _pAIChannel, shared_ptr<CModel> _pModel)
 {
 	shared_ptr<CChannel> pInstance = make_private_shared(CChannel);
 
-	if (FAILED(pInstance->Initialize(_pAIChannel, _pModel)))
+	if (FAILED(pInstance->Initialize_FromAssimp(_pAIChannel, _pModel)))
 	{
 		MSG_RETURN(nullptr, "CChannel::Create", "Failed to Initialize");
 	}
 
 	return pInstance;
 }
+#endif
+
+shared_ptr<CChannel> CChannel::Read(std::ifstream& _inFile)
+{
+	shared_ptr<CChannel> pInstance = make_private_shared(CChannel);
+
+	if (FAILED(pInstance->Initialize_FromBinary(_inFile)))
+	{
+		MSG_RETURN(nullptr, "CChannel::Read", "Failed to Initialize_FromBinary");
+	}
+
+	return pInstance;
+}
+
+#if ACTIVATE_TOOL
+void CChannel::Export(std::ofstream& _outFile)
+{
+	_outFile.write(reinterpret_cast<const _byte*>(&m_iBoneIndex),			sizeof(_uint));
+	_outFile.write(reinterpret_cast<const _byte*>(&m_iNumKeyFrames),		sizeof(_uint));
+	_outFile.write(reinterpret_cast<const _byte*>(m_vecKeyFrames.data()),	sizeof(KEYFRAME) * m_iNumKeyFrames);
+}
+#endif

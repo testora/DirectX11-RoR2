@@ -58,7 +58,6 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-#ifdef _DEBUG
 #if ACTIVATE_IMGUI
 	if (CImGui_Manager::Get_Instance()->Is_Enable())
 	{
@@ -71,7 +70,6 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 		ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
 		ImGui::End();
 	}
-#endif
 #endif
 
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());

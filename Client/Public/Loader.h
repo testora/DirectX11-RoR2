@@ -15,7 +15,7 @@ public:
 
 public:
 	_bool						Is_Finished() const		{ return m_bIsFinish; }
-	wstring						Get_LoadingText() const	{ return m_strLoading; }
+	wstring						Get_LoadingText() const	{ return m_wstrLoading; }
 
 private:
 	HRESULT						Load_Menu();
@@ -25,7 +25,7 @@ private:
 	const SCENE					m_eLoadScene;
 
 	_bool						m_bIsFinish	= false;
-	wstring						m_strLoading;
+	wstring						m_wstrLoading;
 
 	HANDLE						m_hThread	= nullptr;
 	CRITICAL_SECTION			m_tCriticalSection{};

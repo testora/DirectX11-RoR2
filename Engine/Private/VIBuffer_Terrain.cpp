@@ -7,9 +7,9 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D1
 {
 }
 
-HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
+HRESULT CVIBuffer_Terrain::Initialize(any _wstrHeightMapPath)
 {
-	wstring strHeightMapPath = any_cast<wstring>(_strHeightMapPath);
+	wstring strHeightMapPath = any_cast<wstring>(_wstrHeightMapPath);
 
 	HandleRAII hFile(CreateFile(strHeightMapPath.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0));
 	if (!hFile.is_valid())
@@ -159,11 +159,11 @@ HRESULT CVIBuffer_Terrain::Initialize(any _strHeightMapPath)
 	return S_OK;
 }
 
-shared_ptr<CVIBuffer_Terrain> CVIBuffer_Terrain::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _strHeightMapPath)
+shared_ptr<CVIBuffer_Terrain> CVIBuffer_Terrain::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _wstrHeightMapPath)
 {
 	shared_ptr<CVIBuffer_Terrain> pInstance = make_private_shared(CVIBuffer_Terrain, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_strHeightMapPath)))
+	if (FAILED(pInstance->Initialize(_wstrHeightMapPath)))
 	{
 		MSG_RETURN(nullptr, "CVIBuffer_Terrain::Create", "Failed to Initialize");
 	}

@@ -13,16 +13,23 @@ CTexture::CTexture(const CTexture& _rhs)
 {
 }
 
-HRESULT CTexture::Initialize(const wstring& _strTexturePath, _uint _iNumTexture)
+HRESULT CTexture::Initialize(_uint _iNumTextures)
+{
+	m_vecTexture.reserve(_iNumTextures);
+
+	return S_OK;
+}
+
+HRESULT CTexture::Initialize(const wstring& _wstrTexturePath, _uint _iNumTextures)
 {
 	HRESULT hr = S_OK;
 
-	m_vecTexture.reserve(_iNumTexture);
+	m_vecTexture.reserve(_iNumTextures);
 
-	for (size_t i = 0; i < _iNumTexture; ++i)
+	for (size_t i = 0; i < _iNumTextures; ++i)
 	{
 		_wchar szFullPath[MAX_PATH] = TEXT("");
-		wsprintf(szFullPath, _strTexturePath.c_str(), i);
+		wsprintf(szFullPath, _wstrTexturePath.c_str(), i);
 
 		ComPtr<ID3D11ShaderResourceView> pShaderResourceView = Create_ShaderResourceView(szFullPath);
 		if (nullptr == pShaderResourceView)
@@ -37,7 +44,8 @@ HRESULT CTexture::Initialize(const wstring& _strTexturePath, _uint _iNumTexture)
 	return hr;
 }
 
-HRESULT CTexture::Initialize(const wstring& _strModelPath, aiMaterial* _pAIMaterial, aiTextureType _eAITextureType)
+#if ACTIVATE_TOOL
+HRESULT CTexture::Initialize(const wstring& _wstrModelPath, aiMaterial* _pAIMaterial, aiTextureType _eAITextureType)
 {
 	HRESULT hr = S_OK;
 
@@ -45,28 +53,20 @@ HRESULT CTexture::Initialize(const wstring& _strModelPath, aiMaterial* _pAIMater
 
 	for (_uint i = 0; i < g_iMaxTextures; ++i)
 	{
-		aiString strPath;
-		if (FAILED(_pAIMaterial->GetTexture(_eAITextureType, i, &strPath)))
+		aiString aiStrPath;
+		if (FAILED(_pAIMaterial->GetTexture(_eAITextureType, i, &aiStrPath)))
 		{
 			continue;
 		}
 
-		_char	szDrive[MAX_PATH]		= "";
-		_char	szDirectory[MAX_PATH]	= "";
-		_char	szFileName[MAX_PATH]	= "";
-		_char	szExt[MAX_PATH]			= "";
-		_char	szFullPath[MAX_PATH]	= "";
-		_wchar	szFinalPath[MAX_PATH]	= TEXT("");
-	
-		_splitpath_s(Function::ToString(_strModelPath).c_str(), szDrive, MAX_PATH, szDirectory, MAX_PATH, nullptr, 0, nullptr, 0);
-		_splitpath_s(strPath.data, nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
-	
-		strcpy_s(szFullPath, szDrive);
-		strcat_s(szFullPath, szDirectory);
-		strcat_s(szFullPath, szFileName);
-		strcat_s(szFullPath, szExt);
+		wstring	wstrDrive, wstrDirectory;
+		string	strFileName, strExt;
+		Function::SplitPath(_wstrModelPath, &wstrDrive, &wstrDirectory, nullptr, nullptr);
+		Function::SplitPath(aiStrPath.C_Str(), nullptr, nullptr, &strFileName, &strExt);
 
-		ComPtr<ID3D11ShaderResourceView> pShaderResourceView = Create_ShaderResourceView(Function::ToWString(szFullPath));
+		wstring wstrTexturePath = wstrDrive + wstrDirectory + Function::ToWString(strFileName + strExt);
+
+		ComPtr<ID3D11ShaderResourceView> pShaderResourceView = Create_ShaderResourceView(wstrTexturePath);
 		if (nullptr == pShaderResourceView)
 		{
 			hr = E_FAIL;
@@ -74,18 +74,14 @@ HRESULT CTexture::Initialize(const wstring& _strModelPath, aiMaterial* _pAIMater
 		}
 
 		m_vecTexture.emplace_back(pShaderResourceView);
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-		m_vecTextureFileName.emplace_back(Function::ToWString(szFileName) + Function::ToWString(szExt));
-#endif
-#endif
+		m_vecTexturePath.emplace_back(wstrTexturePath);
 	}
 
 	return hr;
 }
+#endif
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 ComPtr<ID3D11ShaderResourceView> CTexture::Get_ShaderResourceView(_uint _iTextureIdx) const
 {
 	if (m_vecTexture.size() <= _iTextureIdx)
@@ -95,7 +91,6 @@ ComPtr<ID3D11ShaderResourceView> CTexture::Get_ShaderResourceView(_uint _iTextur
 
 	return m_vecTexture[_iTextureIdx];
 }
-#endif
 #endif
 
 ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIdx) const
@@ -142,27 +137,23 @@ HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE
 	return S_OK;
 }
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-HRESULT CTexture::Push_ShaderResourceView(const wstring& _strTexturePath)
+HRESULT CTexture::Push_ShaderResourceView(const wstring& _wstrFullPath)
 {
-	ComPtr<ID3D11ShaderResourceView> pShaderResourceView = Create_ShaderResourceView(_strTexturePath);
+	ComPtr<ID3D11ShaderResourceView> pShaderResourceView = Create_ShaderResourceView(_wstrFullPath);
 	if (nullptr == pShaderResourceView)
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Push_ShaderResourceView", "Failed to Create_ShaderResourceView");
 	}
 
 	m_vecTexture.emplace_back(pShaderResourceView);
-
-	_wchar szFileName[MAX_PATH]	= TEXT("");
-	_wchar szExt[MAX_PATH]		= TEXT("");
-	_wsplitpath_s(_strTexturePath.c_str(), nullptr, 0, nullptr, 0, szFileName, MAX_PATH, szExt, MAX_PATH);
-
-	m_vecTextureFileName.emplace_back(wstring(szFileName) + wstring(szExt));
+#if ACTIVATE_TOOL
+	m_vecTexturePath.emplace_back(_wstrFullPath);
+#endif
 
 	return S_OK;
 }
 
+#if ACTIVATE_TOOL
 HRESULT CTexture::Remove_ShaderResourceView(_uint _iTextureIdx)
 {
 	if (m_vecTexture.size() <= _iTextureIdx)
@@ -171,11 +162,10 @@ HRESULT CTexture::Remove_ShaderResourceView(_uint _iTextureIdx)
 	}
 
 	m_vecTexture.erase(m_vecTexture.begin() + _iTextureIdx);
-	m_vecTextureFileName.erase(m_vecTextureFileName.begin() + _iTextureIdx);
+	m_vecTexturePath.erase(m_vecTexturePath.begin() + _iTextureIdx);
 
 	return S_OK;
 }
-#endif
 #endif
 
 HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const _char* _szConstantName, _uint _iTextureIdx) const
@@ -231,25 +221,40 @@ HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, aiTextu
 	return S_OK;
 }
 
-ComPtr<ID3D11ShaderResourceView> CTexture::Create_ShaderResourceView(const wstring& _strTexturePath) const
+#if ACTIVATE_TOOL
+_bool CTexture::Swap_ShaderResourceView(_uint _iTextureIdx1, _uint _iTextureIdx2)
+{
+	if (!Function::InRange(_iTextureIdx1, 0u, static_cast<_uint>(m_vecTexture.size()))
+	||	!Function::InRange(_iTextureIdx2, 0u, static_cast<_uint>(m_vecTexture.size())))
+	{
+		return false;
+	}
+
+	Function::Swap(m_vecTexture[_iTextureIdx1], m_vecTexture[_iTextureIdx2]);
+	Function::Swap(m_vecTexturePath[_iTextureIdx1], m_vecTexturePath[_iTextureIdx2]);
+
+	return true;
+}
+#endif
+
+ComPtr<ID3D11ShaderResourceView> CTexture::Create_ShaderResourceView(const wstring& _wstrFullPath) const
 {
 	ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 
-	_wchar szExt[MAX_PATH]		= TEXT("");
-	_wsplitpath_s(_strTexturePath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
+	wstring strExt(_wstrFullPath.substr(_wstrFullPath.rfind(L'.')));
 
-	assert(lstrcmp(szExt, TEXT(".tga")));
+	assert(strExt != TEXT(".tga"));
 
-	if (false == lstrcmp(szExt, TEXT(".dds")))
+	if (TEXT(".dds") == strExt)
 	{
-		if (FAILED(CreateDDSTextureFromFile(m_pDevice.Get(), _strTexturePath.c_str(), nullptr, pShaderResourceView.GetAddressOf())))
+		if (FAILED(CreateDDSTextureFromFile(m_pDevice.Get(), _wstrFullPath.c_str(), nullptr, pShaderResourceView.GetAddressOf())))
 		{
 			MSG_RETURN(nullptr, "CTexture::Initialize", "Failed to CreateDDSTextureFromFile");
 		}
 	}
 	else
 	{
-		if (FAILED(CreateWICTextureFromFile(m_pDevice.Get(), _strTexturePath.c_str(), nullptr, pShaderResourceView.GetAddressOf())))
+		if (FAILED(CreateWICTextureFromFile(m_pDevice.Get(), _wstrFullPath.c_str(), nullptr, pShaderResourceView.GetAddressOf())))
 		{
 			MSG_RETURN(nullptr, "CTexture::Initialize", "Failed to CreateWICTextureFromFile");
 		}
@@ -258,11 +263,11 @@ ComPtr<ID3D11ShaderResourceView> CTexture::Create_ShaderResourceView(const wstri
 	return pShaderResourceView;
 }
 
-shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _strTexturePath, _uint _iNumTextures)
+shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, _uint _iNumTextures)
 {
 	shared_ptr<CTexture> pInstance = make_private_shared(CTexture, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_strTexturePath, _iNumTextures)))
+	if (FAILED(pInstance->Initialize(_iNumTextures)))
 	{
 		MSG_RETURN(nullptr, "CTexture::Create", "Failed to Initialize");
 	}
@@ -270,19 +275,49 @@ shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 	return pInstance;
 }
 
-shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _strModelPath, aiMaterial* _pAIMaterial, aiTextureType _eAITextureType)
+shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _wstrTexturePath, _uint _iNumTextures)
 {
 	shared_ptr<CTexture> pInstance = make_private_shared(CTexture, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_strModelPath, _pAIMaterial, _eAITextureType)))
+	if (FAILED(pInstance->Initialize(_wstrTexturePath, _iNumTextures)))
 	{
 		MSG_RETURN(nullptr, "CTexture::Create", "Failed to Initialize");
 	}
 
 	return pInstance;
 }
+
+#if ACTIVATE_TOOL
+shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _wstrModelPath, aiMaterial* _pAIMaterial, aiTextureType _eAITextureType)
+{
+	shared_ptr<CTexture> pInstance = make_private_shared(CTexture, _pDevice, _pContext);
+
+	if (FAILED(pInstance->Initialize(_wstrModelPath, _pAIMaterial, _eAITextureType)))
+	{
+		MSG_RETURN(nullptr, "CTexture::Create", "Failed to Initialize");
+	}
+
+	return pInstance;
+}
+#endif
 
 shared_ptr<CComponent> CTexture::Clone(any)
 {
 	return shared_from_this();
 }
+
+#if ACTIVATE_TOOL
+void CTexture::Export(std::ofstream& _outFile)
+{
+	const size_t nNumTextures(m_vecTexture.size());
+	_outFile.write(reinterpret_cast<const _byte*>(&nNumTextures), sizeof(size_t));
+
+	for (auto& wstrPath : m_vecTexturePath)
+	{
+		const size_t nPathLength(wstrPath.length());
+
+		_outFile.write(reinterpret_cast<const _byte*>(&nPathLength),		sizeof(size_t));
+		_outFile.write(reinterpret_cast<const _byte*>(wstrPath.c_str()),	sizeof(_wchar)	* nPathLength);
+	}
+}
+#endif

@@ -18,8 +18,10 @@ namespace Function
 	inline XMVECTOR						DegreesToRadians(XMVECTOR vDegrees);
 	inline XMVECTOR						RadiansToDegrees(XMVECTOR vRadians);
 
-	inline string						ToString(const wstring& wstr);
 	inline wstring						ToWString(const string& str);
+	inline string						ToString(const wstring& wstr);
+	inline void							SplitPath(_In_ const string& _str, _Out_opt_ string* _pDrive, _Out_opt_ string* _pDirectory, _Out_opt_ string* _pFileName, _Out_opt_ string* _pExtension);
+	inline void							SplitPath(_In_ const wstring& _wstr, _Out_opt_ wstring* _pDrive, _Out_opt_ wstring* _pDirectory, _Out_opt_ wstring* _pFileName, _Out_opt_ wstring* _pExtension);
 
 #pragma region Template
 

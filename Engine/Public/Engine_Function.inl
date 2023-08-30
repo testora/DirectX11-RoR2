@@ -94,6 +94,18 @@ namespace Function
 		return _vRadians * (180.0f / XM_PI);
 	}
 
+	wstring ToWString(const string& _str)
+	{
+		_uint	wstrSize	= MultiByteToWideChar(CP_ACP, 0, _str.c_str(), -1, NULL, 0);
+		_wchar*	wstr		= new _wchar[wstrSize];
+
+		MultiByteToWideChar(CP_ACP, 0, _str.c_str(), -1, wstr, wstrSize);
+		wstring wstrResult(wstr);
+		delete[] wstr;
+
+		return wstrResult;
+	}
+
 	string ToString(const wstring& _wstr)
 	{
 		_uint	strSize	= WideCharToMultiByte(CP_ACP, 0, _wstr.c_str(), -1, NULL, 0, NULL, NULL);
@@ -106,16 +118,34 @@ namespace Function
 		return strResult;
 	}
 
-	wstring ToWString(const string& _str)
+	void SplitPath(_In_ const string& _str, _Out_opt_ string* _pDrive, _Out_opt_ string* _pDirectory, _Out_opt_ string* _pFileName, _Out_opt_ string* _pExtension)
 	{
-		_uint	wstrSize	= MultiByteToWideChar(CP_ACP, 0, _str.c_str(), -1, NULL, 0);
-		_wchar*	wstr		= new _wchar[wstrSize];
+		_char	szDrive[MAX_PATH]			= "";
+		_char	szDirectory[MAX_PATH]		= "";
+		_char	szFileName[MAX_PATH]		= "";
+		_char	szExt[MAX_PATH]				= "";
+	
+		_splitpath_s(_str.c_str(), szDrive, MAX_PATH, szDirectory, MAX_PATH, szFileName, MAX_PATH, szExt, MAX_PATH);
+		
+		if (_pDrive)		*_pDrive		= szDrive;
+		if (_pDirectory)	*_pDirectory	= szDirectory;
+		if (_pFileName)		*_pFileName		= szFileName;
+		if (_pExtension)	*_pExtension	= szExt;
+	}
 
-		MultiByteToWideChar(CP_ACP, 0, _str.c_str(), -1, wstr, wstrSize);
-		wstring wstrResult(wstr);
-		delete[] wstr;
-
-		return wstrResult;
+	void SplitPath(_In_ const wstring& _wstr, _Out_opt_ wstring* _pDrive, _Out_opt_ wstring* _pDirectory, _Out_opt_ wstring* _pFileName, _Out_opt_ wstring* _pExtension)
+	{
+		_wchar	szDrive[MAX_PATH]			= TEXT("");
+		_wchar	szDirectory[MAX_PATH]		= TEXT("");
+		_wchar	szFileName[MAX_PATH]		= TEXT("");
+		_wchar	szExt[MAX_PATH]				= TEXT("");
+	
+		_wsplitpath_s(_wstr.c_str(), szDrive, MAX_PATH, szDirectory, MAX_PATH, szFileName, MAX_PATH, szExt, MAX_PATH);
+		
+		if (_pDrive)		*_pDrive		= szDrive;
+		if (_pDirectory)	*_pDirectory	= szDirectory;
+		if (_pFileName)		*_pFileName		= szFileName;
+		if (_pExtension)	*_pExtension	= szExt;
 	}
 }
 

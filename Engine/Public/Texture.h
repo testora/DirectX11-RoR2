@@ -12,44 +12,51 @@ private:
 	virtual ~CTexture() DEFAULT;
 
 public:
-	HRESULT										Initialize(const wstring& strTexturePath, _uint iNumTexture = 1);
-	HRESULT										Initialize(const wstring& strModelPath, aiMaterial*, aiTextureType);
+	HRESULT										Initialize(_uint iNumTextures = 1);
+	HRESULT										Initialize(const wstring& wstrTexturePath, _uint iNumTextures = 1);
+#if ACTIVATE_TOOL
+	HRESULT										Initialize(const wstring& wstrModelPath, aiMaterial*, aiTextureType);
+#endif
 
 public:
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 	ComPtr<ID3D11ShaderResourceView>			Get_ShaderResourceView(_uint iTextureIdx = 0) const;
-	vector<wstring>								Get_TextureFileName() const	{ return m_vecTextureFileName; }
-#endif
+	wstring										Get_TexturePath(_uint iTextureIdx = 0) const	{ return m_vecTexturePath[iTextureIdx]; }
+	_uint										Get_NumTextures() const							{ return static_cast<_uint>(m_vecTexture.size()); }
 #endif
 	ComPtr<ID3D11Texture2D>						Get_Texture2D(_uint iTextureIdx = 0) const;
 	HRESULT										Set_Texture2D(ComPtr<ID3D11Texture2D>, D3D11_TEXTURE2D_DESC, _uint iTextureIdx = 0);
 
 public:
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	HRESULT										Push_ShaderResourceView(const wstring& strTexturePath);
+	HRESULT										Push_ShaderResourceView(const wstring& wstrFullPath);
+#if ACTIVATE_TOOL
 	HRESULT										Remove_ShaderResourceView(_uint iTextureIdx);
+	_bool										Swap_ShaderResourceView(_uint iTextureIdx1, _uint iTextureIdx2);
 #endif
-#endif
+
 	HRESULT										Bind_ShaderResourceView(shared_ptr<class CShader>, aiTextureType, const _char* szConstantName, _uint iTextureIdx = 0) const;
 	HRESULT										Bind_ShaderResourceViews(shared_ptr<class CShader>, aiTextureType, const _char* szConstantName);
 
 private:
-	ComPtr<ID3D11ShaderResourceView>			Create_ShaderResourceView(const wstring& strTexturePath) const;
+	ComPtr<ID3D11ShaderResourceView>			Create_ShaderResourceView(const wstring& wstrFullPath) const;
 
 private:
 	vector<ComPtr<ID3D11ShaderResourceView>>	m_vecTexture;
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	vector<wstring>								m_vecTextureFileName;
-#endif
+#if ACTIVATE_TOOL
+	vector<wstring>								m_vecTexturePath;
 #endif
 
 public:
-	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& strTexturePath, _uint iNumTextures = 1);
-	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& strModelPath, aiMaterial*, aiTextureType);
+	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, _uint iNumTextures = 1);
+	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrTexturePath, _uint iNumTextures = 1);
+#if ACTIVATE_TOOL
+	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrModelPath, aiMaterial*, aiTextureType);
+#endif
 	virtual shared_ptr<CComponent>				Clone(any = any()) override;
+
+#if ACTIVATE_TOOL
+	void										Export(std::ofstream&);
+#endif
 };
 
 END

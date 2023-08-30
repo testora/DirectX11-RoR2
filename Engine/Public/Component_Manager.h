@@ -23,12 +23,12 @@ public:
 	HRESULT													Reserve_Manager(const SCENE);
 
 public:
-	HRESULT													Add_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<CComponent> pPrototype);
+	HRESULT													Add_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<CComponent> pPrototype);
 
-	shared_ptr<CComponent>									Clone_Component(const SCENE, const wstring& strPrototypeTag, any = any());
+	shared_ptr<CComponent>									Clone_Component(const SCENE, const wstring& wstrPrototypeTag, any = any());
 
 private:
-	shared_ptr<CComponent>									Find_Prototype(const SCENE, const wstring& strPrototypeTag);
+	shared_ptr<CComponent>									Find_Prototype(const SCENE, const wstring& wstrPrototypeTag);
 
 private:
 	typedef unordered_map<wstring, shared_ptr<CComponent>>	ComponentPrototype;

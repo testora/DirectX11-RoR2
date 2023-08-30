@@ -12,14 +12,14 @@ CTerrain::CTerrain(const CTerrain& _rhs)
 {
 }
 
-HRESULT CTerrain::Initialize(any _strHeightMapPath)
+HRESULT CTerrain::Initialize(any _wstrHeightMapPath)
 {
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::TEXTURE) | BIT(COMPONENT::VIBUFFER_TERRAIN);
 
 	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
 	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX, any());
 	m_umapComponentArg[COMPONENT::TEXTURE]			= make_pair(PROTOTYPE_COMPONENT_TEXTURE_TERRAIN, any());
-	m_umapComponentArg[COMPONENT::VIBUFFER_TERRAIN]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN, _strHeightMapPath);
+	m_umapComponentArg[COMPONENT::VIBUFFER_TERRAIN]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN, _wstrHeightMapPath);
 
 	if (FAILED(__super::Initialize()))
 	{
@@ -168,11 +168,11 @@ shared_ptr<CTerrain> CTerrain::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 	return pInstance;
 }
 
-shared_ptr<CGameObject> CTerrain::Clone(any _strHeightMapPath)
+shared_ptr<CGameObject> CTerrain::Clone(any _wstrHeightMapPath)
 {
 	shared_ptr<CTerrain> pInstance = make_private_shared_copy(CTerrain, *this);
 
-	if (FAILED(pInstance->Initialize(_strHeightMapPath)))
+	if (FAILED(pInstance->Initialize(_wstrHeightMapPath)))
 	{
 		MSG_RETURN(nullptr, "CTerrain::Clone", "Failed to Initialize");
 	}

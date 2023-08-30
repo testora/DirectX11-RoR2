@@ -10,8 +10,7 @@
 #include "Mesh.h"
 #include "Texture.h"
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 
 CScene_Tool::CScene_Tool(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::TOOL)
@@ -212,7 +211,7 @@ void CScene_Tool::System_Model()
 	{
 		if (m_imEmbed_Export.IsOk())
 		{
-			if (FAILED(Export_BinaryModel(Function::ToWString(m_imEmbed_Export.GetCurrentPath()), Function::ToWString(m_imEmbed_Export.GetCurrentFileName()))))
+			if (FAILED(Export_BinaryModel(Function::ToWString(m_imEmbed_Export.GetFilePathName()))))
 			{
 				MSG_BOX("CScene_Tool::Tick", "Failed to Export_Model");
 			}
@@ -235,7 +234,7 @@ void CScene_Tool::System_Model()
 
 	ImGui::Text("Anim: ");
 	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 - fButtonWidth0);
-	if (ImGui::Button("-", ImVec2(fButtonWidth0, fButtonWidth0)))
+	if (ImGui::Button("-##EraseFromAnim", ImVec2(fButtonWidth0, fButtonWidth0)))
 	{
 		m_mapAnimModels.erase(m_pairSelectedModel.first);
 		m_pairSelectedModel.first.clear();
@@ -260,7 +259,7 @@ void CScene_Tool::System_Model()
 	
 	ImGui::Text("NonAnim: ");
 	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 - fButtonWidth0);
-	if (ImGui::Button("-", ImVec2(fButtonWidth0, fButtonWidth0)))
+	if (ImGui::Button("-##EraseFromNonAnim", ImVec2(fButtonWidth0, fButtonWidth0)))
 	{
 		m_mapNonAnimModels.erase(m_pairSelectedModel.first);
 		m_pairSelectedModel.first.clear();
@@ -448,6 +447,7 @@ void CScene_Tool::Info_Model()
 		const _char*	szPreview			= szTextureTypes[iCurrentIdx];
 		if (ImGui::TreeNodeEx(string("Material " + std::to_string(iSelectedMaterial)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
+			ImGui::SetNextItemWidth(180.f);
 			if (ImGui::BeginCombo("Type", szPreview))
 			{
 				for (int i = 0; i < IM_ARRAYSIZE(szTextureTypes); ++i)
@@ -482,12 +482,18 @@ void CScene_Tool::Info_Model()
 			_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
 			_float fButtonSpace1 = ImGui::GetStyle().ItemSpacing.x;
 		
-			ImGui::SameLine(fWindowWidth1 - 2.f * fButtonWidth1 - fButtonSpace1 - ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("-", ImVec2(fButtonWidth1, fButtonWidth1)))
+			ImGui::SameLine(fWindowWidth1 - fButtonWidth1 * 4.f - fButtonSpace1 * 3.f + ImGui::GetStyle().ItemInnerSpacing.x);
+			if (ImGui::Button("+##AddFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
+			{
+				const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
+				ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+			}
+			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+			if (ImGui::Button("-##EraseFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
 			{
 				if (iSelectedTexture != -1)
 				{
-					if (SUCCEEDED(m_tSelectedMaterial.pMaterial[IDX(eTexType)]->Remove_ShaderResourceView(iSelectedTexture)))
+					if (SUCCEEDED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Remove_ShaderResourceView(iSelectedTexture)))
 					{
 						iSelectedTexture = -1;
 					}
@@ -498,18 +504,32 @@ void CScene_Tool::Info_Model()
 				}
 			}
 			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("+", ImVec2(fButtonWidth1, fButtonWidth1)))
+			if (ImGui::ArrowButton("##UpFromMaterial", ImGuiDir_Up))
 			{
-				const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
-				ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture - 1))
+				{
+					--iSelectedTexture;
+				}
+			}
+			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+			if (ImGui::ArrowButton("##DownFromMaterial", ImGuiDir_Down))
+			{
+				if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture + 1))
+				{
+					++iSelectedTexture;
+				}
 			}
 
 			if (ImGui::BeginListBox(szPreview, ImVec2(-FLT_MIN, 0.f)))
 			{
 				iTextureIdx = 0;
-				for (auto& strTexture : m_tSelectedMaterial.pMaterial[IDX(eTexType)]->Get_TextureFileName())
+				for (_uint i = 0; i < m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_NumTextures(); ++i)
 				{
-					if (ImGui::Selectable(Function::ToString(strTexture).c_str(), iSelectedTexture == iTextureIdx))
+					wstring wstrTexturePath = m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(i);
+					wstring wstrFileName, wstrExtension;
+					Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
+
+					if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
 					{
 						iSelectedTexture = iTextureIdx;
 					}
@@ -524,7 +544,7 @@ void CScene_Tool::Info_Model()
 				ImVec2 imgSize;
 
 				D3D11_TEXTURE2D_DESC tTexture2dDesc{};
-				m_tSelectedMaterial.pMaterial[IDX(eTexType)]->Get_Texture2D(iSelectedTexture)->GetDesc(&tTexture2dDesc);
+				m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_Texture2D(iSelectedTexture)->GetDesc(&tTexture2dDesc);
 
 				_float fWidth	= static_cast<_float>(tTexture2dDesc.Width);
 				_float fHeight	= static_cast<_float>(tTexture2dDesc.Height);
@@ -541,7 +561,7 @@ void CScene_Tool::Info_Model()
 					imgSize.y = 300.f;
 				}
 
-				ImGui::Image(m_tSelectedMaterial.pMaterial[IDX(eTexType)]->Get_ShaderResourceView(iSelectedTexture).Get(), imgSize);
+				ImGui::Image(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_ShaderResourceView(iSelectedTexture).Get(), imgSize);
 				if (ImGui::BeginItemTooltip())
 				{
 					ImGui::Text("%.0fx%.0f", fWidth, fHeight);
@@ -559,7 +579,7 @@ void CScene_Tool::Info_Model()
 	{
 		if (ImGuiFileDialog::Instance()->IsOk())
 		{
-			if (FAILED(m_tSelectedMaterial.pMaterial[IDX(eTexType)]->Push_ShaderResourceView(Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
+			if (FAILED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Push_ShaderResourceView(Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
 			{
 				MSG_BOX("Scene_Tool::Info_Model", "Failed to Push ShaderResourceView");
 			}
@@ -572,14 +592,14 @@ void CScene_Tool::Info_Model()
 	ImGui::End();
 }
 
-HRESULT CScene_Tool::Load_Model(const wstring& _strFilePath, const wstring& _strFileName, const MODEL _eType, _matrixf _mPivot)
+HRESULT CScene_Tool::Load_Model(const wstring& _wstrFilePath, const wstring& _wstrFileName, const MODEL _eType, _matrixf _mPivot)
 {
 	if (!Function::InRange(_eType, static_cast<MODEL>(0), MODEL::MAX))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Tool::Load_Model", "Invalid MODEL");
 	}
 
-	shared_ptr<CModel> pModel = CModel::Create(m_pDevice, m_pContext, _eType, _strFilePath + wstring(TEXT("\\")) + _strFileName, _mPivot);
+	shared_ptr<CModel> pModel = CModel::Create(m_pDevice, m_pContext, _eType, _wstrFilePath + wstring(TEXT("\\")) + _wstrFileName, _mPivot);
 
 	if (nullptr == pModel)
 	{
@@ -588,12 +608,12 @@ HRESULT CScene_Tool::Load_Model(const wstring& _strFilePath, const wstring& _str
 
 	switch (_eType)
 	{
-	case MODEL::NONANIM:
-		m_mapNonAnimModels.emplace(Function::ToString(_strFileName), pModel);
+	case MODEL::ANIM:
+		m_mapAnimModels.emplace(Function::ToString(_wstrFileName), pModel);
 		break;
 
-	case MODEL::ANIM:
-		m_mapAnimModels.emplace(Function::ToString(_strFileName), pModel);
+	case MODEL::NONANIM:
+		m_mapNonAnimModels.emplace(Function::ToString(_wstrFileName), pModel);
 		break;
 
 	default:
@@ -601,12 +621,12 @@ HRESULT CScene_Tool::Load_Model(const wstring& _strFilePath, const wstring& _str
 		break;
 	}
 
-	m_strModelPath = _strFilePath;
+	m_wstrModelPath = _wstrFilePath;
 	
 	return S_OK;
 }
 
-HRESULT CScene_Tool::Export_BinaryModel(const wstring& _strFilePath, const wstring& _strFileName)
+HRESULT CScene_Tool::Export_BinaryModel(const wstring& _wstrPath)
 {
 	shared_ptr<CModel> pOut = m_pairSelectedModel.second;
 	if (nullptr == pOut)
@@ -614,138 +634,10 @@ HRESULT CScene_Tool::Export_BinaryModel(const wstring& _strFilePath, const wstri
 		return S_FALSE;
 	}
 
-	std::ofstream fout(_strFilePath + wstring(TEXT("\\")) + _strFileName, std::ios::binary);
-	if (!fout.is_open())
+	if (FAILED(pOut->Export(_wstrPath)))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Open File");
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryModel", "Failed to Export");
 	}
-
-#pragma region Model
-	const MODEL	eType			= pOut->Get_ModelType();
-	const _uint	iNumBones		= pOut->Get_NumBones();
-	const _uint	iNumAnimations	= pOut->Get_NumAnimations();
-	const _uint	iNumMeshes		= pOut->Get_NumMeshes();
-	const _uint	iNumMaterials	= pOut->Get_NumMaterials();
-
-	fout.write(reinterpret_cast<const _byte*>(&eType),			sizeof(MODEL));
-	fout.write(reinterpret_cast<const _byte*>(&iNumBones),		sizeof(_uint));
-	fout.write(reinterpret_cast<const _byte*>(&iNumAnimations),	sizeof(_uint));
-	fout.write(reinterpret_cast<const _byte*>(&iNumMeshes),		sizeof(_uint));
-	fout.write(reinterpret_cast<const _byte*>(&iNumMaterials),	sizeof(_uint));
-
-	if (fout.fail())
-	{
-		fout.clear();
-		fout.close();
-		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
-	}
-#pragma endregion
-#pragma region Bones
-	for (_uint i = 0; i < iNumBones; ++i)
-	{
-		shared_ptr<CBone>	pBone			= pOut->Get_Bone(i);
-		const _uint			iParrentBoneIdx	= pBone->Get_ParentBoneIndex();
-		const _float4x4		mTransformation	= pBone->Get_Transformation();
-
-		fout.write(pBone->Get_Name(),									MAX_PATH);
-		fout.write(reinterpret_cast<const _byte*>(&iParrentBoneIdx),	sizeof(_uint));
-		fout.write(reinterpret_cast<const _byte*>(&mTransformation),	sizeof(_float4x4));
-	}
-
-	if (fout.fail())
-	{
-		fout.clear();
-		fout.close();
-		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
-	}
-#pragma endregion
-#pragma region Animations
-	for (_uint i = 0; i < iNumAnimations; ++i)
-	{
-		shared_ptr<CAnimation>		pAnimation		= pOut->Get_Animation(i);
-		const _float 				fDuration		= pAnimation->Get_Duration();
-		const _float 				fTicksPerSecond	= pAnimation->Get_TicksPerSecond();
-		const _uint					iNumChannels	= pAnimation->Get_NumChannels();
-
-		fout.write(pAnimation->Get_Name(),								MAX_PATH);
-		fout.write(reinterpret_cast<const _byte*>(&fDuration),			sizeof(_float));
-		fout.write(reinterpret_cast<const _byte*>(&fTicksPerSecond),	sizeof(_float));
-		fout.write(reinterpret_cast<const _byte*>(&iNumChannels),		sizeof(_uint));
-#pragma region Channels
-		for (_uint j = 0; j < iNumChannels; ++j)
-		{
-			shared_ptr<CChannel>	pChannel		= pAnimation->Get_Channel(j);
-			const _uint				iBoneIndex		= pChannel->Get_BoneIndex();
-			const _uint				iNumKeyFrames	= pChannel->Get_NumKeyFrames();
-
-			fout.write(reinterpret_cast<const _byte*>(&iBoneIndex),		sizeof(_uint));
-			fout.write(reinterpret_cast<const _byte*>(&iNumKeyFrames),	sizeof(_uint));
-#pragma region KeyFrames
-			for (_uint k = 0; k < iNumKeyFrames; ++k)
-			{
-				const KEYFRAME		tKeyFrame		= pChannel->Get_KeyFrame(k);
-				fout.write(reinterpret_cast<const _byte*>(&tKeyFrame),	sizeof(KEYFRAME));
-			}
-#pragma endregion
-		}
-#pragma endregion
-	}
-
-	if (fout.fail())
-	{
-		fout.clear();
-		fout.close();
-		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
-	}
-#pragma endregion
-#pragma region Meshes
-	for (_uint i = 0; i < iNumMeshes; ++i)
-	{
-		shared_ptr<CMesh>					pMesh				= pOut->Get_Mesh(i);
-		const _float4x4						mPivot				= pMesh->Get_Pivot();
-		const _uint							iMaterialIndex		= pMesh->Get_MaterialIndex();
-		const _uint							iNumVertexBuffers	= pMesh->Get_NumVertexBuffers();
-		const _uint							iNumVertices		= pMesh->Get_NumVertices();
-		const _uint							iNumIndices			= pMesh->Get_NumIndices();
-
-		fout.write(pMesh->Get_Name(),											MAX_PATH);
-		fout.write(reinterpret_cast<const _byte*>(&mPivot),						sizeof(_float4x4));
-		fout.write(reinterpret_cast<const _byte*>(&iMaterialIndex),				sizeof(_uint));
-		fout.write(reinterpret_cast<const _byte*>(&iNumVertexBuffers),			sizeof(_uint));
-		fout.write(reinterpret_cast<const _byte*>(&iNumVertices),				sizeof(_uint));
-		fout.write(reinterpret_cast<const _byte*>(&iNumIndices),				sizeof(_uint));
-		fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices().first),	sizeof(_float3)	* iNumVertices);
-		fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Indices().first),	sizeof(_uint)	* iNumIndices);
-
-		switch (eType)
-		{
-		case MODEL::NONANIM:
-		{
-			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices_NonAnim().first), sizeof(VTXMESH)	* iNumVertices);
-		}
-		break;
-		case MODEL::ANIM:
-		{
-			const _uint	iNumBones	= pMesh->Get_NumBones();
-
-			fout.write(reinterpret_cast<const _byte*>(&iNumBones), sizeof(_uint));
-			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_BoneIndices().first),		sizeof(_uint)		* iNumBones);
-			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_BoneOffsets().first),		sizeof(_float4x4)	* iNumVertices);
-			fout.write(reinterpret_cast<const _byte*>(pMesh->Get_Vertices_Anim().first),	sizeof(VTXMESHANIM)	* iNumVertices);
-		}
-		break;
-		};
-	}
-
-	if (fout.fail())
-	{
-		fout.clear();
-		fout.close();
-		MSG_RETURN(E_FAIL, "CScene_Tool::Export_ModelBinary", "Failed to Write File");
-	}
-#pragma endregion
-
-	fout.close();
 
 	return S_OK;
 }
@@ -762,5 +654,4 @@ shared_ptr<CScene_Tool> CScene_Tool::Create(ComPtr<ID3D11Device> _pDevice, ComPt
 	return pInstance;
 }
 
-#endif
 #endif

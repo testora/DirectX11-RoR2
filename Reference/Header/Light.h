@@ -14,8 +14,8 @@ public:
 	void						Tick();
 
 public:
-	LIGHTDESC					Get_LightDesc() const	{ return m_tLightDesc; }
 	_bool						Is_Expired() const;
+	LIGHTDESC					Get_LightDesc() const	{ return m_tLightDesc; }
 
 private:
 	LIGHTDESC					m_tLightDesc{};

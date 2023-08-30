@@ -39,6 +39,6 @@ enum class BEHAVIOR
 
 enum class PIPELINE		{ WORLD, VIEW, PROJECTION, MAX };
 enum class TRANSFORM	{ RIGHT, UP, LOOK, POSITION, MAX };
-enum class MODEL		{ NONANIM, ANIM, MAX };
+enum class MODEL		{ ANIM, NONANIM, MAX };
 enum class COLLIDER		{ SPHERE, AABB, OBB, MAX };
 enum class PICKER		{ LOCAL, WORLD, MAX };

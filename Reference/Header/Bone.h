@@ -6,22 +6,20 @@ BEGIN(Engine)
 class ENGINE_DLL CBone final
 {
 private:
-	explicit CBone(_uint iParentBoneIndex);
+	explicit CBone() DEFAULT;
 	explicit CBone(const CBone&) DEFAULT;
 	virtual ~CBone() DEFAULT;
 
 public:
-	HRESULT						Initialize(const aiNode* pAINode);
+#if ACTIVATE_TOOL
+	HRESULT						Initialize_FromAssimp(const aiNode* pAINode, _uint iParentBoneIndex);
+#endif
+	HRESULT						Initialize_FromBinary(std::ifstream&);
 
 public:
 	const _char*				Get_Name() const								{ return m_szName; }
 	_float4x4					Get_CombinedTransformation() const				{ return m_mCombinedTransformation; }
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	const _uint					Get_ParentBoneIndex() const						{ return m_iParentBoneIndex; }
-	_float4x4					Get_Transformation() const						{ return m_mTransformation; }
-#endif
-#endif
+
 	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
 
 public:
@@ -29,14 +27,21 @@ public:
 
 private:
 	_char						m_szName[MAX_PATH]			= "";
-	const _uint					m_iParentBoneIndex			= g_iMaxBones;
+	_uint						m_iParentBoneIndex			= g_iMaxBones;
 
 	_float4x4					m_mTransformation;
 	_float4x4					m_mCombinedTransformation;
 
 public:
+#if ACTIVATE_TOOL
 	static shared_ptr<CBone>	Create(const aiNode* pAINode, _uint iParentBoneIndex);
+#endif
+	static shared_ptr<CBone>	Read(std::ifstream&);
 	shared_ptr<CBone>			Clone();
+
+#if ACTIVATE_TOOL
+	void						Export(std::ofstream&);
+#endif
 };
 
 END

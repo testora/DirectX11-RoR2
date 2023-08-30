@@ -11,6 +11,7 @@ private:
 
 public:
 	HRESULT											Reserve_Manager(const SCENE);
+
 	void											Tick();
 	void											Late_Tick();
 

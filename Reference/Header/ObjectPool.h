@@ -10,7 +10,7 @@ private:
 	virtual ~CObjectPool() DEFAULT;
 
 public:
-	HRESULT											Initialize(const wstring& strPrototype, any = any());
+	HRESULT											Initialize(const wstring& wstrPrototype, any = any());
 	void											Tick(_float fTimeDelta);
 	void											Late_Tick(_float fTimeDelta);
 
@@ -35,7 +35,7 @@ private:
 	const SCENE										m_eScene;
 
 public:
-	static shared_ptr<CObjectPool>					Create(const SCENE, const _uint iPoolSize, const wstring& strPrototypeTag, any = any());
+	static shared_ptr<CObjectPool>					Create(const SCENE, const _uint iPoolSize, const wstring& wstrPrototypeTag, any = any());
 };
 
 END

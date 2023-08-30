@@ -5,10 +5,8 @@ enum class	SCENE
 	STATIC,
 	LOADING,
 	MENU,
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 	TOOL,
-#endif
 #endif
 	TEST,
 	MAX

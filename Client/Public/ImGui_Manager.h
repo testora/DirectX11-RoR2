@@ -1,7 +1,7 @@
 #pragma once
 #include "Client_Define.h"
 
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 
 BEGIN(Client)
 

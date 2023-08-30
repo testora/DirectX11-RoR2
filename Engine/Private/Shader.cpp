@@ -14,7 +14,7 @@ CShader::CShader(const CShader& _rhs)
 {
 }
 
-HRESULT CShader::Initialize(const wstring& _strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElements)
+HRESULT CShader::Initialize(const wstring& _wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElements)
 {
 #ifdef _DEBUG
 	_uint iHLSLFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -22,7 +22,7 @@ HRESULT CShader::Initialize(const wstring& _strShaderFilePath, const D3D11_INPUT
 	_uint iHLSLFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
 #endif
 
-	if (FAILED(D3DX11CompileEffectFromFile(_strShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHLSLFlag, 0, m_pDevice.Get(), m_pEffect.ReleaseAndGetAddressOf(), nullptr)))
+	if (FAILED(D3DX11CompileEffectFromFile(_wstrShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHLSLFlag, 0, m_pDevice.Get(), m_pEffect.ReleaseAndGetAddressOf(), nullptr)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Initialize", "Failed to D3DX11CompileEffectFromFile");
 	}
@@ -262,11 +262,11 @@ HRESULT CShader::Bind_ShaderResourceViews(const _char* _szConstantName, vector<C
 	return S_OK;
 }
 
-shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _strShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElement)
+shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElement)
 {
 	shared_ptr<CShader> pInstance = make_private_shared(CShader, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_strShaderFilePath, _pElememts, _iNumElement)))
+	if (FAILED(pInstance->Initialize(_wstrShaderFilePath, _pElememts, _iNumElement)))
 	{
 		MSG_RETURN(nullptr, "CShader::Create", "Failed to Initialize");
 	}

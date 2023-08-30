@@ -9,9 +9,9 @@ CObjectPool::CObjectPool(const SCENE _eScene, const _uint _iPoolSize)
 {
 }
 
-HRESULT CObjectPool::Initialize(const wstring& _strPrototype, any _arg)
+HRESULT CObjectPool::Initialize(const wstring& _wstrPrototype, any _arg)
 {
-	m_pPrototype = CObject_Manager::Get_Instance()->Clone_GameObject(m_eScene, _strPrototype);
+	m_pPrototype = CObject_Manager::Get_Instance()->Clone_GameObject(m_eScene, _wstrPrototype);
 
 	m_funcPush = [&]()->shared_ptr<CGameObject> { return m_pPrototype->Clone(_arg); };
 
@@ -75,11 +75,11 @@ void CObjectPool::Add()
 	}
 }
 
-shared_ptr<CObjectPool> CObjectPool::Create(const SCENE _eScene, const _uint _iPoolSize, const wstring& _strPrototypeTag, any _arg)
+shared_ptr<CObjectPool> CObjectPool::Create(const SCENE _eScene, const _uint _iPoolSize, const wstring& _wstrPrototypeTag, any _arg)
 {
 	shared_ptr<CObjectPool> pInstance = make_private_shared(CObjectPool, _eScene, _iPoolSize);
 
-	if (FAILED(pInstance->Initialize(_strPrototypeTag, _arg)))
+	if (FAILED(pInstance->Initialize(_wstrPrototypeTag, _arg)))
 	{
 		MSG_RETURN(nullptr, "CObject::Create", "Failed to Initialize");
 	}

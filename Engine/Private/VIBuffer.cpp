@@ -104,7 +104,7 @@ _bool CVIBuffer::Intersect(_Out_ _float3& _vOut, _In_opt_ const _float4x4 _mWorl
 	return bCollide;
 }
 
-void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _funcCallback)
+void CVIBuffer::Iterate_Polygons(function<_bool(POLYGON)> _funcCallback)
 {
 	for (size_t i = 0; i < m_iNumIndices; i += 3)
 	{
@@ -112,7 +112,7 @@ void CVIBuffer::Iterate_Polygons(function<_bool(_float3, _float3, _float3)> _fun
 		_float3 v1 = m_pVertices[m_pIndices[i + 1]];
 		_float3 v2 = m_pVertices[m_pIndices[i + 2]];
 
-		if (!_funcCallback(v0, v1, v2))
+		if (!_funcCallback(POLYGON{ v0, v1, v2 }))
 		{
 			return;
 		}

@@ -11,30 +11,27 @@ private:
 	virtual ~CMesh() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(MODEL, const aiMesh*, shared_ptr<class CModel> pModel, _matrixf mPivot);
+#if ACTIVATE_TOOL
+	HRESULT							Initialize(MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
+#endif
+	HRESULT							Initialize_FromBinary(MODEL, std::ifstream&);
+
+#if ACTIVATE_TOOL
+private:
+	HRESULT							Ready_VertexBuffer_Anim(const aiMesh*, shared_ptr<class CModel> pModel);
+	HRESULT							Ready_VertexBuffer_NonAnim(const aiMesh*);
+#endif
+	HRESULT							Ready_VertexBuffer_Anim(std::ifstream&);
+	HRESULT							Ready_VertexBuffer_NonAnim(std::ifstream&);
 
 public:
+#if ACTIVATE_TOOL
+	const _char*					Get_Name() const				{ return m_szName; }
+#endif
 	_uint							Get_MaterialIndex() const		{ return m_iMaterialIndex; }
 	_float4x4*						Get_BoneMatrices(vector<shared_ptr<class CBone>>);
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	pair<const VTXMESH*, _uint>		Get_Vertices_NonAnim() const	{ return make_pair(m_pVertices_NonAnim.get(), m_iNumVertices); }
-	pair<const VTXMESHANIM*, _uint>	Get_Vertices_Anim() const		{ return make_pair(m_pVertices_Anim.get(), m_iNumVertices); }
-	pair<const _uint*, _uint>		Get_BoneIndices() const			{ return make_pair(m_vecBoneIndices.data(), m_iNumBones); }
-	pair<const float4x4*, _uint>	Get_BoneOffsets() const			{ return make_pair(m_vecBoneOffsets.data(), m_iNumBones); }
-
-	const _char*					Get_Name() const				{ return m_szName; }
-	_float4x4						Get_Pivot() const				{ return m_mPivot; }
-	_uint							Get_NumBones() const			{ return m_iNumBones; }
-
-#endif
-#endif
 
 	void							Set_Interpolation(vector<shared_ptr<class CBone>>, _float fDuration);
-
-public:
-	HRESULT							Ready_VertexBuffer_NonAnim(const aiMesh*);
-	HRESULT							Ready_VertexBuffer_Anim(const aiMesh*, shared_ptr<class CModel> pModel);
 
 private:
 	_char							m_szName[MAX_PATH]		= "";
@@ -50,16 +47,21 @@ private:
 	array<_float4x4, g_iMaxBones>	m_arrInterpolationMatrices;
 	_float							m_fInterpolationRatio	= 0.f;
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+#if ACTIVATE_TOOL
 	unique_ptr<VTXMESH[]>			m_pVertices_NonAnim;
 	unique_ptr<VTXMESHANIM[]>		m_pVertices_Anim;
 #endif
-#endif
 
 public:
+#if ACTIVATE_TOOL
 	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
+#endif
+	static shared_ptr<CMesh>		Read(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, std::ifstream&);
 	virtual shared_ptr<CComponent>	Clone(any = any()) override;
+
+#if ACTIVATE_TOOL
+	void							Export(std::ofstream&, MODEL);
+#endif
 };
 
 END

@@ -5,25 +5,22 @@ HRESULT CGrid::Initialize(_float3 _vMinBound, _float3 _vGridSize)
 {
 	m_vMinBound	= _vMinBound;
 	m_vGridSize	= _vGridSize;
-
+	
 	return S_OK;
 }
 
-void CGrid::Add_Polygon(const _float3* _pVertices, _uint3 _vIndices)
+void CGrid::Add_Polygon(POLYGON _polygon)
 {
-	m_umapPolygons[_pVertices].emplace_back(_vIndices);
+	m_vecPolygons.emplace_back(_polygon);
 }
 
-void CGrid::Iterate_Polygon(function<_bool(_float3, _float3, _float3)> _funcCallback)
+void CGrid::Iterate_Polygon(function<_bool(POLYGON)> _funcCallback)
 {
-	for (auto& pair : m_umapPolygons)
+	for (auto& polygon : m_vecPolygons)
 	{
-		for (auto& vIndices : pair.second)
+		if (!_funcCallback(polygon))
 		{
-			if (!_funcCallback(pair.first[vIndices.x], pair.first[vIndices.y], pair.first[vIndices.z]))
-			{
-				return;
-			}
+			return;
 		}
 	}
 }

@@ -4,6 +4,8 @@
 // However, files listed here are ALL re-compiled if any one of them is updated between builds.
 // Do not add files here that you will be updating frequently as this negates the performance advantage.
 
+#include "Engine_Settings.h"
+
 #ifndef ENGINE_PCH_H
 #define ENGINE_PCH_H
 
@@ -86,9 +88,11 @@ using std::any;
 using std::make_tuple;
 using std::any_cast;
 
+#if ACTIVATE_TOOL
 #include "Assimp/Importer.hpp"
 #include "Assimp/scene.h"
 #include "Assimp/postprocess.h"
+#endif
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"
 #include "DirectXTK/ScreenGrab.h"

@@ -233,6 +233,8 @@ namespace Engine
 	typedef DirectX::XMMATRIX	_matrix;
 	typedef DirectX::FXMMATRIX	_matrixf;
 	typedef DirectX::CXMMATRIX	_matrixc;
+
+	typedef array<float3, 3>	POLYGON;
 }
 
 #include "Engine_Typedef.inl"

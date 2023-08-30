@@ -1,7 +1,7 @@
 #include "ClientPCH.h"
 #include "ImGui_Manager.h"
 
-#ifdef _DEBUG
+#if ACTIVATE_IMGUI
 
 CImGui_Manager::~CImGui_Manager()
 {

@@ -12,15 +12,27 @@ private:
 	virtual ~CModel() DEFAULT;
 
 public:
-	virtual HRESULT							Initialize(const wstring& strModelPath, _matrixf mPivot = g_mUnit);
+	virtual HRESULT							Initialize(const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
 	HRESULT									Render(shared_ptr<class CShader>, _uint iPassIndex);
 	HRESULT									Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
 
+private:
+#if ACTIVATE_TOOL
+	HRESULT									Initialize_FromAssimp(const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
+#endif
+	HRESULT									Initialize_FromBinary(const wstring& wstrModelPath);
+
+#if ACTIVATE_TOOL
+	HRESULT									Ready_Bones(const aiNode*, _uint iParentBoneIndex);
+	HRESULT									Ready_Animations(const aiScene*);
+	HRESULT									Ready_Meshes(const aiScene*, _matrixf mPivot);
+	HRESULT									Ready_Materials(const aiScene*, const wstring& wstrModelPath);
+#endif
+
 public:
 	_uint									Get_BoneIndex(const _char* szBoneName);
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
-	const MODEL								Get_ModelType() const				{ return m_eType; }
+
+#if ACTIVATE_TOOL
 	const _uint								Get_NumBones() const				{ return m_iNumBones; }
 	const _uint								Get_NumAnimations() const			{ return m_iNumAnimations; }
 	const _uint								Get_NumMeshes() const				{ return m_iNumMeshes; }
@@ -30,7 +42,6 @@ public:
 	shared_ptr<class CAnimation>			Get_Animation(_uint iIndex) const	{ return m_vecAnimations[iIndex]; }
 	shared_ptr<class CMesh>					Get_Mesh(_uint iIndex) const		{ return m_vecMeshes[iIndex]; }
 	MATERIAL								Get_Material(_uint iIndex) const	{ return m_vecMaterials[iIndex]; }
-#endif
 #endif
 
 public:
@@ -46,16 +57,7 @@ public:
 	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const _char* szConstantName);
 
 private:
-	HRESULT									Ready_Bones(const aiNode* pAINode, _uint iParentBoneIndex);
-	HRESULT									Ready_Animations();
-	HRESULT									Ready_Meshes(_matrixf mPivot);
-	HRESULT									Ready_Materials(const wstring& strModelPath);
-
-private:
-	Assimp::Importer						m_aiImporter;
-	const aiScene*							m_pAIScene			= nullptr;
-
-	const MODEL								m_eType				= MODEL::MAX;
+	MODEL									m_eType				= MODEL::MAX;
 
 	_uint									m_iNumBones			= 0;
 	vector<shared_ptr<class CBone>>			m_vecBones;
@@ -73,8 +75,12 @@ private:
 	_bool									m_bAnimLoop			= true;
 
 public:
-	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& strModelPath, _matrixf mPivot = g_mUnit);
+	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
 	virtual shared_ptr<CComponent>			Clone(any = any()) override;
+
+#if ACTIVATE_TOOL
+	HRESULT									Export(const wstring& wstrPath);
+#endif
 };
 
 END

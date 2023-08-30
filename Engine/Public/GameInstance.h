@@ -76,14 +76,14 @@ public:
 #pragma endregion
 #pragma region Object Manager
 
-	HRESULT										Add_Object_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CGameObject> pPrototype);
-	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& strPrototypeTag, any = any());
+	HRESULT										Add_Object_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CGameObject> pPrototype);
+	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& wstrPrototypeTag, any = any());
 
-	shared_ptr<class CObjectLayer>				Add_Layer(const SCENE, const wstring& strLayerTag);
-	shared_ptr<class CObjectPool>				Add_Pool(const SCENE, const wstring& strPoolTag, const wstring& strPrototypeTag, _uint iPoolSize, any = any());
+	shared_ptr<class CObjectLayer>				Add_Layer(const SCENE, const wstring& wstrLayerTag);
+	shared_ptr<class CObjectPool>				Add_Pool(const SCENE, const wstring& wstrPoolTag, const wstring& wstrPrototypeTag, _uint iPoolSize, any = any());
 
-	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& strLayerTag);
-	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& strPoolTag);
+	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& wstrLayerTag);
+	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& wstrPoolTag);
 
 	void										Iterate_Layers(const SCENE, function<_bool(pair<wstring, shared_ptr<class CObjectLayer>>)>);
 	void										Iterate_Pools(const SCENE, function<_bool(pair<wstring, shared_ptr<class CObjectPool>>)>);
@@ -97,19 +97,19 @@ public:
 #pragma endregion
 #pragma region Behavior Manager
 
-	HRESULT										Add_Behavior_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CBehavior> pPrototype);
-	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& strPrototypeTag, any = any());
+	HRESULT										Add_Behavior_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CBehavior> pPrototype);
+	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = any());
 
 #pragma endregion
 #pragma region Grid Manager
 
 	_float3										Get_GridSize();
 
-	HRESULT										Register_VIBuffer(const SCENE, const wstring& strGridLayerTag, shared_ptr<class CGameObject>);
-	HRESULT										Reset_Grids(const SCENE, const wstring& strGridLayerTag = wstring());
+	HRESULT										Register_VIBuffer(const SCENE, const wstring& wstrGridLayerTag, shared_ptr<class CGameObject>);
+	HRESULT										Reset_Grids(const SCENE, const wstring& wstrGridLayerTag = wstring());
 
 	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
-	_float3										Raycast(const wstring& strGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float3										Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
 
 #pragma endregion
 #pragma region Grid Manager

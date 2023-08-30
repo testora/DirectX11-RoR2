@@ -16,7 +16,7 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT					Render() override;
 
-public:
+private:
 	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Terrain();

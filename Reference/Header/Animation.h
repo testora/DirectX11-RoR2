@@ -11,20 +11,16 @@ private:
 	virtual ~CAnimation() DEFAULT;
 
 public:
-	HRESULT								Initialize(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
-	void								Update(_float fTimeDelta, vector<shared_ptr<class CBone>>, _bool bLoop = true);
+#if ACTIVATE_TOOL
+	HRESULT								Initialize_FromAssimp(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
+#endif
+	HRESULT								Initialize_FromBinary(std::ifstream&);
+	void								Tick(_float fTimeDelta, vector<shared_ptr<class CBone>>, _bool bLoop = true);
 
-#ifdef _DEBUG
-#if ACTIVATE_IMGUI
+private:
+
 public:
-	const _char*						Get_Name() const				{ return m_szName; }
-	_float								Get_Duration() const			{ return m_fDuration; }
-	_float								Get_TicksPerSecond() const		{ return m_fTicksPerSecond; }
-	_uint								Get_NumChannels() const			{ return m_iNumChannels; }
-
-	shared_ptr<class CChannel>			Get_Channel(_uint iIndex) const	{ return m_vecChannels[iIndex]; }
-#endif
-#endif
+	const _char*						Get_Name() const	{ return m_szName; }
 
 private:
 	_char								m_szName[MAX_PATH] = "";
@@ -38,8 +34,15 @@ private:
 	vector<_uint>						m_vecChannelKeyFrames;
 
 public:
+#if ACTIVATE_TOOL
 	static shared_ptr<CAnimation>		Create(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
+#endif
+	static shared_ptr<CAnimation>		Read(std::ifstream&);
 	shared_ptr<CAnimation>				Clone();
+
+#if ACTIVATE_TOOL
+	void								Export(std::ofstream&);
+#endif
 };
 
 END
