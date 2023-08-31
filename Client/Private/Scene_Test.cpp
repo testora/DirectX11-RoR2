@@ -68,9 +68,7 @@ HRESULT CScene_Test::Ready_Light()
 	tLightDesc.vDirection	= _float3(1.f, -2.f, 1.f);
 	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
 	tLightDesc.vSpecular	= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 1.f);
-
-	shared_ptr<CTransform>	pTransform;
+	tLightDesc.vAmbient		= _color(0.3f, 0.3f, 0.3f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Lights(SCENE::TEST, tLightDesc, nullptr)))
 	{

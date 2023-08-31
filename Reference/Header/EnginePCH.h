@@ -89,9 +89,12 @@ using std::make_tuple;
 using std::any_cast;
 
 #if ACTIVATE_TOOL
+#pragma warning(push)
+#pragma warning(disable:26451)
 #include "Assimp/Importer.hpp"
 #include "Assimp/scene.h"
 #include "Assimp/postprocess.h"
+#pragma warning(pop)
 #endif
 #include "DirectXTK/DDSTextureLoader.h"
 #include "DirectXTK/WICTextureLoader.h"

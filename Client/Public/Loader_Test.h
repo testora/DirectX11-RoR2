@@ -19,12 +19,6 @@ HRESULT CLoader::Load_Test()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_TERRAIN");
 	}
 
-//	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_TEXTURE_BRUSH,
-//		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/Texture/Brush.png")))))
-//	{
-//		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP");
-//	}
-
 #pragma endregion
 #pragma region Prototype Model
 
@@ -33,13 +27,12 @@ HRESULT CLoader::Load_Test()
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/aaa.mdl")))))
-	//	CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/_Temp/Model/RailGunner/untitled.fbx"), XMMatrixRotationY(XMConvertToRadians(180.0f))))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
 	}
+
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS,
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/bbb.mdl")))))
-	//	CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/_Temp/Map/Set 3_ Golemplains.fbx"), XMMatrixRotationY(XMConvertToRadians(180.0f))))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/GolemPlains/Terrain.mdl")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS");
 	}

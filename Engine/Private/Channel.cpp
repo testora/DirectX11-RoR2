@@ -104,7 +104,7 @@ shared_ptr<CChannel> CChannel::Create(const aiNodeAnim* _pAIChannel, shared_ptr<
 
 	if (FAILED(pInstance->Initialize_FromAssimp(_pAIChannel, _pModel)))
 	{
-		MSG_RETURN(nullptr, "CChannel::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CChannel::Create", "Failed to Initialize_FromAssimp");
 	}
 
 	return pInstance;

@@ -112,7 +112,7 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 		{
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
 		}
-		if (FAILED(pShader->Bind_RawValue(SHADER_MTRLSHN, &m_tMaterialDesc.fShininess, sizeof m_tMaterialDesc.fShininess)))
+		if (FAILED(pShader->Bind_Float(SHADER_MTRLSHN, m_tMaterialDesc.fShininess)))
 		{
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
 		}

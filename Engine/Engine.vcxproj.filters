@@ -499,5 +499,8 @@
     <None Include="Public\GameObject.inl">
       <Filter>03. Utility\04. GameObject</Filter>
     </None>
+    <None Include="..\Resources\Shader\ShaderCommon.hlsli">
+      <Filter>03. Utility\05. Component\03. Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -49,6 +49,7 @@ HRESULT CRailGunner::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
 	}
 
+	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(IDX(ANIMATION::PLAYER::IDLE::IDLE));
 
 	return S_OK;
@@ -81,19 +82,19 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 		ImGui::DragFloat3("Velocity", reinterpret_cast<_float*>(&pVelocity));
 
 		ImGui::Text("Desc: ");
-		ImGui::SliderFloat("ForwardSpeed", &m_tCharacterDesc.fForwardSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("BackwardSpeed", &m_tCharacterDesc.fBackwardSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("LeftSpeed", &m_tCharacterDesc.fLeftSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("RightSpeed", &m_tCharacterDesc.fRightSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("JumpPower", &m_tCharacterDesc.fJumpPower, 0.f, 1000.f);
-		ImGui::SliderFloat3("MaxSpeed", reinterpret_cast<_float*>(&m_tCharacterDesc.vMaxSpeed), 0.f, 1000.f);
-		ImGui::SliderFloat3("Resist", reinterpret_cast<_float*>(&m_tCharacterDesc.vResist), 0.f, 0.5f);
+		ImGui::SliderFloat("ForwardSpeed",	&m_tCharacterDesc.fForwardSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("BackwardSpeed",	&m_tCharacterDesc.fBackwardSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("LeftSpeed",		&m_tCharacterDesc.fLeftSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("RightSpeed",	&m_tCharacterDesc.fRightSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("JumpPower",		&m_tCharacterDesc.fJumpPower, 0.f, 1000.f);
+		ImGui::SliderFloat3("MaxSpeed",		reinterpret_cast<_float*>(&m_tCharacterDesc.vMaxSpeed), 0.f, 1000.f);
+		ImGui::SliderFloat3("Resist",		reinterpret_cast<_float*>(&m_tCharacterDesc.vResist), 0.f, 0.5f);
 
 		ImGui::End();
 	}
 #endif
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+//	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CRailGunner::Render(_uint)

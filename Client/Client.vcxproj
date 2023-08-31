@@ -152,10 +152,10 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEX.hlsl" />
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEXBONE.hlsl" />
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl" />
-    <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl" />
+    <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl" />
+    <FxCompile Include="..\Resources\Shader\PosNorTanTexBone.hlsl" />
+    <FxCompile Include="..\Resources\Shader\PosNorTex.hlsl" />
+    <FxCompile Include="..\Resources\Shader\PosTex.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

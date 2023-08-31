@@ -25,7 +25,7 @@ HRESULT CCamera_Main::Initialize(any _desc)
 		m_tCameraMainDesc.tCameraDesc.fAspect		= static_cast<_float>(g_iWinCX) / static_cast<_float>(g_iWinCY);
 
 		m_tCameraMainDesc.tCameraDesc.fNear			= 0.1f;
-		m_tCameraMainDesc.tCameraDesc.fFar			= 1000.f;
+		m_tCameraMainDesc.tCameraDesc.fFar			= 10000.f;
 	}
 
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);

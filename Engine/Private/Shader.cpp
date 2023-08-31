@@ -68,9 +68,19 @@ HRESULT CShader::Initialize(const wstring& _wstrShaderFilePath, const D3D11_INPU
 	return S_OK;
 }
 
-void CShader::Set_Flag(_uint _iStatus)
+void CShader::Add_Flag(_uint _iStatus)
 {
 	m_iShaderFlag |= _iStatus;
+}
+
+void CShader::Set_Flag(_uint _iStatus)
+{
+	m_iShaderFlag = _iStatus;
+}
+
+void CShader::Remove_Flag(_uint _iStatus)
+{
+	_iStatus ? m_iShaderFlag &= ~_iStatus : m_iShaderFlag = 0;
 }
 
 HRESULT CShader::BeginPass(const _uint _iPassIndex)
@@ -85,11 +95,10 @@ HRESULT CShader::BeginPass(const _uint _iPassIndex)
 		MSG_RETURN(E_FAIL, "CShader::BeginPass", "Invalid Range");
 	}
 
-	if (FAILED(Bind_RawValue(SHADER_FLAG, &m_iShaderFlag, sizeof m_iShaderFlag)))
+	if (FAILED(Bind_Int(SHADER_FLAG, m_iShaderFlag)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::BeginPass", "Failed to Bind_RawValue");
 	}
-	m_iShaderFlag = 0;
 
 	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
@@ -128,7 +137,91 @@ HRESULT CShader::Bind_RawValue(const _char* _szConstantName, const void* _pData,
 	return S_OK;
 }
 
-HRESULT CShader::Bind_Vector(const _char* _szConstantName, _float4 _vValue)
+HRESULT CShader::Bind_Int(const _char* _szConstantName, const _int _iValue)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectScalarVariable* pScalarVariable = m_pEffect->GetVariableByName(_szConstantName)->AsScalar();
+	if (nullptr == pScalarVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_Int", "Failed to GetVariableByName::AsScalar");
+	}
+
+	if (FAILED(pScalarVariable->SetInt(_iValue)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_Int", "Failed to SetInt");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_IntArray(const _char* _szConstantName, const _int* _pArray, _uint _iCount)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectScalarVariable* pScalarVariable = m_pEffect->GetVariableByName(_szConstantName)->AsScalar();
+	if (nullptr == pScalarVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_IntArray", "Failed to GetVariableByName::AsScalar");
+	}
+
+	if (FAILED(pScalarVariable->SetIntArray(_pArray, 0, _iCount)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_IntArray", "Failed to SetIntArray");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_Float(const _char* _szConstantName, const _float _fValue)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectScalarVariable* pScalarVariable = m_pEffect->GetVariableByName(_szConstantName)->AsScalar();
+	if (nullptr == pScalarVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_Float", "Failed to GetVariableByName::AsScalar");
+	}
+
+	if (FAILED(pScalarVariable->SetFloat(_fValue)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_Float", "Failed to SetFloat");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_FloatArray(const _char* _szConstantName, const _float* _pArray, _uint _iCount)
+{
+	if (nullptr == m_pEffect)
+	{
+		return E_FAIL;
+	}
+
+	ID3DX11EffectScalarVariable* pScalarVariable = m_pEffect->GetVariableByName(_szConstantName)->AsScalar();
+	if (nullptr == pScalarVariable)
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_FloatArray", "Failed to GetVariableByName::AsScalar");
+	}
+
+	if (FAILED(pScalarVariable->SetFloatArray(_pArray, 0, _iCount)))
+	{
+		MSG_RETURN(E_FAIL, "CShader::Bind_FloatArray", "Failed to SetFloatArray");
+	}
+
+	return S_OK;
+}
+
+HRESULT CShader::Bind_Vector(const _char* _szConstantName, const _float4 _vValue)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -141,15 +234,15 @@ HRESULT CShader::Bind_Vector(const _char* _szConstantName, _float4 _vValue)
 		MSG_RETURN(E_FAIL, "CShader::Bind_Vector", "Failed to GetVariableByName::AsVector");
 	}
 
-	if (FAILED(pVectorVariable->SetFloatVector(reinterpret_cast<_float*>(&_vValue))))
+	if (FAILED(pVectorVariable->SetFloatVector(reinterpret_cast<const _float*>(&_vValue))))
 	{
-		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to SetFloatVectorArray");
+		MSG_RETURN(E_FAIL, "CShader::Bind_Vector", "Failed to SetFloatVectorArray");
 	}
 
 	return S_OK;
 }
 
-HRESULT CShader::Bind_VectorArray(const _char* _szConstantName, _float4* _vArray, _uint _iCount)
+HRESULT CShader::Bind_VectorArray(const _char* _szConstantName, const _float4* _pArray, _uint _iCount)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -162,7 +255,7 @@ HRESULT CShader::Bind_VectorArray(const _char* _szConstantName, _float4* _vArray
 		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to GetVariableByName::AsVector");
 	}
 
-	if (FAILED(pVectorVariable->SetFloatVectorArray(reinterpret_cast<_float*>(_vArray), 0, _iCount)))
+	if (FAILED(pVectorVariable->SetFloatVectorArray(reinterpret_cast<const _float*>(_pArray), 0, _iCount)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_VectorArray", "Failed to SetFloatVectorArray");
 	}
@@ -170,7 +263,7 @@ HRESULT CShader::Bind_VectorArray(const _char* _szConstantName, _float4* _vArray
 	return S_OK;
 }
 
-HRESULT CShader::Bind_Matrix(const _char* _szConstantName, _float4x4 _mValue)
+HRESULT CShader::Bind_Matrix(const _char* _szConstantName, const _float4x4 _mValue)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -183,7 +276,7 @@ HRESULT CShader::Bind_Matrix(const _char* _szConstantName, _float4x4 _mValue)
 		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to GetVariableByName::AsMatrix");
 	}
 
-	if (FAILED(pMatrixVariable->SetMatrix(reinterpret_cast<_float*>(&_mValue))))
+	if (FAILED(pMatrixVariable->SetMatrix(reinterpret_cast<const _float*>(&_mValue))))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_Matrix", "Failed to SetMatrix");
 	}
@@ -191,7 +284,7 @@ HRESULT CShader::Bind_Matrix(const _char* _szConstantName, _float4x4 _mValue)
 	return S_OK;
 }
 
-HRESULT CShader::Bind_MatrixArray(const _char* _szConstantName, _float4x4* _mArray, _uint _iCount)
+HRESULT CShader::Bind_MatrixArray(const _char* _szConstantName, const _float4x4* _pArray, _uint _iCount)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -204,7 +297,7 @@ HRESULT CShader::Bind_MatrixArray(const _char* _szConstantName, _float4x4* _mArr
 		MSG_RETURN(E_FAIL, "CShader::Bind_MatrixArray", "Failed to GetVariableByName::AsMatrix");
 	}
 
-	if (FAILED(pMatrixVariable->SetMatrixArray(reinterpret_cast<_float*>(_mArray), 0, _iCount)))
+	if (FAILED(pMatrixVariable->SetMatrixArray(reinterpret_cast<const _float*>(_pArray), 0, _iCount)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_MatrixArray", "Failed to SetMatrixArray");
 	}
@@ -212,7 +305,7 @@ HRESULT CShader::Bind_MatrixArray(const _char* _szConstantName, _float4x4* _mArr
 	return S_OK;
 }
 
-HRESULT CShader::Bind_ShaderResourceView(const _char* _szConstantName, ComPtr<ID3D11ShaderResourceView> _pShaderResourceView)
+HRESULT CShader::Bind_ShaderResourceView(const _char* _szConstantName, _In_ ComPtr<ID3D11ShaderResourceView> _pShaderResourceView)
 {
 	if (nullptr == m_pEffect)
 	{
@@ -233,8 +326,13 @@ HRESULT CShader::Bind_ShaderResourceView(const _char* _szConstantName, ComPtr<ID
 	return S_OK;
 }
 
-HRESULT CShader::Bind_ShaderResourceViews(const _char* _szConstantName, vector<ComPtr<ID3D11ShaderResourceView>>& _vecShaderResourceView)
+HRESULT CShader::Bind_ShaderResourceViews(const _char* _szConstantName, _In_ ID3D11ShaderResourceView** _ppcShaderResourceViews, _uint _iOffset, _uint _iCount)
 {
+	if (0 == _iCount)
+	{
+		return S_FALSE;
+	}
+
 	if (nullptr == m_pEffect)
 	{
 		return E_FAIL;
@@ -246,18 +344,10 @@ HRESULT CShader::Bind_ShaderResourceViews(const _char* _szConstantName, vector<C
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to GetVariableByName");
 	}
 
-	auto raw = Function::ConvertToRawPtrVector(_vecShaderResourceView);
-	if (FAILED(pShaderResourceVariable->SetResourceArray(raw.data(), 0, static_cast<_uint>(_vecShaderResourceView.size()))))
+	if (FAILED(pShaderResourceVariable->SetResourceArray(_ppcShaderResourceViews, _iOffset, _iCount)))
 	{
 		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to SetResource");
 	}
-
-#if TEMP_TRIPLANER
-	if (FAILED(pShaderResourceVariable->SetResourceArray(raw.data(), 2, static_cast<_uint>(_vecShaderResourceView.size()))))
-	{
-		MSG_RETURN(E_FAIL, "CShader::Bind_ShaderResourceViews", "Failed to SetResource");
-	}
-#endif
 
 	return S_OK;
 }

@@ -9,10 +9,9 @@
 #pragma endregion
 
 #define	ACTIVATE_CONSOLE		FALSE
-#define ACTIVATE_IMGUI			FALSE
+#define ACTIVATE_IMGUI			TRUE
 #define ACTIVATE_TOOL			TRUE
 
-#define TEMP_TRIPLANER			TRUE
 #define WIP_FRUSTRUM_CULLING	FALSE
 
 #pragma region Post-Settings

@@ -38,7 +38,7 @@
 
 #pragma region INGAME - Player
 
-#define PLAYER_CAMERA_OFFSET			_float4(0.f, 4.f, -10.f, 1.f)
+#define PLAYER_CAMERA_OFFSET			_float4(0.f, 3.f, -6.f, 1.f)
 
 #define PLAYER_SPEED_FORWARD			240.f;
 #define PLAYER_SPEED_BACKWARD			160.f;

@@ -1,5 +1,5 @@
 #pragma once
-#pragma region Settings
+#pragma region Pre-Settings
 #ifndef FALSE
 #define FALSE					0
 #endif
@@ -9,13 +9,12 @@
 #pragma endregion
 
 #define	ACTIVATE_CONSOLE		FALSE
-#define ACTIVATE_IMGUI			FALSE
+#define ACTIVATE_IMGUI			TRUE
 #define ACTIVATE_TOOL			TRUE
 
-#define TEMP_TRIPLANER			TRUE
 #define WIP_FRUSTRUM_CULLING	FALSE
 
-#pragma region Settings
+#pragma region Post-Settings
 #ifndef _DEBUG
 #undef ACTIVATE_IMGUI
 #define ACTIVATE_IMGUI			FALSE

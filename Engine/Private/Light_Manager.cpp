@@ -113,7 +113,7 @@ HRESULT CLight_Manager::Bind_Lights()
 {
 	for (auto& pShader : m_vecShaders)
 	{
-		if (FAILED(pShader->Bind_RawValue(SHADER_LIGHTCNT, &m_iLightCount, sizeof m_iLightCount)))
+		if (FAILED(pShader->Bind_Int(SHADER_LIGHTCNT, m_iLightCount)))
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_RawValue:SHADER_LIGHTCNT");
 		}
@@ -141,19 +141,19 @@ HRESULT CLight_Manager::Bind_Lights()
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_VectorArray:SHADER_LIGHTAMB");
 		}
-		if (FAILED(pShader->Bind_RawValue(SHADER_LIGHTRNG, m_arrRange.data(), sizeof(float) * m_iLightCount)))
+		if (FAILED(pShader->Bind_FloatArray(SHADER_LIGHTRNG, m_arrRange.data(), m_iLightCount)))
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_RawValue:SHADER_LIGHTRNG");
 		}
-		if (FAILED(pShader->Bind_RawValue(SHADER_ATT0, m_arrAttenuation0.data(), sizeof(float) * m_iLightCount)))
+		if (FAILED(pShader->Bind_FloatArray(SHADER_ATT0, m_arrAttenuation0.data(), m_iLightCount)))
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_RawValue:SHADER_ATT0");
 		}
-		if (FAILED(pShader->Bind_RawValue(SHADER_ATT1, m_arrAttenuation1.data(), sizeof(float) * m_iLightCount)))
+		if (FAILED(pShader->Bind_FloatArray(SHADER_ATT1, m_arrAttenuation1.data(), m_iLightCount)))
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_RawValue:SHADER_ATT1");
 		}
-		if (FAILED(pShader->Bind_RawValue(SHADER_ATT2, m_arrAttenuation2.data(), sizeof(float) * m_iLightCount)))
+		if (FAILED(pShader->Bind_FloatArray(SHADER_ATT2, m_arrAttenuation2.data(), m_iLightCount)))
 		{
 			MSG_RETURN(E_FAIL, "CLight_Manager::Bind_Lights", "Failed to Bind_RawValue:SHADER_ATT2");
 		}

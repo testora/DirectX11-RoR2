@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CRenderer;
 class CTransform;
+class CShader;
 END
 
 BEGIN(Client)
@@ -29,12 +30,7 @@ private:
 public:
 	shared_ptr<CRenderer>				m_pRenderer;
 	shared_ptr<CTransform>				m_pTransform;
-
-#if TEMP_TRIPLANER
-	shared_ptr<CShader>					m_pTriPlanerShd;
-	shared_ptr<CTexture>				m_pTriPlanerDif;
-	shared_ptr<CTexture>				m_pTriPlanerNor;
-#endif
+	shared_ptr<CShader>					m_pShader;
 
 public:
 	static shared_ptr<CGolemPlains>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

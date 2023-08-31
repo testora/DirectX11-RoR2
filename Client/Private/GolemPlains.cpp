@@ -29,12 +29,42 @@ HRESULT CGolemPlains::Initialize(any)
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Initialize", "Failed to __super::Initialize");
 	}
-	
-#if TEMP_TRIPLANER
-	m_pTriPlanerShd = Get_Component<CShader>(COMPONENT::SHADER);
-	m_pTriPlanerDif = CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/texGPGrassTerrain%d.png"), 2);
-	m_pTriPlanerNor = CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/_Temp/texGPGrassTerrainNormal%d.png"), 2);
-#endif // TEMP_TRIPLANER
+
+	shared_ptr<CModel> pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	pModel->Add_ShaderBinding(0,
+		[this]()->HRESULT
+		{
+			const _float fTiling = 3.f;
+			m_pShader->Set_Flag(SHADER_FLAG_TRIPLANER_POSITIVE_Y);
+			m_pShader->Bind_Float(SHADER_TILING_DIFFUSE, fTiling);
+			m_pShader->Bind_Float(SHADER_TILING_NORMAL, fTiling);
+			return S_OK;
+		}
+	);
+	pModel->Add_ShaderBinding(2,
+		[this]()->HRESULT
+		{
+			const _float fTiling = 1.f;
+			m_pShader->Set_Flag(SHADER_FLAG_TRIPLANER_POSITIVE_Y);
+			m_pShader->Bind_Float(SHADER_TILING_DIFFUSE, fTiling);
+			m_pShader->Bind_Float(SHADER_TILING_NORMAL, fTiling);
+			return S_OK;
+		}
+	);
+	pModel->Add_ShaderBinding(7,
+		[this]()->HRESULT
+		{
+			m_pShader->Set_Flag(SHADER_FLAG_TRIPLANER_POSITIVE_X | SHADER_FLAG_TRIPLANER_POSITIVE_Y | SHADER_FLAG_TRIPLANER_POSITIVE_Z |
+								SHADER_FLAG_TRIPLANER_NEGATIVE_X | SHADER_FLAG_TRIPLANER_NEGATIVE_Y | SHADER_FLAG_TRIPLANER_NEGATIVE_Z |
+								SHADER_FLAG_TRIPLANER_SHARE_X |  SHADER_FLAG_TRIPLANER_SHARE_Z |
+								SHADER_FLAG_TRIPLANER_SHARE_X_Z | SHADER_FLAG_TRIPLANER_SYNC_XZ);
+			const _float fTilingDiffuse[3] = { 0.05f, 0.05f, 0.05f };
+			const _float fTilingNormal[3] = { 0.f, 0.f, 1.5f };
+			m_pShader->Bind_FloatArray(SHADER_TILING_DIFFUSE, fTilingDiffuse, 3);
+			m_pShader->Bind_FloatArray(SHADER_TILING_NORMAL, fTilingNormal, 3);
+			return S_OK;
+		}
+	);
 
 	return S_OK;
 }
@@ -53,11 +83,6 @@ void CGolemPlains::Late_Tick(_float _fTimeDelta)
 
 HRESULT CGolemPlains::Render(_uint)
 {
-#if TEMP_TRIPLANER
-	m_pTriPlanerDif->Bind_ShaderResourceViews(m_pTriPlanerShd, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE);
-	m_pTriPlanerNor->Bind_ShaderResourceViews(m_pTriPlanerShd, aiTextureType_NORMALS, SHADER_TEXNORMAL);
-#endif // TEMP_TRIPLANER
-
 	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Render", "Failed to __super::Render");
@@ -83,6 +108,12 @@ HRESULT CGolemPlains::Ready_Components()
 	if (nullptr == m_pTransform)
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pTransform");
+	}
+
+	m_pShader = Get_Component<CShader>(COMPONENT::SHADER);
+	if (nullptr == m_pShader)
+	{
+		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pShader");
 	}
 
 	return S_OK;

@@ -47,7 +47,7 @@ shared_ptr<CBone> CBone::Create(const aiNode* _pAINode, _uint _iParentBoneIndex)
 
 	if (FAILED(pInstance->Initialize_FromAssimp(_pAINode, _iParentBoneIndex)))
 	{
-		MSG_RETURN(nullptr, "CBone::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CBone::Create", "Failed to Initialize_FromAssimp");
 	}
 
 	return pInstance;

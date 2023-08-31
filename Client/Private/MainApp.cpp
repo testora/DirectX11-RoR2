@@ -200,28 +200,28 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	shared_ptr<CShader> pShader;
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSTEX.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosTex.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
 	}
 	m_pGameInstance->Add_BindShaders(pShader);
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTEX.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosNorTex.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
 	}
 	m_pGameInstance->Add_BindShaders(pShader);
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESH,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTANTEX.hlsl"), VTXPOSNORTANTEX::tElements, VTXPOSNORTANTEX::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosNorTanTex.hlsl"), VTXPOSNORTANTEX::tElements, VTXPOSNORTANTEX::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXMESH");
 	}
 	m_pGameInstance->Add_BindShaders(pShader);
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/VTXPOSNORTANTEXBONE.hlsl"), VTXPOSNORTANTEXBONE::tElements, VTXPOSNORTANTEXBONE::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosNorTanTexBone.hlsl"), VTXPOSNORTANTEXBONE::tElements, VTXPOSNORTANTEXBONE::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM");
 	}

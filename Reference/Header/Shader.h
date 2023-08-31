@@ -15,19 +15,25 @@ public:
 	HRESULT								Initialize(const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElements);
 
 public:
+	void								Add_Flag(_uint iStatus);
 	void								Set_Flag(_uint iStatus);
+	void								Remove_Flag(_uint iStatus = 0);
 
 public:
 	HRESULT								BeginPass(const _uint iPassIndex);
 
 	HRESULT								Bind_RawValue(const _char* szConstantName, const void* pData, _uint iByteSize);
-	HRESULT								Bind_Vector(const _char* szConstantName, _float4);
-	HRESULT								Bind_VectorArray(const _char* szConstantName, _float4*, _uint iCount);
-	HRESULT								Bind_Matrix(const _char* szConstantName, _float4x4);
-	HRESULT								Bind_MatrixArray(const _char* szConstantName, _float4x4*, _uint iCount);
+	HRESULT								Bind_Int(const _char* szConstantName, const _int);
+	HRESULT								Bind_IntArray(const _char* szConstantName, const _int*, _uint iCount);
+	HRESULT								Bind_Float(const _char* szConstantName, const _float);
+	HRESULT								Bind_FloatArray(const _char* szConstantName, const _float*, _uint iCount);
+	HRESULT								Bind_Vector(const _char* szConstantName, const _float4);
+	HRESULT								Bind_VectorArray(const _char* szConstantName, const _float4*, _uint iCount);
+	HRESULT								Bind_Matrix(const _char* szConstantName, const _float4x4);
+	HRESULT								Bind_MatrixArray(const _char* szConstantName, const _float4x4*, _uint iCount);
 
-	HRESULT								Bind_ShaderResourceView(const _char* szConstantName, ComPtr<ID3D11ShaderResourceView>);
-	HRESULT								Bind_ShaderResourceViews(const _char* szConstantName, vector<ComPtr<ID3D11ShaderResourceView>>&);
+	HRESULT								Bind_ShaderResourceView(const _char* szConstantName, _In_ ComPtr<ID3D11ShaderResourceView>);
+	HRESULT								Bind_ShaderResourceViews(const _char* szConstantName, _In_ ID3D11ShaderResourceView**, _uint iOffset = 0, _uint iCount = 1);
 
 private:
 	ComPtr<ID3DX11Effect>				m_pEffect;

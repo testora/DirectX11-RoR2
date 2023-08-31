@@ -132,6 +132,7 @@
     <ClCompile Include="Private\VIBuffer_Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Resources\Shader\ShaderCommon.hlsli" />
     <None Include="Public\Engine_Function.inl" />
     <None Include="Public\Engine_Typedef.inl" />
     <None Include="Public\GameObject.inl" />

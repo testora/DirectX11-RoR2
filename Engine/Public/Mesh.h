@@ -12,7 +12,7 @@ private:
 
 public:
 #if ACTIVATE_TOOL
-	HRESULT							Initialize(MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
+	HRESULT							Initialize_FromAssimp(MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
 #endif
 	HRESULT							Initialize_FromBinary(MODEL, std::ifstream&);
 

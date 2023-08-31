@@ -64,7 +64,8 @@ void CScene_Tool::System_Model()
 				m_imEmbed_Export.Close();
 			}
 
-			m_imEmbed_Open.OpenDialog(DIALOG_OPEN_FBX, "Open FBX", ".fbx", "Bin/Resources/", 1, nullptr,
+			const _char* szFilters = "Models (*.fbx, *.mdl){.fbx,.mdl},FBX (*.fbx){.fbx},Binary (*.mdl){.mdl},All files{.*}";
+			m_imEmbed_Open.OpenDialog(DIALOG_OPEN_FBX, "Open Model", szFilters, "Bin/Resources/", 1, nullptr,
 				ImGuiFileDialogFlags_HideColumnType			|
 				ImGuiFileDialogFlags_NoDialog				|
 				ImGuiFileDialogFlags_DisableBookmarkMode	|
@@ -85,7 +86,7 @@ void CScene_Tool::System_Model()
 				m_imEmbed_Open.Close();
 			}
 
-			const _char* szFilters = "Binary (*.mdl){.mdl},Models (*.fbx, *.mdl){*.fbx *.mdl},All files{.*}";
+			const _char* szFilters = "Binary (*.mdl){.mdl},Models (*.fbx, *.mdl){.fbx,.mdl},All files{.*}";
 			m_imEmbed_Export.OpenDialog(DIALOG_EXPORT_MODEL, "Export Model", szFilters, "Bin/Resources/", "",
 				[](const char*, void*, bool*)
 				{
@@ -447,7 +448,7 @@ void CScene_Tool::Info_Model()
 		const _char*	szPreview			= szTextureTypes[iCurrentIdx];
 		if (ImGui::TreeNodeEx(string("Material " + std::to_string(iSelectedMaterial)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			ImGui::SetNextItemWidth(180.f);
+			ImGui::SetNextItemWidth(120.f);
 			if (ImGui::BeginCombo("Type", szPreview))
 			{
 				for (int i = 0; i < IM_ARRAYSIZE(szTextureTypes); ++i)
@@ -480,9 +481,20 @@ void CScene_Tool::Info_Model()
 
 			_float fWindowWidth1 = ImGui::GetWindowWidth();
 			_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
-			_float fButtonSpace1 = ImGui::GetStyle().ItemSpacing.x;
+			_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
 		
-			ImGui::SameLine(fWindowWidth1 - fButtonWidth1 * 4.f - fButtonSpace1 * 3.f + ImGui::GetStyle().ItemInnerSpacing.x);
+			ImGui::SameLine(fWindowWidth1 - fButtonWidth1 * 5.f - fButtonSpace1 * 4.f - ImGui::GetStyle().WindowPadding.x);
+			if (ImGui::Button("*##DuplicateFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
+			{
+				if (iSelectedTexture != -1)
+				{
+					if (FAILED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Push_ShaderResourceView(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(iSelectedTexture))))
+					{
+						MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove Push_ShaderResourceView");
+					}
+				}
+			}
+			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
 			if (ImGui::Button("+##AddFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
 			{
 				const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
@@ -529,10 +541,12 @@ void CScene_Tool::Info_Model()
 					wstring wstrFileName, wstrExtension;
 					Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
 
+					ImGui::PushID(iTextureIdx);
 					if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
 					{
 						iSelectedTexture = iTextureIdx;
 					}
+					ImGui::PopID();
 
 					++iTextureIdx;
 				}

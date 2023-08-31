@@ -82,26 +82,26 @@ HRESULT CTexture::Initialize(const wstring& _wstrModelPath, aiMaterial* _pAIMate
 #endif
 
 #if ACTIVATE_TOOL
-ComPtr<ID3D11ShaderResourceView> CTexture::Get_ShaderResourceView(_uint _iTextureIdx) const
+ComPtr<ID3D11ShaderResourceView> CTexture::Get_ShaderResourceView(_uint _iTextureIndex) const
 {
-	if (m_vecTexture.size() <= _iTextureIdx)
+	if (m_vecTexture.size() <= _iTextureIndex)
 	{
 		MSG_RETURN(nullptr, "CTexture::Get_ShaderResourceView", "Invalid Range");
 	}
 
-	return m_vecTexture[_iTextureIdx];
+	return m_vecTexture[_iTextureIndex];
 }
 #endif
 
-ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIdx) const
+ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIndex) const
 {
-	if (m_vecTexture.size() <= _iTextureIdx)
+	if (m_vecTexture.size() <= _iTextureIndex)
 	{
 		MSG_RETURN(nullptr, "CTexture::Get_Texture2D", "Invalid Range");
 	}
 
 	ComPtr<ID3D11Resource> pResource;
-	m_vecTexture[_iTextureIdx]->GetResource(pResource.GetAddressOf());
+	m_vecTexture[_iTextureIndex]->GetResource(pResource.GetAddressOf());
 
 	ComPtr<ID3D11Texture2D> pTexture2D;
 	if (FAILED(pResource.As(&pTexture2D)))
@@ -112,9 +112,9 @@ ComPtr<ID3D11Texture2D> CTexture::Get_Texture2D(_uint _iTextureIdx) const
 	return pTexture2D;
 }
 
-HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE2D_DESC _tDesc, _uint _iTextureIdx)
+HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE2D_DESC _tDesc, _uint _iTextureIndex)
 {
-	if (m_vecTexture.size() <= _iTextureIdx)
+	if (m_vecTexture.size() <= _iTextureIndex)
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Set_Texture2D", "Invalid Range");
 	}
@@ -132,7 +132,7 @@ HRESULT CTexture::Set_Texture2D(ComPtr<ID3D11Texture2D> _pTexture, D3D11_TEXTURE
 		MSG_RETURN(E_FAIL, "CTexture::Set_Texture2D", "Failed to CreateShaderResourceView");
 	}
 
-	m_vecTexture[_iTextureIdx] = pShaderResourceView;
+	m_vecTexture[_iTextureIndex] = pShaderResourceView;
 
 	return S_OK;
 }
@@ -154,28 +154,28 @@ HRESULT CTexture::Push_ShaderResourceView(const wstring& _wstrFullPath)
 }
 
 #if ACTIVATE_TOOL
-HRESULT CTexture::Remove_ShaderResourceView(_uint _iTextureIdx)
+HRESULT CTexture::Remove_ShaderResourceView(_uint _iTextureIndex)
 {
-	if (m_vecTexture.size() <= _iTextureIdx)
+	if (m_vecTexture.size() <= _iTextureIndex)
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Remove_ShaderResourceView", "Invalid Range");
 	}
 
-	m_vecTexture.erase(m_vecTexture.begin() + _iTextureIdx);
-	m_vecTexturePath.erase(m_vecTexturePath.begin() + _iTextureIdx);
+	m_vecTexture.erase(m_vecTexture.begin() + _iTextureIndex);
+	m_vecTexturePath.erase(m_vecTexturePath.begin() + _iTextureIndex);
 
 	return S_OK;
 }
 #endif
 
-HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const _char* _szConstantName, _uint _iTextureIdx) const
+HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const _char* _szConstantName, _uint _iTextureIndex) const
 {
-	if (m_vecTexture.size() <= _iTextureIdx)
+	if (m_vecTexture.size() <= _iTextureIndex)
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Invalid Range");
 	}
 
-	if (FAILED(_pShader->Bind_ShaderResourceView(_szConstantName, m_vecTexture[_iTextureIdx])))
+	if (FAILED(_pShader->Bind_ShaderResourceView(_szConstantName, m_vecTexture[_iTextureIndex])))
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Failed to Bind_ShaderResourceView");
 	}
@@ -183,11 +183,11 @@ HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextur
 	switch (_eAiType)
 	{
 	case aiTextureType_DIFFUSE:
-		_pShader->Set_Flag(SHADER_FLAG_TEXDIFFUSE);
+		_pShader->Add_Flag(SHADER_FLAG_TEXDIFFUSE);
 		break;
 
 	case aiTextureType_NORMALS:
-		_pShader->Set_Flag(SHADER_FLAG_TEXNORMAL);
+		_pShader->Add_Flag(SHADER_FLAG_TEXNORMAL);
 		break;
 
 	default:
@@ -199,7 +199,7 @@ HRESULT CTexture::Bind_ShaderResourceView(shared_ptr<CShader> _pShader, aiTextur
 
 HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, aiTextureType _eAiType, const _char* _szConstantName)
 {
-	if (FAILED(_pShader->Bind_ShaderResourceViews(_szConstantName, m_vecTexture)))
+	if (FAILED(_pShader->Bind_ShaderResourceViews(_szConstantName, Function::ConvertToRawPtrVector(m_vecTexture).data(), 0, static_cast<_uint>(m_vecTexture.size()))))
 	{
 		MSG_RETURN(E_FAIL, "CTexture::Bind_ShaderResourceView", "Failed to Bind_ShaderResourceView");
 	}
@@ -207,11 +207,11 @@ HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, aiTextu
 	switch (_eAiType)
 	{
 	case aiTextureType_DIFFUSE:
-		_pShader->Set_Flag(SHADER_FLAG_TEXDIFFUSE);
+		_pShader->Add_Flag(SHADER_FLAG_TEXDIFFUSE);
 		break;
 
 	case aiTextureType_NORMALS:
-		_pShader->Set_Flag(SHADER_FLAG_TEXNORMAL);
+		_pShader->Add_Flag(SHADER_FLAG_TEXNORMAL);
 		break;
 
 	default:
@@ -222,16 +222,16 @@ HRESULT CTexture::Bind_ShaderResourceViews(shared_ptr<CShader> _pShader, aiTextu
 }
 
 #if ACTIVATE_TOOL
-_bool CTexture::Swap_ShaderResourceView(_uint _iTextureIdx1, _uint _iTextureIdx2)
+_bool CTexture::Swap_ShaderResourceView(_uint _iTextureIndex1, _uint _iTextureIndex2)
 {
-	if (!Function::InRange(_iTextureIdx1, 0u, static_cast<_uint>(m_vecTexture.size()))
-	||	!Function::InRange(_iTextureIdx2, 0u, static_cast<_uint>(m_vecTexture.size())))
+	if (!Function::InRange(_iTextureIndex1, 0u, static_cast<_uint>(m_vecTexture.size()))
+	||	!Function::InRange(_iTextureIndex2, 0u, static_cast<_uint>(m_vecTexture.size())))
 	{
 		return false;
 	}
 
-	Function::Swap(m_vecTexture[_iTextureIdx1], m_vecTexture[_iTextureIdx2]);
-	Function::Swap(m_vecTexturePath[_iTextureIdx1], m_vecTexturePath[_iTextureIdx2]);
+	Function::Swap(m_vecTexture[_iTextureIndex1], m_vecTexture[_iTextureIndex2]);
+	Function::Swap(m_vecTexturePath[_iTextureIndex1], m_vecTexturePath[_iTextureIndex2]);
 
 	return true;
 }

@@ -326,16 +326,16 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shader\VTXPOSTEX.hlsl">
+    <FxCompile Include="..\Resources\Shader\PosTex.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTEX.hlsl">
+    <FxCompile Include="..\Resources\Shader\PosNorTex.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEX.hlsl">
+    <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Resources\Shader\VTXPOSNORTANTEXBONE.hlsl">
+    <FxCompile Include="..\Resources\Shader\PosNorTanTexBone.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
   </ItemGroup>

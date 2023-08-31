@@ -12,7 +12,7 @@ protected:
 
 public:
 	HRESULT							Initialize(any = any());
-	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex);
+	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex, _bool bResetFlag = true);
 
 public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;

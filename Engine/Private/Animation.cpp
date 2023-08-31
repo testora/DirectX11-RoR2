@@ -22,7 +22,7 @@ HRESULT CAnimation::Initialize_FromAssimp(const aiAnimation* _pAIAnimation, shar
 		if (nullptr == pChannel)
 		{
 			hr = E_FAIL;
-			MSG_CONTINUE("CAnimation::Create", "Failed to CChannel::Create");
+			MSG_CONTINUE("CAnimation::Initialize_FromAssimp", "Failed to CChannel::Create");
 		}
 
 		m_vecChannels.emplace_back(pChannel);
@@ -78,7 +78,7 @@ shared_ptr<CAnimation> CAnimation::Create(const aiAnimation* _pAIAnimation, shar
 
 	if (FAILED(pInstance->Initialize_FromAssimp(_pAIAnimation, _pModel)))
 	{
-		MSG_RETURN(nullptr, "CAnimation::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CAnimation::Create", "Failed to Initialize_FromAssimp");
 	}
 
 	return pInstance;
