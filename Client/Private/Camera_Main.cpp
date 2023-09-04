@@ -50,8 +50,8 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 		m_pTransform->Set_Matrix(m_vOffset * m_pTargetTransform->Get_Matrix());
 	}
 
-//	Debug_MouseControl(_fTimeDelta);
-//	Debug_KeyControl(_fTimeDelta);
+	Debug_MouseControl(_fTimeDelta);
+	Debug_KeyControl(_fTimeDelta);
 }
 
 void CCamera_Main::Late_Tick(_float _fTimeDelta)
@@ -75,7 +75,7 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CCamera_Main::Render(_uint _iPassIndex)
+HRESULT CCamera_Main::Render()
 {
 	if (FAILED(__super::Render()))
 	{

@@ -15,7 +15,7 @@ public:
 	virtual HRESULT												Initialize(any = any());
 	virtual void												Tick(_float fTimeDelta);
 	virtual void												Late_Tick(_float fTimeDelta);
-	virtual HRESULT												Render(_uint iPassIndex = 0);
+	virtual HRESULT												Render()			PURE;
 
 	virtual HRESULT												Fetch(any = any());
 
@@ -26,6 +26,8 @@ public:
 	shared_ptr<T>												Get_Behavior(const BEHAVIOR);
 
 protected:
+	virtual HRESULT												Render(_uint iPassIndex);
+
 	virtual HRESULT												Ready_Components();
 	virtual HRESULT												Ready_Behaviors();
 
@@ -36,7 +38,6 @@ protected:
 
 protected:
 	CHARACTERDESC												m_tCharacterDesc{};
-	MATERIALDESC												m_tMaterialDesc{};
 
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
 	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;

@@ -29,12 +29,6 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 	{
 		m_umapBehaviorArg[static_cast<BEHAVIOR>(i)] = make_pair(wstring(), any());
 	}
-
-	m_tMaterialDesc.vDiffuse	= _color(1.f, 1.f, 1.f, 1.f);
-	m_tMaterialDesc.vAmbient	= _color(1.f, 1.f, 1.f, 1.f);
-	m_tMaterialDesc.vSpecular	= _color(1.f, 1.f, 1.f, 1.f);
-	m_tMaterialDesc.vEmissive	= _color(0.f, 0.f, 0.f, 0.f);
-	m_tMaterialDesc.fShininess	= 32.f;
 }
 
 CGameObject::CGameObject(const CGameObject& _rhs)
@@ -96,27 +90,6 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 {
 	if (shared_ptr<CShader> pShader = m_pShader.lock())
 	{
-		if (FAILED(pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(pShader->Bind_Vector(SHADER_MTRLAMB, m_tMaterialDesc.vAmbient)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(pShader->Bind_Vector(SHADER_MTRLSPC, m_tMaterialDesc.vSpecular)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(pShader->Bind_Vector(SHADER_MTRLEMS, m_tMaterialDesc.vEmissive)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(pShader->Bind_Float(SHADER_MTRLSHN, m_tMaterialDesc.fShininess)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
-		}
-
 		if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
 		{
 			if (FAILED(pTransform->Bind_OnShader(pShader)))

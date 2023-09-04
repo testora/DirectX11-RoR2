@@ -17,9 +17,9 @@ CShader::CShader(const CShader& _rhs)
 HRESULT CShader::Initialize(const wstring& _wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* _pElememts, _uint _iNumElements)
 {
 #ifdef _DEBUG
-	_uint iHLSLFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	_flags iHLSLFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #else
-	_uint iHLSLFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+	_flags iHLSLFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
 #endif
 
 	if (FAILED(D3DX11CompileEffectFromFile(_wstrShaderFilePath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, iHLSLFlag, 0, m_pDevice.Get(), m_pEffect.ReleaseAndGetAddressOf(), nullptr)))
@@ -68,17 +68,20 @@ HRESULT CShader::Initialize(const wstring& _wstrShaderFilePath, const D3D11_INPU
 	return S_OK;
 }
 
-void CShader::Add_Flag(_uint _iStatus)
+void CShader::Add_Flag(_flags _iStatus)
 {
 	m_iShaderFlag |= _iStatus;
 }
 
-void CShader::Set_Flag(_uint _iStatus)
+void CShader::Set_Flag(_flags _iStatus)
 {
-	m_iShaderFlag = _iStatus;
+	if (_iStatus)
+	{
+		m_iShaderFlag = _iStatus;
+	}
 }
 
-void CShader::Remove_Flag(_uint _iStatus)
+void CShader::Remove_Flag(_flags _iStatus)
 {
 	_iStatus ? m_iShaderFlag &= ~_iStatus : m_iShaderFlag = 0;
 }

@@ -94,10 +94,10 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
-//	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CRailGunner::Render(_uint)
+HRESULT CRailGunner::Render()
 {
 	if (FAILED(__super::Render(0)))
 	{

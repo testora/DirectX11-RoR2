@@ -47,7 +47,6 @@ public:
 	void									Tick_Animation(_float fTimeDelta);
 	void									Set_Animation(_uint iAnimationIndex, _float fInterpolationDuration, _bool bLoop = true);
 
-	void									Add_ShaderBinding(_uint iMeshIndex, function<HRESULT()>);
 	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 
 private:
@@ -71,15 +70,17 @@ private:
 
 	_uint									m_iNumMaterials				= 0;
 	vector<MATERIAL>						m_vecMaterials;
+	vector<MATERIALDESC>					m_vecMaterialDescs;
 
 	_uint									m_iCurrentAnimationIndex	= 0;
 	_bool									m_bAnimLoop					= true;
 
-	map<_uint, function<HRESULT()>>			m_mapMeshShaderBinding;
+	map<_uint, _flags>						m_mapMeshShaderFlags;
+	map<_uint, function<HRESULT(shared_ptr<class CShader>)>>			m_mapMeshShaderBindings;
 
 public:
 	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
-	virtual shared_ptr<CComponent>			Clone(any = any()) override;
+	virtual shared_ptr<CComponent>			Clone(any mapDesc = any()) override;
 
 #if ACTIVATE_TOOL
 	HRESULT									Export(const wstring& wstrPath);

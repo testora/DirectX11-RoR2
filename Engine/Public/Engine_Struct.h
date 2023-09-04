@@ -36,10 +36,10 @@ namespace Engine
 		XMFLOAT4		vSpecular;
 		XMFLOAT4		vAmbient;
 
-		float			fRange;
-		float			fAttenuation0;
-		float			fAttenuation1;
-		float			fAttenuation2;
+		_float			fRange;
+		_float			fAttenuation0;
+		_float			fAttenuation1;
+		_float			fAttenuation2;
 	} LIGHTDESC;
 
 	typedef struct tagMaterialDesc
@@ -48,7 +48,15 @@ namespace Engine
 		XMFLOAT4		vAmbient;
 		XMFLOAT4		vSpecular;
 		XMFLOAT4		vEmissive;
-		float			fShininess;
+		_float			fShininess;
+
+		tagMaterialDesc() :
+			vDiffuse	(1.f, 1.f, 1.f, 1.f),
+			vAmbient	(1.f, 1.f, 1.f, 1.f),
+			vSpecular	(1.f, 1.f, 1.f, 1.f),
+			vEmissive	(0.f, 0.f, 0.f, 1.f),
+			fShininess	(32.f)
+		{}
 	} MATERIALDESC;
 
 #pragma endregion
@@ -59,7 +67,7 @@ namespace Engine
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vTexCoord;
 
-		const static unsigned int				iNumElement = 2;
+		const static _uint						iNumElement = 2;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSTEX;
 
@@ -69,7 +77,7 @@ namespace Engine
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexCoord;
 
-		const static unsigned int				iNumElement = 3;
+		const static _uint						iNumElement = 3;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSNORTEX;
 
@@ -80,7 +88,7 @@ namespace Engine
 		XMFLOAT3		vTangent;
 		XMFLOAT2		vTexCoord;
 
-		const static unsigned int				iNumElement = 4;
+		const static _uint						iNumElement = 4;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSNORTANTEX, VTXMESH;
 
@@ -93,7 +101,7 @@ namespace Engine
 		XMUINT4			vBlendIndices;
 		XMFLOAT4		vBlendWeights;
 
-		const static unsigned int				iNumElement = 6;
+		const static _uint						iNumElement = 6;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSNORTANTEXBONE, VTXMESHANIM;
 
@@ -113,7 +121,7 @@ namespace Engine
 		XMFLOAT4	vScale;
 		XMFLOAT4	vRotation;
 		XMFLOAT4	vTranslation;
-		float		fTime;
+		_float		fTime;
 	} KEYFRAME;
 
 #pragma endregion
@@ -126,7 +134,7 @@ namespace Engine
 		XMFLOAT3	vPosition;
 		XMFLOAT3	vSize;
 		XMFLOAT3	vRotation;
-		float		fRadius;
+		_float 		fRadius;
 	} COLLIDERDESC;
 
 #pragma endregion
@@ -134,11 +142,11 @@ namespace Engine
 
 	typedef struct tagCharacterDesc
 	{
-		float		fForwardSpeed;
-		float		fLeftSpeed;
-		float		fBackwardSpeed;
-		float		fRightSpeed;
-		float		fJumpPower;
+		_float		fForwardSpeed;
+		_float		fLeftSpeed;
+		_float		fBackwardSpeed;
+		_float		fRightSpeed;
+		_float		fJumpPower;
 
 		XMFLOAT3	vMaxSpeed;
 		XMFLOAT3	vResist;

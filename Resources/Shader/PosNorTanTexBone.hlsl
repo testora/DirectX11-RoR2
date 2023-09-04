@@ -35,12 +35,12 @@ VS_OUT VS_MAIN(VS_IN In)
 		mul(g_mBones[In.vBlendIndices.w], (1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z)));
 	
 	vector vPosition	= mul(vector(In.vPosition, 1.f), mBone);
-	vector vNormal		= mul(vector(normalize(In.vNormal), 0.f), mBone);
-	vector vTangent		= mul(vector(normalize(In.vTangent), 0.f), mBone);
+	vector vNormal		= mul(vector(In.vNormal, 0.f), mBone);
+	vector vTangent		= mul(vector(In.vTangent, 0.f), mBone);
 
 	Out.vPosition		= mul(vPosition, mWVP);
-	Out.vNormal			= mul(vNormal, g_mWorld);
-	Out.vTangent		= mul(vTangent, g_mWorld);
+	Out.vNormal			= normalize(mul(vNormal, g_mWorld));
+	Out.vTangent		= normalize(mul(vTangent, g_mWorld));
 	Out.vTexCoord		= In.vTexCoord;
 	Out.vWorldPos		= mul(vPosition, g_mWorld);
 
@@ -73,9 +73,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	
 	if (g_iShaderFlag & STATUS_TEXNORMAL)
 	{
-		float3x3	vTBN		=	float3x3(In.vTangent.xyz, cross(In.vNormal.xyz, In.vTangent.xyz), In.vNormal.xyz);
-		float3		vNormalMap	=	g_texNormal[0].Sample(LinearSampler, In.vTexCoord).xyz * 2.f - 1.f;
-		vNormal					=	mul(vNormalMap, vTBN);
+		float4		vUnityDXT5nm	= g_texNormal[0].Sample(LinearSampler, In.vTexCoord);
+		float3x3	mTBN			= float3x3(In.vTangent.xyz, normalize(cross(In.vNormal.xyz, In.vTangent.xyz)), In.vNormal.xyz);
+		vNormal						= UnpackNormalDXT5nm(vUnityDXT5nm, mTBN);
 	}
 	
 	// Specular
@@ -112,8 +112,8 @@ PS_OUT PS_MAIN(PS_IN In)
 		}
 		
 		// Final
-		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * fDiffuse + g_vLightAmbient[i].rgb)
-							+	fSpc * g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb;
+		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * g_vMtrlDiffuse.rgb * fDiffuse + g_vLightAmbient[i].rgb * g_vMtrlAmbient.rgb)
+							+	g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb * fSpc;
 		
 		vFinalColor			*=	fSmoothAtt;
 	}
@@ -181,8 +181,8 @@ PS_OUT PS_TRIPLANER_MIX(PS_IN In)
 		}
 		
 		// Final
-		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * fDiffuse + g_vLightAmbient[i].rgb)
-							+	fSpc * g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb;
+		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * g_vMtrlDiffuse.rgb * fDiffuse + g_vLightAmbient[i].rgb * g_vMtrlAmbient.rgb)
+							+	g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb * fSpc;
 		
 		vFinalColor			*=	fSmoothAtt;
 	}

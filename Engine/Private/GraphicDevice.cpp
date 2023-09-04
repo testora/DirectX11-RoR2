@@ -3,7 +3,7 @@
 
 HRESULT CGraphicDevice::Ready_GraphicDevice(_In_ GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
 {
-	_uint				iFlag = 0;
+	_flags				iFlag = 0;
 	D3D_FEATURE_LEVEL	eFeatureLevel;
 
 #ifdef _DEBUG

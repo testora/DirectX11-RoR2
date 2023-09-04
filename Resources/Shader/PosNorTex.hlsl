@@ -25,7 +25,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	mWVP			= mul(mWV, g_mProj);
 
 	Out.vPosition	= mul(vector(In.vPosition, 1.f), mWVP);
-	Out.vNormal		= mul(vector(normalize(In.vNormal), 0.f), g_mWorld);
+	Out.vNormal		= normalize(mul(vector(In.vNormal, 0.f), g_mWorld));
 	Out.vTexCoord	= In.vTexCoord;
 	Out.vWorldPos	= mul(vector(In.vPosition, 1.f), g_mWorld);
 
@@ -151,8 +151,8 @@ PS_OUT PS_TERRAIN(PS_IN In)
 		}
 		
 		// Final
-		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * fDiffuse + g_vLightAmbient[i].rgb)
-							+	fSpc * g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb;
+		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * g_vMtrlDiffuse.rgb * fDiffuse + g_vLightAmbient[i].rgb * g_vMtrlAmbient.rgb)
+							+	g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb * fSpc;
 		
 		vFinalColor			*=	fSmoothAtt;
 	}

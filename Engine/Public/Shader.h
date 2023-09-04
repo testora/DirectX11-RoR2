@@ -15,9 +15,9 @@ public:
 	HRESULT								Initialize(const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElements);
 
 public:
-	void								Add_Flag(_uint iStatus);
-	void								Set_Flag(_uint iStatus);
-	void								Remove_Flag(_uint iStatus = 0);
+	void								Add_Flag(_flags iStatus);
+	void								Set_Flag(_flags iStatus);
+	void								Remove_Flag(_flags iStatus = 0);
 
 public:
 	HRESULT								BeginPass(const _uint iPassIndex);
@@ -41,7 +41,7 @@ private:
 
 	_uint 								m_iNumPasses	= 0;
 
-	_uint 								m_iShaderFlag	= 0;
+	_flags 								m_iShaderFlag	= 0;
 
 public:
 	static shared_ptr<CShader>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElement);

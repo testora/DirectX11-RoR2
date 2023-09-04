@@ -52,7 +52,7 @@ void CCamera::Late_Tick(_float _fTimeDelta)
 	__super::Late_Tick(_fTimeDelta);
 }
 
-HRESULT CCamera::Render(_uint _iPassIndex)
+HRESULT CCamera::Render()
 {
 	switch (m_tCameraDesc.eType)
 	{

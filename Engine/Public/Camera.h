@@ -26,7 +26,7 @@ public:
 	virtual HRESULT						Initialize(any = any()) override;
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT						Render(_uint _iPassIndex = 0) override;
+	virtual HRESULT						Render() override;
 
 public:
 	virtual HRESULT						Ready_Components() override;

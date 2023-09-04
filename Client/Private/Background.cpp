@@ -47,7 +47,7 @@ void CBackground::Late_Tick(_float _fTimeDelta)
 	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
-HRESULT CBackground::Render(_uint)
+HRESULT CBackground::Render()
 {
 	if (FAILED(m_pTexture->Bind_ShaderResourceViews(m_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
 	{

@@ -19,6 +19,7 @@ CModel::CModel(const CModel& _rhs)
 	, m_iNumAnimations			(_rhs.m_iNumAnimations)
 	, m_vecMeshes				(_rhs.m_vecMeshes)
 	, m_vecMaterials			(_rhs.m_vecMaterials)
+	, m_vecMaterialDescs		(_rhs.m_vecMaterialDescs)
 	, m_iCurrentAnimationIndex	(_rhs.m_iCurrentAnimationIndex)
 {
 	for (auto pOriginal : _rhs.m_vecAnimations)
@@ -64,9 +65,14 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 {
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		if (m_mapMeshShaderBinding.find(i) != m_mapMeshShaderBinding.end())
+		if (m_mapMeshShaderFlags.find(i) != m_mapMeshShaderFlags.end())
 		{
-			if (FAILED(m_mapMeshShaderBinding[i]()))
+			_pShader->Set_Flag(m_mapMeshShaderFlags[i]);
+		}
+
+		if (m_mapMeshShaderBindings.find(i) != m_mapMeshShaderBindings.end())
+		{
+			if (FAILED(m_mapMeshShaderBindings[i](_pShader)))
 			{
 				MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind");
 			}
@@ -95,6 +101,27 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 {
 	if (m_vecMeshes[_iMeshIndex])
 	{
+		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, m_vecMaterialDescs[_iMeshIndex].vDiffuse)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLAMB, m_vecMaterialDescs[_iMeshIndex].vAmbient)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLSPC, m_vecMaterialDescs[_iMeshIndex].vSpecular)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLEMS, m_vecMaterialDescs[_iMeshIndex].vEmissive)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(_pShader->Bind_Float(SHADER_MTRLSHN, m_vecMaterialDescs[_iMeshIndex].fShininess)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+		}
+
 		if (FAILED(m_vecMeshes[_iMeshIndex]->Render(_pShader, _iPassIndex, false)))
 		{
 			MSG_RETURN(E_FAIL, "CModel::Render", "Failed to CMesh::Render");
@@ -112,7 +139,7 @@ HRESULT CModel::Initialize_FromAssimp(const MODEL _eType, const wstring& _wstrMo
 	Assimp::Importer	aiImporter;
 	const aiScene*		pAIScene	= nullptr;
 	
-	_uint iAIFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
+	_flags iAIFlag = aiProcessPreset_TargetRealtime_Fast | aiProcess_ConvertToLeftHanded;
 	if (MODEL::NONANIM == m_eType)
 	{
 		iAIFlag |= aiProcess_PreTransformVertices;
@@ -240,6 +267,8 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 
 	inFile.close();
 
+	m_vecMaterialDescs.resize(m_iNumMeshes);
+
 	return S_OK;
 }
 
@@ -303,6 +332,8 @@ HRESULT CModel::Ready_Meshes(const aiScene* _pAIScene, _matrixf _mPivot)
 
 		m_vecMeshes.emplace_back(pMesh);
 	}
+
+	m_vecMaterialDescs.resize(m_iNumMeshes);
 
 	return hr;
 }
@@ -379,11 +410,6 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fInterpolationDuratio
 
 	m_iCurrentAnimationIndex	= _iAnimationIndex;
 	m_bAnimLoop					= _bLoop;
-}
-
-void CModel::Add_ShaderBinding(_uint _iMeshIndex, function<HRESULT()> _funcCallBack)
-{
-	m_mapMeshShaderBinding[_iMeshIndex] = _funcCallBack;
 }
 
 void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _funcCallback)
@@ -578,9 +604,21 @@ shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11De
 	return pInstance;
 }
 
-shared_ptr<CComponent> CModel::Clone(any)
+shared_ptr<CComponent> CModel::Clone(any _mapDesc)
 {
-	return make_private_shared_copy(CModel, *this);
+	shared_ptr<CModel> pInstance = make_private_shared_copy(CModel, *this);
+	if (_mapDesc.has_value())
+	{
+		auto a = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
+		for (auto& pair : a)
+		{
+			pInstance->m_vecMaterialDescs[pair.first]		= std::get<0>(pair.second);
+			pInstance->m_mapMeshShaderFlags[pair.first]		= std::get<1>(pair.second);
+			pInstance->m_mapMeshShaderBindings[pair.first]	= std::get<2>(pair.second);
+		}
+	}
+	
+	return pInstance;
 }
 
 #if ACTIVATE_TOOL
@@ -607,7 +645,7 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Bones
-	for(auto& pBone : m_vecBones)
+	for(const auto& pBone : m_vecBones)
 	{
 		pBone->Export(outFile);
 	}
@@ -620,7 +658,7 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Animations
-	for(auto& pAnimation : m_vecAnimations)
+	for(const auto& pAnimation : m_vecAnimations)
 	{
 		pAnimation->Export(outFile);
 	}
@@ -633,7 +671,7 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Meshes
-	for (auto& pMesh : m_vecMeshes)
+	for (const auto& pMesh : m_vecMeshes)
 	{
 		pMesh->Export(outFile, m_eType);
 	}
@@ -646,7 +684,7 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Materials
-	for (auto& tMaterial : m_vecMaterials)
+	for (const auto& tMaterial : m_vecMaterials)
 	{
 		for (_uint i = 0; i < AI_TEXTURE_TYPE_MAX; ++i)
 		{

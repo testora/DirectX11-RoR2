@@ -386,7 +386,6 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(std::ifstream& _inFile)
 _float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<class CBone>> _vecModelBones)
 {
 	m_arrBones.fill(g_mUnit);
-	cout << m_fInterpolationRatio << endl;
 
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
