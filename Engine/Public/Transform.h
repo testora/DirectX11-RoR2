@@ -35,7 +35,7 @@ private:
 
 public:
 	static shared_ptr<CTransform>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CComponent>	Clone(any = any()) override;
+	virtual shared_ptr<CComponent>	Clone(any = g_aNull) override;
 };
 
 END

@@ -24,10 +24,10 @@ VS_OUT VS_MAIN(VS_IN In)
 	mWV				= mul(g_mWorld, g_mView);
 	mWVP			= mul(mWV, g_mProj);
 
-	Out.vPosition	= mul(vector(In.vPosition, 1.f), mWVP);
-	Out.vNormal		= normalize(mul(vector(In.vNormal, 0.f), g_mWorld));
+	Out.vPosition	= mul(float4(In.vPosition, 1.f), mWVP);
+	Out.vNormal		= normalize(mul(float4(In.vNormal, 0.f), g_mWorld));
 	Out.vTexCoord	= In.vTexCoord;
-	Out.vWorldPos	= mul(vector(In.vPosition, 1.f), g_mWorld);
+	Out.vWorldPos	= mul(float4(In.vPosition, 1.f), g_mWorld);
 
 	return Out;
 }
@@ -66,14 +66,14 @@ PS_OUT PS_MAIN(PS_IN In)
 		switch (g_iLightType[i])
 		{
 		case POINT:
-			vLightDir		=	normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
+			vLightDir		=	normalize(In.vWorldPos - g_vLightPosition[i]).xyz;
 			break;
 		case DIRECTIONAL:
 			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
 			break;
 		}
 		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal));
+		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
 		
 		// Specular
 		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
@@ -134,7 +134,7 @@ PS_OUT PS_TERRAIN(PS_IN In)
 			break;
 		}
 		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal));
+		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
 		
 		// Specular
 		float3	vHalfDir	=	normalize(vViewDir - vLightDir);

@@ -58,6 +58,21 @@ HRESULT CVIBuffer::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex, _bool
 	return S_OK;
 }
 
+HRESULT CVIBuffer::Render(shared_ptr<class CShader> _pShader, shared_ptr<class CTransform> _pTransform, _uint _iPassIndex, _bool _bResetFlag)
+{
+	if (FAILED(_pTransform->Bind_OnShader(_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CVIBuffer::Render", "Failed to CTransform::Bind_OnShader");
+	}
+
+	if (FAILED(Render(_pShader, _iPassIndex, _bResetFlag)))
+	{
+		MSG_RETURN(E_FAIL, "CVIBuffer::Render", "Failed to CVIBuffer::Render");
+	}
+
+	return S_OK;
+}
+
 _bool CVIBuffer::Intersect(_In_opt_ const _float4x4 _mWorld) const
 {
 	_float3 vOut;

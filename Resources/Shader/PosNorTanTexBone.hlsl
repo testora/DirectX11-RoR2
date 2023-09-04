@@ -34,9 +34,9 @@ VS_OUT VS_MAIN(VS_IN In)
 		mul(g_mBones[In.vBlendIndices.z], In.vBlendWeights.z) +
 		mul(g_mBones[In.vBlendIndices.w], (1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z)));
 	
-	vector vPosition	= mul(vector(In.vPosition, 1.f), mBone);
-	vector vNormal		= mul(vector(In.vNormal, 0.f), mBone);
-	vector vTangent		= mul(vector(In.vTangent, 0.f), mBone);
+	float4 vPosition	= mul(float4(In.vPosition, 1.f), mBone);
+	float4 vNormal		= mul(float4(In.vNormal, 0.f), mBone);
+	float4 vTangent		= mul(float4(In.vTangent, 0.f), mBone);
 
 	Out.vPosition		= mul(vPosition, mWVP);
 	Out.vNormal			= normalize(mul(vNormal, g_mWorld));
@@ -88,14 +88,14 @@ PS_OUT PS_MAIN(PS_IN In)
 		switch (g_iLightType[i])
 		{
 		case POINT:
-			vLightDir		=	normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
+			vLightDir		=	normalize(In.vWorldPos - g_vLightPosition[i]).xyz;
 			break;
 		case DIRECTIONAL:
 			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
 			break;
 		}
 		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal));
+		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
 		
 		// Specular
 		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
@@ -164,7 +164,7 @@ PS_OUT PS_TRIPLANER_MIX(PS_IN In)
 			break;
 		}
 		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal));
+		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
 		
 		// Specular
 		float3	vHalfDir	=	normalize(vViewDir - vLightDir);

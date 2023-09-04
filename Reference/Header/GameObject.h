@@ -12,12 +12,12 @@ protected:
 
 public:
 	virtual HRESULT												Initialize_Prototype();
-	virtual HRESULT												Initialize(any = any());
+	virtual HRESULT												Initialize(any = g_aNull);
 	virtual void												Tick(_float fTimeDelta);
 	virtual void												Late_Tick(_float fTimeDelta);
 	virtual HRESULT												Render()			PURE;
 
-	virtual HRESULT												Fetch(any = any());
+	virtual HRESULT												Fetch(any = g_aNull);
 
 public:
 	template <typename T>
@@ -53,12 +53,13 @@ private:
 	weak_ptr<class CCollider>									m_pCollider;
 	weak_ptr<class CModel>										m_pModel;
 	weak_ptr<class CVIBuffer>									m_pVIBuffer;
+
 protected:
 	ComPtr<ID3D11Device>										m_pDevice;
 	ComPtr<ID3D11DeviceContext>									m_pContext;
 
 public:
-	virtual shared_ptr<CGameObject>								Clone(any = any())	PURE;
+	virtual shared_ptr<CGameObject>								Clone(any = g_aNull)	PURE;
 };
 
 #include "GameObject.inl"

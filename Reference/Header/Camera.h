@@ -23,7 +23,7 @@ protected:
 	virtual ~CCamera() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize(any = any()) override;
+	virtual HRESULT						Initialize(any = g_aNull) override;
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
@@ -44,7 +44,7 @@ private:
 	_float4x4							m_mProjection;
 
 public:
-	virtual shared_ptr<CGameObject>		Clone(any = any()) override	PURE;
+	virtual shared_ptr<CGameObject>		Clone(any = g_aNull) override	PURE;
 };
 
 END

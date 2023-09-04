@@ -357,7 +357,7 @@ void CGameInstance::CheckFocus_OnKeyboard(_bool _bCheck)
 #pragma endregion
 #pragma region Event Handler
 
-void CGameInstance::Register_TickListener(shared_ptr<CGameObject> _pSubscriber, function<_bool(_float)> _funcListener)
+void CGameInstance::Register_TickListener(shared_ptr<void> _pSubscriber, function<_bool(_float)> _funcListener)
 {
 	if (nullptr == m_pEvent_Handler)
 	{

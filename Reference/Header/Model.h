@@ -80,7 +80,7 @@ private:
 
 public:
 	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
-	virtual shared_ptr<CComponent>			Clone(any mapDesc = any()) override;
+	virtual shared_ptr<CComponent>			Clone(any mapDesc = g_aNull) override;
 
 #if ACTIVATE_TOOL
 	HRESULT									Export(const wstring& wstrPath);

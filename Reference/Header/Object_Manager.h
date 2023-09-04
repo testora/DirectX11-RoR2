@@ -26,9 +26,9 @@ public:
 	HRESULT															Add_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CGameObject> pPrototype);
 
 	shared_ptr<CObjectLayer>										Add_Layer(const SCENE, const wstring& wstrLayerTag);
-	shared_ptr<CObjectPool>											Add_Pool(const SCENE, const wstring& wstrPoolTag, const wstring& wstrPrototypeTag, _uint iPoolSize, any = any());
+	shared_ptr<CObjectPool>											Add_Pool(const SCENE, const wstring& wstrPoolTag, const wstring& wstrPrototypeTag, _uint iPoolSize, any = g_aNull);
 
-	shared_ptr<CGameObject>											Clone_GameObject(const SCENE, const wstring& wstrPrototypeTag, any = any());
+	shared_ptr<CGameObject>											Clone_GameObject(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
 
 	HRESULT															Clear_Scene_Object(const SCENE);
 

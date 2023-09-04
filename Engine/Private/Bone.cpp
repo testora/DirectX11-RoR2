@@ -32,11 +32,11 @@ void CBone::Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _
 	m_mTransformation = XMMatrixAffineTransformation(_vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), _vRotation, _vTranslation);
 }
 
-void CBone::Update_CombinedTransformation(vector<shared_ptr<CBone>> _vecModelBones)
+void CBone::Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator _itBegin)
 {
 	if (m_iParentBoneIndex != g_iMaxBones)
 	{
-		m_mCombinedTransformation = m_mTransformation * _vecModelBones[m_iParentBoneIndex]->m_mCombinedTransformation;
+		m_mCombinedTransformation = m_mTransformation * _itBegin[m_iParentBoneIndex]->m_mCombinedTransformation;
 	}
 }
 

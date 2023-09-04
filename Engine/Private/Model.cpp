@@ -72,9 +72,12 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 
 		if (m_mapMeshShaderBindings.find(i) != m_mapMeshShaderBindings.end())
 		{
-			if (FAILED(m_mapMeshShaderBindings[i](_pShader)))
+			if (nullptr != m_mapMeshShaderBindings[i])
 			{
-				MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind");
+				if (FAILED(m_mapMeshShaderBindings[i](_pShader)))
+				{
+					MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind");
+				}
 			}
 		}
 
@@ -388,11 +391,11 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 		return;
 	}
 
-	m_vecAnimations[m_iCurrentAnimationIndex]->Tick(_fTimeDelta, m_vecBones, m_bAnimLoop);
+	m_vecAnimations[m_iCurrentAnimationIndex]->Tick(_fTimeDelta, m_vecBones.begin(), m_bAnimLoop);
 
 	for (auto pBone : m_vecBones)
 	{
-		pBone->Update_CombinedTransformation(m_vecBones);
+		pBone->Update_CombinedTransformation(m_vecBones.begin());
 	}
 }
 
@@ -405,7 +408,7 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fInterpolationDuratio
 
 	for (auto pMesh : m_vecMeshes)
 	{
-		pMesh->Set_Interpolation(m_vecBones, _fInterpolationDuration);
+		pMesh->Set_Interpolation(m_vecBones.begin(), _fInterpolationDuration);
 	}
 
 	m_iCurrentAnimationIndex	= _iAnimationIndex;
@@ -589,7 +592,7 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones), g_iMaxBones);
+	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin()), g_iMaxBones);
 }
 
 shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
@@ -613,8 +616,18 @@ shared_ptr<CComponent> CModel::Clone(any _mapDesc)
 		for (auto& pair : a)
 		{
 			pInstance->m_vecMaterialDescs[pair.first]		= std::get<0>(pair.second);
-			pInstance->m_mapMeshShaderFlags[pair.first]		= std::get<1>(pair.second);
-			pInstance->m_mapMeshShaderBindings[pair.first]	= std::get<2>(pair.second);
+
+			_flags iShaderFlags = std::get<1>(pair.second);
+			if (iShaderFlags)
+			{
+				pInstance->m_mapMeshShaderFlags[pair.first] = iShaderFlags;
+			}
+
+			function<HRESULT(shared_ptr<class CShader>)> funcCallback = std::get<2>(pair.second);
+			if (funcCallback)
+			{
+				pInstance->m_mapMeshShaderBindings[pair.first] = funcCallback;
+			}
 		}
 	}
 	

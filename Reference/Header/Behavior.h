@@ -25,7 +25,7 @@ private:
 	const BEHAVIOR					m_eType;
 
 public:
-	virtual shared_ptr<CBehavior>	Clone(any = any())	PURE;
+	virtual shared_ptr<CBehavior>	Clone(any = g_aNull)	PURE;
 };
 
 END

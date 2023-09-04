@@ -16,7 +16,7 @@ public:
 	HRESULT						Initialize_FromBinary(std::ifstream&);
 
 public:
-	void						Update_Transformation(vector<shared_ptr<class CBone>>, _uint& iCurrentKeyFrame, _float fTrackPosition);
+	void						Update_Transformation(vector<shared_ptr<class CBone>>::iterator itBegin, _uint& iCurrentKeyFrame, _float fTrackPosition);
 
 private:
 	_uint						m_iBoneIndex		= g_iMaxBones;

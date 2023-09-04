@@ -114,8 +114,6 @@ namespace DirectX
 	inline XMVECTOR QuaternionBetweenAxis(FXMVECTOR, FXMVECTOR);
 }
 
-#include "Engine_Function.inl"
-
 template <typename T>
 void Safe_Delete(T& _p)
 {
@@ -135,3 +133,5 @@ void Safe_Delete_Array(T& _p)
 		_p = nullptr;
 	}
 }
+
+#include "Engine_Function.inl"

@@ -52,7 +52,7 @@ public:
 #if ACTIVATE_TOOL
 	static shared_ptr<CTexture>					Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrModelPath, aiMaterial*, aiTextureType);
 #endif
-	virtual shared_ptr<CComponent>				Clone(any = any()) override;
+	virtual shared_ptr<CComponent>				Clone(any = g_aNull) override;
 
 #if ACTIVATE_TOOL
 	void										Export(std::ofstream&);

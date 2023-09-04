@@ -11,8 +11,9 @@ protected:
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
-	HRESULT							Initialize(any = any());
+	HRESULT							Initialize(any = g_aNull);
 	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex, _bool bResetFlag = true);
+	HRESULT							Render(shared_ptr<class CShader>, shared_ptr<class CTransform>, _uint iPassIndex, _bool bResetFlag = true);
 
 public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;
@@ -49,7 +50,7 @@ private:
 #endif
 
 public:
-	virtual shared_ptr<CComponent>	Clone(any = any()) override	PURE;
+	virtual shared_ptr<CComponent>	Clone(any = g_aNull) override	PURE;
 };
 
 END

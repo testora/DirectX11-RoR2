@@ -24,6 +24,7 @@
 #define SHADER_MATWORLD							"g_mWorld"
 #define SHADER_MATVIEW							"g_mView"
 #define SHADER_MATPROJ							"g_mProj"
+#define SHADER_MATORTHOGRAPHIC					"g_mOrthographic"
 #define SHADER_CAMPOS							"g_vCamPosition"
 
 #define SHADER_LIGHTCNT							"g_iLightCount"

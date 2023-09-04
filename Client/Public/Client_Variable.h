@@ -8,6 +8,7 @@
 #define PROTOTYPE_GAMEOBJECT_TERRAIN						TEXT("Prototype:GameObject:Terrain")
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS					TEXT("Prototype:GameObject:GolemPlains")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER						TEXT("Prototype:GameObject:RailGunner")
+#define PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR			TEXT("Prototype:GameObject:RailGunner:Crosshair")
 
 #pragma	endregion
 #pragma region Component
@@ -34,7 +35,11 @@
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER				TEXT("Prototype:Component:Model:RailGunner")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS				TEXT("Prototype:Component:Model:GolemPlains")
 
+#ifdef _DEBUG
+#define PROTOTYPE_COMPONENT_MODEL_CUBE						TEXT("Prototype:Component:Model:Cube")
+#endif
 #pragma endregion
+
 #pragma region Layer
 
 #define SCENE_MENU_LAYER_BACKGROUND							TEXT("Scene:Menu:Layers:Background")

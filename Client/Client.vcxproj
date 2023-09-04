@@ -60,6 +60,7 @@
     <ClInclude Include="Public\GolemPlains.h" />
     <ClInclude Include="Public\Scene_Tool.h" />
     <ClInclude Include="Public\Tool_Define.h" />
+    <ClInclude Include="Public\RailGunner_Crosshair.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -143,6 +144,7 @@
     <ClCompile Include="Private\RailGunner.cpp" />
     <ClCompile Include="Private\GolemPlains.cpp" />
     <ClCompile Include="Private\Scene_Tool.cpp" />
+    <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

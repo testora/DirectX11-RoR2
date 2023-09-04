@@ -23,11 +23,11 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 
 	for (_uint i = 0; i < IDX(COMPONENT::MAX); ++i)
 	{
-		m_umapComponentArg[static_cast<COMPONENT>(i)] = make_pair(wstring(), any());
+		m_umapComponentArg[static_cast<COMPONENT>(i)] = make_pair(wstring(), g_aNull);
 	}
 	for (_uint i = 0; i < IDX(BEHAVIOR::MAX); ++i)
 	{
-		m_umapBehaviorArg[static_cast<BEHAVIOR>(i)] = make_pair(wstring(), any());
+		m_umapBehaviorArg[static_cast<BEHAVIOR>(i)] = make_pair(wstring(), g_aNull);
 	}
 }
 
@@ -221,7 +221,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	switch (_eComponent)
 	{
 	case COMPONENT::TRANSFORM:
-		m_pTransform = Get_Component<CTransform>(_eComponent);
+		m_pTransform	= Get_Component<CTransform>(_eComponent);
 		break;
 	case COMPONENT::SHADER:
 		m_pShader		= Get_Component<CShader>(_eComponent);

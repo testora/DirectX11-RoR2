@@ -6,8 +6,8 @@
 
 namespace Client
 {
-	constexpr _uint	g_iWinCX = 1920;
-	constexpr _uint	g_iWinCY = 1080;
+	constexpr _uint	g_iWinCX	= 1920;
+	constexpr _uint	g_iWinCY	= 1080;
 }
 
 using namespace Client;

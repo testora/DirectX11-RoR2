@@ -28,8 +28,9 @@ HRESULT CCamera_Main::Initialize(any _desc)
 		m_tCameraMainDesc.tCameraDesc.fFar			= 10000.f;
 	}
 
-	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);
-	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
+	m_bitComponent	|= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);
+
+	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
 
 	if (FAILED(__super::Initialize(m_tCameraMainDesc.tCameraDesc)))
 	{
@@ -72,7 +73,7 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CCamera_Main::Render()

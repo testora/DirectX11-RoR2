@@ -19,7 +19,7 @@ private:
 
 public:
 	virtual HRESULT						Initialize_Prototype() override;
-	virtual HRESULT						Initialize(any = any()) override;
+	virtual HRESULT						Initialize(any = g_aNull) override;
 	virtual void						Tick(_float fTimeDelta) override;
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
@@ -34,7 +34,7 @@ public:
 
 public:
 	static shared_ptr<CGolemPlains>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CGameObject>		Clone(any = any()) override;
+	virtual shared_ptr<CGameObject>		Clone(any = g_aNull) override;
 };
 
 END

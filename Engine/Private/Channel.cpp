@@ -64,7 +64,7 @@ HRESULT CChannel::Initialize_FromBinary(std::ifstream& _inFile)
 	return S_OK;
 }
 
-void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _vecModelBones, _uint& _iCurrentKeyFrame, _float _fTrackPosition)
+void CChannel::Update_Transformation(vector<shared_ptr<CBone>>::iterator _itBegin, _uint& _iCurrentKeyFrame, _float _fTrackPosition)
 {
 	if (0.f == _fTrackPosition)
 	{
@@ -94,7 +94,7 @@ void CChannel::Update_Transformation(vector<shared_ptr<CBone>> _vecModelBones, _
 		vTranslation	= _float4(m_vecKeyFrames.back().vTranslation);
 	}
 
-	_vecModelBones[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
+	_itBegin[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
 }
 
 #if ACTIVATE_TOOL

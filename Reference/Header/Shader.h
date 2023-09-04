@@ -45,7 +45,7 @@ private:
 
 public:
 	static shared_ptr<CShader>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElememts, _uint iNumElement);
-	virtual shared_ptr<CComponent>		Clone(any = any()) override;
+	virtual shared_ptr<CComponent>		Clone(any = g_aNull) override;
 };
 
 END

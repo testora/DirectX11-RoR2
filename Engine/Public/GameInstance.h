@@ -65,7 +65,7 @@ public:
 #pragma endregion
 #pragma region Event Handler
 
-	void										Register_TickListener(shared_ptr<class CGameObject>, function<_bool(_float fTimeDelta)>);
+	void										Register_TickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)>);
 
 #pragma endregion
 #pragma region Scene Manager
@@ -77,10 +77,10 @@ public:
 #pragma region Object Manager
 
 	HRESULT										Add_Object_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CGameObject> pPrototype);
-	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& wstrPrototypeTag, any = any());
+	shared_ptr<class CGameObject>				Clone_GameObject(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
 
 	shared_ptr<class CObjectLayer>				Add_Layer(const SCENE, const wstring& wstrLayerTag);
-	shared_ptr<class CObjectPool>				Add_Pool(const SCENE, const wstring& wstrPoolTag, const wstring& wstrPrototypeTag, _uint iPoolSize, any = any());
+	shared_ptr<class CObjectPool>				Add_Pool(const SCENE, const wstring& wstrPoolTag, const wstring& wstrPrototypeTag, _uint iPoolSize, any = g_aNull);
 
 	shared_ptr<class CObjectLayer>				Find_Layer(const SCENE, const wstring& wstrLayerTag);
 	shared_ptr<class CObjectPool>				Find_Pool(const SCENE, const wstring& wstrPoolTag);
@@ -92,13 +92,13 @@ public:
 #pragma region Component Manager
 
 	HRESULT										Add_Component_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
-	shared_ptr<class CComponent>				Clone_Component(const SCENE, const wstring& strPrototypeTag, any = any());
+	shared_ptr<class CComponent>				Clone_Component(const SCENE, const wstring& strPrototypeTag, any = g_aNull);
 
 #pragma endregion
 #pragma region Behavior Manager
 
 	HRESULT										Add_Behavior_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CBehavior> pPrototype);
-	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = any());
+	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
 
 #pragma endregion
 #pragma region Grid Manager

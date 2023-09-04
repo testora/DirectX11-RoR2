@@ -56,7 +56,7 @@ HRESULT CAnimation::Initialize_FromBinary(std::ifstream& _inFile)
 	return S_OK;
 }
 
-void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>> _vecModelBones, _bool _bLoop)
+void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>>::iterator _itBegin, _bool _bLoop)
 {
 	m_fTrackPosition += m_fTicksPerSecond * _fTimeDelta;
 
@@ -67,7 +67,7 @@ void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>> _vecMo
 
 	for (size_t i = 0; i < m_iNumChannels; ++i)
 	{
-		m_vecChannels[i]->Update_Transformation(_vecModelBones, m_vecChannelKeyFrames[i], m_fTrackPosition);
+		m_vecChannels[i]->Update_Transformation(_itBegin, m_vecChannelKeyFrames[i], m_fTrackPosition);
 	}
 }
 

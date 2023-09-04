@@ -40,7 +40,7 @@ private:
 
 public:
 	static shared_ptr<CPhysics>		Create(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*);
-	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
+	virtual shared_ptr<CBehavior>	Clone(any = g_aNull) override;
 };
 
 END

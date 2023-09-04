@@ -23,7 +23,7 @@ public:
 	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
 
 public:
-	void						Update_CombinedTransformation(vector<shared_ptr<CBone>>);
+	void						Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator itBegin);
 
 private:
 	_char						m_szName[MAX_PATH]			= "";

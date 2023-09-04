@@ -27,7 +27,7 @@ private:
 
 public:
 	static shared_ptr<CGrounding>	Create(shared_ptr<class CGameObject> pOwner, const wstring& wstrTerrainGridLayerTag);
-	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
+	virtual shared_ptr<CBehavior>	Clone(any = g_aNull) override;
 };
 
 END

@@ -16,10 +16,10 @@ HRESULT CBackground::Initialize(any _arg)
 {
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::TEXTURE) | BIT(COMPONENT::VIBUFFER_RECT);
 
-	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
-	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX, any());
-	m_umapComponentArg[COMPONENT::TEXTURE]			= make_pair(PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND, any());
-	m_umapComponentArg[COMPONENT::VIBUFFER_RECT]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_RECT, any());
+	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX, g_aNull);
+	m_umapComponentArg[COMPONENT::TEXTURE]			= make_pair(PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND, g_aNull);
+	m_umapComponentArg[COMPONENT::VIBUFFER_RECT]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_RECT, g_aNull);
 
 	if (FAILED(__super::Initialize()))
 	{
@@ -29,8 +29,7 @@ HRESULT CBackground::Initialize(any _arg)
 	m_pTransform->Set_Scale(_float3(g_iWinCX, g_iWinCY, 1.f));
 	m_pTransform->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
-	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::VIEW, XMMatrixIdentity());
-	CPipeLine::Get_Instance()->Set_Transform(PIPELINE::PROJECTION, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
+	auto a = XMVector3TransformCoord(_float4(50.f, 100.f, 0.f, 1.f), (m_pTransform->Get_Matrix() * XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f)));
 
 	return S_OK;
 }
@@ -44,7 +43,7 @@ void CBackground::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CBackground::Render()
@@ -54,7 +53,7 @@ HRESULT CBackground::Render()
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to Bind_ShaderResourceViews");
 	}
 
-	if (FAILED(__super::Render(0)))
+	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CBackground::Render", "Failed to __super::Render");
 	}

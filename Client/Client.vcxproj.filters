@@ -58,9 +58,6 @@
     <Filter Include="03. Tool">
       <UniqueIdentifier>{014cff2c-5918-4902-9760-25b35651850a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\03. Player_Character">
-      <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\02. Terrain">
       <UniqueIdentifier>{e68124d5-8f8d-4403-9c7a-cd676bc95e33}</UniqueIdentifier>
     </Filter>
@@ -105,6 +102,15 @@
     </Filter>
     <Filter Include="03. Tool\02. ImGuizmo\02. Source">
       <UniqueIdentifier>{e0dfafc4-1ca2-4087-ab1c-0e9e2030eec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\03. Survivor">
+      <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\03. Survivor\00. RailGunner">
+      <UniqueIdentifier>{e6e012e1-41d0-440f-97fd-ceb0c235e461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\03. Survivor\00. RailGunner\00. Crosshair">
+      <UniqueIdentifier>{b1078752-e856-4d22-821f-23ac01dbdd5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +198,6 @@
     <ClInclude Include="Public\ImGui_Manager.h">
       <Filter>03. Tool\00. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Public\RailGunner.h">
-      <Filter>06. GameObject\03. Player_Character</Filter>
-    </ClInclude>
     <ClInclude Include="Public\GolemPlains.h">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClInclude>
@@ -230,6 +233,12 @@
     </ClInclude>
     <ClInclude Include="Public\Client_Settings.h">
       <Filter>00. Header\00. PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\RailGunner.h">
+      <Filter>06. GameObject\03. Survivor\00. RailGunner</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\RailGunner_Crosshair.h">
+      <Filter>06. GameObject\03. Survivor\00. RailGunner\00. Crosshair</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -284,9 +293,6 @@
     <ClCompile Include="Private\ImGui_Manager.cpp">
       <Filter>03. Tool\00. Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Private\RailGunner.cpp">
-      <Filter>06. GameObject\03. Player_Character</Filter>
-    </ClCompile>
     <ClCompile Include="Private\GolemPlains.cpp">
       <Filter>06. GameObject\02. Terrain\01. GolemPlains</Filter>
     </ClCompile>
@@ -310,6 +316,12 @@
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGuizmo\ImSequencer.cpp">
       <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RailGunner.cpp">
+      <Filter>06. GameObject\03. Survivor\00. RailGunner</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RailGunner_Crosshair.cpp">
+      <Filter>06. GameObject\03. Survivor\00. RailGunner\00. Crosshair</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

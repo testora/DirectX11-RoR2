@@ -205,6 +205,7 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX");
 	}
 	m_pGameInstance->Add_BindShaders(pShader);
+	pShader->Bind_Matrix(SHADER_MATORTHOGRAPHIC, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX,
 		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosNorTex.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))

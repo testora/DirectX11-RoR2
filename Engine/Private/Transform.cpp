@@ -79,9 +79,11 @@ void CTransform::Set_State(const TRANSFORM _eState, const _vectorf _vState)
 
 void CTransform::Set_Scale(const _vectorf _vScale)
 {
-	_float3 vScaleFactor = _vScale / Get_Scale();
+	_vectorf vPosition		= XMLoadFloat4x4(&m_mWorld).r[IDX(TRANSFORM::POSITION)];
+	_vectorf vScaleFactor	= _vScale / Get_Scale();
 	
 	m_mWorld *= XMMatrixScalingFromVector(vScaleFactor);
+	Set_State(TRANSFORM::POSITION, vPosition);
 }
 
 void CTransform::Multiply(const _matrixf _mMatrix)

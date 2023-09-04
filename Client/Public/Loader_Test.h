@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "GolemPlains.h"
 #include "RailGunner.h"
+#include "RailGunner_Crosshair.h"
 
 HRESULT CLoader::Load_Test()
 {
@@ -36,6 +37,14 @@ HRESULT CLoader::Load_Test()
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS");
 	}
+	
+#ifdef _DEBUG
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_CUBE,
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/_Temp/Model/Cube.fbx")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_CUBE");
+	}
+#endif
 
 #pragma endregion
 #pragma region Prototype VIBuffer
@@ -78,6 +87,12 @@ HRESULT CLoader::Load_Test()
 		CRailGunner::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR,
+		CRailGunner_Crosshair::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR");
 	}
 
 #pragma endregion

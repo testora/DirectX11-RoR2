@@ -16,9 +16,9 @@ HRESULT CTerrain::Initialize(any _wstrHeightMapPath)
 {
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::TEXTURE) | BIT(COMPONENT::VIBUFFER_TERRAIN);
 
-	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
-	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX, any());
-	m_umapComponentArg[COMPONENT::TEXTURE]			= make_pair(PROTOTYPE_COMPONENT_TEXTURE_TERRAIN, any());
+	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX, g_aNull);
+	m_umapComponentArg[COMPONENT::TEXTURE]			= make_pair(PROTOTYPE_COMPONENT_TEXTURE_TERRAIN, g_aNull);
 	m_umapComponentArg[COMPONENT::VIBUFFER_TERRAIN]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN, _wstrHeightMapPath);
 
 	if (FAILED(__super::Initialize()))
@@ -98,7 +98,7 @@ void CTerrain::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CTerrain::Render()

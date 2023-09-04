@@ -3,6 +3,8 @@
 #define MAX_BONE						256
 #define PI								3.141592654f
 
+#define DIFFUSE_OFFSET					0.f
+
 #define DIRECTIONAL						0
 #define POINT							1
 
@@ -36,7 +38,7 @@ sampler PointSampler = sampler_state
 
 int			g_iShaderFlag;
 
-matrix		g_mWorld, g_mView, g_mProj;
+matrix		g_mWorld, g_mView, g_mProj, g_mOrthographic;
 vector		g_vCamPosition;
 
 Texture2D	g_texDiffuse			[MAX_TEXTURE];
@@ -93,20 +95,10 @@ float3 UnpackNormalDXT5nm(float4 vPackedNormal, float3x3 mTBN)
 {
 	float3 vNormalMap;
 	
-	vNormalMap.rg	= vPackedNormal.ab * 2.f - 1.f;
+	vNormalMap.rg	= vPackedNormal.ag * 2.f - 1.f;
 	vNormalMap.b	= sqrt(1.f - saturate(dot(vNormalMap.rg, vNormalMap.rg)));
 	
 	return normalize(mul(vNormalMap, mTBN));
-}
-
-float3 UnpackNormalDXT5nm(float4 vPackedNormal)
-{
-	float3 vNormalMap;
-	
-	vNormalMap.rg	= vPackedNormal.ab * 2.f - 1.f;
-	vNormalMap.b	= sqrt(1.f - saturate(dot(vNormalMap.rg, vNormalMap.rg)));
-	
-    return (vNormalMap);
 }
 
 float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos, float3 vBlendFactor)
@@ -179,61 +171,61 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_X && vNormal.x > 0)
 	{
 		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)		* g_fTilingNormal[1]):
-							g_texNormal[1].Sample(LinearSampler, vWorldPos.yz							* g_fTilingNormal[1]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.x;
+							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)	* g_fTilingNormal[1]):
+							g_texNormal[1].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[1]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.x;
 		fBlendFactor	-=	vBlendFactor.x;
 	}
 	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y && vNormal.y > 0)
 	{
-		float4 vDXT5nm	=	g_texNormal[2].Sample(LinearSampler, vWorldPos.zx							* g_fTilingNormal[2]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.y;
+		float4 vDXT5nm	=	g_texNormal[2].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[2]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.y;
 		fBlendFactor	-=	vBlendFactor.y;
 	}
 	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z && vNormal.z > 0)
 	{
 		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
 							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)				* g_fTilingNormal[1]):
-							g_texNormal[1].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[1]):
+							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingNormal[1]):
+							g_texNormal[1].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[1]):
 							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[3].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)				* g_fTilingNormal[3]):
-							g_texNormal[3].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[3]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.z;
+							g_texNormal[3].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingNormal[3]):
+							g_texNormal[3].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[3]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.z;
 		fBlendFactor	-=	vBlendFactor.z;
 	}
 	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X && vNormal.x < 0)
 	{
 		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X ?
 							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)		* g_fTilingNormal[1]):
-							g_texNormal[1].Sample(LinearSampler, vWorldPos.yz							* g_fTilingNormal[1]):
+							g_texNormal[1].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[1]):
+							g_texNormal[1].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[1]):
 							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[4].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)		* g_fTilingNormal[4]):
-							g_texNormal[4].Sample(LinearSampler, vWorldPos.yz							* g_fTilingNormal[4]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.x;
+							g_texNormal[4].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[4]):
+							g_texNormal[4].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[4]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.x;
 		fBlendFactor	-=	vBlendFactor.x;
 	}
 	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y && vNormal.y < 0)
 	{
 		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Y ?
-							g_texNormal[2].Sample(LinearSampler, vWorldPos.zx							* g_fTilingNormal[2]):
-							g_texNormal[5].Sample(LinearSampler, vWorldPos.zx							* g_fTilingNormal[5]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.y;
+							g_texNormal[2].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[2]):
+							g_texNormal[5].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[5]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.y;
 		fBlendFactor	-=	vBlendFactor.y;
 	}
 	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z && vNormal.z < 0)
 	{
 		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Z ?
 							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texNormal[1].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[1]):
-							g_texNormal[3].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[3]):
+							g_texNormal[1].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[1]):
+							g_texNormal[3].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[3]):
 							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texNormal[4].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[4]):
-							g_texNormal[6].Sample(LinearSampler, vWorldPos.xy							* g_fTilingNormal[6]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm) * vBlendFactor.z;
+							g_texNormal[4].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[4]):
+							g_texNormal[6].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[6]);
+		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)										* vBlendFactor.z;
 		fBlendFactor	-=	vBlendFactor.z;
 	}
 	
-	return normalize(mul(vTriNormal + vNormal * fBlendFactor, mTBN));
+	return vTriNormal + vNormal * fBlendFactor;
 }

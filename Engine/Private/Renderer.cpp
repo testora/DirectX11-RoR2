@@ -17,11 +17,11 @@ HRESULT CRenderer::Initialize(any _arg)
 	return S_OK;
 }
 
-HRESULT CRenderer::Add_RenderGroup(const RENDER_GROUP _eRenderGroup, shared_ptr<CGameObject> _pGameObject)
+HRESULT CRenderer::Add_RenderObject(const RENDER_GROUP _eRenderGroup, shared_ptr<CGameObject> _pGameObject)
 {
 	if (nullptr == _pGameObject)
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Add_RenderGroup", "Nullptr Exception: _pGameObject");
+		MSG_RETURN(E_FAIL, "CRenderer::Add_RenderObject", "Nullptr Exception: _pGameObject");
 	}
 
 	m_lstRenderGroup[IDX(_eRenderGroup)].emplace_back(_pGameObject);

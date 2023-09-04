@@ -29,9 +29,9 @@ public:
 	const _char*					Get_Name() const				{ return m_szName; }
 #endif
 	_uint							Get_MaterialIndex() const		{ return m_iMaterialIndex; }
-	_float4x4*						Get_BoneMatrices(vector<shared_ptr<class CBone>>);
+	_float4x4*						Get_BoneMatrices(vector<shared_ptr<class CBone>>::iterator itBegin);
 
-	void							Set_Interpolation(vector<shared_ptr<class CBone>>, _float fDuration);
+	void							Set_Interpolation(vector<shared_ptr<class CBone>>::iterator itBegin, _float fDuration);
 
 private:
 	_char							m_szName[MAX_PATH]		= "";
@@ -57,7 +57,7 @@ public:
 	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
 #endif
 	static shared_ptr<CMesh>		Read(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, std::ifstream&);
-	virtual shared_ptr<CComponent>	Clone(any = any()) override;
+	virtual shared_ptr<CComponent>	Clone(any = g_aNull) override;
 
 #if ACTIVATE_TOOL
 	void							Export(std::ofstream&, MODEL);

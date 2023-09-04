@@ -2,6 +2,7 @@
 #include "RailGunner.h"
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
+#include "RailGunner_Crosshair.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -23,10 +24,10 @@ HRESULT CRailGunner::Initialize_Prototype()
 	tColliderDesc.vPosition = _float3(0.f, .5f, 0.f);
 	tColliderDesc.vSize		= _float3(1.f, 1.f, 1.f);
 
-	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
-	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM, any());
+	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM, g_aNull);
 	m_umapComponentArg[COMPONENT::COLLIDER]	= make_pair(PROTOTYPE_COMPONENT_COLLIDER, tColliderDesc);
-	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_RAILGUNNER, any());
+	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_RAILGUNNER, g_aNull);
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
@@ -50,7 +51,10 @@ HRESULT CRailGunner::Initialize(any)
 	}
 
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
+
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(IDX(ANIMATION::PLAYER::IDLE::IDLE));
+
+	m_pCrosshair = dynamic_pointer_cast<CRailGunner_Crosshair>(CGameInstance::Get_Instance()->Clone_GameObject(CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR));
 
 	return S_OK;
 }
@@ -58,6 +62,8 @@ HRESULT CRailGunner::Initialize(any)
 void CRailGunner::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+
+	m_pCrosshair->Tick(_fTimeDelta);
 }
 
 void CRailGunner::Late_Tick(_float _fTimeDelta)
@@ -94,7 +100,9 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+
+	m_pCrosshair->Late_Tick(_fTimeDelta);
 }
 
 HRESULT CRailGunner::Render()

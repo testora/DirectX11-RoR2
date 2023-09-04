@@ -24,7 +24,7 @@ private:
 
 public:
 	static shared_ptr<CAnimator>	Create(shared_ptr<class CGameObject> pOwner);
-	virtual shared_ptr<CBehavior>	Clone(any = any()) override;
+	virtual shared_ptr<CBehavior>	Clone(any = g_aNull) override;
 };
 
 END

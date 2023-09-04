@@ -20,7 +20,7 @@ public:
 public:
 	HRESULT													Add_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<CBehavior> pPrototype);
 
-	shared_ptr<CBehavior>									Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = any());
+	shared_ptr<CBehavior>									Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
 
 private:
 	shared_ptr<CBehavior>									Find_Prototype(const SCENE, const wstring& wstrPrototypeTag);

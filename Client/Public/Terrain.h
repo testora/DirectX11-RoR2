@@ -20,7 +20,7 @@ private:
 	virtual ~CTerrain() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize(any = any()) override;
+	virtual HRESULT					Initialize(any = g_aNull) override;
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT					Render() override;
@@ -37,7 +37,7 @@ private:
 
 public:
 	static shared_ptr<CTerrain>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CGameObject>	Clone(any = any()) override;
+	virtual shared_ptr<CGameObject>	Clone(any = g_aNull) override;
 };
 
 END

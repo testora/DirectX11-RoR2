@@ -11,10 +11,10 @@ private:
 	virtual ~CRenderer() DEFAULT;
 
 public:
-	HRESULT									Initialize(any = any());
+	HRESULT									Initialize(any = g_aNull);
 
 public:
-	HRESULT									Add_RenderGroup(const RENDER_GROUP, shared_ptr<class CGameObject>);
+	HRESULT									Add_RenderObject(const RENDER_GROUP, shared_ptr<class CGameObject>);
 
 	HRESULT									Draw_RenderGroup();
 
@@ -31,7 +31,7 @@ private:
 
 public:
 	static shared_ptr<CRenderer>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CComponent>			Clone(any = any()) override;
+	virtual shared_ptr<CComponent>			Clone(any = g_aNull) override;
 };
 
 END

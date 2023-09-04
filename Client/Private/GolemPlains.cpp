@@ -36,9 +36,9 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
-	mapDesc.emplace(7, make_tuple(
-		tTerrainMaterial,
-		SHADER_FLAG_TRIPLANER_POSITIVE_Y,
+	mapDesc.emplace(2, make_tuple(
+		MATERIALDESC(),
+		0,
 		[](shared_ptr<CShader> _pShader)->HRESULT
 		{
 			if (FAILED(_pShader->Bind_Float(SHADER_TILING_DIFFUSE, 1.f)))
@@ -52,15 +52,15 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
-	mapDesc.emplace(8, make_tuple(
+	mapDesc.emplace(7, make_tuple(
 		tTerrainMaterial,
 		SHADER_FLAG_TRIPLANER_POSITIVE_X	| SHADER_FLAG_TRIPLANER_POSITIVE_Y	| SHADER_FLAG_TRIPLANER_POSITIVE_Z	|
 		SHADER_FLAG_TRIPLANER_NEGATIVE_X	| SHADER_FLAG_TRIPLANER_NEGATIVE_Y	| SHADER_FLAG_TRIPLANER_NEGATIVE_Z	|
 		SHADER_FLAG_TRIPLANER_SHARE_X		| SHADER_FLAG_TRIPLANER_SHARE_Z		| SHADER_FLAG_TRIPLANER_SHARE_X_Z	| SHADER_FLAG_TRIPLANER_SYNC_XZ,
 		[](shared_ptr<CShader> _pShader)->HRESULT
 		{
-			const _float fTilingDif[3]{ 0.05f,	0.05f,	0.05f };
-			const _float fTilingNor[3]{ 0.f,	0.f,	1.5f };
+			const _float fTilingDif[3]{ 0.05f,	 0.05f,	 0.05f };
+			const _float fTilingNor[3]{ 0.05f,	 0.05f,	 0.05f };
 			if (FAILED(_pShader->Bind_FloatArray(SHADER_TILING_DIFFUSE, fTilingDif, 3)))
 			{
 				MSG_RETURN(E_FAIL, "CGolemPlains::Initialize_Prototype", "Failed to Bind_FloatArray");
@@ -72,9 +72,14 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
+	mapDesc.emplace(8, make_tuple(
+		tTerrainMaterial,
+		0,
+		nullptr
+	));
 
-	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, any());
-	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESH, any());
+	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESH, g_aNull);
 	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS, mapDesc);
 
 	return S_OK;
@@ -99,7 +104,7 @@ void CGolemPlains::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRenderer->Add_RenderGroup(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CGolemPlains::Render()

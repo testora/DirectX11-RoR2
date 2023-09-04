@@ -11,11 +11,11 @@ private:
 	virtual ~CVIBuffer_Rect() DEFAULT;
 
 public:
-	HRESULT								Initialize(any = any());
+	HRESULT								Initialize(any = g_aNull);
 
 public:
 	static shared_ptr<CVIBuffer_Rect>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CComponent>		Clone(any = any()) override;
+	virtual shared_ptr<CComponent>		Clone(any = g_aNull) override;
 };
 
 END

@@ -383,20 +383,20 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(std::ifstream& _inFile)
 	return S_OK;
 }
 
-_float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<class CBone>> _vecModelBones)
+_float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<CBone>>::iterator _itBegin)
 {
 	m_arrBones.fill(g_mUnit);
 
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
-		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _vecModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
 		m_arrBones[i] = m_vecBoneOffsets[i] * mInterpolation * m_mPivot;
 	}
 
 	return m_arrBones.data();
 }
 
-void CMesh::Set_Interpolation(vector<shared_ptr<class CBone>> _vecModelBones, _float _fDuration)
+void CMesh::Set_Interpolation(vector<shared_ptr<CBone>>::iterator _itBegin, _float _fDuration)
 {
 	if (0.f == _fDuration)
 	{
@@ -405,7 +405,7 @@ void CMesh::Set_Interpolation(vector<shared_ptr<class CBone>> _vecModelBones, _f
 
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
-		m_arrInterpolationMatrices[i] = Function::Lerp(m_arrInterpolationMatrices[i], _vecModelBones[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+		m_arrInterpolationMatrices[i] = Function::Lerp(m_arrInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
 	}
 
 	m_fInterpolationRatio = 0.f;

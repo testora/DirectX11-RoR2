@@ -7,12 +7,12 @@ namespace Function
 		return (_fStart * (1.f - _fRatio)) + (_fEnd * _fRatio);
 	}
 
-	XMVECTOR Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float fRatio)
+	XMVECTOR Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float _fRatio)
 	{
-		return XMVectorLerp(vStart, vEnd, fRatio);
+		return XMVectorLerp(vStart, vEnd, _fRatio);
 	}
 
-	XMMATRIX Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio)
+	XMMATRIX Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float _fRatio)
 	{
 		XMVECTOR vStartScale, vStartRotation, vStartTranslation;
 		XMVECTOR vEndScale,	vEndRotation, vEndTranslation;
@@ -27,9 +27,9 @@ namespace Function
 			return XMMATRIX{};
 		}
 
-		XMVECTOR vScale			= XMVectorLerp(vStartScale, vEndScale, fRatio);
-		XMVECTOR vRotation		= XMQuaternionSlerp(vStartRotation, vEndRotation, fRatio);
-		XMVECTOR vTranslation	= XMVectorLerp(vStartTranslation, vEndTranslation, fRatio);
+		XMVECTOR vScale			= XMVectorLerp(vStartScale, vEndScale, _fRatio);
+		XMVECTOR vRotation		= XMQuaternionSlerp(vStartRotation, vEndRotation, _fRatio);
+		XMVECTOR vTranslation	= XMVectorLerp(vStartTranslation, vEndTranslation, _fRatio);
 
 		return XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
 	}

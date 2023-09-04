@@ -15,7 +15,7 @@ public:
 	HRESULT								Initialize_FromAssimp(const aiAnimation* pAIAnimation, shared_ptr<class CModel>);
 #endif
 	HRESULT								Initialize_FromBinary(std::ifstream&);
-	void								Tick(_float fTimeDelta, vector<shared_ptr<class CBone>>, _bool bLoop = true);
+	void								Tick(_float fTimeDelta, vector<shared_ptr<class CBone>>::iterator itBegin, _bool bLoop = true);
 
 private:
 

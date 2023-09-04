@@ -25,7 +25,7 @@ public:
 public:
 	HRESULT													Add_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<CComponent> pPrototype);
 
-	shared_ptr<CComponent>									Clone_Component(const SCENE, const wstring& wstrPrototypeTag, any = any());
+	shared_ptr<CComponent>									Clone_Component(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
 
 private:
 	shared_ptr<CComponent>									Find_Prototype(const SCENE, const wstring& wstrPrototypeTag);
