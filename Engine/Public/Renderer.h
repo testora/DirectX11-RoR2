@@ -19,6 +19,7 @@ public:
 	HRESULT									Draw_RenderGroup();
 
 private:
+	HRESULT									Ready_Camera();
 	HRESULT									Render_Priority();
 	HRESULT									Render_NonBlend();
 	HRESULT									Render_Blend();

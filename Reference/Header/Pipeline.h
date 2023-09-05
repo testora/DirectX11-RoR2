@@ -14,7 +14,9 @@ public:
 	void				Set_Transform(const PIPELINE eState, _float4x4 mTransform)	{ m_mTransform[IDX(eState)] = mTransform; }
 
 	_bool				Is_InScreen(const BoundingBox tBoundingBox)					{ return m_tFrustum.Intersects(tBoundingBox); }
+#if WIP_FRUSTRUM_CULLING
 	void				Update_Frustum()											{ BoundingFrustum::CreateFromMatrix(m_tFrustum, m_mTransform[IDX(PIPELINE::PROJECTION)]); }
+#endif
 
 private:
 	_float4x4			m_mTransform[IDX(PIPELINE::MAX)];

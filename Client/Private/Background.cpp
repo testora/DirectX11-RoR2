@@ -26,7 +26,7 @@ HRESULT CBackground::Initialize(any _arg)
 		MSG_RETURN(E_FAIL, "CBackground::Initialize", "Failed to __super::Initialize");
 	}
 
-	m_pTransform->Set_Scale(_float3(g_iWinCX, g_iWinCY, 1.f));
+	m_pTransform->Set_Scale(_float3(static_cast<_float>(g_iWinCX), static_cast<_float>(g_iWinCY), 1.f));
 	m_pTransform->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
 	auto a = XMVector3TransformCoord(_float4(50.f, 100.f, 0.f, 1.f), (m_pTransform->Get_Matrix() * XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f)));

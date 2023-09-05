@@ -48,7 +48,8 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 
 	if (nullptr != m_pTargetTransform)
 	{
-		m_pTransform->Set_Matrix(m_vOffset * m_pTargetTransform->Get_Matrix());
+	//	m_pTransform->Set_Matrix(m_vOffset * m_pTargetTransform->Get_Matrix());
+		Smooth_Tranformation(_fTimeDelta);
 	}
 
 	Debug_MouseControl(_fTimeDelta);
@@ -73,7 +74,7 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::CAMERA, shared_from_this());
 }
 
 HRESULT CCamera_Main::Render()
@@ -94,7 +95,7 @@ HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _fl
 	}
 
 	m_pTargetTransform	= _pTargetTransform;
-	m_vOffset			= _mOffset;
+	m_mOffset			= _mOffset;
 
 	return S_OK;
 }
@@ -163,6 +164,11 @@ void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
 	{
 		m_pTransform->Translate(MAINCAM_DEBUG_SPEED * vMove * _fTimeDelta);
 	}
+}
+
+void CCamera_Main::Smooth_Tranformation(_float _fTimeDelta)
+{
+	m_pTransform->Set_Matrix(Function::Lerp(m_pTransform->Get_Matrix(), m_mOffset * m_pTargetTransform->Get_Matrix(), 1.f, false, true, true));
 }
 
 shared_ptr<CCamera_Main> CCamera_Main::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

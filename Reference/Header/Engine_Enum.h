@@ -6,6 +6,7 @@ enum class SCENE;
 		   
 enum class RENDER_GROUP
 {
+	CAMERA,
 	PRIORITY,
 	NONBLEND,
 	BLEND,

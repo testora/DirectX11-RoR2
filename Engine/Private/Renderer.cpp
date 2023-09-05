@@ -9,6 +9,7 @@ CRenderer::CRenderer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> 
 
 HRESULT CRenderer::Initialize(any _arg)
 {
+	m_vecFnRenderGroup.emplace_back([this] { return this->Ready_Camera(); });
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_Priority(); });
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_NonBlend(); });
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_Blend(); });
@@ -33,31 +34,38 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	HRESULT hr = S_OK;
 
-	if (FAILED(m_vecFnRenderGroup[IDX(RENDER_GROUP::PRIORITY)]()))
+	for (auto& pFnRenderGroup : m_vecFnRenderGroup)
 	{
-		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Priority");
-		hr = E_FAIL;
-	}
-	if (FAILED(m_vecFnRenderGroup[IDX(RENDER_GROUP::NONBLEND)]()))
-	{
-		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_NonBlend");
-		hr = E_FAIL;
-	}
-	if (FAILED(m_vecFnRenderGroup[IDX(RENDER_GROUP::BLEND)]()))
-	{
-		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Blend");
-		hr = E_FAIL;
-	}
-	if (FAILED(m_vecFnRenderGroup[IDX(RENDER_GROUP::UI)]()))
-	{
-		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_UI");
-		hr = E_FAIL;
+		if (FAILED(pFnRenderGroup()))
+		{
+			MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Draw_RenderGroup");
+			hr = E_FAIL;
+		}
 	}
 
 	return hr;
 }
 
 #pragma region RenderGroup
+HRESULT CRenderer::Ready_Camera()
+{
+	HRESULT hr = S_OK;
+
+	for (auto& pGameObject : m_lstRenderGroup[IDX(RENDER_GROUP::CAMERA)])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render()))
+			{
+				hr = E_FAIL;
+			}
+		}
+	}
+	m_lstRenderGroup[IDX(RENDER_GROUP::CAMERA)].clear();
+
+	return hr;
+}
+
 HRESULT CRenderer::Render_Priority()
 {
 	HRESULT hr = S_OK;

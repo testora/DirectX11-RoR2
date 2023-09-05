@@ -17,14 +17,15 @@ public:
 	_float3							Get_Scale() const;
 
 	void							Set_Matrix(const _matrixf mMatrix);
-	void							Set_State(const TRANSFORM eState, const _vectorf vState);
+	void							Set_State(const TRANSFORM, const _vectorf vState);
 	void							Set_Scale(const _vectorf vScale);
 
 public:
 	void							Multiply(const _matrixf mMatrix);
 
-	void							Translate(const _vectorf vPosition);
+	void							Translate(const _vectorf vTranslation);
 	void							Rotate(const _vectorf vAxis, const _float fDegree);
+	void							Rotate(const TRANSFORM, const _float fDegree);
 	void							LookAt(const _vectorf vPosition);
 	void							LookTo(const _vectorf vDirection);
 

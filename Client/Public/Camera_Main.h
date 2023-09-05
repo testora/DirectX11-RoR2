@@ -23,17 +23,19 @@ public:
 	virtual HRESULT					Render() override;
 
 public:
-	HRESULT							Attach(shared_ptr<class CTransform>, _float4x4 vOffset = _float4x4());
+	HRESULT							Attach(shared_ptr<class CTransform>, _float4x4 vOffset = g_mUnit);
 
 private:
 	void							Debug_MouseControl(_float fTimeDelta);
 	void							Debug_KeyControl(_float fTimeDelta);
 
+	void							Smooth_Tranformation(_float fTimeDelta);
+
 private:
 	CAMERA_MAIN_DESC				m_tCameraMainDesc;
 
 	shared_ptr<class CTransform>	m_pTargetTransform;
-	_float4x4						m_vOffset;
+	_float4x4						m_mOffset;
 
 public:
 	static shared_ptr<CCamera_Main>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

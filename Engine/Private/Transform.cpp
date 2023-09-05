@@ -70,6 +70,7 @@ void CTransform::Set_State(const TRANSFORM _eState, const _vectorf _vState)
 	{
 		mWorld.r[IDX(_eState)] = _vState;
 		m_mWorld = mWorld;
+		m_mWorld.m[3][3] = 1.f;
 	}
 	else
 	{
@@ -91,9 +92,9 @@ void CTransform::Multiply(const _matrixf _mMatrix)
 	m_mWorld *= _mMatrix;
 }
 
-void CTransform::Translate(const _vectorf _vPosition)
+void CTransform::Translate(const _vectorf _vTranslation)
 {
-	m_mWorld *= XMMatrixTranslationFromVector(_vPosition);
+	m_mWorld *= XMMatrixTranslationFromVector(_vTranslation);
 }
 
 void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
@@ -101,6 +102,11 @@ void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
 	_matrix mWorld(m_mWorld);
 	m_mWorld *= XMMatrixRotationQuaternion(XMQuaternionRotationAxis(_vAxis, XMConvertToRadians(_fDegree)));
 	Set_State(TRANSFORM::POSITION, mWorld.r[IDX(TRANSFORM::POSITION)]);
+}
+
+void CTransform::Rotate(const TRANSFORM _eState, const _float _fDegree)
+{
+	Rotate(Get_State(_eState), _fDegree);
 }
 
 void CTransform::LookAt(const _vectorf _vPosition)
