@@ -176,6 +176,10 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_MAIN();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
 	pass TERRAIN
@@ -185,5 +189,9 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_TERRAIN();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 }

@@ -10,6 +10,10 @@ CCamera_Main::CCamera_Main(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceCon
 
 HRESULT CCamera_Main::Initialize(any _desc)
 {
+	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);
+
+	m_umapComponentArg[COMPONENT::RENDERER] = make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+
 	if (_desc.has_value())
 	{
 		m_tCameraMainDesc = any_cast<CAMERA_MAIN_DESC>(_desc);
@@ -27,10 +31,6 @@ HRESULT CCamera_Main::Initialize(any _desc)
 		m_tCameraMainDesc.tCameraDesc.fNear			= 0.1f;
 		m_tCameraMainDesc.tCameraDesc.fFar			= 10000.f;
 	}
-
-	m_bitComponent	|= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);
-
-	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
 
 	if (FAILED(__super::Initialize(m_tCameraMainDesc.tCameraDesc)))
 	{
@@ -98,6 +98,16 @@ HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _fl
 	m_mOffset			= _mOffset;
 
 	return S_OK;
+}
+
+void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight)
+{
+	__super::Adjust_FOV(_fRadian, _fDuration, _fWeight);
+}
+
+void CCamera_Main::Release_FOV(_float _fDuration, _float _fWeight)
+{
+	__super::Release_FOV(_fDuration, _fWeight);
 }
 
 void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)

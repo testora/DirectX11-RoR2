@@ -2,9 +2,9 @@
 
 namespace Function
 {
-	inline _float						Lerp(_float fStart, _float fEnd, _float fRatio);
-	inline XMVECTOR						Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float fRatio);
-	inline XMMATRIX						Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio, _bool bScale = true, _bool bRotation = true, _bool bTranslation = true);
+	inline _float						Lerp(_float fStart, _float fEnd, _float fRatio, _float fWeight = 1.f);
+	inline XMVECTOR						Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float fRatio, _float fWeight = 1.f);
+	inline XMMATRIX						Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio, _float fWeight = 1.f, _bool bScale = true, _bool bRotation = true, _bool bTranslation = true);
 
 	inline _float						Clamp(_float fMin, _float fMax, _float fValue);
 	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);

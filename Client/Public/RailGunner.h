@@ -12,6 +12,9 @@ BEGIN(Client)
 class CRailGunner final : public CGameObject
 {
 private:
+	enum class STATE	{ ATTACK_AVAILABE, MAX };
+
+private:
 	explicit CRailGunner(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	explicit CRailGunner(const CRailGunner&);
 	virtual ~CRailGunner() DEFAULT;
@@ -27,6 +30,8 @@ private:
 	virtual HRESULT								Ready_Components() override;
 
 private:
+	bitset<IDX(STATE::MAX)>						m_bitPlayerState;
+
 	shared_ptr<class CRailGunner_Crosshair>		m_pCrosshair;
 
 	shared_ptr<CRenderer>						m_pRenderer;

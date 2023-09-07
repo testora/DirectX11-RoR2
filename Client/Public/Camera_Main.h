@@ -25,6 +25,9 @@ public:
 public:
 	HRESULT							Attach(shared_ptr<class CTransform>, _float4x4 vOffset = g_mUnit);
 
+	void							Adjust_FOV(_float fRadian, _float fDuration = 0.f, _float fWeight = 1.f);
+	void							Release_FOV(_float fDuration = 0.f, _float fWeight = 1.f);
+
 private:
 	void							Debug_MouseControl(_float fTimeDelta);
 	void							Debug_KeyControl(_float fTimeDelta);

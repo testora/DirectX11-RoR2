@@ -15,8 +15,16 @@ BEGIN(Client)
 class CRailGunner_Crosshair final : public CGameObject
 {
 private:
-	enum class ELEMENT	{ BOUND_IN, BOUND_OUT, BRACKET, NIBS, FLAVOR, SCOPE, CROSS, BOUND_GLOWY_IN, BOUND_GLOWY_OUT, DOT, ARROW, MAX };
-	enum class STATE	{ MAIN, SNIPER, SUPER_CHARGE, SUPER_READY, SUPER_REBOOT, SPRINT, MAX };
+	enum class STATE	{ MAIN, SCOPE, SUPER_CHARGE, SUPER_READY, SUPER_REBOOT, RELOAD, SPRINT, MAX };
+	enum class ELEMENT
+	{
+		MAIN_BOUND_IN, MAIN_BOUND_OUT, MAIN_BRACKET, MAIN_NIBS, MAIN_FLAVOR,
+		SCOPE_SCOPE, SCOPE_CROSS, SCOPE_BOUND_IN, SCOPE_BOUND_OUT,
+		RELOAD_BOUND, RELOAD_STRIPE, RELOAD_BAR, RELOAD_SLIDE, RELOAD_TAG, RELOAD_BOOST,
+		DOT,
+		ARROW,
+		MAX
+	};
 
 private:
 	explicit CRailGunner_Crosshair(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -33,15 +41,18 @@ public:
 public:
 	void										Change_State(const STATE);
 
-	void										Init_Bound();
-	void										Init_Flavor();
-	void										Init_Bracket();
-	void										Init_Scope();
-	void										Init_Bound_Glowy();
-	void										Init_Arrow();
-
 private:
 	virtual HRESULT								Ready_Components() override;
+
+	HRESULT										Render_Element(const ELEMENT, _uint iPassIndex);
+
+	void										Visualize_Main();
+	void										Visualize_Bracket();
+	void										Visualize_Scope();
+	void										Visualize_Reload();
+	void										Visualize_Sprint();
+
+	void										Bounce_Bracket();
 
 private:
 	STATE										m_eState				= STATE::MAIN;
@@ -51,14 +62,25 @@ private:
 
 	bitset<IDX(ELEMENT::MAX)>					m_bitElement;
 
+	pair<_float, _float>						m_pairTagPositionRange;
+	_float										m_fCurrentTagPosition	= 0.f;
+	_bool										m_bHitTag				= false;
+
 	shared_ptr<CTransform>						m_pTransform[IDX(ELEMENT::MAX)];
 	shared_ptr<CVIBuffer_Rect>					m_pVIBuffer;
+
+	shared_ptr<CTexture>						m_pTexSinglePixel;
 
 	shared_ptr<CTexture>						m_pTexBounds;
 	shared_ptr<CTexture>						m_pTexBracket;
 	shared_ptr<CTexture>						m_pTexFlavor;
+	
 	shared_ptr<CTexture>						m_pTexScope;	
 	shared_ptr<CTexture>						m_pTexBounds_Glowy;
+	shared_ptr<CTexture>						m_pTexSniperCharge;
+
+	shared_ptr<CTexture>						m_pTexStripes;
+	shared_ptr<CTexture>						m_pTexBoost;
 
 	shared_ptr<CTexture>						m_pTexDot;
 	shared_ptr<CTexture>						m_pTexArrow;

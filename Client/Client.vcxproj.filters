@@ -118,6 +118,9 @@
     <Filter Include="06. GameObject\02. UI\01. InGame">
       <UniqueIdentifier>{e0da5f27-2343-48af-8880-8162b57f0a9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Shader\00. Include">
+      <UniqueIdentifier>{06cd7987-a95a-411c-bd85-19cb670e144f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -356,5 +359,13 @@
     <FxCompile Include="..\Resources\Shader\PosNorTanTexBone.hlsl">
       <Filter>04. Shader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Shader\ShaderCommon.hlsli">
+      <Filter>04. Shader\00. Include</Filter>
+    </None>
+    <None Include="..\Resources\Shader\ShaderDefine.hlsli">
+      <Filter>04. Shader\00. Include</Filter>
+    </None>
   </ItemGroup>
 </Project>

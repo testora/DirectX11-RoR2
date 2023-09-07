@@ -70,12 +70,8 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT	Out;
 
-	Out.vColor	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
-	
-    if (Out.vColor.a < 0.1f)
-    {
-        discard; // Temp
-    }
+	Out.vColor	=	g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+	Out.vColor	*=	g_vMtrlDiffuse;
 	
 	return Out;
 }
@@ -89,72 +85,85 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_BOUNDS(PS_IN_ORTHOGRAPHIC In)
 	
 	float2	vTextureSize			= float2(384.f, 384.f);
 	
-	float	fTexInterval			= 21.f;
+	float	fTexInterval			= 3.f;
+	float	fTexBlendInterval		= 18.f;
 	float	fTexOutlineThickness	= 12.f;
 	float	fTexBoundHeight			= 94.f;
 	
-    float	fInGameInterval			= 3.5f;
+	float	fInGameBlendInterval	= 3.f;
 	float	fInGameOutlineThickness	= 2.f;
 	float	fInGameBoundHeight		= 16.f;
 	
 	float2	vTexCoord;
 	
-	if (vLocalPos.x < fInGameInterval)
-    {
-		vTexCoord.x = lerp(0, fTexInterval, vLocalPos.x / fInGameInterval) / vTextureSize.x;
+	if (vLocalPos.x < fInGameBlendInterval)
+	{
+        vTexCoord.x = lerp(fTexInterval, fTexInterval + fTexBlendInterval, vLocalPos.x / fInGameBlendInterval);
     }
-	else if (vLocalPos.x < fInGameInterval + fInGameOutlineThickness)
-    {
-		vTexCoord.x = lerp(fTexInterval, fTexInterval + fTexOutlineThickness, (vLocalPos.x - fInGameInterval) / fInGameOutlineThickness) / vTextureSize.x;
+	else if (vLocalPos.x < fInGameBlendInterval + fInGameOutlineThickness)
+	{
+        vTexCoord.x = lerp(fTexInterval + fTexBlendInterval, fTexInterval + fTexBlendInterval + fTexOutlineThickness, (vLocalPos.x - fInGameBlendInterval) / fInGameOutlineThickness);
     }
-	else if (vLocalPos.x > vSize.x - fInGameInterval)
-    {
-        vTexCoord.x = lerp(vTextureSize.x - fTexInterval, vTextureSize.x, 1.f - (vSize.x - vLocalPos.x) / fInGameInterval) / vTextureSize.x;
+	else if (vLocalPos.x < fInGameBlendInterval * 2.f + fInGameOutlineThickness)
+	{
+        vTexCoord.x = lerp(fTexInterval + fTexBlendInterval + fTexOutlineThickness, fTexInterval + fTexBlendInterval * 2.f + fTexOutlineThickness, (vLocalPos.x - fInGameBlendInterval - fInGameOutlineThickness) / fInGameBlendInterval);
     }
-    else if (vLocalPos.x > vSize.x - fInGameInterval - fInGameOutlineThickness)
-    {
-        vTexCoord.x = lerp(vTextureSize.x - (fTexInterval + fTexOutlineThickness), vTextureSize.x - fTexInterval, 1.f - (vSize.x - vLocalPos.x - fInGameInterval) / fInGameOutlineThickness) / vTextureSize.x;
+	else if (vLocalPos.x > vSize.x - fInGameBlendInterval)
+	{
+        vTexCoord.x = lerp(vTextureSize.x - fTexBlendInterval - fTexInterval, vTextureSize.x - fTexInterval, 1.f - (vSize.x - vLocalPos.x) / fInGameBlendInterval);
     }
-    else
-    {
-        vTexCoord.x = lerp(fTexInterval + fTexOutlineThickness, vTextureSize.x - (fTexInterval + fTexOutlineThickness), (vLocalPos.x - fInGameInterval - fInGameOutlineThickness) / (vSize.x - fInGameInterval * 2.f - fInGameOutlineThickness * 2.f)) / vTextureSize.x;
+	else if (vLocalPos.x > vSize.x - fInGameBlendInterval - fInGameOutlineThickness)
+	{
+        vTexCoord.x = lerp(vTextureSize.x - fTexBlendInterval - fTexOutlineThickness - fTexInterval, vTextureSize.x - fTexBlendInterval - fTexInterval, 1.f - (vSize.x - vLocalPos.x - fInGameBlendInterval) / fInGameOutlineThickness);
     }
-	
-	if (vLocalPos.y < fInGameInterval)
-    {
-		vTexCoord.y = lerp(0, fTexInterval, vLocalPos.y / fInGameInterval) / vTextureSize.y;
-    }
-	else if(vLocalPos.y < fInGameInterval + fInGameOutlineThickness)
-    {
-		vTexCoord.y = lerp(fTexInterval, fTexInterval + fTexOutlineThickness, (vLocalPos.y - fInGameInterval) / fInGameOutlineThickness) / vTextureSize.y;
-    }
-	else if (vLocalPos.y < fInGameInterval + fInGameBoundHeight)
-    {
-        vTexCoord.y = lerp(fTexInterval + fTexOutlineThickness, fTexInterval + fTexBoundHeight, (vLocalPos.y - fInGameInterval - fInGameOutlineThickness) / (fInGameBoundHeight - fInGameOutlineThickness)) / vTextureSize.y;
-    }
-    else if (vLocalPos.y > vSize.y - fInGameInterval)
-    {
-        vTexCoord.y = lerp(vTextureSize.y - fTexInterval, vTextureSize.y, 1.f - (vSize.y - vLocalPos.y) / fInGameInterval) / vTextureSize.y;
-    }
-    else if (vLocalPos.y > vSize.y - fInGameInterval - fInGameOutlineThickness)
-    {
-        vTexCoord.y = lerp(vTextureSize.y - (fTexInterval + fTexOutlineThickness), vTextureSize.y - fTexInterval, 1.f - (vSize.y - vLocalPos.y - fInGameInterval) / fInGameOutlineThickness) / vTextureSize.y;
-    }
-    else if (vLocalPos.y > vSize.y - fInGameInterval - fInGameBoundHeight)
-    {
-        vTexCoord.y = lerp(vTextureSize.y - (fTexInterval + fTexBoundHeight), vTextureSize.y - (fTexInterval + fTexOutlineThickness), 1.f - (vSize.y - vLocalPos.y - fInGameInterval - fInGameOutlineThickness) / (fInGameBoundHeight - fInGameOutlineThickness)) / vTextureSize.y;
+	else if (vLocalPos.x > vSize.x - fInGameBlendInterval * 2.f - fInGameOutlineThickness)
+	{
+        vTexCoord.x = lerp(vTextureSize.x - fTexBlendInterval * 2.f - fTexOutlineThickness - fTexInterval, vTextureSize.x - fTexBlendInterval - fTexOutlineThickness - fTexInterval, 1.f - (vSize.x - vLocalPos.x - fInGameBlendInterval - fInGameOutlineThickness) / fInGameBlendInterval);
     }
 	else
     {
-		vTexCoord.y = lerp(fTexInterval + fTexBoundHeight, vTextureSize.y - (fTexInterval + fTexBoundHeight), (vLocalPos.y - fInGameInterval - fInGameBoundHeight) / (vSize.y - fInGameInterval * 2.f - fInGameBoundHeight * 2.f)) / vTextureSize.y;
+        vTexCoord.x = lerp(fTexInterval + fTexBlendInterval * 2.f + fTexOutlineThickness, vTextureSize.x - fTexBlendInterval * 2.f - fTexOutlineThickness - fTexInterval, (vLocalPos.x - fInGameBlendInterval * 2.f - fInGameOutlineThickness) / (vSize.x - (fInGameBlendInterval * 2.f + fInGameOutlineThickness) * 2.f));
     }
 	
-	Out.vColor	= g_texDiffuse[0].Sample(LinearSampler, vTexCoord);
-	
-	if (Out.vColor.a < 1.f)
+	if (vLocalPos.y < fInGameBlendInterval)
 	{
-		discard;	// Temp
-	}
+        vTexCoord.y = lerp(fTexInterval, fTexInterval + fTexBlendInterval, vLocalPos.y / fInGameBlendInterval);
+    }
+	else if (vLocalPos.y > vSize.y - fInGameBlendInterval)
+	{
+        vTexCoord.y = lerp(vTextureSize.y - fTexBlendInterval - fTexInterval, vTextureSize.y - fTexInterval, 1.f - (vSize.y - vLocalPos.y) / fInGameBlendInterval);
+    }
+	else if (vLocalPos.y < fInGameBlendInterval + fInGameOutlineThickness)
+	{
+        vTexCoord.y = lerp(fTexInterval + fTexBlendInterval, fTexInterval + fTexBlendInterval + fTexOutlineThickness, (vLocalPos.y - fInGameBlendInterval) / fInGameOutlineThickness);
+    }
+	else if (vLocalPos.y > vSize.y - fInGameBlendInterval - fInGameOutlineThickness)
+	{
+        vTexCoord.y = lerp(vTextureSize.y - fTexBlendInterval - fTexOutlineThickness - fTexInterval, vTextureSize.y - fTexBlendInterval - fTexInterval, 1.f - (vSize.y - vLocalPos.y - fInGameBlendInterval) / fInGameOutlineThickness);
+    }
+	else if (vLocalPos.y < fInGameBlendInterval * 2.f + fInGameOutlineThickness)
+	{
+        vTexCoord.y = lerp(fTexInterval + fTexBlendInterval + fTexInterval + fTexOutlineThickness, fTexBlendInterval * 2.f + fTexOutlineThickness, (vLocalPos.y - fInGameBlendInterval - fInGameOutlineThickness) / fInGameBlendInterval);
+    }
+	else if (vLocalPos.y > vSize.y - fInGameBlendInterval * 2.f - fInGameOutlineThickness)
+	{
+        vTexCoord.y = lerp(vTextureSize.y - fTexBlendInterval * 2.f - fTexOutlineThickness - fTexInterval, vTextureSize.y - fTexBlendInterval - fTexOutlineThickness - fTexInterval, 1.f - (vSize.y - vLocalPos.y - fInGameBlendInterval - fInGameOutlineThickness) / fInGameBlendInterval);
+    }
+	else if (vLocalPos.y < fInGameBlendInterval + fInGameBoundHeight)
+	{
+        vTexCoord.y = lerp(fTexInterval + fTexBlendInterval * 2.f + fTexOutlineThickness, fTexInterval + fTexBlendInterval + fTexBoundHeight, (vLocalPos.y - fInGameBlendInterval * 2.f - fInGameOutlineThickness) / (fInGameBoundHeight - fInGameOutlineThickness - fInGameBlendInterval));
+    }
+	else if (vLocalPos.y > vSize.y - fInGameBlendInterval - fInGameBoundHeight)
+	{
+        vTexCoord.y = lerp(vTextureSize.y - fTexBlendInterval - fTexBoundHeight - fTexInterval, vTextureSize.y - fTexBlendInterval * 2.f - fTexOutlineThickness - fTexInterval, 1.f - (vSize.y - vLocalPos.y - fInGameBlendInterval * 2.f - fInGameOutlineThickness) / (fInGameBoundHeight - fInGameOutlineThickness - fInGameBlendInterval));
+    }
+	else
+	{
+        vTexCoord.y = lerp(fTexInterval + fTexBlendInterval + fTexBoundHeight, vTextureSize.y - fTexBlendInterval - fTexBoundHeight - fTexInterval, (vLocalPos.y - fInGameBlendInterval * 2.f - fInGameBoundHeight) / (vSize.y - (fInGameBlendInterval + fInGameBoundHeight) * 2.f));
+    }
+	
+	Out.vColor	=	g_texDiffuse[0].Sample(LinearSampler, vTexCoord / vTextureSize);
+	Out.vColor	*=	g_vMtrlDiffuse;
 	
 	return Out;
 }
@@ -180,45 +189,46 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_BRACKET(PS_IN_ORTHOGRAPHIC In)
 	
 	if (vLocalPos.x < fInGameThickness)
 	{
-		vTexCoord.x = lerp(fTexInterval, fTexInterval + fTexLineThickness, vLocalPos.x / fInGameThickness) / vTextureSize.x;
+		vTexCoord.x = lerp(fTexInterval, fTexInterval + fTexLineThickness, vLocalPos.x / fInGameThickness);
 	}
 	else if (vLocalPos.x < fInGameLineWidth)
 	{
-		vTexCoord.x = lerp(fTexInterval + fTexLineThickness, fTexInterval + fTexLineWidth, (vLocalPos.x - fInGameThickness) / (fInGameLineWidth - fInGameThickness)) / vTextureSize.x;
+		vTexCoord.x = lerp(fTexInterval + fTexLineThickness, fTexInterval + fTexLineWidth, (vLocalPos.x - fInGameThickness) / (fInGameLineWidth - fInGameThickness));
 	}
 	else if (vLocalPos.x > vSize.x - fInGameThickness)
 	{
-		vTexCoord.x = lerp(vTextureSize.x - (fTexInterval + fTexLineThickness), vTextureSize.x - fTexInterval, 1.f - (vSize.x - vLocalPos.x) / fInGameThickness) / vTextureSize.x;
+		vTexCoord.x = lerp(vTextureSize.x - (fTexInterval + fTexLineThickness), vTextureSize.x - fTexInterval, 1.f - (vSize.x - vLocalPos.x) / fInGameThickness);
 	}
 	else if (vLocalPos.x > vSize.x - fInGameLineWidth)
 	{
-        vTexCoord.x = lerp(vTextureSize.x - (fTexInterval + fTexLineWidth), vTextureSize.x - (fTexInterval + fTexLineThickness), 1.f - (vSize.x - vLocalPos.x - fInGameThickness) / (fInGameLineWidth - fInGameThickness)) / vTextureSize.x;
-    }
+		vTexCoord.x = lerp(vTextureSize.x - (fTexInterval + fTexLineWidth), vTextureSize.x - (fTexInterval + fTexLineThickness), 1.f - (vSize.x - vLocalPos.x - fInGameThickness) / (fInGameLineWidth - fInGameThickness));
+	}
 	else
 	{
-		vTexCoord.x = lerp(fTexInterval + fTexLineWidth, vTextureSize.x - (fTexInterval + fTexLineWidth), (vLocalPos.x - fInGameLineWidth) / (vSize.x - fInGameLineWidth * 2.f)) / vTextureSize.x;
+		vTexCoord.x = lerp(fTexInterval + fTexLineWidth, vTextureSize.x - (fTexInterval + fTexLineWidth), (vLocalPos.x - fInGameLineWidth) / (vSize.x - fInGameLineWidth * 2.f));
 	}
 	
 	if (vLocalPos.y < fInGameThickness)
-    {
-		vTexCoord.y = lerp(fTexInterval, fTexInterval + fTexLineThickness, vLocalPos.y / fInGameThickness) / vTextureSize.y;
-    }
+	{
+		vTexCoord.y = lerp(fTexInterval, fTexInterval + fTexLineThickness, vLocalPos.y / fInGameThickness);
+	}
 	else if (vLocalPos.y > vSize.y - fInGameThickness)
-    {
-		vTexCoord.y = lerp(vTextureSize.y - (fTexInterval + fTexLineThickness), vTextureSize.y - fTexInterval, 1.f - (vSize.y - vLocalPos.y) / fInGameThickness) / vTextureSize.y;
-    }
+	{
+		vTexCoord.y = lerp(vTextureSize.y - (fTexInterval + fTexLineThickness), vTextureSize.y - fTexInterval, 1.f - (vSize.y - vLocalPos.y) / fInGameThickness);
+	}
 	else
-    {
-		vTexCoord.y = lerp(fTexInterval + fTexLineThickness, vTextureSize.y - (fTexInterval + fTexLineThickness), (vLocalPos.y - fInGameThickness) / (vSize.y - fInGameThickness * 2.f)) / vTextureSize.y;
-    }
+	{
+		vTexCoord.y = lerp(fTexInterval + fTexLineThickness, vTextureSize.y - (fTexInterval + fTexLineThickness), (vLocalPos.y - fInGameThickness) / (vSize.y - fInGameThickness * 2.f));
+	}
 	
-	Out.vColor = g_texDiffuse[0].Sample(LinearSampler, vTexCoord);
+	Out.vColor	=	g_texDiffuse[0].Sample(LinearSampler, vTexCoord / vTextureSize);
+	Out.vColor	*=	g_vMtrlDiffuse;
 	
 	if (Out.vColor.a < 1.f)
 	{
 		discard;	// Temp
 	}
-	
+		
 	return Out;
 }
 
@@ -238,33 +248,34 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_NIBS(PS_IN_ORTHOGRAPHIC In)
 	
 	float2	vTexCoord;
 	
-    if (vLocalPos.x < vInGameNibSize.x)
+	if (vLocalPos.x < vInGameNibSize.x)
 	{
-        vTexCoord.x = lerp(vTexInterval.x, vTexInterval.x + vTexNibSize.x, vLocalPos.x / vInGameNibSize.x) / vTextureSize.x;
-    }
-    else if (vLocalPos.x > vSize.x - vInGameNibSize.x)
+		vTexCoord.x = lerp(vTexInterval.x, vTexInterval.x + vTexNibSize.x, vLocalPos.x / vInGameNibSize.x);
+	}
+	else if (vLocalPos.x > vSize.x - vInGameNibSize.x)
 	{
-        vTexCoord.x = lerp(vTextureSize.x - (vTexInterval.x + vTexNibSize.x), vTextureSize.x - vTexInterval.x, 1.f - (vSize.x - vLocalPos.x) / vInGameNibSize.x) / vTextureSize.x;
-    }
+		vTexCoord.x = lerp(vTextureSize.x - (vTexInterval.x + vTexNibSize.x), vTextureSize.x - vTexInterval.x, 1.f - (vSize.x - vLocalPos.x) / vInGameNibSize.x);
+	}
 	else
 	{
-        vTexCoord.x = lerp(vTexInterval.x + vTexNibSize.x, vTextureSize.x - (vTexInterval.x + vTexNibSize.x), (vLocalPos.x - vInGameNibSize.x) / (vSize.x - vInGameNibSize.x * 2.f)) / vTextureSize.x;
-    }
+		vTexCoord.x = lerp(vTexInterval.x + vTexNibSize.x, vTextureSize.x - (vTexInterval.x + vTexNibSize.x), (vLocalPos.x - vInGameNibSize.x) / (vSize.x - vInGameNibSize.x * 2.f));
+	}
 	
-    if (vLocalPos.y < vInGameNibSize.y)
-    {
-        vTexCoord.y = lerp(vTexInterval.y, vTexInterval.y + vTexNibSize.y, vLocalPos.y / vInGameNibSize.y) / vTextureSize.y;
-    }
-    else if (vLocalPos.y > vSize.y - vInGameNibSize.y)
-    {
-        vTexCoord.y = lerp(vTextureSize.y - (vTexInterval.y + vTexNibSize.y), vTextureSize.y - vTexInterval.y, 1.f - (vSize.y - vLocalPos.y) / vInGameNibSize.y) / vTextureSize.y;
-    }
+	if (vLocalPos.y < vInGameNibSize.y)
+	{
+		vTexCoord.y = lerp(vTexInterval.y, vTexInterval.y + vTexNibSize.y, vLocalPos.y / vInGameNibSize.y);
+	}
+	else if (vLocalPos.y > vSize.y - vInGameNibSize.y)
+	{
+		vTexCoord.y = lerp(vTextureSize.y - (vTexInterval.y + vTexNibSize.y), vTextureSize.y - vTexInterval.y, 1.f - (vSize.y - vLocalPos.y) / vInGameNibSize.y);
+	}
 	else
-    {
-        vTexCoord.y = lerp(vTexInterval.y + vTexNibSize.y, vTextureSize.y - (vTexInterval.y + vTexNibSize.y), (vLocalPos.y - vInGameNibSize.y) / (vSize.y - vInGameNibSize.y * 2.f)) / vTextureSize.y;
-    }
+	{
+		vTexCoord.y = lerp(vTexInterval.y + vTexNibSize.y, vTextureSize.y - (vTexInterval.y + vTexNibSize.y), (vLocalPos.y - vInGameNibSize.y) / (vSize.y - vInGameNibSize.y * 2.f));
+	}
 	
-	Out.vColor = g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
+	Out.vColor	=	g_texDiffuse[1].Sample(LinearSampler, vTexCoord / vTextureSize);
+	Out.vColor	*=	g_vMtrlDiffuse;
 	
 	if (Out.vColor.a < 1.f)
 	{
@@ -276,20 +287,29 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_NIBS(PS_IN_ORTHOGRAPHIC In)
 
 PS_OUT PS_RAILGUNNER_CROSSHAIR_SCOPE(PS_IN_ORTHOGRAPHIC In)
 {
+	// Render Target
+	// 0. Pure Camera Sight
+	// 1. 
+	// Crosshair	: Base-Black, Alpha-Over Black
+	// Scope		: Base-Black, Alpha-Over Black
+	// Outline		: Base-Black, Alpha-Over Yellow, TexCoord-x1.5(CenterBase)
+	// Background	: Base-Black, Alpha-Over Yellow, TexCoord-x2.0(CenterBase)
+	
 	PS_OUT	Out;
 	
 	float2	vTexCoord = In.vTexCoord * 2.f - 1.f;
 	
 	if (In.vLocalPos.x < 0.f)
-    {
-        vTexCoord.x *= -1.f;
-    }
+	{
+		vTexCoord.x *= -1.f;
+	}
 	if (In.vLocalPos.y < 0.f)
-    {
-        vTexCoord.y *= -1.f;
-    }
+	{
+		vTexCoord.y *= -1.f;
+	}
 	
-    Out.vColor = g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
+	Out.vColor	=	g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
+	Out.vColor	*=	g_vMtrlDiffuse;
 	
 	return Out;
 }
@@ -303,6 +323,10 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_MAIN();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
 	pass Orthographic
@@ -312,6 +336,10 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_MAIN();
+
+		SetRasterizerState(RS_Default);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
 	pass RailGunner_Crosshair_Bounds
@@ -321,6 +349,10 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_BOUNDS();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
 	pass RailGunner_Crosshair_Bracket
@@ -330,6 +362,10 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_BRACKET();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
 	pass RailGunner_Crosshair_Nibs
@@ -339,14 +375,22 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_NIBS();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
 	}
 
-    pass RailGunner_Crosshair_Scope
-    {
-        VertexShader	= compile vs_5_0 VS_ORTHOGRAPHIC();
-        GeometryShader	= NULL;
-        HullShader		= NULL;
-        DomainShader	= NULL;
-        PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_SCOPE();
-    }
+	pass RailGunner_Crosshair_Scope
+	{
+		VertexShader	= compile vs_5_0 VS_ORTHOGRAPHIC();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_SCOPE();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+	}
 }

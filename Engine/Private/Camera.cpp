@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Camera.h"
 #include "PipeLine.h"
+#include "Event_Handler.h"
 #include "Component_Manager.h"
 #include "Behavior_Manager.h"
 
@@ -14,11 +15,10 @@ CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCo
 
 HRESULT CCamera::Initialize(any _arg)
 {
-	auto arg = any_cast<CAMERA_DESC>(_arg);
-
-	m_tCameraDesc = arg;
-
 	m_bitComponent |= BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::RENDERER);
+
+	m_tCameraDesc		= any_cast<CAMERA_DESC>(_arg);
+	m_fTargetFovAngleY	= m_tCameraDesc.fFovAngleY;
 	
 	if (FAILED(__super::Initialize()))
 	{
@@ -86,4 +86,56 @@ HRESULT CCamera::Ready_Components()
 	}
 
 	return S_OK;
+}
+
+void CCamera::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight)
+{
+	m_fTargetFovAngleY = _fRadian;
+
+	if (!_fDuration)
+	{
+		m_mProjection = XMMatrixPerspectiveFovLH(m_fTargetFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+	}
+	else
+	{
+		_float fAcc(0.f);
+		CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+			[=](_float _fTimeDelta) mutable->_bool
+			{
+				if (fAcc < 1.f)
+				{
+					fAcc += _fTimeDelta / _fDuration;
+					m_mProjection = XMMatrixPerspectiveFovLH(
+						Function::Lerp(m_tCameraDesc.fFovAngleY, m_fTargetFovAngleY, fAcc, _fWeight), m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+				}
+
+				return !(fAcc >= 1.f);
+			}
+		);
+	}
+}
+
+void CCamera::Release_FOV(_float _fDuration, _float _fWeight)
+{
+	if (!_fDuration)
+	{
+		m_mProjection = XMMatrixPerspectiveFovLH(m_tCameraDesc.fFovAngleY, m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+	}
+	else
+	{
+		_float fAcc(0.f);
+		CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+			[=](_float _fTimeDelta) mutable->_bool
+			{
+				if (fAcc < 1.f)
+				{
+					fAcc += _fTimeDelta / _fDuration;
+					m_mProjection = XMMatrixPerspectiveFovLH(
+						Function::Lerp(m_fTargetFovAngleY, m_tCameraDesc.fFovAngleY, fAcc, _fWeight), m_tCameraDesc.fAspect, m_tCameraDesc.fNear, m_tCameraDesc.fFar);
+				}
+
+				return !(fAcc >= 1.f);
+			}
+		);
+	}
 }
