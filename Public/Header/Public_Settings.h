@@ -2,8 +2,8 @@
 
 #pragma region INGAME - Camera
 
-#define MAINCAM_SENSITIVITY_PITCH		75.0f
-#define MAINCAM_SENSITIVITY_YAW			50.0f
+#define MAINCAM_SENSITIVITY_PITCH		50.0f
+#define MAINCAM_SENSITIVITY_YAW			25.0f
 
 #define MAINCAM_PITCH_MIN				-90.0f
 #define MAINCAM_PITCH_MAX				+90.0f
@@ -28,7 +28,11 @@
 #define CONTROL_LEFT					'A'
 #define CONTROL_BACKWARD				'S'
 #define CONTROL_RIGHT					'D'
-#define CONTROL_SPRINT					VK_SHIFT
 #define CONTROL_JUMP					VK_SPACE
+#define CONTROL_SPRINT					VK_CONTROL
+#define CONTROL_ATTACK1					VK_LBUTTON
+#define CONTROL_ATTACK2					VK_RBUTTON
+#define CONTROL_UTILITY					VK_SHIFT
+#define CONTROL_SPECIAL					'R'
 
-#pragma endregion
+#pragma endregion 

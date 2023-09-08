@@ -2,6 +2,7 @@
 #include "RailGunner.h"
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
+#include "Control_RailGunner.h"
 #include "RailGunner_Crosshair.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -45,16 +46,15 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 HRESULT CRailGunner::Initialize(any)
 {
+	m_pCrosshair = dynamic_pointer_cast<CRailGunner_Crosshair>(CGameInstance::Get_Instance()->Clone_GameObject(
+		CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR));
+
 	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
 	}
 
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
-
-	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(IDX(ANIMATION::PLAYER::IDLE::IDLE));
-
-	m_pCrosshair = dynamic_pointer_cast<CRailGunner_Crosshair>(CGameInstance::Get_Instance()->Clone_GameObject(CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR));
 
 	return S_OK;
 }
@@ -135,6 +135,28 @@ HRESULT CRailGunner::Ready_Components()
 	}
 
 	return S_OK;
+}
+
+HRESULT CRailGunner::Ready_Behaviors()
+{
+	if (FAILED(__super::Ready_Behaviors()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
+	}
+
+	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_this(), m_pCrosshair, &m_tCharacterDesc));
+
+	return S_OK;
+}
+
+void CRailGunner::Set_State(STATE _eState, const _bool _bState)
+{
+	m_bitPlayerState.set(IDX(_eState), _bState);
+}
+
+_bool CRailGunner::Check_State(STATE _eState) const
+{
+	return m_bitPlayerState.test(IDX(_eState));
 }
 
 shared_ptr<CRailGunner> CRailGunner::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

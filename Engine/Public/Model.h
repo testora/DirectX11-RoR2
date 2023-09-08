@@ -30,7 +30,11 @@ private:
 #endif
 
 public:
-	_uint									Get_BoneIndex(const _char* szBoneName);
+	_bool									Is_AnimationFinished() const;
+
+	_uint									Get_AnimationIndex() const			{ return m_iCurrentAnimationIndex; }
+
+	_uint									Get_BoneIndex(const _char* szBoneName) const;
 #if ACTIVATE_TOOL
 	const _uint								Get_NumBones() const				{ return m_iNumBones; }
 	const _uint								Get_NumAnimations() const			{ return m_iNumAnimations; }

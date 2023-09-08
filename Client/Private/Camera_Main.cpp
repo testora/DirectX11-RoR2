@@ -23,7 +23,7 @@ HRESULT CCamera_Main::Initialize(any _desc)
 		m_tCameraMainDesc.tCameraDesc.eType			= CCamera::TYPE::PERSPECTIVE;
 
 		m_tCameraMainDesc.tCameraDesc.vEye			= _float4(0.f, 10.f, 0.f, 1.f);
-		m_tCameraMainDesc.tCameraDesc.vAt			= _float4(0.f, 0.f, 0.f, 1.f);
+		m_tCameraMainDesc.tCameraDesc.vAt			= _float4(0.f, 0.f, 0.f, 0.f);
 
 		m_tCameraMainDesc.tCameraDesc.fFovAngleY	= XMConvertToRadians(60.f);
 		m_tCameraMainDesc.tCameraDesc.fAspect		= static_cast<_float>(g_iWinCX) / static_cast<_float>(g_iWinCY);
@@ -38,6 +38,7 @@ HRESULT CCamera_Main::Initialize(any _desc)
 	}
 
 	CGameInstance::Get_Instance()->Fix_Cursor();
+	m_pPipeLine->Set_Camera(static_pointer_cast<CCamera>(shared_from_this()));
 
 	return S_OK;
 }
@@ -46,14 +47,12 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
+	Handle_MouseInput(_fTimeDelta);
+
 	if (nullptr != m_pTargetTransform)
 	{
-	//	m_pTransform->Set_Matrix(m_vOffset * m_pTargetTransform->Get_Matrix());
 		Smooth_Tranformation(_fTimeDelta);
 	}
-
-	Debug_MouseControl(_fTimeDelta);
-	Debug_KeyControl(_fTimeDelta);
 }
 
 void CCamera_Main::Late_Tick(_float _fTimeDelta)
@@ -87,7 +86,7 @@ HRESULT CCamera_Main::Render()
 	return S_OK;
 }
 
-HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _float4x4 _mOffset)
+HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _float4 _vOffset)
 {
 	if (nullptr == _pTargetTransform)
 	{
@@ -95,9 +94,41 @@ HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _fl
 	}
 
 	m_pTargetTransform	= _pTargetTransform;
-	m_mOffset			= _mOffset;
+	m_vMainOffset		= _vOffset;
 
 	return S_OK;
+}
+
+void CCamera_Main::Rebound_Pistol()
+{
+	_float fAcc(0.f);
+	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fAcc < 0.5f)
+			{
+				fAcc += _fTimeDelta / RAILGUNNER_MAIN_ATTACK_COOL;
+				m_vShakeAxis = Function::Lerp(_float3(0.f, 1.f, 0.f), _float3(0.05f, 1.f, -0.05f), Function::Clamp(0.f, 1.f, fAcc));
+
+				m_pTransform->Set_State(TRANSFORM::UP, m_vShakeAxis);
+
+				return true;
+			}
+			else if (fAcc < 1.f)
+			{
+				fAcc += _fTimeDelta / RAILGUNNER_MAIN_ATTACK_COOL;
+				m_vShakeAxis = Function::Lerp(_float3(0.05f, 1.f, -0.05f), _float3(0.f, 1.f, 0.f), Function::Clamp(0.f, 1.f, fAcc));
+
+				m_pTransform->Set_State(TRANSFORM::UP, m_vShakeAxis);
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	);
 }
 
 void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight)
@@ -108,6 +139,32 @@ void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeigh
 void CCamera_Main::Release_FOV(_float _fDuration, _float _fWeight)
 {
 	__super::Release_FOV(_fDuration, _fWeight);
+}
+
+void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
+{
+	POINT ptCursorMove{};
+
+	if (!CGameInstance::Get_Instance()->Is_CursorOn())
+	{
+		ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
+	}
+
+	if (ptCursorMove.x)
+	{
+		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), MAINCAM_SENSITIVITY_YAW * ptCursorMove.x * _fTimeDelta);
+	}
+
+	if (ptCursorMove.y)
+	{
+		_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
+		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
+		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
+		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
+		_float	fFinal		= fNewPitch - fCurPitch;
+
+		m_pTransform->Rotate(m_pTransform->Get_State(TRANSFORM::RIGHT), fFinal);
+	}
 }
 
 void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
@@ -178,7 +235,11 @@ void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
 
 void CCamera_Main::Smooth_Tranformation(_float _fTimeDelta)
 {
-	m_pTransform->Set_Matrix(Function::Lerp(m_pTransform->Get_Matrix(), m_mOffset * m_pTargetTransform->Get_Matrix(), 1.f, false, true, true));
+	_float3 vLook	= m_pTransform->Get_State(TRANSFORM::LOOK).normalize();
+	_float3 vOffset	= XMVector3Rotate(_float3(m_vMainOffset.x, 0.f, m_vMainOffset.z), QuaternionBetweenAxis(_float3(0.f, 0.f, 1.f), vLook));
+
+	m_pTransform->Set_State(TRANSFORM::POSITION, Function::Lerp(m_pTransform->Get_State(TRANSFORM::POSITION),
+		_float3(m_pTargetTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, m_vMainOffset.y, 0.f)) + vOffset, 0.5f));
 }
 
 shared_ptr<CCamera_Main> CCamera_Main::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

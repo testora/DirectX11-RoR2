@@ -161,6 +161,9 @@ namespace DirectX
 
 		XMVECTOR vCross	= XMVector3Cross(vAxisA, vAxisB);
 		_float fDot		= XMVectorGetX(XMVector3Dot(vAxisA, vAxisB));
+		
+		if (fDot > 1.f)		fDot = 1.f;
+		if (fDot < -1.f)	fDot = -1.f;
 
 		if (XMVector3Equal(vCross, XMVectorZero()))
 		{

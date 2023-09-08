@@ -21,9 +21,9 @@ public:
 	void				Tick();
 
 public:
-	_bool				Key_Down(_uint _iKey)				{ return KEY_STATE::DOWN == m_vecKey[_iKey].eKeyState; }
-	_bool				Key_Hold(_uint _iKey)				{ return KEY_STATE::HOLD == m_vecKey[_iKey].eKeyState; }
-	_bool				Key_Up(_uint _iKey)					{ return KEY_STATE::UP == m_vecKey[_iKey].eKeyState; }
+	_bool				Key_Down(_uint _iKey)				{ return KEY_STATE::DOWN	== m_vecKey[_iKey].eKeyState; }
+	_bool				Key_Hold(_uint _iKey)				{ return KEY_STATE::HOLD	== m_vecKey[_iKey].eKeyState; }
+	_bool				Key_Up(_uint _iKey)					{ return KEY_STATE::UP		== m_vecKey[_iKey].eKeyState; }
 
 	_bool				Key_Down();
 	_bool				Key_Hold();

@@ -35,6 +35,7 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\Control_RailGunner.h" />
     <ClInclude Include="Public\Client_Variable.h" />
     <ClInclude Include="Public\Background.h" />
     <ClInclude Include="Public\Camera_Main.h" />
@@ -51,6 +52,7 @@
     <ClInclude Include="Public\Loader_Test.h" />
     <ClInclude Include="Public\MainApp.h" />
     <ClInclude Include="Public\ClientPCH.h" />
+    <ClInclude Include="Public\Client_Animation.h" />
     <ClInclude Include="Public\Scene_Load.h" />
     <ClInclude Include="Public\Scene_Menu.h" />
     <ClInclude Include="Public\Scene_Test.h" />
@@ -61,6 +63,8 @@
     <ClInclude Include="Public\Scene_Tool.h" />
     <ClInclude Include="Public\Tool_Define.h" />
     <ClInclude Include="Public\RailGunner_Crosshair.h" />
+    <ClInclude Include="Public\RailGunner_Bullet.h" />
+    <ClInclude Include="Public\RailGunner_PistolBullet.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -125,6 +129,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\Control_RailGunner.cpp" />
     <ClCompile Include="Private\Background.cpp" />
     <ClCompile Include="Private\Camera_Main.cpp" />
     <ClCompile Include="Default\Client.cpp" />
@@ -145,6 +150,8 @@
     <ClCompile Include="Private\GolemPlains.cpp" />
     <ClCompile Include="Private\Scene_Tool.cpp" />
     <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
+    <ClCompile Include="Private\RailGunner_Bullet.cpp" />
+    <ClCompile Include="Private\RailGunner_PistolBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

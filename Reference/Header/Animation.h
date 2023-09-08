@@ -17,13 +17,13 @@ public:
 	HRESULT								Initialize_FromBinary(std::ifstream&);
 	void								Tick(_float fTimeDelta, vector<shared_ptr<class CBone>>::iterator itBegin, _bool bLoop = true);
 
-private:
-
 public:
+	_bool								Is_Finished() const	{ return m_fTrackPosition > m_fDuration; }
+
 	const _char*						Get_Name() const	{ return m_szName; }
 
 private:
-	_char								m_szName[MAX_PATH] = "";
+	_char								m_szName[MAX_PATH]	= "";
 
 	_float								m_fDuration			= 0.f;
 	_float								m_fTicksPerSecond	= 0.f;

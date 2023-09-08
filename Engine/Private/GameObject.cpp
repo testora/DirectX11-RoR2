@@ -262,7 +262,6 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 		break;
 
 	case BEHAVIOR::CONTROL:
-		m_umapBehavior.emplace(_eBehavior, CControl::Create(shared_from_this(), &m_tCharacterDesc));
 		break;
 
 	default:

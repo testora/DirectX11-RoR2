@@ -58,7 +58,8 @@ _bool CKey_Manager::Key_Down()
 		||	i == VK_RBUTTON
 		||	i == VK_MBUTTON
 		||	i == VK_XBUTTON1
-		||	i == VK_XBUTTON2)
+		||	i == VK_XBUTTON2
+		||	i == VK_FINAL)
 		{
 			continue;
 		}
@@ -80,7 +81,8 @@ _bool CKey_Manager::Key_Hold()
 		||	i == VK_RBUTTON
 		||	i == VK_MBUTTON
 		||	i == VK_XBUTTON1
-		||	i == VK_XBUTTON2)
+		||	i == VK_XBUTTON2
+		||	i == VK_FINAL)
 		{
 			continue;
 		}
@@ -102,7 +104,8 @@ _bool CKey_Manager::Key_Up()
 		||	i == VK_RBUTTON
 		||	i == VK_MBUTTON
 		||	i == VK_XBUTTON1
-		||	i == VK_XBUTTON2)
+		||	i == VK_XBUTTON2
+		||	i == VK_FINAL)
 		{
 			continue;
 		}

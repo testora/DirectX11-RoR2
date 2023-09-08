@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "RailGunner_Crosshair.h"
 #include "GameInstance.h"
+#include "Camera_Main.h"
 
 #define MAIN_INBOUND_SCALE			_float3(_float3(384.f, 128.f, 1.f) + _float3(7.f, 7.f, 0.f))
 #define MAIN_OUTBOUND_SCALE			_float3(MAIN_INBOUND_SCALE + _float3(8.f, 8.f, 0.f))
@@ -70,6 +71,9 @@ HRESULT CRailGunner_Crosshair::Initialize_Prototype()
 #pragma endregion
 #pragma region Transform
 
+	m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(MAIN_BRACKET_SCALE);
+	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(MAIN_NIB_SCALE);
+
 	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
 
 	m_pTransform[IDX(ELEMENT::SCOPE_SCOPE)]->Set_Scale(_float3(static_cast<_float>(g_iWinCX), static_cast<_float>(g_iWinCY), 1.f));
@@ -124,9 +128,11 @@ HRESULT CRailGunner_Crosshair::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to __super::Initialize");
 	}
 
+	Change_State(CROSSHAIR::MAIN);
+
 	return S_OK;
+
 }
-#include "Camera_Main.h"
 void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 {
 	if (m_bitElement.test(IDX(ELEMENT::MAIN_FLAVOR)))
@@ -142,17 +148,17 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Down('9'))
 	{
-		Change_State(STATE::MAIN);
+		Change_State(CROSSHAIR::MAIN);
 	}
 	
 	if (CGameInstance::Get_Instance()->Key_Down('8'))
 	{
-		Change_State(STATE::SPRINT);
+		Change_State(CROSSHAIR::SPRINT);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('7'))
 	{
-		Change_State(STATE::SCOPE);
+		Change_State(CROSSHAIR::SCOPE);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('6'))
@@ -162,42 +168,12 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Down('5'))
 	{
-		Change_State(STATE::RELOAD);
+		Change_State(CROSSHAIR::RELOAD);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('4'))
 	{
 		m_bHitTag = true;
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('0'))
-	{
-		CGameInstance::Get_Instance()->Find_Layer(CGameInstance::Get_Instance()->Current_Scene(), SCENE_TEST_LAYER_CAMERA)->Iterate_Objects(
-			[=](shared_ptr<CGameObject> _pObject)->_bool
-			{
-				if (shared_ptr<CCamera_Main> pMainCam = dynamic_pointer_cast<CCamera_Main>(_pObject))
-				{
-					pMainCam->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
-				}
-
-				return false;
-			}
-		);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Up('0'))
-	{
-		CGameInstance::Get_Instance()->Find_Layer(CGameInstance::Get_Instance()->Current_Scene(), SCENE_TEST_LAYER_CAMERA)->Iterate_Objects(
-			[=](shared_ptr<CGameObject> _pObject)->_bool
-			{
-				if (shared_ptr<CCamera_Main> pMainCam = dynamic_pointer_cast<CCamera_Main>(_pObject))
-				{
-					pMainCam->Release_FOV(RAILGUNNER_SCOPE_ZOOM_OUT_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
-				}
-
-				return false;
-			}
-		);
 	}
 }
 
@@ -368,7 +344,7 @@ HRESULT CRailGunner_Crosshair::Render()
 	return S_OK;
 }
 
-void CRailGunner_Crosshair::Change_State(const STATE _eState)
+void CRailGunner_Crosshair::Change_State(const CROSSHAIR _eState)
 {
 	if (m_eState == _eState)
 	{
@@ -377,43 +353,77 @@ void CRailGunner_Crosshair::Change_State(const STATE _eState)
 
 	m_bitElement.reset();
 
+	if (CROSSHAIR::SCOPE == m_eState && CROSSHAIR::SCOPE != _eState)
+	{
+		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Release_FOV();
+	}
+
 	switch (_eState)
 	{
-	case STATE::MAIN:
+	case CROSSHAIR::MAIN:
 		Visualize_Main();
-		if (m_eState != STATE::RELOAD)
+		if (CROSSHAIR::RELOAD != m_eState)
 		{
 			Visualize_Bracket();
 		}
+		Visualize_Flavor();
 		break;
 
-	case STATE::SCOPE:
+	case CROSSHAIR::SCOPE:
+		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
 		Visualize_Scope();
 		break;
 
-	case STATE::SUPER_CHARGE:
+	case CROSSHAIR::SUPER_CHARGE:
 
 		break;
 
-	case STATE::SUPER_READY:
+	case CROSSHAIR::SUPER_READY:
 
 		break;
 
-	case STATE::SUPER_REBOOT:
+	case CROSSHAIR::SUPER_REBOOT:
 
 		break;
 
-	case STATE::RELOAD:
+	case CROSSHAIR::RELOAD:
 		Visualize_Reload();
 		Visualize_Bracket();
 		break;
 
-	case STATE::SPRINT:
+	case CROSSHAIR::SPRINT:
 		Visualize_Sprint();
 		break;
 	}
 
 	m_eState = _eState;
+}
+
+void CRailGunner_Crosshair::Bounce_Bracket()
+{
+	m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_SCALE * MAIN_BRACKET_BOUNCE_SCALE, MAIN_BRACKET_SCALE, 0.5f, 0.5f));
+	
+	if (m_bitElement.test(IDX(ELEMENT::MAIN_BRACKET)))
+	{
+		_float	fAcc(0.f);
+		CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+			[=](_float _fTimeDelta) mutable->_bool
+			{
+				if (fAcc < 1.f)
+				{
+					fAcc += _fTimeDelta / 0.1f;
+					m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_SCALE * MAIN_BRACKET_BOUNCE_SCALE, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fAcc), 0.5f));
+				}
+
+				return !(fAcc >= 1.f);
+			}
+		);
+	}
+}
+
+void CRailGunner_Crosshair::Hit_Reload()
+{
+	m_bHitTag = true;
 }
 
 void CRailGunner_Crosshair::Visualize_Main()
@@ -422,9 +432,6 @@ void CRailGunner_Crosshair::Visualize_Main()
 	m_bitElement.set(IDX(ELEMENT::MAIN_BOUND_OUT));
 	m_bitElement.set(IDX(ELEMENT::MAIN_BRACKET));
 	m_bitElement.set(IDX(ELEMENT::MAIN_NIBS));
-	m_bitElement.set(IDX(ELEMENT::MAIN_FLAVOR));
-
-	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)] = m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)];
 
 	_float	fInAcc(0.f), fOutAcc(0.f);
 	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
@@ -445,6 +452,49 @@ void CRailGunner_Crosshair::Visualize_Main()
 		}
 	);
 
+	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)] = m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)];
+}
+
+void CRailGunner_Crosshair::Visualize_Bracket()
+{
+	m_bitElement.set(IDX(ELEMENT::MAIN_BRACKET));
+	m_bitElement.set(IDX(ELEMENT::MAIN_NIBS));
+
+	_float	fBracketAcc(0.f), fNibsAcc(0.f);
+	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fBracketAcc > 0.5f)
+			{
+				fBracketAcc += _fTimeDelta / 0.1f;
+				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_STEP, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f - 1.f)));
+			}
+			else if (fBracketAcc > 0.f)
+			{
+				fBracketAcc += _fTimeDelta / 0.1f;
+				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(_float3(), MAIN_BRACKET_STEP, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f)));
+			}
+
+			if (fNibsAcc > 0.5f)
+			{
+				fNibsAcc += _fTimeDelta / 0.1f;
+				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(MAIN_NIB_STEP, MAIN_NIB_SCALE, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f - 1.f)));
+			}
+			else if (fNibsAcc > 0.f)
+			{
+				fNibsAcc += _fTimeDelta / 0.1f;
+				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(_float3(), MAIN_NIB_STEP, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f)));
+			}
+
+			return !(fBracketAcc >= 1.f && fNibsAcc >= 1.f);
+		}
+	);
+}
+
+void CRailGunner_Crosshair::Visualize_Flavor()
+{
+	m_bitElement.set(IDX(ELEMENT::MAIN_FLAVOR));
+
 	_float fAcc(0.f);
 	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
@@ -457,42 +507,6 @@ void CRailGunner_Crosshair::Visualize_Main()
 			}
 
 			return !(fAcc >= 1.f);
-		}
-	);
-}
-
-void CRailGunner_Crosshair::Visualize_Bracket()
-{
-	m_bitElement.set(IDX(ELEMENT::MAIN_BRACKET));
-	m_bitElement.set(IDX(ELEMENT::MAIN_NIBS));
-
-	_float	fBracketAcc(0.f), fNibsAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
-		[=](_float _fTimeDelta) mutable->_bool
-		{
-			if (fBracketAcc < 0.5f)
-			{
-				fBracketAcc += _fTimeDelta / 0.1f;
-				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(_float3(), MAIN_BRACKET_STEP, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f)));
-			}
-			else if (fBracketAcc < 1.f)
-			{
-				fBracketAcc += _fTimeDelta / 0.1f;
-				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_STEP, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f - 1.f)));
-			}
-
-			if (fNibsAcc < 0.5f)
-			{
-				fNibsAcc += _fTimeDelta / 0.1f;
-				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(_float3(), MAIN_NIB_STEP, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f)));
-			}
-			else if (fNibsAcc < 1.f)
-			{
-				fNibsAcc += _fTimeDelta / 0.1f;
-				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(MAIN_NIB_STEP, MAIN_NIB_SCALE, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f - 1.f)));
-			}
-
-			return !(fBracketAcc >= 1.f && fNibsAcc >= 1.f);
 		}
 	);
 }
@@ -631,7 +645,7 @@ void CRailGunner_Crosshair::Visualize_Reload()
 
 			if (fAcc >= 1.f || fHitAcc >= 1.f)
 			{
-				Change_State(STATE::MAIN);
+				Change_State(CROSSHAIR::MAIN);
 
 				return false;
 			}
@@ -690,28 +704,6 @@ HRESULT CRailGunner_Crosshair::Render_Element(const ELEMENT _eElement, _uint _iP
 	}
 
 	return S_OK;
-}
-
-void CRailGunner_Crosshair::Bounce_Bracket()
-{
-	if (m_bitElement.test(IDX(ELEMENT::MAIN_BRACKET)))
-	{
-		_float	fAcc(0.f);
-		CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
-			[=](_float _fTimeDelta) mutable->_bool
-			{
-				if (fAcc < 1.f)
-				{
-					fAcc += _fTimeDelta / 0.1f;
-					m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_SCALE * MAIN_BRACKET_BOUNCE_SCALE, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fAcc), 0.5f));
-				}
-
-				return !(fAcc >= 1.f);
-			}
-		);
-	}
-
-	m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_SCALE * MAIN_BRACKET_BOUNCE_SCALE, MAIN_BRACKET_SCALE, 0.5f, 0.5f));
 }
 
 shared_ptr<CRailGunner_Crosshair> CRailGunner_Crosshair::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

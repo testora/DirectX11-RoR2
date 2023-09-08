@@ -141,7 +141,7 @@ HRESULT CScene_Test::Ready_Player()
 			MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
 		}
 
-		pMainCam->Attach(pPlayer->Get_Component<CTransform>(COMPONENT::TRANSFORM), XMMatrixTranslationFromVector(PLAYER_CAMERA_OFFSET));
+		pMainCam->Attach(pPlayer->Get_Component<CTransform>(COMPONENT::TRANSFORM), PLAYER_CAMERA_OFFSET);
 	}
 	else
 	{

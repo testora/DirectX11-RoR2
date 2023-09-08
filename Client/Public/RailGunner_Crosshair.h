@@ -15,7 +15,6 @@ BEGIN(Client)
 class CRailGunner_Crosshair final : public CGameObject
 {
 private:
-	enum class STATE	{ MAIN, SCOPE, SUPER_CHARGE, SUPER_READY, SUPER_REBOOT, RELOAD, SPRINT, MAX };
 	enum class ELEMENT
 	{
 		MAIN_BOUND_IN, MAIN_BOUND_OUT, MAIN_BRACKET, MAIN_NIBS, MAIN_FLAVOR,
@@ -39,7 +38,13 @@ public:
 	virtual HRESULT								Render() override;
 
 public:
-	void										Change_State(const STATE);
+	CROSSHAIR									Get_State() const		{ return m_eState; }
+
+public:
+	void										Change_State(const CROSSHAIR);
+
+	void										Bounce_Bracket();
+	void										Hit_Reload();
 
 private:
 	virtual HRESULT								Ready_Components() override;
@@ -48,14 +53,13 @@ private:
 
 	void										Visualize_Main();
 	void										Visualize_Bracket();
+	void										Visualize_Flavor();
 	void										Visualize_Scope();
 	void										Visualize_Reload();
 	void										Visualize_Sprint();
 
-	void										Bounce_Bracket();
-
 private:
-	STATE										m_eState				= STATE::MAIN;
+	CROSSHAIR									m_eState				= CROSSHAIR::MAX;
 	_color										m_vDiffuse[IDX(ELEMENT::MAX)];
 
 	_float										m_fFlavorRotateSpeed	= 0.f;

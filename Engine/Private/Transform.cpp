@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "Shader.h"
 #include "PipeLine.h"
+#include "Event_Handler.h"
 
 CTransform::CTransform(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::TRANSFORM)
@@ -109,14 +110,62 @@ void CTransform::Rotate(const TRANSFORM _eState, const _float _fDegree)
 	Rotate(Get_State(_eState), _fDegree);
 }
 
-void CTransform::LookAt(const _vectorf _vPosition)
+void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp)
 {
 	Set_State(TRANSFORM::LOOK, _vPosition - Get_State(TRANSFORM::POSITION));
+	if (_bFixUp)
+	{
+		Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+	}
 }
 
-void CTransform::LookTo(const _vectorf _vDirection)
+void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bFixUp, const _float _fInterpolationDuration, const _float _fWeight)
+{
+	_float	fAcc(0.f);
+	_vector	vLook = _vPosition - Get_State(TRANSFORM::POSITION);
+	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fAcc < 1.f)
+			{
+				fAcc += _fTimeDelta / _fInterpolationDuration;
+				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight));
+
+				return true;
+			}
+
+			return false;
+		}
+	);
+}
+
+void CTransform::LookTo(const _vectorf _vDirection, const _bool _bFixUp)
 {
 	Set_State(TRANSFORM::LOOK, _vDirection);
+	if (_bFixUp)
+	{
+		Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+	}
+}
+
+void CTransform::LookTo_Interpolation(const _vectorf _vDirection, const _bool _bFixUp, const _float _fInterpolationDuration, const _float _fWeight)
+{
+	_float	fAcc(0.f);
+	_vector	vLook = _vDirection;
+	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fAcc < 1.f)
+			{
+				fAcc += _fTimeDelta / _fInterpolationDuration;
+				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight));
+
+				return true;
+			}
+
+			return false;
+		}
+	);
 }
 
 HRESULT CTransform::Bind_OnShader(shared_ptr<class CShader> _pShader)

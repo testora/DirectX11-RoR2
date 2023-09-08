@@ -371,7 +371,12 @@ HRESULT CModel::Ready_Materials(const aiScene* _pAIScene, const wstring& _wstrMo
 }
 #endif
 
-_uint CModel::Get_BoneIndex(const _char* _szBoneName)
+_bool CModel::Is_AnimationFinished() const
+{
+	return m_vecAnimations[m_iCurrentAnimationIndex]->Is_Finished();
+}
+
+_uint CModel::Get_BoneIndex(const _char* _szBoneName) const
 {
 	for (_uint i = 0; i < m_vecBones.size(); ++i)
 	{

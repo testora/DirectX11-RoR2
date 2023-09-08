@@ -14,5 +14,6 @@ using namespace Client;
 
 extern HWND		g_hWnd;
 
+#include "Client_Animation.h"
 #include "Client_Enum.h"
 #include "Client_Variable.h"

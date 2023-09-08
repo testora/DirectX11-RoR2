@@ -9,7 +9,7 @@ CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCo
 	: CGameObject	(_pDevice, _pContext)
 	, m_pPipeLine	(CPipeLine::Get_Instance())
 	, m_mView		(g_mUnit)
-	, m_mProjection		(g_mUnit)
+	, m_mProjection	(g_mUnit)
 {
 }
 
@@ -33,7 +33,7 @@ HRESULT CCamera::Initialize(any _arg)
 	}
 
 	m_pTransform->Set_State(TRANSFORM::POSITION, m_tCameraDesc.vEye);
-	m_pTransform->LookAt(m_tCameraDesc.vAt);
+	m_pTransform->LookAt(m_tCameraDesc.vAt, false);
 
 #if WIP_FRUSTRUM_CULLING
 	m_pPipeLine->Update_Frustum();
@@ -57,9 +57,9 @@ HRESULT CCamera::Render()
 	switch (m_tCameraDesc.eType)
 	{
 	case TYPE::PERSPECTIVE:
-		m_pPipeLine->Set_Transform(PIPELINE::WORLD, m_pTransform->Get_Matrix());
-		m_pPipeLine->Set_Transform(PIPELINE::VIEW, m_pTransform->Get_Matrix().inverse());
-		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION, m_mProjection);
+		m_pPipeLine->Set_Transform(PIPELINE::WORLD,			m_pTransform->Get_Matrix());
+		m_pPipeLine->Set_Transform(PIPELINE::VIEW,			m_pTransform->Get_Matrix().inverse());
+		m_pPipeLine->Set_Transform(PIPELINE::PROJECTION,	m_mProjection);
 		break;
 	}
 

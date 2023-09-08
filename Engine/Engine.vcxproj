@@ -28,6 +28,7 @@
     <ClInclude Include="Public\Collider.h" />
     <ClInclude Include="Public\DebugDraw.h" />
     <ClInclude Include="Public\Engine_Shader.h" />
+    <ClInclude Include="Public\GraphicDevice.h" />
     <ClInclude Include="Public\Grid_Manager.h" />
     <ClInclude Include="Public\Grid.h" />
     <ClInclude Include="Public\Grounding.h" />
@@ -35,14 +36,14 @@
     <ClInclude Include="Public\Animation.h" />
     <ClInclude Include="Public\Channel.h" />
     <ClInclude Include="Public\Bone.h" />
+    <ClInclude Include="Public\Key_Manager.h" />
     <ClInclude Include="Public\Mesh.h" />
     <ClInclude Include="Public\Model.h" />
     <ClInclude Include="Public\Light.h" />
     <ClInclude Include="Public\Light_Manager.h" />
+    <ClInclude Include="Public\Mouse_Manager.h" />
     <ClInclude Include="Public\Picker.h" />
     <ClInclude Include="Public\HandleRAII.h" />
-    <ClInclude Include="Public\Key_Manager.h" />
-    <ClInclude Include="Public\Mouse_Manager.h" />
     <ClInclude Include="Public\Behavior_Manager.h" />
     <ClInclude Include="Public\Component_Manager.h" />
     <ClInclude Include="Public\Object_Manager.h" />
@@ -61,14 +62,13 @@
     <ClInclude Include="Public\Engine_Struct.h" />
     <ClInclude Include="Public\GameInstance.h" />
     <ClInclude Include="Public\Engine_Macro.h" />
-    <ClInclude Include="Public\GraphicDevice.h" />
     <ClInclude Include="Public\Engine_Define.h" />
     <ClInclude Include="Public\Engine_Typedef.h" />
     <ClInclude Include="Public\EnginePCH.h" />
-    <ClInclude Include="Public\Timer.h" />
-    <ClInclude Include="Public\Timer_Manager.h" />
     <ClInclude Include="Public\Scene_Manager.h" />
     <ClInclude Include="Public\Scene.h" />
+    <ClInclude Include="Public\Timer.h" />
+    <ClInclude Include="Public\Timer_Manager.h" />
     <ClInclude Include="Public\Transform.h" />
     <ClInclude Include="Public\Renderer.h" />
     <ClInclude Include="Public\Shader.h" />
@@ -86,6 +86,7 @@
     <ClCompile Include="Private\Bounding_Sphere.cpp" />
     <ClCompile Include="Private\Collider.cpp" />
     <ClCompile Include="Private\DebugDraw.cpp" />
+    <ClCompile Include="Private\GraphicDevice.cpp" />
     <ClCompile Include="Private\Grid_Manager.cpp" />
     <ClCompile Include="Private\Grid.cpp" />
     <ClCompile Include="Private\Grounding.cpp" />
@@ -93,13 +94,13 @@
     <ClCompile Include="Private\Animation.cpp" />
     <ClCompile Include="Private\Channel.cpp" />
     <ClCompile Include="Private\Bone.cpp" />
+    <ClCompile Include="Private\Key_Manager.cpp" />
     <ClCompile Include="Private\Mesh.cpp" />
     <ClCompile Include="Private\Model.cpp" />
     <ClCompile Include="Private\Light.cpp" />
     <ClCompile Include="Private\Light_Manager.cpp" />
-    <ClCompile Include="Private\Picker.cpp" />
-    <ClCompile Include="Private\Key_Manager.cpp" />
     <ClCompile Include="Private\Mouse_Manager.cpp" />
+    <ClCompile Include="Private\Picker.cpp" />
     <ClCompile Include="Private\Behavior_Manager.cpp" />
     <ClCompile Include="Private\Component_Manager.cpp" />
     <ClCompile Include="Private\Engine_Header.cpp" />
@@ -112,17 +113,16 @@
     <ClCompile Include="Private\Physics.cpp" />
     <ClCompile Include="Private\GameObject.cpp" />
     <ClCompile Include="Private\GameInstance.cpp" />
-    <ClCompile Include="Private\GraphicDevice.cpp" />
     <ClCompile Include="Private\EnginePCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Private\Timer.cpp" />
-    <ClCompile Include="Private\Timer_Manager.cpp" />
     <ClCompile Include="Private\Scene_Manager.cpp" />
     <ClCompile Include="Private\Scene.cpp" />
+    <ClCompile Include="Private\Timer.cpp" />
+    <ClCompile Include="Private\Timer_Manager.cpp" />
     <ClCompile Include="Private\Transform.cpp" />
     <ClCompile Include="Private\Renderer.cpp" />
     <ClCompile Include="Private\Shader.cpp" />
@@ -132,6 +132,7 @@
     <ClCompile Include="Private\VIBuffer_Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Public\Animator.inl" />
     <None Include="Public\Engine_Function.inl" />
     <None Include="Public\Engine_Typedef.inl" />
     <None Include="Public\GameObject.inl" />

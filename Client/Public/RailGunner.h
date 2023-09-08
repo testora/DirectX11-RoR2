@@ -11,8 +11,8 @@ BEGIN(Client)
 
 class CRailGunner final : public CGameObject
 {
-private:
-	enum class STATE	{ ATTACK_AVAILABE, MAX };
+public:
+	enum class STATE	{ MAIN_ATTACK_AVAILABE, SPRINT, JUMP, MAX };
 
 private:
 	explicit CRailGunner(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -28,6 +28,11 @@ public:
 
 private:
 	virtual HRESULT								Ready_Components() override;
+	virtual HRESULT								Ready_Behaviors() override;
+
+public:
+	void										Set_State(STATE, const _bool);
+	_bool										Check_State(STATE) const;
 
 private:
 	bitset<IDX(STATE::MAX)>						m_bitPlayerState;

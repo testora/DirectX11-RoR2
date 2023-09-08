@@ -26,8 +26,10 @@ public:
 	void							Translate(const _vectorf vTranslation);
 	void							Rotate(const _vectorf vAxis, const _float fDegree);
 	void							Rotate(const TRANSFORM, const _float fDegree);
-	void							LookAt(const _vectorf vPosition);
-	void							LookTo(const _vectorf vDirection);
+	void							LookAt(const _vectorf vPosition, const _bool bFixUp = true);
+	void							LookAt_Interpolation(const _vectorf vPosition, const _bool bFixUp = true, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);
+	void							LookTo(const _vectorf vDirection, const _bool bFixUp = true);
+	void							LookTo_Interpolation(const _vectorf vDirection, const _bool bFixUp = true, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);
 
 	HRESULT							Bind_OnShader(shared_ptr<class CShader>);
 
