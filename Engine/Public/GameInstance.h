@@ -47,15 +47,16 @@ public:
 	POINT										Get_CursorMove();
 	_bool										Is_CursorOn();
 
-	void										CheckFocus_OnMouse(_bool bCheck = true);
-
 	void										Fix_Cursor(_bool bFix = true);
 	void										Show_Cursor(_bool bShow = true);
 	void										Toggle_Cursor();
 
+	void										CheckFocus_OnMouse(_bool bCheck = true);
+
 #pragma endregion
 #pragma region Key Manager
 
+	_bool										Key_None(_uint iKey = VK_MAX);
 	_bool										Key_Down(_uint iKey = VK_MAX);
 	_bool										Key_Hold(_uint iKey = VK_MAX);
 	_bool										Key_Up(_uint iKey = VK_MAX);

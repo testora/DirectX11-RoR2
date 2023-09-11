@@ -39,11 +39,6 @@ HRESULT CAnimator::Initialize(shared_ptr<class CGameObject> _pOwner)
 void CAnimator::Tick(_float _fTimeDelta)
 {
 	m_pTargetModel->Tick_Animation(_fTimeDelta);
-
-	if (m_pTargetModel->Is_AnimationFinished())
-	{
-		m_pTargetModel->Set_Animation(m_iReservedAnimationIndex, m_fReservedInterpolationDuration, m_bReservedLoop);
-	}
 }
 
 void CAnimator::Late_Tick(_float _fTimeDelta)
@@ -55,18 +50,9 @@ _uint CAnimator::Get_Animation() const
 	return m_pTargetModel->Get_AnimationIndex();
 }
 
-void CAnimator::Set_Animation(_uint _iAnimationIndex, _float _fInterpolationDuration, _bool _bLoop)
+void CAnimator::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)
 {
-	m_pTargetModel->Set_Animation(IDX(_iAnimationIndex), _fInterpolationDuration, _bLoop);
-}
-
-void CAnimator::Set_Animation(_uint _iAnimationIndex, _uint _iNextAnimationIndex, _float _fInterpolationDuration, _float _fReservedInterpolationDuration, _bool _bReservedLoop)
-{
-	m_pTargetModel->Set_Animation(IDX(_iAnimationIndex), _fInterpolationDuration, false);
-
-	m_bReservedLoop						= _bReservedLoop;
-	m_fReservedInterpolationDuration	= _fReservedInterpolationDuration;
-	m_iReservedAnimationIndex			= _iNextAnimationIndex;
+	m_pTargetModel->Set_Animation(IDX(_iAnimationIndex), _fPlaySpeed, _bReverse, _fInterpolationDuration, _bLoop);
 }
 
 shared_ptr<CAnimator> CAnimator::Create(shared_ptr<class CGameObject> _pOwner)

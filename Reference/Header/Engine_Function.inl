@@ -8,23 +8,23 @@ namespace Function
 		return (_fStart * (1.f - fRatio)) + (_fEnd * fRatio);
 	}
 
-	XMVECTOR Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float _fRatio, _float _fWeight)
+	XMVECTOR Lerp(FXMVECTOR _vStart, FXMVECTOR _vEnd, _float _fRatio, _float _fWeight)
 	{
 		_float fRatio(powf(_fRatio, _fWeight));
-		return XMVectorLerp(vStart, vEnd, fRatio);
+		return XMVectorLerp(_vStart, _vEnd, fRatio);
 	}
 
-	XMMATRIX Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float _fRatio, _float _fWeight, _bool _bScale, _bool _bRotation, _bool _bTranslation)
+	XMMATRIX Lerp(FXMMATRIX _mStart, CXMMATRIX _mEnd, _float _fRatio, _float _fWeight, _bool _bScale, _bool _bRotation, _bool _bTranslation)
 	{
 		XMVECTOR vStartScale, vStartRotation, vStartTranslation;
 		XMVECTOR vEndScale,	vEndRotation, vEndTranslation;
 
-		if (!XMMatrixDecompose(&vStartScale, &vStartRotation, &vStartTranslation, mStart))
+		if (!XMMatrixDecompose(&vStartScale, &vStartRotation, &vStartTranslation, _mStart))
 		{
 			return XMMATRIX{};
 		}
 
-		if (!XMMatrixDecompose(&vEndScale, &vEndRotation, &vEndTranslation, mEnd))
+		if (!XMMatrixDecompose(&vEndScale, &vEndRotation, &vEndTranslation, _mEnd))
 		{
 			return XMMATRIX{};
 		}
@@ -35,6 +35,14 @@ namespace Function
 		XMVECTOR vTranslation	= !_bTranslation	? vStartTranslation	: XMVectorLerp(vStartTranslation, vEndTranslation, fRatio);
 
 		return XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vTranslation);
+	}
+
+	XMVECTOR Slerp(FXMVECTOR _vQuaternion, _float _fRatio, _float _fWeight)
+	{
+		_float fRatio(fmodf(powf(fabsf(_fRatio), _fWeight), 1.f));
+		XMVECTOR vQuaternion = _fRatio >= 0.f ? _vQuaternion : XMQuaternionInverse(_vQuaternion);
+
+		return XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio);
 	}
 
 	_float Clamp(_float _fMin, _float _fMax, _float _fValue)
@@ -55,22 +63,28 @@ namespace Function
 		return fabsf(_fValue) <= g_fTolorance;
 	}
 
-	_bool NearZero2(XMVECTOR _fVector2)
+	_bool NearZero2(FXMVECTOR _fVector2)
 	{
 		return XMVector2NearEqual(XMVectorZero(), _fVector2, XMVectorSet(g_fTolorance, g_fTolorance, 0.f, 0.f));
 	}
 
-	_bool NearZero3(XMVECTOR _fVector3)
+	_bool NearZero3(FXMVECTOR _fVector3)
 	{
 		return XMVector3NearEqual(XMVectorZero(), _fVector3, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, 0.f));
 	}
 
-	_bool NearZero4(XMVECTOR _fVector4)
+	_bool NearZero4(FXMVECTOR _fVector4)
 	{
 		return XMVector4NearEqual(XMVectorZero(), _fVector4, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
 	}
 
-	XMVECTOR QuaternionToEuler(XMVECTOR _vQuaternion, _bool _bToRadians)
+	_float QuaternionToAngle(FXMVECTOR _vQuaternion, _bool _bToRadians)
+	{
+		_float fTheta = acosf(XMVectorGetW(XMQuaternionNormalize(_vQuaternion))) * 2.f;
+		return _bToRadians ? fTheta : XMConvertToDegrees(fTheta);
+	}
+
+	XMVECTOR QuaternionToEuler(FXMVECTOR _vQuaternion, _bool _bToRadians)
 	{
 		XMFLOAT4 vQuaternion;
 		XMStoreFloat4(&vQuaternion, XMQuaternionNormalize(_vQuaternion));
@@ -87,12 +101,12 @@ namespace Function
 		return _bToRadians ? XMVectorSet(fPitch, fYaw, fRoll, 0.f) : RadiansToDegrees(XMVectorSet(fPitch, fYaw, fRoll, 0.f));
 	}
 
-	XMVECTOR DegreesToRadians(XMVECTOR _vDegrees)
+	XMVECTOR DegreesToRadians(FXMVECTOR _vDegrees)
 	{
 		return _vDegrees * (XM_PI / 180.0f);
 	}
 
-	XMVECTOR RadiansToDegrees(XMVECTOR _vRadians)
+	XMVECTOR RadiansToDegrees(FXMVECTOR _vRadians)
 	{
 		return _vRadians * (180.0f / XM_PI);
 	}

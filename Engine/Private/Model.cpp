@@ -396,7 +396,7 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 		return;
 	}
 
-	m_vecAnimations[m_iCurrentAnimationIndex]->Tick(_fTimeDelta, m_vecBones.begin(), m_bAnimLoop);
+	m_vecAnimations[m_iCurrentAnimationIndex]->Tick(m_fAnimationPlaySpeed * _fTimeDelta, m_vecBones.begin(), m_bAnimReverse, m_bAnimLoop);
 
 	for (auto pBone : m_vecBones)
 	{
@@ -404,7 +404,7 @@ void CModel::Tick_Animation(_float _fTimeDelta)
 	}
 }
 
-void CModel::Set_Animation(_uint _iAnimationIndex, _float _fInterpolationDuration, _bool _bLoop)
+void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)
 {
 	if (_iAnimationIndex >= m_iNumAnimations)
 	{
@@ -417,6 +417,8 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fInterpolationDuratio
 	}
 
 	m_iCurrentAnimationIndex	= _iAnimationIndex;
+	m_fAnimationPlaySpeed		= _fPlaySpeed;
+	m_bAnimReverse				= _bReverse;
 	m_bAnimLoop					= _bLoop;
 }
 

@@ -65,6 +65,8 @@ using std::make_pair;
 #include <functional>
 #include <tuple>
 #include <any>
+#include <variant>
+#include <optional>
 
 using std::string;
 using std::wstring;

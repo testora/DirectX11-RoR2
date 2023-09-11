@@ -65,6 +65,8 @@
     <ClInclude Include="Public\RailGunner_Crosshair.h" />
     <ClInclude Include="Public\RailGunner_Bullet.h" />
     <ClInclude Include="Public\RailGunner_PistolBullet.h" />
+    <ClInclude Include="Public\RailGunner_State.h" />
+    <ClInclude Include="Public\System.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -152,6 +154,8 @@
     <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
     <ClCompile Include="Private\RailGunner_Bullet.cpp" />
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp" />
+    <ClCompile Include="Private\RailGunner_State.cpp" />
+    <ClCompile Include="Private\System.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

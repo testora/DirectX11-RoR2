@@ -24,6 +24,7 @@ public:
 	void							Multiply(const _matrixf mMatrix);
 
 	void							Translate(const _vectorf vTranslation);
+	void							Rotate(const _vectorf vQuaternion);
 	void							Rotate(const _vectorf vAxis, const _float fDegree);
 	void							Rotate(const TRANSFORM, const _float fDegree);
 	void							LookAt(const _vectorf vPosition, const _bool bFixUp = true);

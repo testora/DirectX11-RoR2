@@ -170,7 +170,7 @@ namespace Engine
 		_bool operator != (const float4&) const noexcept;
 
 		operator XMVECTOR() const noexcept;
-	} _float4, _color;
+	} _float4, _quaternion, _color;
 
 	typedef struct ENGINE_DLL	float4x4 : public DirectX::XMFLOAT4X4
 	{

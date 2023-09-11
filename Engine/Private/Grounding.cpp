@@ -16,7 +16,7 @@ CGrounding::CGrounding(const CGrounding& _rhs)
 {
 }
 
-HRESULT CGrounding::Initialize(shared_ptr<class CGameObject> _pOwner, const wstring& _wstrTerrainGridLayerTag)
+HRESULT CGrounding::Initialize(shared_ptr<CGameObject> _pOwner, const wstring& _wstrTerrainGridLayerTag)
 {
 	if (FAILED(__super::Initialize(_pOwner)))
 	{
@@ -52,11 +52,13 @@ void CGrounding::Tick(_float _fTimeDelta)
 	_float3 vPosition = Intersect_Terrain();
 	if (vPosition == m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 1.f, 0.f))
 	{
+		m_bIsGrounding = false;
 		return;
 	}
 
 	m_pOwnerTransform->Set_State(TRANSFORM::POSITION, _float4(vPosition, 1.f));
 	m_pOwnerPhysics->Flattern(false, true, false);
+	m_bIsGrounding = true;
 }
 
 void CGrounding::Late_Tick(_float _fTimeDelta)
@@ -68,7 +70,7 @@ _float3 CGrounding::Intersect_Terrain()
 	return CGrid_Manager::Get_Instance()->Raycast(m_wstrTerrainGridLayerTag, m_pOwnerTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, 1.f, 0.f), _float3(0.f, -1.f, 0.f), 1.f);
 }
 
-shared_ptr<CGrounding> CGrounding::Create(shared_ptr<class CGameObject> _pOwner, const wstring& _wstrTerrainGridLayerTag)
+shared_ptr<CGrounding> CGrounding::Create(shared_ptr<CGameObject> _pOwner, const wstring& _wstrTerrainGridLayerTag)
 {
 	shared_ptr<CGrounding> pInstance = make_private_shared(CGrounding);
 

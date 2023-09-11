@@ -30,105 +30,36 @@
 #define SPRINT_ARROW_SCALE			_float3(98.f, 98.f, 1.f)
 
 CRailGunner_Crosshair::CRailGunner_Crosshair(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-	: CGameObject(_pDevice, _pContext)
+	: m_pDevice	(_pDevice)
+	, m_pContext(_pContext)
 {
-}
-
-HRESULT CRailGunner_Crosshair::Initialize_Prototype()
-{
-	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::VIBUFFER_RECT);
-
-	m_umapComponentArg[COMPONENT::RENDERER]			= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
-	m_umapComponentArg[COMPONENT::SHADER]			= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX, g_aNull);
-	m_umapComponentArg[COMPONENT::VIBUFFER_RECT]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_RECT, g_aNull);
-
-	m_pairTagPositionRange							= make_pair(0.42f, 0.17f);
-
-#pragma region Texture
-
-	for (size_t i = 0; i < IDX(ELEMENT::MAX); ++i)
-	{
-		m_pTransform[i] = CTransform::Create(m_pDevice, m_pContext);
-	}
-
-	m_pTexSinglePixel	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/White1px.png"));
-
-	m_pTexBounds		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBounds.png"));
-	m_pTexBracket		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBracket%d.png"), 2);
-	m_pTexFlavor		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerFlavor1.png"));
-
-	m_pTexScope			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texRailgunnerScope%d.png"), 2);
-	m_pTexBounds_Glowy	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBoundsGlowy.png"));
-
-	m_pTexSniperCharge	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texSniperCharge.png"));
-
-	m_pTexStripes		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunneStripes.png"));
-	m_pTexBoost			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunBoosted.png"));
-
-	m_pTexDot			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairDot.png"));
-	m_pTexArrow			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairArrow.png"));
-
-#pragma endregion
-#pragma region Transform
-
-	m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(MAIN_BRACKET_SCALE);
-	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(MAIN_NIB_SCALE);
-
-	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
-
-	m_pTransform[IDX(ELEMENT::SCOPE_SCOPE)]->Set_Scale(_float3(static_cast<_float>(g_iWinCX), static_cast<_float>(g_iWinCY), 1.f));
-	m_pTransform[IDX(ELEMENT::SCOPE_SCOPE)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
-	m_pTransform[IDX(ELEMENT::SCOPE_CROSS)]->Set_Scale(SCOPE_CROSSHAIR_SCALE);
-	m_pTransform[IDX(ELEMENT::SCOPE_CROSS)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
-
-	m_pTransform[IDX(ELEMENT::RELOAD_BOUND)]->Set_Scale(RELOAD_BOUND_SCALE);
-	m_pTransform[IDX(ELEMENT::RELOAD_BOUND)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
-	m_pTransform[IDX(ELEMENT::RELOAD_STRIPE)]->Set_Scale(RELOAD_STRIPE_SCALE);
-	m_pTransform[IDX(ELEMENT::RELOAD_STRIPE)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
-	m_pTransform[IDX(ELEMENT::RELOAD_BAR)]->Set_Scale(RELOAD_BAR_SCALE);
-	m_pTransform[IDX(ELEMENT::RELOAD_BAR)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
-	m_pTransform[IDX(ELEMENT::RELOAD_TAG)]->Set_Scale(_float3(m_pairTagPositionRange.second * RELOAD_BAR_SCALE.x, RELOAD_BAR_SCALE.y, RELOAD_BAR_SCALE.z));
-	m_pTransform[IDX(ELEMENT::RELOAD_TAG)]->Set_State(TRANSFORM::POSITION, _float4((m_pairTagPositionRange.first - 0.5f) * RELOAD_BAR_SCALE.x, RELOAD_POSITION.y, 0.f, 1.f));
-	m_pTransform[IDX(ELEMENT::RELOAD_BOOST)]->Set_Scale(RELOAD_BOOST_SCALE);
-	m_pTransform[IDX(ELEMENT::RELOAD_BOOST)]->Set_State(TRANSFORM::POSITION, RELOAD_BOOST_POSITION);
-	m_pTransform[IDX(ELEMENT::RELOAD_SLIDE)]->Set_Scale(RELOAD_SLIDE_SCALE);
-
-	m_pTransform[IDX(ELEMENT::ARROW)]->Set_Scale(SPRINT_ARROW_SCALE);
-
-#pragma endregion
-#pragma region Diffuse
-
-	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)]		= _color(0.84f, 0.73f, 0.30f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_OUT)]	= _color(0.84f, 0.73f, 0.30f, 0.50f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_BRACKET)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_NIBS)]			= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::SCOPE_SCOPE)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_CROSS)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_IN)]	= _color(0.95f, 0.67f, 0.76f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_OUT)]	= _color(0.95f, 0.67f, 0.76f, 0.50f);
-
-	m_vDiffuse[IDX(ELEMENT::RELOAD_STRIPE)]		= _color(0.85f, 0.55f, 0.70f, 0.25f);
-	m_vDiffuse[IDX(ELEMENT::RELOAD_BAR)]		= _color(0.00f, 0.00f, 0.00f, 0.50f);
-	m_vDiffuse[IDX(ELEMENT::RELOAD_SLIDE)]		= _color(1.00f, 0.86f, 0.92f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::DOT)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::ARROW)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-#pragma endregion
-	return S_OK;
 }
 
 HRESULT CRailGunner_Crosshair::Initialize(any)
 {
-	if (FAILED(__super::Initialize()))
+	m_pairTagPositionRange = make_pair(0.42f, 0.17f);
+
+	if (FAILED(Ready_Components()))
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to __super::Initialize");
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to Ready_Components");
 	}
 
-	Change_State(CROSSHAIR::MAIN);
+	if (FAILED(Ready_Transforms()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to Ready_Transforms");
+	}
+
+	if (FAILED(Ready_Textures()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to Ready_Textures");
+	}
+
+	if (FAILED(Ready_Diffuses()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Initialize", "Failed to Ready_Diffuses");
+	}
+
+	Visualize(RG_CROSSHAIR::MAIN);
 
 	return S_OK;
 
@@ -148,27 +79,27 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Down('9'))
 	{
-		Change_State(CROSSHAIR::MAIN);
+		Visualize(RG_CROSSHAIR::MAIN);
 	}
 	
 	if (CGameInstance::Get_Instance()->Key_Down('8'))
 	{
-		Change_State(CROSSHAIR::SPRINT);
+		Visualize(RG_CROSSHAIR::SPRINT);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('7'))
 	{
-		Change_State(CROSSHAIR::SCOPE);
+		Visualize(RG_CROSSHAIR::SCOPE);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('6'))
 	{
-		Bounce_Bracket();
+		Visualize_Bracket();
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('5'))
 	{
-		Change_State(CROSSHAIR::RELOAD);
+		Visualize(RG_CROSSHAIR::RELOAD);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('4'))
@@ -179,7 +110,7 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 
 void CRailGunner_Crosshair::Late_Tick(_float _fTimeDelta)
 {
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+
 }
 
 HRESULT CRailGunner_Crosshair::Render()
@@ -344,7 +275,128 @@ HRESULT CRailGunner_Crosshair::Render()
 	return S_OK;
 }
 
-void CRailGunner_Crosshair::Change_State(const CROSSHAIR _eState)
+HRESULT CRailGunner_Crosshair::Ready_Components()
+{
+	m_pRenderer	= dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+	if (nullptr == m_pRenderer)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pRenderer");
+	}
+
+	m_pShader	= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX));
+	if (nullptr == m_pShader)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pShader");
+	}
+
+	m_pVIBuffer	= dynamic_pointer_cast<CVIBuffer_Rect>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_RECT));
+	if (nullptr == m_pVIBuffer)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pVIBuffer");
+	}
+
+	return S_OK;
+}
+
+HRESULT CRailGunner_Crosshair::Ready_Transforms()
+{
+	for (size_t i = 0; i < IDX(ELEMENT::MAX); ++i)
+	{
+		m_pTransform[i] = CTransform::Create(m_pDevice, m_pContext);
+	}
+
+	m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(MAIN_BRACKET_SCALE);
+	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(MAIN_NIB_SCALE);
+
+	m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+
+	m_pTransform[IDX(ELEMENT::SCOPE_SCOPE)]->Set_Scale(_float3(static_cast<_float>(g_iWinCX), static_cast<_float>(g_iWinCY), 1.f));
+	m_pTransform[IDX(ELEMENT::SCOPE_SCOPE)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+	m_pTransform[IDX(ELEMENT::SCOPE_CROSS)]->Set_Scale(SCOPE_CROSSHAIR_SCALE);
+	m_pTransform[IDX(ELEMENT::SCOPE_CROSS)]->Set_State(TRANSFORM::POSITION, _float4(0.f, 0.f, 0.f, 1.f));
+
+	m_pTransform[IDX(ELEMENT::RELOAD_BOUND)]->Set_Scale(RELOAD_BOUND_SCALE);
+	m_pTransform[IDX(ELEMENT::RELOAD_BOUND)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
+	m_pTransform[IDX(ELEMENT::RELOAD_STRIPE)]->Set_Scale(RELOAD_STRIPE_SCALE);
+	m_pTransform[IDX(ELEMENT::RELOAD_STRIPE)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
+	m_pTransform[IDX(ELEMENT::RELOAD_BAR)]->Set_Scale(RELOAD_BAR_SCALE);
+	m_pTransform[IDX(ELEMENT::RELOAD_BAR)]->Set_State(TRANSFORM::POSITION, RELOAD_POSITION);
+	m_pTransform[IDX(ELEMENT::RELOAD_TAG)]->Set_Scale(_float3(m_pairTagPositionRange.second * RELOAD_BAR_SCALE.x, RELOAD_BAR_SCALE.y, RELOAD_BAR_SCALE.z));
+	m_pTransform[IDX(ELEMENT::RELOAD_TAG)]->Set_State(TRANSFORM::POSITION, _float4((m_pairTagPositionRange.first - 0.5f) * RELOAD_BAR_SCALE.x, RELOAD_POSITION.y, 0.f, 1.f));
+	m_pTransform[IDX(ELEMENT::RELOAD_BOOST)]->Set_Scale(RELOAD_BOOST_SCALE);
+	m_pTransform[IDX(ELEMENT::RELOAD_BOOST)]->Set_State(TRANSFORM::POSITION, RELOAD_BOOST_POSITION);
+	m_pTransform[IDX(ELEMENT::RELOAD_SLIDE)]->Set_Scale(RELOAD_SLIDE_SCALE);
+
+	m_pTransform[IDX(ELEMENT::ARROW)]->Set_Scale(SPRINT_ARROW_SCALE);
+
+	return S_OK;
+}
+
+HRESULT CRailGunner_Crosshair::Ready_Textures()
+{
+	m_pTexSinglePixel	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/White1px.png"));
+
+	m_pTexBounds		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBounds.png"));
+	m_pTexBracket		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBracket%d.png"), 2);
+	m_pTexFlavor		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerFlavor1.png"));
+
+	m_pTexScope			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texRailgunnerScope%d.png"), 2);
+	m_pTexBounds_Glowy	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunnerBoundsGlowy.png"));
+
+	m_pTexSniperCharge	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texSniperCharge.png"));
+
+	m_pTexStripes		= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunneStripes.png"));
+	m_pTexBoost			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairRailgunBoosted.png"));
+
+	m_pTexDot			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairDot.png"));
+	m_pTexArrow			= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Crosshair/texCrosshairArrow.png"));
+
+	return S_OK;
+}
+
+HRESULT CRailGunner_Crosshair::Ready_Diffuses()
+{
+	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)]		= _color(0.84f, 0.73f, 0.30f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_OUT)]	= _color(0.84f, 0.73f, 0.30f, 0.50f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_BRACKET)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_NIBS)]			= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::SCOPE_SCOPE)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_CROSS)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_IN)]	= _color(0.95f, 0.67f, 0.76f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_OUT)]	= _color(0.95f, 0.67f, 0.76f, 0.50f);
+
+	m_vDiffuse[IDX(ELEMENT::RELOAD_STRIPE)]		= _color(0.85f, 0.55f, 0.70f, 0.25f);
+	m_vDiffuse[IDX(ELEMENT::RELOAD_BAR)]		= _color(0.00f, 0.00f, 0.00f, 0.50f);
+	m_vDiffuse[IDX(ELEMENT::RELOAD_SLIDE)]		= _color(1.00f, 0.86f, 0.92f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::DOT)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::ARROW)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	return S_OK;
+}
+
+HRESULT CRailGunner_Crosshair::Render_Element(const ELEMENT _eElement, _uint _iPassIndex)
+{
+	if (m_bitElement.test(IDX(_eElement)))
+	{
+		if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLDIF, m_vDiffuse[IDX(_eElement)])))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render_Element", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+
+		if (FAILED(m_pVIBuffer->Render(m_pShader, m_pTransform[IDX(_eElement)], _iPassIndex)))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render_Element", "Failed to CVIBuffer_Rect::Bind_OnShader");
+		}
+	}
+
+	return S_OK;
+}
+
+void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 {
 	if (m_eState == _eState)
 	{
@@ -353,45 +405,45 @@ void CRailGunner_Crosshair::Change_State(const CROSSHAIR _eState)
 
 	m_bitElement.reset();
 
-	if (CROSSHAIR::SCOPE == m_eState && CROSSHAIR::SCOPE != _eState)
+	if (RG_CROSSHAIR::SCOPE == m_eState && RG_CROSSHAIR::SCOPE != _eState)
 	{
 		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Release_FOV();
 	}
 
 	switch (_eState)
 	{
-	case CROSSHAIR::MAIN:
+	case RG_CROSSHAIR::MAIN:
 		Visualize_Main();
-		if (CROSSHAIR::RELOAD != m_eState)
+		if (RG_CROSSHAIR::RELOAD != m_eState)
 		{
 			Visualize_Bracket();
 		}
 		Visualize_Flavor();
 		break;
 
-	case CROSSHAIR::SCOPE:
+	case RG_CROSSHAIR::SCOPE:
 		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
 		Visualize_Scope();
 		break;
 
-	case CROSSHAIR::SUPER_CHARGE:
+	case RG_CROSSHAIR::SUPER_CHARGE:
 
 		break;
 
-	case CROSSHAIR::SUPER_READY:
+	case RG_CROSSHAIR::SUPER_READY:
 
 		break;
 
-	case CROSSHAIR::SUPER_REBOOT:
+	case RG_CROSSHAIR::SUPER_REBOOT:
 
 		break;
 
-	case CROSSHAIR::RELOAD:
+	case RG_CROSSHAIR::RELOAD:
 		Visualize_Reload();
 		Visualize_Bracket();
 		break;
 
-	case CROSSHAIR::SPRINT:
+	case RG_CROSSHAIR::SPRINT:
 		Visualize_Sprint();
 		break;
 	}
@@ -464,26 +516,36 @@ void CRailGunner_Crosshair::Visualize_Bracket()
 	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
-			if (fBracketAcc > 0.5f)
+			if (fBracketAcc >= 0.5f)
 			{
-				fBracketAcc += _fTimeDelta / 0.1f;
+				fBracketAcc += _fTimeDelta / 0.25f;
 				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_STEP, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f - 1.f)));
 			}
-			else if (fBracketAcc > 0.f)
+			else if (fBracketAcc >= 0.f)
 			{
-				fBracketAcc += _fTimeDelta / 0.1f;
+				fBracketAcc += _fTimeDelta / 0.25f;
 				m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(_float3(), MAIN_BRACKET_STEP, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f)));
+
+				if (fBracketAcc >= 1.f && _fTimeDelta / 0.25f >= 0.5f)
+				{
+					m_pTransform[IDX(ELEMENT::MAIN_BRACKET)]->Set_Scale(Function::Lerp(MAIN_BRACKET_STEP, MAIN_BRACKET_SCALE, Function::Clamp(0.f, 1.f, fBracketAcc * 2.f - 1.f)));
+				}
 			}
 
-			if (fNibsAcc > 0.5f)
+			if (fNibsAcc >= 0.5f)
 			{
-				fNibsAcc += _fTimeDelta / 0.1f;
+				fNibsAcc += _fTimeDelta / 0.25f;
 				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(MAIN_NIB_STEP, MAIN_NIB_SCALE, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f - 1.f)));
 			}
-			else if (fNibsAcc > 0.f)
+			else if (fNibsAcc >= 0.f)
 			{
-				fNibsAcc += _fTimeDelta / 0.1f;
+				fNibsAcc += _fTimeDelta / 0.25f;
 				m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(_float3(), MAIN_NIB_STEP, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f)));
+
+				if (fNibsAcc >= 1.f && _fTimeDelta / 0.25f >= 0.5f)
+				{
+					m_pTransform[IDX(ELEMENT::MAIN_NIBS)]->Set_Scale(Function::Lerp(MAIN_NIB_STEP, MAIN_NIB_SCALE, Function::Clamp(0.f, 1.f, fNibsAcc * 2.f - 1.f)));
+				}
 			}
 
 			return !(fBracketAcc >= 1.f && fNibsAcc >= 1.f);
@@ -555,7 +617,8 @@ void CRailGunner_Crosshair::Visualize_Reload()
 	m_pTransform[IDX(ELEMENT::RELOAD_STRIPE)]->Set_Scale(RELOAD_STRIPE_SCALE);
 	m_pTransform[IDX(ELEMENT::RELOAD_SLIDE)]->Set_Scale(RELOAD_SLIDE_SCALE);
 
-	m_bHitTag = false;
+	m_bHitTag			= false;
+	m_bSuccessReload	= false;
 
 	_float fAcc(0.f), fHitAcc(0.f), fMissAcc(0.f);
 	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
@@ -583,6 +646,8 @@ void CRailGunner_Crosshair::Visualize_Reload()
 				{
 					if (!fMissAcc)
 					{
+						m_bSuccessReload = true;
+
 						if (fHitAcc < 1.f)
 						{
 							fHitAcc += _fTimeDelta / RAILGUNNER_RELOAD_SUCCESS_DELAY;
@@ -645,7 +710,7 @@ void CRailGunner_Crosshair::Visualize_Reload()
 
 			if (fAcc >= 1.f || fHitAcc >= 1.f)
 			{
-				Change_State(CROSSHAIR::MAIN);
+				Visualize(RG_CROSSHAIR::MAIN);
 
 				return false;
 			}
@@ -660,71 +725,13 @@ void CRailGunner_Crosshair::Visualize_Sprint()
 	m_bitElement.set(IDX(ELEMENT::ARROW));
 }
 
-HRESULT CRailGunner_Crosshair::Ready_Components()
-{
-	if (FAILED(__super::Ready_Components()))
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Failed to __super::Ready_Components");
-	}
-
-	m_pRenderer = Get_Component<CRenderer>(COMPONENT::RENDERER);
-	if (nullptr == m_pRenderer)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pRenderer");
-	}
-
-	m_pShader = Get_Component<CShader>(COMPONENT::SHADER);
-	if (nullptr == m_pShader)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pShader");
-	}
-
-	m_pVIBuffer = Get_Component<CVIBuffer_Rect>(COMPONENT::VIBUFFER_RECT);
-	if (nullptr == m_pVIBuffer)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Ready_Components", "Nullptr Exception: m_pVIBuffer");
-	}
-
-	return S_OK;
-}
-
-HRESULT CRailGunner_Crosshair::Render_Element(const ELEMENT _eElement, _uint _iPassIndex)
-{
-	if (m_bitElement.test(IDX(_eElement)))
-	{
-		if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLDIF, m_vDiffuse[IDX(_eElement)])))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render_Element", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-
-		if (FAILED(m_pVIBuffer->Render(m_pShader, m_pTransform[IDX(_eElement)], _iPassIndex)))
-		{
-			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render_Element", "Failed to CVIBuffer_Rect::Bind_OnShader");
-		}
-	}
-
-	return S_OK;
-}
-
 shared_ptr<CRailGunner_Crosshair> CRailGunner_Crosshair::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 {
 	shared_ptr<CRailGunner_Crosshair> pInstance = make_private_shared(CRailGunner_Crosshair, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_RETURN(nullptr, "CRailGunner_Crosshair::Create", "Failed to Initialize_Prototype");
-	}
-
-	return pInstance;
-}
-
-shared_ptr<CGameObject> CRailGunner_Crosshair::Clone(any)
-{
-	shared_ptr<CRailGunner_Crosshair> pInstance = make_private_shared_copy(CRailGunner_Crosshair, *this);
-
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_RETURN(nullptr, "CRailGunner_Crosshair::Clone", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CRailGunner_Crosshair::Create", "Failed to Initialize");
 	}
 
 	return pInstance;

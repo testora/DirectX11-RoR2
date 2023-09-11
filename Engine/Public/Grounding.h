@@ -16,11 +16,15 @@ public:
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
+public:
+	_bool							Is_Grounding() const	{ return m_bIsGrounding; }
+
 private:
 	_float3							Intersect_Terrain();
 
 private:
 	wstring							m_wstrTerrainGridLayerTag;
+	_bool							m_bIsGrounding		= false;
 
 	shared_ptr<class CTransform>	m_pOwnerTransform;
 	shared_ptr<class CPhysics>		m_pOwnerPhysics;

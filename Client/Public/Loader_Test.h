@@ -89,12 +89,6 @@ HRESULT CLoader::Load_Test()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
 	}
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR,
-		CRailGunner_Crosshair::Create(m_pDevice, m_pContext))))
-	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR");
-	}
-
 #pragma endregion
 
 	return S_OK;

@@ -50,6 +50,29 @@ void CKey_Manager::Tick()
 	}
 }
 
+_bool CKey_Manager::Key_None()
+{
+	for (_uint i = 0; i < VK_MAX; ++i)
+	{
+		if (i == VK_LBUTTON
+		||	i == VK_RBUTTON
+		||	i == VK_MBUTTON
+		||	i == VK_XBUTTON1
+		||	i == VK_XBUTTON2
+		||	i == VK_FINAL)
+		{
+			continue;
+		}
+
+		if (m_vecKey[i].eKeyState == KEY_STATE::NONE)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 _bool CKey_Manager::Key_Down()
 {
 	for (_uint i = 0; i < VK_MAX; ++i)

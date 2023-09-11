@@ -5,13 +5,7 @@ T CAnimator::Current_Animation() const
 }
 
 template <typename T>
-void CAnimator::Play_Animation(T _eAnimation, _float _fInterpolationDuration, _bool _bLoop)
+void CAnimator::Play_Animation(T _eAnimation, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)
 {
-	Set_Animation(IDX(_eAnimation), _fInterpolationDuration, _bLoop);
-}
-
-template <typename T>
-void CAnimator::Play_Animation(T _eAnimation, T _eNextAnimation, _float _fInterpolationDuration, _float _fReservedInterpolationDuration, _bool _bReservedLoop)
-{
-	Set_Animation(IDX(_eAnimation), IDX(_eNextAnimation), _fInterpolationDuration, _fReservedInterpolationDuration, _bReservedLoop);
+	Set_Animation(IDX(_eAnimation), _fPlaySpeed, _bReverse, _fInterpolationDuration, _bLoop);
 }

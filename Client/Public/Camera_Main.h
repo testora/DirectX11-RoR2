@@ -44,6 +44,8 @@ private:
 	_float4							m_vMainOffset;
 	_float3							m_vShakeAxis;
 
+	_float4							m_vPistolReboundQuaternion;
+
 	shared_ptr<class CTransform>	m_pTargetTransform;
 
 public:

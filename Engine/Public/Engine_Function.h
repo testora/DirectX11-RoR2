@@ -5,18 +5,20 @@ namespace Function
 	inline _float						Lerp(_float fStart, _float fEnd, _float fRatio, _float fWeight = 1.f);
 	inline XMVECTOR						Lerp(FXMVECTOR vStart, FXMVECTOR vEnd, _float fRatio, _float fWeight = 1.f);
 	inline XMMATRIX						Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio, _float fWeight = 1.f, _bool bScale = true, _bool bRotation = true, _bool bTranslation = true);
+	inline XMVECTOR						Slerp(FXMVECTOR vQuaternion, _float fRatio, _float fWeight = 1.f);
 
 	inline _float						Clamp(_float fMin, _float fMax, _float fValue);
 	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);
 
 	inline _bool						NearZero(_float fValue);
-	inline _bool						NearZero2(XMVECTOR fVector2);
-	inline _bool						NearZero3(XMVECTOR fVector3);
-	inline _bool						NearZero4(XMVECTOR fVector4);
+	inline _bool						NearZero2(FXMVECTOR fVector2);
+	inline _bool						NearZero3(FXMVECTOR fVector3);
+	inline _bool						NearZero4(FXMVECTOR fVector4);
 
-	inline XMVECTOR						QuaternionToEuler(XMVECTOR vQuaternion, _bool bToRadians = true);
-	inline XMVECTOR						DegreesToRadians(XMVECTOR vDegrees);
-	inline XMVECTOR						RadiansToDegrees(XMVECTOR vRadians);
+	inline _float						QuaternionToAngle(FXMVECTOR vQuaternion, _bool bToRadians = true);
+	inline XMVECTOR						QuaternionToEuler(FXMVECTOR vQuaternion, _bool bToRadians = true);
+	inline XMVECTOR						DegreesToRadians(FXMVECTOR vDegrees);
+	inline XMVECTOR						RadiansToDegrees(FXMVECTOR vRadians);
 
 	inline wstring						ToWString(const string& str);
 	inline string						ToString(const wstring& wstr);

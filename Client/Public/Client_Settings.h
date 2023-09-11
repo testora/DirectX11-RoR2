@@ -3,24 +3,24 @@
 
 #pragma region Client
 
-#define	ACTIVATE_MENU					FALSE
-#define DEFAULT_FPS						60
+#define	ACTIVATE_MENU							FALSE
+#define DEFAULT_FPS								60
 
 #pragma endregion
 
 #pragma region Device
 
-#define BACK_BUFFER_COLOR				_float4(0.5f, 0.5f, 0.5f, 1.0f)
+#define BACK_BUFFER_COLOR						_float4(0.5f, 0.5f, 0.5f, 1.0f)
 
 #pragma endregion
 
 #pragma region INGAME - Camera
 
-#define MAINCAM_SENSITIVITY_PITCH		75.0f
-#define MAINCAM_SENSITIVITY_YAW			50.0f
+#define MAINCAM_SENSITIVITY_PITCH				75.0f
+#define MAINCAM_SENSITIVITY_YAW					50.0f
 
-#define MAINCAM_PITCH_MIN				-90.0f
-#define MAINCAM_PITCH_MAX				+90.0f
+#define MAINCAM_PITCH_MIN						-90.0f
+#define MAINCAM_PITCH_MAX						+90.0f
 
 #define MAINCAM_DEBUG_SPEED						25.f
 
@@ -34,22 +34,25 @@
 #define MAINCAM_DEBUG_DOWN						VK_LCONTROL
 #define MAINCAM_DEBUG_MOUSE_CONTROL				VK_MBUTTON
 
+#define MAINCAM_PISTOL_REBOUND_DURATION			0.1f
+
 #pragma endregion
 
 #pragma region INGAME - Player
 
 #define PLAYER_CAMERA_OFFSET					_float4(0.f, 3.f, -6.f, 1.f)
 
-#define PLAYER_SPEED_FORWARD					240.f;
-#define PLAYER_SPEED_BACKWARD					160.f;
-#define PLAYER_SPEED_LEFT						200.f;
-#define PLAYER_SPEED_RIGHT						200.f;
+#define PLAYER_SPEED_FORWARD					90.f;
+#define PLAYER_SPEED_BACKWARD					60.f;
+#define PLAYER_SPEED_LEFT						75.f;
+#define PLAYER_SPEED_RIGHT						75.f;
+#define PLAYER_SPRINT_POWER						2.f;
 #define PLAYER_JUMP_POWER						60.f;
 
 #define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
 #define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f);
 
-#define RAILGUNNER_MAIN_ATTACK_COOL				0.1f
+#define RAILGUNNER_COOLTIME_PISTOL				0.2f
 #define	RAILGUNNER_RELOAD_COOL					1.f
 #define	RAILGUNNER_RELOAD_SUCCESS_DELAY			0.14f
 #define	RAILGUNNER_RELOAD_FAIL					0.1f

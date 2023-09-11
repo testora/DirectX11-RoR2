@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
 #include "Control_RailGunner.h"
+#include "System.h"
+#include "RailGunner_State.h"
 #include "RailGunner_Crosshair.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -36,6 +38,7 @@ HRESULT CRailGunner::Initialize_Prototype()
 	m_tCharacterDesc.fBackwardSpeed			= PLAYER_SPEED_BACKWARD;
 	m_tCharacterDesc.fLeftSpeed				= PLAYER_SPEED_LEFT;
 	m_tCharacterDesc.fRightSpeed			= PLAYER_SPEED_RIGHT;
+	m_tCharacterDesc.fSpritPower			= PLAYER_SPRINT_POWER;
 	m_tCharacterDesc.fJumpPower				= PLAYER_JUMP_POWER;
 
 	m_tCharacterDesc.vMaxSpeed				= PLAYER_SPEED_TERMINAL;
@@ -46,14 +49,16 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 HRESULT CRailGunner::Initialize(any)
 {
-	m_pCrosshair = dynamic_pointer_cast<CRailGunner_Crosshair>(CGameInstance::Get_Instance()->Clone_GameObject(
-		CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR));
-
 	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to __super::Initialize");
 	}
-
+	
+	if (FAILED(Ready_RailGunner()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to Ready_RailGunner");
+	}
+	
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
 	return S_OK;
@@ -63,12 +68,20 @@ void CRailGunner::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	m_pCrosshair->Tick(_fTimeDelta);
+	for (auto& system : m_umapSystem)
+	{
+		system.second->Tick(_fTimeDelta);
+	}
 }
 
 void CRailGunner::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
+
+	for (auto& system : m_umapSystem)
+	{
+		system.second->Late_Tick(_fTimeDelta);
+	}
 
 #if ACTIVATE_IMGUI
 	if (CImGui_Manager::Get_Instance()->Is_Enable())
@@ -101,8 +114,6 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 #endif
 
 	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
-
-	m_pCrosshair->Late_Tick(_fTimeDelta);
 }
 
 HRESULT CRailGunner::Render()
@@ -111,6 +122,21 @@ HRESULT CRailGunner::Render()
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to __super::Render");
 	}
+
+	for (auto& system : m_umapSystem)
+	{
+		system.second->Render();
+	}
+
+	return S_OK;
+}
+
+HRESULT CRailGunner::Ready_RailGunner()
+{
+	m_umapSystem.reserve(IDX(SYSTEM::MAX));
+
+	m_umapSystem[SYSTEM::STATE]		= CRailGunner_State::Create(dynamic_pointer_cast<CRailGunner>(shared_from_this()));
+	m_umapSystem[SYSTEM::CROSSHAIR]	= CRailGunner_Crosshair::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -144,20 +170,116 @@ HRESULT CRailGunner::Ready_Behaviors()
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
 	}
 
-	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_this(), m_pCrosshair, &m_tCharacterDesc));
+	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_this(), &m_tCharacterDesc));
 
 	return S_OK;
 }
 
-void CRailGunner::Set_State(STATE _eState, const _bool _bState)
+#pragma region RailGunner State
+
+_bool CRailGunner::Is_State(bitset<IDX(RG_STATE::MAX)> _bit)
 {
-	m_bitPlayerState.set(IDX(_eState), _bState);
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::STATE)
+	||	nullptr == m_umapSystem.find(SYSTEM::STATE)->second)
+	{
+		MSG_RETURN(false, "CRailGunner::Is_State", "Nullptr Exception: m_pState");
+	}
+
+	return static_pointer_cast<CRailGunner_State>(m_umapSystem[SYSTEM::STATE])->Is_State(_bit);
 }
 
-_bool CRailGunner::Check_State(STATE _eState) const
+bitset<IDX(RG_STATE::MAX)> CRailGunner::Get_State()
 {
-	return m_bitPlayerState.test(IDX(_eState));
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::STATE)
+	||	nullptr == m_umapSystem.find(SYSTEM::STATE)->second)
+	{
+		MSG_RETURN(bitset<IDX(RG_STATE::MAX)>(0), "CRailGunner::Get_State", "Nullptr Exception: m_pState");
+	}
+
+	return static_pointer_cast<CRailGunner_State>(m_umapSystem[SYSTEM::STATE])->Get_State();
 }
+
+void CRailGunner::Set_State(RG_STATE _eState, _bool _bValue)
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::STATE)
+	||	nullptr == m_umapSystem.find(SYSTEM::STATE)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Set_State", "Nullptr Exception: m_pState");
+	}
+
+	return static_pointer_cast<CRailGunner_State>(m_umapSystem[SYSTEM::STATE])->Set_State(_eState, _bValue);
+}
+
+#pragma endregion
+#pragma region RailGunner Crosshair
+
+RG_CROSSHAIR CRailGunner::Get_Crosshair()
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(RG_CROSSHAIR::MAIN, "CRailGunner::Get_Crosshair", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Get_State();
+}
+
+_bool CRailGunner::Is_Crosshair(RG_CROSSHAIR _eCrosshair)
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(false, "CRailGunner::Is_Crosshair", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return _eCrosshair == static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Get_State();
+}
+
+_bool CRailGunner::Is_SuccessReload()
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(false, "CRailGunner::Is_SuccessReload", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Is_SuccessReload();
+}
+
+void CRailGunner::Visualize_Crosshair(RG_CROSSHAIR _eCrosshair)
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Visualize_Crosshair", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Visualize(_eCrosshair);
+}
+
+void CRailGunner::Bounce_Bracket()
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Bounce_Bracket", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Bounce_Bracket();
+}
+
+void CRailGunner::Hit_Reload()
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Hit_Reload", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Hit_Reload();
+}
+
+#pragma endregion
 
 shared_ptr<CRailGunner> CRailGunner::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 {

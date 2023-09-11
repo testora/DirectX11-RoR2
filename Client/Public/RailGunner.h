@@ -12,7 +12,7 @@ BEGIN(Client)
 class CRailGunner final : public CGameObject
 {
 public:
-	enum class STATE	{ MAIN_ATTACK_AVAILABE, SPRINT, JUMP, MAX };
+	enum class SYSTEM	{ STATE, CROSSHAIR, MAX };
 
 private:
 	explicit CRailGunner(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -20,31 +20,46 @@ private:
 	virtual ~CRailGunner() DEFAULT;
 
 public:
-	virtual HRESULT								Initialize_Prototype() override;
-	virtual HRESULT								Initialize(any = g_aNull) override;
-	virtual void								Tick(_float fTimeDelta) override;
-	virtual void								Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT								Render() override;
+	virtual HRESULT										Initialize_Prototype() override;
+	virtual HRESULT										Initialize(any = g_aNull) override;
+	virtual void										Tick(_float fTimeDelta) override;
+	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT										Render() override;
 
 private:
-	virtual HRESULT								Ready_Components() override;
-	virtual HRESULT								Ready_Behaviors() override;
+	HRESULT												Ready_RailGunner();
+	virtual HRESULT										Ready_Components() override;
+	virtual HRESULT										Ready_Behaviors() override;
 
 public:
-	void										Set_State(STATE, const _bool);
-	_bool										Check_State(STATE) const;
+#pragma region RailGunner State
+
+	_bool												Is_State(bitset<IDX(RG_STATE::MAX)> bit);
+	bitset<IDX(RG_STATE::MAX)>							Get_State();
+	void												Set_State(RG_STATE, _bool = true);
+
+#pragma endregion
+#pragma region RailGunner Crosshair
+
+	_bool												Is_Crosshair(RG_CROSSHAIR);
+	_bool												Is_SuccessReload();
+	RG_CROSSHAIR										Get_Crosshair();
+
+	void												Visualize_Crosshair(RG_CROSSHAIR);
+	void												Bounce_Bracket();
+	void												Hit_Reload();
+
+#pragma endregion
 
 private:
-	bitset<IDX(STATE::MAX)>						m_bitPlayerState;
+	unordered_map<SYSTEM, shared_ptr<class ISystem>>	m_umapSystem;
 
-	shared_ptr<class CRailGunner_Crosshair>		m_pCrosshair;
-
-	shared_ptr<CRenderer>						m_pRenderer;
-	shared_ptr<CTransform>						m_pTransform;
+	shared_ptr<CRenderer>								m_pRenderer;
+	shared_ptr<CTransform>								m_pTransform;
 
 public:
-	static shared_ptr<CRailGunner>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CGameObject>				Clone(any = g_aNull) override;
+	static shared_ptr<CRailGunner>						Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	virtual shared_ptr<CGameObject>						Clone(any = g_aNull) override;
 };
 
 END

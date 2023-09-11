@@ -146,6 +146,7 @@ namespace Engine
 		_float		fLeftSpeed;
 		_float		fBackwardSpeed;
 		_float		fRightSpeed;
+		_float		fSpritPower;
 		_float		fJumpPower;
 
 		XMFLOAT3	vMaxSpeed;

@@ -271,16 +271,6 @@ _bool CGameInstance::Is_CursorOn()
 	return m_pMouse_Manager->Is_CursorOn();
 }
 
-void CGameInstance::CheckFocus_OnMouse(_bool _bCheck)
-{
-	if (nullptr == m_pMouse_Manager)
-	{
-		MSG_RETURN(, "CGameInstance::CheckFocus_OnMouse", "Null Exception: m_pMouse_Manager");
-	}
-
-	return m_pMouse_Manager->CheckFocus(_bCheck);
-}
-
 void CGameInstance::Fix_Cursor(_bool _bFix)
 {
 	if (nullptr == m_pMouse_Manager)
@@ -311,8 +301,28 @@ void CGameInstance::Toggle_Cursor()
 	return m_pMouse_Manager->Toggle_Cursor();
 }
 
+void CGameInstance::CheckFocus_OnMouse(_bool _bCheck)
+{
+	if (nullptr == m_pMouse_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::CheckFocus_OnMouse", "Null Exception: m_pMouse_Manager");
+	}
+
+	return m_pMouse_Manager->CheckFocus(_bCheck);
+}
+
 #pragma endregion
 #pragma region Key Manager
+
+_bool CGameInstance::Key_None(_uint _iKey)
+{
+	if (nullptr == m_pKey_Manager)
+	{
+		MSG_RETURN(false, "CGameInstance::Key_Down", "Null Exception: m_pKey_Manager");
+	}
+
+	return _iKey == VK_MAX ? m_pKey_Manager->Key_None() : m_pKey_Manager->Key_None(_iKey);
+}
 
 _bool CGameInstance::Key_Down(_uint _iKey)
 {

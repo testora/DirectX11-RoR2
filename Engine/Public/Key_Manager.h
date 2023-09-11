@@ -21,18 +21,20 @@ public:
 	void				Tick();
 
 public:
-	_bool				Key_Down(_uint _iKey)				{ return KEY_STATE::DOWN	== m_vecKey[_iKey].eKeyState; }
-	_bool				Key_Hold(_uint _iKey)				{ return KEY_STATE::HOLD	== m_vecKey[_iKey].eKeyState; }
-	_bool				Key_Up(_uint _iKey)					{ return KEY_STATE::UP		== m_vecKey[_iKey].eKeyState; }
+	_bool				Key_None(_uint iKey)				{ return KEY_STATE::NONE	== m_vecKey[iKey].eKeyState; }
+	_bool				Key_Down(_uint iKey)				{ return KEY_STATE::DOWN	== m_vecKey[iKey].eKeyState; }
+	_bool				Key_Hold(_uint iKey)				{ return KEY_STATE::HOLD	== m_vecKey[iKey].eKeyState; }
+	_bool				Key_Up(_uint iKey)					{ return KEY_STATE::UP		== m_vecKey[iKey].eKeyState; }
 
+	_bool				Key_None();
 	_bool				Key_Down();
 	_bool				Key_Hold();
 	_bool				Key_Up();
 
-	void				CheckFocus(_bool _bCheck = true)	{ m_bCheckFocus = _bCheck; }
+	void				CheckFocus(_bool bCheck = true)		{ m_bCheckFocus = bCheck; }
 
 private:
-	KEY_STATE			Get_KeyState(_uint _iKey) const		{ return m_vecKey[_iKey].eKeyState; }
+	KEY_STATE			Get_KeyState(_uint iKey) const		{ return m_vecKey[iKey].eKeyState; }
 
 private:
 	vector<KEYINFO>		m_vecKey;

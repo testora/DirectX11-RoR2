@@ -40,6 +40,8 @@ HRESULT CCamera_Main::Initialize(any _desc)
 	CGameInstance::Get_Instance()->Fix_Cursor();
 	m_pPipeLine->Set_Camera(static_pointer_cast<CCamera>(shared_from_this()));
 
+	m_vPistolReboundQuaternion = QuaternionBetweenAxis(_float3(0.f, 1.f, 0.f), _float3(0.02f, 1.f, -0.05f));
+
 	return S_OK;
 }
 
@@ -107,26 +109,30 @@ void CCamera_Main::Rebound_Pistol()
 		{
 			if (fAcc < 0.5f)
 			{
-				fAcc += _fTimeDelta / RAILGUNNER_MAIN_ATTACK_COOL;
-				m_vShakeAxis = Function::Lerp(_float3(0.f, 1.f, 0.f), _float3(0.05f, 1.f, -0.05f), Function::Clamp(0.f, 1.f, fAcc));
-
-				m_pTransform->Set_State(TRANSFORM::UP, m_vShakeAxis);
-
-				return true;
+				fAcc += _fTimeDelta / MAINCAM_PISTOL_REBOUND_DURATION;
+		
+				_float fRatio(_fTimeDelta / MAINCAM_PISTOL_REBOUND_DURATION);
+				if (fAcc > 0.5f)
+				{
+					fRatio -= (fAcc - 0.5f) * 2.f;
+				}
+		
+				m_pTransform->Rotate(Function::Slerp(m_vPistolReboundQuaternion, fRatio));
 			}
 			else if (fAcc < 1.f)
 			{
-				fAcc += _fTimeDelta / RAILGUNNER_MAIN_ATTACK_COOL;
-				m_vShakeAxis = Function::Lerp(_float3(0.05f, 1.f, -0.05f), _float3(0.f, 1.f, 0.f), Function::Clamp(0.f, 1.f, fAcc));
-
-				m_pTransform->Set_State(TRANSFORM::UP, m_vShakeAxis);
-
-				return true;
+				fAcc += _fTimeDelta / MAINCAM_PISTOL_REBOUND_DURATION;
+		
+				_float fRatio(_fTimeDelta / MAINCAM_PISTOL_REBOUND_DURATION);
+				if (fAcc > 1.f)
+				{
+					fRatio -= fAcc - 1.f;
+				}
+		
+				m_pTransform->Rotate(Function::Slerp(m_vPistolReboundQuaternion, -fRatio));
 			}
-			else
-			{
-				return false;
-			}
+
+			return fAcc < 1.f;
 		}
 	);
 }
@@ -163,7 +169,7 @@ void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
 		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 		_float	fFinal		= fNewPitch - fCurPitch;
 
-		m_pTransform->Rotate(m_pTransform->Get_State(TRANSFORM::RIGHT), fFinal);
+		m_pTransform->Rotate(TRANSFORM::RIGHT, fFinal);
 	}
 }
 

@@ -212,11 +212,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	break;
 	case WM_DESTROY:
+	{
 		PostQuitMessage(0);
-		break;
+	}
+	break;
 	case WM_MOUSEWHEEL:
 	case WM_MOUSEHWHEEL:
+	{
 		if (g_pMainApp) g_pMainApp->WndProcHandler(hWnd, message, wParam, lParam);
+	}
+	break;
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

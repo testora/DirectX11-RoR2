@@ -98,6 +98,13 @@ void CTransform::Translate(const _vectorf _vTranslation)
 	m_mWorld *= XMMatrixTranslationFromVector(_vTranslation);
 }
 
+void CTransform::Rotate(const _vectorf _vQuaternion)
+{
+	_matrix mWorld(m_mWorld);
+	m_mWorld *= XMMatrixRotationQuaternion(XMQuaternionNormalize(_vQuaternion));
+	Set_State(TRANSFORM::POSITION, mWorld.r[IDX(TRANSFORM::POSITION)]);
+}
+
 void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
 {
 	_matrix mWorld(m_mWorld);
@@ -129,12 +136,10 @@ void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bF
 			if (fAcc < 1.f)
 			{
 				fAcc += _fTimeDelta / _fInterpolationDuration;
-				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight));
-
-				return true;
+				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp);
 			}
 
-			return false;
+			return fAcc < 1.f;
 		}
 	);
 }
@@ -151,19 +156,16 @@ void CTransform::LookTo(const _vectorf _vDirection, const _bool _bFixUp)
 void CTransform::LookTo_Interpolation(const _vectorf _vDirection, const _bool _bFixUp, const _float _fInterpolationDuration, const _float _fWeight)
 {
 	_float	fAcc(0.f);
-	_vector	vLook = _vDirection;
 	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fAcc < 1.f)
 			{
 				fAcc += _fTimeDelta / _fInterpolationDuration;
-				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight));
-
-				return true;
+				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), _vDirection, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp);
 			}
 
-			return false;
+			return fAcc < 1.f;
 		}
 	);
 }

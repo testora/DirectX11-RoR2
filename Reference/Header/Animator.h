@@ -22,21 +22,14 @@ public:
 
 public:
 	template<typename T>
-	void							Play_Animation(T eAnimation, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
-	template<typename T>
-	void							Play_Animation(T eAnimation, T eNextAnimation, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _float fReservedInterpolationDuration = g_fDefaultInterpolationDuration, _bool bReservedLoop = true);
+	void							Play_Animation(T eAnimation, _float fPlaySpeed = 1.f, _bool bReverse = false, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
 
 private:
 	_uint							Get_Animation() const;
-	void							Set_Animation(_uint iAnimationIndex, _float fInterpolationDuration, _bool bLoop);
-	void							Set_Animation(_uint iAnimationIndex, _uint iNextAnimationIndex, _float fInterpolationDuration, _float fReservedInterpolationDuration, _bool bReservedLoop);
+	void							Set_Animation(_uint iAnimationIndex, _float fPlaySpeed, _bool bReverse, _float fInterpolationDuration, _bool bLoop);
 
 private:
 	shared_ptr<class CModel>		m_pTargetModel;
-
-	_bool							m_bReservedLoop						= false;
-	_float							m_fReservedInterpolationDuration	= 0.f;
-	_uint							m_iReservedAnimationIndex			= 0;
 
 public:
 	static shared_ptr<CAnimator>	Create(shared_ptr<class CGameObject> pOwner);

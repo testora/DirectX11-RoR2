@@ -40,21 +40,6 @@
     <Filter Include="06. GameObject">
       <UniqueIdentifier>{c180f1a1-862f-423d-92ac-bf1b70c8cb06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\01. Camera">
-      <UniqueIdentifier>{4a5b1052-39ab-4004-a3e3-43d321a97bd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\01. Camera\00. MainCamera">
-      <UniqueIdentifier>{0967b197-a0a9-4bd8-b3e9-5ead662ed88b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\00. Demo">
-      <UniqueIdentifier>{794baa40-c63a-4b05-bad3-9fd303f0d4d7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\00. Demo\01. Background">
-      <UniqueIdentifier>{aefec61f-1da6-4708-a4dc-9cd9f7290c2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\00. Demo\02. Terrain">
-      <UniqueIdentifier>{ac879c5a-3fc3-40d4-bce9-ce64ddfe1f32}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Tool">
       <UniqueIdentifier>{014cff2c-5918-4902-9760-25b35651850a}</UniqueIdentifier>
     </Filter>
@@ -97,14 +82,17 @@
     <Filter Include="03. Tool\02. ImGuizmo\02. Source">
       <UniqueIdentifier>{e0dfafc4-1ca2-4087-ab1c-0e9e2030eec1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\03. Terrain">
-      <UniqueIdentifier>{e68124d5-8f8d-4403-9c7a-cd676bc95e33}</UniqueIdentifier>
+    <Filter Include="04. Shader\00. Include">
+      <UniqueIdentifier>{06cd7987-a95a-411c-bd85-19cb670e144f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\03. Terrain\01. GolemPlains">
-      <UniqueIdentifier>{4733f48e-72a4-4f07-8a84-45f846e319d9}</UniqueIdentifier>
+    <Filter Include="06. GameObject\01. Demo">
+      <UniqueIdentifier>{794baa40-c63a-4b05-bad3-9fd303f0d4d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor">
-      <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
+    <Filter Include="06. GameObject\01. Demo\01. Background">
+      <UniqueIdentifier>{aefec61f-1da6-4708-a4dc-9cd9f7290c2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\01. Demo\02. Terrain">
+      <UniqueIdentifier>{ac879c5a-3fc3-40d4-bce9-ce64ddfe1f32}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. GameObject\02. UI">
       <UniqueIdentifier>{c7626695-8256-4e5d-83e3-262ea6ed6256}</UniqueIdentifier>
@@ -112,31 +100,52 @@
     <Filter Include="06. GameObject\02. UI\01. InGame">
       <UniqueIdentifier>{e0da5f27-2343-48af-8880-8162b57f0a9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Shader\00. Include">
-      <UniqueIdentifier>{06cd7987-a95a-411c-bd85-19cb670e144f}</UniqueIdentifier>
+    <Filter Include="06. GameObject\03. Camera">
+      <UniqueIdentifier>{4a5b1052-39ab-4004-a3e3-43d321a97bd7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner">
+    <Filter Include="06. GameObject\03. Camera\00. MainCamera">
+      <UniqueIdentifier>{0967b197-a0a9-4bd8-b3e9-5ead662ed88b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\04. Terrain">
+      <UniqueIdentifier>{e68124d5-8f8d-4403-9c7a-cd676bc95e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\04. Terrain\01. GolemPlains">
+      <UniqueIdentifier>{4733f48e-72a4-4f07-8a84-45f846e319d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor">
+      <UniqueIdentifier>{d5058e98-5773-41a5-b513-290f92f76429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner">
       <UniqueIdentifier>{e6e012e1-41d0-440f-97fd-ceb0c235e461}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\01. Crosshair">
-      <UniqueIdentifier>{b1078752-e856-4d22-821f-23ac01dbdd5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\00. Behavior">
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\00. Behavior">
       <UniqueIdentifier>{a565f8aa-8e94-476b-a2da-82ee0ed5e736}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\00. Behavior\00. Control">
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\00. Behavior\01. Control">
       <UniqueIdentifier>{def1028c-f18b-4c90-933d-35a4d1d8e97e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\02. Bullet">
+    <Filter Include="06. GameObject\00. System">
+      <UniqueIdentifier>{0905afb7-845f-41cc-9bd7-e9c040df3037}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\01. System">
+      <UniqueIdentifier>{607403cb-648a-46b2-a4f5-2bc28cc78413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\01. System\01. State">
+      <UniqueIdentifier>{d478aa15-2134-405a-b508-676a904439de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\01. System\02. Crosshair">
+      <UniqueIdentifier>{b1078752-e856-4d22-821f-23ac01dbdd5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\02. Bullet">
       <UniqueIdentifier>{e80708ea-ed3d-4c89-97e1-9a5341a86034}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\02. Bullet\01. Pistol">
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol">
       <UniqueIdentifier>{47e1a9ba-c8c3-49d1-b631-57f6b124976e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\02. Bullet\02. Sniper">
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\02. Bullet\02. Sniper">
       <UniqueIdentifier>{4d71bd31-ce58-46ab-bd88-80fd2eb0ac2e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\04. Survivor\01. RailGunner\02. Bullet\03. Super">
+    <Filter Include="06. GameObject\05. Survivor\01. RailGunner\02. Bullet\03. Super">
       <UniqueIdentifier>{397ab4c9-ed7b-411f-8492-b20198afe12f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -184,10 +193,10 @@
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Background.h">
-      <Filter>06. GameObject\00. Demo\01. Background</Filter>
+      <Filter>06. GameObject\01. Demo\01. Background</Filter>
     </ClInclude>
     <ClInclude Include="Public\Camera_Main.h">
-      <Filter>06. GameObject\01. Camera\00. MainCamera</Filter>
+      <Filter>06. GameObject\03. Camera\00. MainCamera</Filter>
     </ClInclude>
     <ClInclude Include="Public\Client_Variable.h">
       <Filter>00. Header</Filter>
@@ -196,7 +205,7 @@
       <Filter>05. Scene\00. Load\00. Loader</Filter>
     </ClInclude>
     <ClInclude Include="Public\Terrain.h">
-      <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
+      <Filter>06. GameObject\01. Demo\02. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGui\imconfig.h">
       <Filter>03. Tool\01. ImGui\01. Header</Filter>
@@ -226,7 +235,7 @@
       <Filter>03. Tool\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\GolemPlains.h">
-      <Filter>06. GameObject\03. Terrain\01. GolemPlains</Filter>
+      <Filter>06. GameObject\04. Terrain\01. GolemPlains</Filter>
     </ClInclude>
     <ClInclude Include="Public\Scene_Tool.h">
       <Filter>05. Scene\02. Tool</Filter>
@@ -262,22 +271,28 @@
       <Filter>00. Header\00. PCH</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner.h">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner_Crosshair.h">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\01. Crosshair</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\02. Crosshair</Filter>
     </ClInclude>
     <ClInclude Include="Public\Control_RailGunner.h">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\00. Behavior\00. Control</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\00. Behavior\01. Control</Filter>
     </ClInclude>
     <ClInclude Include="Public\Client_Animation.h">
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner_Bullet.h">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\02. Bullet</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet</Filter>
     </ClInclude>
     <ClInclude Include="Public\RailGunner_PistolBullet.h">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\RailGunner_State.h">
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\System.h">
+      <Filter>06. GameObject\00. System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -303,13 +318,13 @@
       <Filter>05. Scene\01. Menu</Filter>
     </ClCompile>
     <ClCompile Include="Private\Background.cpp">
-      <Filter>06. GameObject\00. Demo\01. Background</Filter>
+      <Filter>06. GameObject\01. Demo\01. Background</Filter>
     </ClCompile>
     <ClCompile Include="Private\Camera_Main.cpp">
-      <Filter>06. GameObject\01. Camera\00. MainCamera</Filter>
+      <Filter>06. GameObject\03. Camera\00. MainCamera</Filter>
     </ClCompile>
     <ClCompile Include="Private\Terrain.cpp">
-      <Filter>06. GameObject\00. Demo\02. Terrain</Filter>
+      <Filter>06. GameObject\01. Demo\02. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGui\imgui.cpp">
       <Filter>03. Tool\01. ImGui\02. Source</Filter>
@@ -333,7 +348,7 @@
       <Filter>03. Tool\00. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Private\GolemPlains.cpp">
-      <Filter>06. GameObject\03. Terrain\01. GolemPlains</Filter>
+      <Filter>06. GameObject\04. Terrain\01. GolemPlains</Filter>
     </ClCompile>
     <ClCompile Include="Private\Scene_Tool.cpp">
       <Filter>05. Scene\02. Tool</Filter>
@@ -357,19 +372,25 @@
       <Filter>03. Tool\02. ImGuizmo\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner.cpp">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner_Crosshair.cpp">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\01. Crosshair</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\02. Crosshair</Filter>
     </ClCompile>
     <ClCompile Include="Private\Control_RailGunner.cpp">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\00. Behavior\00. Control</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\00. Behavior\01. Control</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner_Bullet.cpp">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\02. Bullet</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet</Filter>
     </ClCompile>
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp">
-      <Filter>06. GameObject\04. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RailGunner_State.cpp">
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\System.cpp">
+      <Filter>06. GameObject\00. System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

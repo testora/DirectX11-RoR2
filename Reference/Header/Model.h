@@ -12,82 +12,84 @@ private:
 	virtual ~CModel() DEFAULT;
 
 public:
-	virtual HRESULT							Initialize(const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
-	HRESULT									Render(shared_ptr<class CShader>, _uint iPassIndex);
-	HRESULT									Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
+	virtual HRESULT												Initialize(const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
+	HRESULT														Render(shared_ptr<class CShader>, _uint iPassIndex);
+	HRESULT														Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
 
 private:
 #if ACTIVATE_TOOL
-	HRESULT									Initialize_FromAssimp(const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
+	HRESULT														Initialize_FromAssimp(const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
 #endif
-	HRESULT									Initialize_FromBinary(const wstring& wstrModelPath);
+	HRESULT														Initialize_FromBinary(const wstring& wstrModelPath);
 
 #if ACTIVATE_TOOL
-	HRESULT									Ready_Bones(const aiNode*, _uint iParentBoneIndex);
-	HRESULT									Ready_Animations(const aiScene*);
-	HRESULT									Ready_Meshes(const aiScene*, _matrixf mPivot);
-	HRESULT									Ready_Materials(const aiScene*, const wstring& wstrModelPath);
+	HRESULT														Ready_Bones(const aiNode*, _uint iParentBoneIndex);
+	HRESULT														Ready_Animations(const aiScene*);
+	HRESULT														Ready_Meshes(const aiScene*, _matrixf mPivot);
+	HRESULT														Ready_Materials(const aiScene*, const wstring& wstrModelPath);
 #endif
 
 public:
-	_bool									Is_AnimationFinished() const;
+	_bool														Is_AnimationFinished() const;
 
-	_uint									Get_AnimationIndex() const			{ return m_iCurrentAnimationIndex; }
+	_uint														Get_AnimationIndex() const			{ return m_iCurrentAnimationIndex; }
 
-	_uint									Get_BoneIndex(const _char* szBoneName) const;
+	_uint														Get_BoneIndex(const _char* szBoneName) const;
 #if ACTIVATE_TOOL
-	const _uint								Get_NumBones() const				{ return m_iNumBones; }
-	const _uint								Get_NumAnimations() const			{ return m_iNumAnimations; }
-	const _uint								Get_NumMeshes() const				{ return m_iNumMeshes; }
-	const _uint								Get_NumMaterials() const			{ return m_iNumMaterials; }
+	const _uint													Get_NumBones() const				{ return m_iNumBones; }
+	const _uint													Get_NumAnimations() const			{ return m_iNumAnimations; }
+	const _uint													Get_NumMeshes() const				{ return m_iNumMeshes; }
+	const _uint													Get_NumMaterials() const			{ return m_iNumMaterials; }
 
-	shared_ptr<class CBone>					Get_Bone(_uint iIndex) const		{ return m_vecBones[iIndex]; }
-	shared_ptr<class CAnimation>			Get_Animation(_uint iIndex) const	{ return m_vecAnimations[iIndex]; }
-	shared_ptr<class CMesh>					Get_Mesh(_uint iIndex) const		{ return m_vecMeshes[iIndex]; }
-	MATERIAL								Get_Material(_uint iIndex) const	{ return m_vecMaterials[iIndex]; }
+	shared_ptr<class CBone>										Get_Bone(_uint iIndex) const		{ return m_vecBones[iIndex]; }
+	shared_ptr<class CAnimation>								Get_Animation(_uint iIndex) const	{ return m_vecAnimations[iIndex]; }
+	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const		{ return m_vecMeshes[iIndex]; }
+	MATERIAL													Get_Material(_uint iIndex) const	{ return m_vecMaterials[iIndex]; }
 #endif
 
 public:
-	void									Tick_Animation(_float fTimeDelta);
-	void									Set_Animation(_uint iAnimationIndex, _float fInterpolationDuration, _bool bLoop = true);
+	void														Tick_Animation(_float fTimeDelta);
+	void														Set_Animation(_uint iAnimationIndex, _float fPlaySpeed = 1.f, _bool bReverse = false, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
 
-	void									Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
+	void														Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 
 private:
-	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIndex = 0);
-	HRESULT									Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName, _uint iTextureIndex = 0);
-	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>);
-	HRESULT									Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName);
-	HRESULT									Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const _char* szConstantName);
+	HRESULT														Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIndex = 0);
+	HRESULT														Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName, _uint iTextureIndex = 0);
+	HRESULT														Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>);
+	HRESULT														Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName);
+	HRESULT														Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const _char* szConstantName);
 
 private:
-	MODEL									m_eType						= MODEL::MAX;
+	MODEL														m_eType						= MODEL::MAX;
 
-	_uint									m_iNumBones					= 0;
-	vector<shared_ptr<class CBone>>			m_vecBones;
+	_uint														m_iNumBones					= 0;
+	vector<shared_ptr<class CBone>>								m_vecBones;
 
-	_uint									m_iNumAnimations			= 0;
-	vector<shared_ptr<class CAnimation>>	m_vecAnimations;
+	_uint														m_iNumAnimations			= 0;
+	vector<shared_ptr<class CAnimation>>						m_vecAnimations;
 
-	_uint									m_iNumMeshes				= 0;
-	vector<shared_ptr<class CMesh>>			m_vecMeshes;
+	_uint														m_iNumMeshes				= 0;
+	vector<shared_ptr<class CMesh>>								m_vecMeshes;
 
-	_uint									m_iNumMaterials				= 0;
-	vector<MATERIAL>						m_vecMaterials;
-	vector<MATERIALDESC>					m_vecMaterialDescs;
+	_uint														m_iNumMaterials				= 0;
+	vector<MATERIAL>											m_vecMaterials;
+	vector<MATERIALDESC>										m_vecMaterialDescs;
 
-	_uint									m_iCurrentAnimationIndex	= 0;
-	_bool									m_bAnimLoop					= true;
+	_uint														m_iCurrentAnimationIndex	= 0;
+	_float														m_fAnimationPlaySpeed		= 1.f;
+	_bool														m_bAnimReverse				= false;
+	_bool														m_bAnimLoop					= true;
 
-	map<_uint, _flags>						m_mapMeshShaderFlags;
-	map<_uint, function<HRESULT(shared_ptr<class CShader>)>>			m_mapMeshShaderBindings;
+	map<_uint, _flags>											m_mapMeshShaderFlags;
+	map<_uint, function<HRESULT(shared_ptr<class CShader>)>>	m_mapMeshShaderBindings;
 
 public:
-	static shared_ptr<CModel>				Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
-	virtual shared_ptr<CComponent>			Clone(any mapDesc = g_aNull) override;
+	static shared_ptr<CModel>									Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
+	virtual shared_ptr<CComponent>								Clone(any mapDesc = g_aNull) override;
 
 #if ACTIVATE_TOOL
-	HRESULT									Export(const wstring& wstrPath);
+	HRESULT														Export(const wstring& wstrPath);
 #endif
 };
 

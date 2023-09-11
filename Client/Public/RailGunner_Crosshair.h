@@ -1,6 +1,6 @@
 #pragma once
 #include "Client_Define.h"
-#include "GameObject.h"
+#include "System.h"
 
 BEGIN(Engine)
 class CRenderer;
@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 
-class CRailGunner_Crosshair final : public CGameObject
+class CRailGunner_Crosshair final : public ISystem
 {
 private:
 	enum class ELEMENT
@@ -27,51 +27,56 @@ private:
 
 private:
 	explicit CRailGunner_Crosshair(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	explicit CRailGunner_Crosshair(const CRailGunner_Crosshair&) DEFAULT;
 	virtual ~CRailGunner_Crosshair() DEFAULT;
 
 public:
-	virtual HRESULT								Initialize_Prototype() override;
 	virtual HRESULT								Initialize(any = g_aNull) override;
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
 
 public:
-	CROSSHAIR									Get_State() const		{ return m_eState; }
+	RG_CROSSHAIR								Get_State() const			{ return m_eState; }
+	_bool										Is_SuccessReload() const	{ return m_bSuccessReload; }
 
 public:
-	void										Change_State(const CROSSHAIR);
+	void										Visualize(const RG_CROSSHAIR);
 
 	void										Bounce_Bracket();
 	void										Hit_Reload();
 
 private:
-	virtual HRESULT								Ready_Components() override;
+	HRESULT										Ready_Components();
+	HRESULT										Ready_Transforms();
+	HRESULT										Ready_Textures();
+	HRESULT										Ready_Diffuses();
 
 	HRESULT										Render_Element(const ELEMENT, _uint iPassIndex);
 
 	void										Visualize_Main();
 	void										Visualize_Bracket();
 	void										Visualize_Flavor();
-	void										Visualize_Scope();
+	void										Visualize_Scope();	
 	void										Visualize_Reload();
 	void										Visualize_Sprint();
 
 private:
-	CROSSHAIR									m_eState				= CROSSHAIR::MAX;
+	RG_CROSSHAIR								m_eState					= RG_CROSSHAIR::MAX;
+	bitset<IDX(ELEMENT::MAX)>					m_bitElement;
 	_color										m_vDiffuse[IDX(ELEMENT::MAX)];
 
-	_float										m_fFlavorRotateSpeed	= 0.f;
-
-	bitset<IDX(ELEMENT::MAX)>					m_bitElement;
-
 	pair<_float, _float>						m_pairTagPositionRange;
-	_float										m_fCurrentTagPosition	= 0.f;
-	_bool										m_bHitTag				= false;
+	_float										m_fCurrentTagPosition		= 0.f;
+	_bool										m_bSuccessReload			= false;
+	_bool										m_bHitTag					= false;
+
+	_float										m_fFlavorRotateSpeed		= 0.f;
+
+	shared_ptr<CRenderer>						m_pRenderer;
+	shared_ptr<CShader>							m_pShader;
+	shared_ptr<CVIBuffer_Rect>					m_pVIBuffer;
 
 	shared_ptr<CTransform>						m_pTransform[IDX(ELEMENT::MAX)];
-	shared_ptr<CVIBuffer_Rect>					m_pVIBuffer;
 
 	shared_ptr<CTexture>						m_pTexSinglePixel;
 
@@ -89,12 +94,11 @@ private:
 	shared_ptr<CTexture>						m_pTexDot;
 	shared_ptr<CTexture>						m_pTexArrow;
 
-	shared_ptr<CRenderer>						m_pRenderer;
-	shared_ptr<CShader>							m_pShader;
+	ComPtr<ID3D11Device>						m_pDevice;
+	ComPtr<ID3D11DeviceContext>					m_pContext;
 
 public:
 	static shared_ptr<CRailGunner_Crosshair>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CGameObject>				Clone(any = g_aNull) override;
 };
 
 END
