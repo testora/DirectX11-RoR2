@@ -94,7 +94,7 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 		{
 			if (FAILED(pTransform->Bind_OnShader(pShader)))
 			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Matrix: SHADER_MATRIX::MTX_WORLD");
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CTransform::Bind_OnShader");
 			}
 		}
 		if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
@@ -202,6 +202,9 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
+	case COMPONENT::VIBUFFER:
+		break;
+
 	default:
 		MSG_RETURN(E_FAIL, "CGameObject::Add_Component", "Invalid Range");
 	}
@@ -220,6 +223,9 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 #pragma region Weak Pointer
 	switch (_eComponent)
 	{
+	case COMPONENT::RENDERER:
+		m_pRenderer		= Get_Component<CRenderer>(_eComponent);
+		break;
 	case COMPONENT::TRANSFORM:
 		m_pTransform	= Get_Component<CTransform>(_eComponent);
 		break;
@@ -310,4 +316,21 @@ HRESULT CGameObject::Delete_Behavior(const BEHAVIOR _eBehavior)
 	m_bitBehavior.set(IDX(_eBehavior), false);
 
 	return S_OK;
+}
+
+HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
+{
+	if (shared_ptr<CRenderer> pRenderer = m_pRenderer.lock())
+	{
+		if (SUCCEEDED(pRenderer->Add_RenderObject(_eRenderGroup, shared_from_this())))
+		{
+			return S_OK;
+		}
+		else
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+		}
+	}
+
+	return S_FALSE;
 }

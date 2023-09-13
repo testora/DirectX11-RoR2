@@ -6,7 +6,7 @@
 #include "Model.h"
 #include "GolemPlains.h"
 #include "RailGunner.h"
-#include "RailGunner_Crosshair.h"
+#include "RailGunner_PistolBullet.h"
 
 HRESULT CLoader::Load_Test()
 {
@@ -64,11 +64,12 @@ HRESULT CLoader::Load_Test()
 //	PROTOTYPE_GAMEOBJECT_TERRAIN
 //	PROTOTYPE_GAMEOBJECT_GOLEMPLAINS
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER
+//	PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
 		CCamera_Main::Create(m_pDevice, m_pContext))))
 	{
-		MSG_RETURN(E_FAIL, "CMainApp::Ready_GameObject_Prototype", "Failed to Add_Object_Prototype: CCamera");
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_GameObject_Prototype", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TERRAIN,
@@ -87,6 +88,12 @@ HRESULT CLoader::Load_Test()
 		CRailGunner::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET,
+		CRailGunner_PistolBullet::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET");
 	}
 
 #pragma endregion

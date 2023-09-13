@@ -282,17 +282,14 @@
     <ClInclude Include="Public\Client_Animation.h">
       <Filter>00. Header</Filter>
     </ClInclude>
-    <ClInclude Include="Public\RailGunner_Bullet.h">
-      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\RailGunner_PistolBullet.h">
-      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
-    </ClInclude>
     <ClInclude Include="Public\RailGunner_State.h">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
     </ClInclude>
     <ClInclude Include="Public\System.h">
       <Filter>06. GameObject\00. System</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\RailGunner_PistolBullet.h">
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -380,17 +377,14 @@
     <ClCompile Include="Private\Control_RailGunner.cpp">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\00. Behavior\01. Control</Filter>
     </ClCompile>
-    <ClCompile Include="Private\RailGunner_Bullet.cpp">
-      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\RailGunner_PistolBullet.cpp">
-      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
-    </ClCompile>
     <ClCompile Include="Private\RailGunner_State.cpp">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
     </ClCompile>
     <ClCompile Include="Private\System.cpp">
       <Filter>06. GameObject\00. System</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RailGunner_PistolBullet.cpp">
+      <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

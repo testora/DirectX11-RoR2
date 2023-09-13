@@ -19,6 +19,7 @@ public:
 public:
 	template<typename T>
 	T								Current_Animation() const;
+	_bool							Is_Finished() const;
 
 public:
 	template<typename T>

@@ -244,7 +244,7 @@ HRESULT CMainApp::Ready_Component_Prototype()
 }
 
 #if ACTIVATE_IMGUI
-void CMainApp::ImGui_GameStatus(_float _fTimeDelta, bool* _pOpen)
+void CMainApp::ImGui_GameStatus(_float _fTimeDelta, _bool* _pOpen)
 {
 	static int location = 0;
 	ImGuiIO& io = ImGui::GetIO();

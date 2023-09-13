@@ -15,6 +15,13 @@ struct VS_OUT
 	float2	vTexCoord	: TEXCOORD0;
 };
 
+struct VS_OUT_WORLD
+{
+	float4	vPosition	: SV_POSITION;
+	float2	vTexCoord	: TEXCOORD0;
+	float4	vWorldPos	: TEXCOORD1;
+};
+
 struct VS_OUT_ORTHOGRAPHIC
 {
 	float4	vPosition	: SV_POSITION;
@@ -37,6 +44,54 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT_WORLD VS_WORLD(VS_IN In)
+{
+    VS_OUT_WORLD Out;
+
+	matrix	mWV, mWVP;
+
+	mWV				= mul(g_mWorld, g_mView);
+	mWVP			= mul(mWV, g_mProj);
+
+	Out.vPosition	= mul(float4(In.vPosition, 1.f), mWVP);
+	Out.vTexCoord	= In.vTexCoord;
+	Out.vWorldPos	= mul(float4(In.vPosition, 1.f), g_mWorld);
+
+	return Out;
+}
+
+VS_OUT_WORLD VS_RAILGUNNER_PISTOLBULLET(VS_IN In)
+{
+    VS_OUT_WORLD Out;
+	
+	float4x4	mWorld		= g_mWorld;
+    float		fDistance	= distance(g_vCamPosition, g_mWorld[3]);
+	float		fMaxDist	= 25.f;
+	
+    if (fMaxDist < fDistance)
+    {
+        float		fRatio			= fDistance / fMaxDist;
+        float4x4	fScaleFactor	= float4x4(
+										float4(fRatio, 0.f, 0.f, 0.f),
+										float4(0.f, fRatio, 0.f, 0.f),
+										float4(0.f, 0.f, fRatio, 0.f),
+										float4(0.f, 0.f, 0.f, 1.f));
+        mWorld		= mul(fScaleFactor, mWorld);
+    }
+	
+	matrix	mWV, mWVP;
+
+	mWV				= mul(mWorld, g_mView);
+	mWVP			= mul(mWV, g_mProj);
+	
+
+	Out.vPosition	= mul(float4(In.vPosition, 1.f), mWVP);
+	Out.vTexCoord	= In.vTexCoord;
+	Out.vWorldPos	= mul(float4(In.vPosition, 1.f), g_mWorld);
+
+	return Out;
+}
+
 VS_OUT_ORTHOGRAPHIC VS_ORTHOGRAPHIC(VS_IN In)
 {
 	VS_OUT_ORTHOGRAPHIC	Out;
@@ -52,6 +107,13 @@ struct PS_IN
 {
 	float4	vPosition	: SV_POSITION;
 	float2	vTexCoord	: TEXCOORD0;
+};
+
+struct PS_IN_WORLD
+{
+	float4	vPosition	: SV_POSITION;
+	float2	vTexCoord	: TEXCOORD0;
+	float4	vWorldPos	: TEXCOORD1;
 };
 
 struct PS_IN_ORTHOGRAPHIC
@@ -314,6 +376,28 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_SCOPE(PS_IN_ORTHOGRAPHIC In)
 	return Out;
 }
 
+PS_OUT PS_RAILGUNNER_PISTOLBULLET(PS_IN_WORLD In)
+{
+	PS_OUT	Out;
+	
+	float2	vTextureSize	= float2(128.f, 128.f);
+	float4	vMaskColor1		= float4(0.99f, 0.95f, 0.70f, 1.00f);
+	float4	vMaskColor2		= float4(1.00f, 0.40f, 0.30f, 1.00f);
+	
+	Out.vColor	=	g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+	
+	if (In.vTexCoord.y < 0.5f)
+    {
+        Out.vColor *= vMaskColor1;
+    }
+	else
+    {
+        Out.vColor *= vMaskColor2;
+    }
+	
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -393,4 +477,17 @@ technique11 DefaultTechnique
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
+
+    pass RailGunner_PistolBullet
+    {
+		VertexShader	= compile vs_5_0 VS_RAILGUNNER_PISTOLBULLET();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_RAILGUNNER_PISTOLBULLET();
+
+        SetRasterizerState(RS_Default);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+    }
 }

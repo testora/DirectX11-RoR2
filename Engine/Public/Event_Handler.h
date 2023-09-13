@@ -13,8 +13,8 @@ public:
 	void																	Tick(_float fTimeDelta);
 
 public:
-	void																	Register_TickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)> funcListener);
-	void																	Erase_TickListener(shared_ptr<void>);
+	void																	Register_OnTickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)> funcListener);
+	void																	Erase_OnTickListener(shared_ptr<void>);
 
 private:
 	multimap<weak_ptr<void>, function<_bool(_float)>, std::owner_less<>>	m_mmapTickListener;

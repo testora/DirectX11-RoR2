@@ -63,7 +63,6 @@
     <ClInclude Include="Public\Scene_Tool.h" />
     <ClInclude Include="Public\Tool_Define.h" />
     <ClInclude Include="Public\RailGunner_Crosshair.h" />
-    <ClInclude Include="Public\RailGunner_Bullet.h" />
     <ClInclude Include="Public\RailGunner_PistolBullet.h" />
     <ClInclude Include="Public\RailGunner_State.h" />
     <ClInclude Include="Public\System.h" />
@@ -152,7 +151,6 @@
     <ClCompile Include="Private\GolemPlains.cpp" />
     <ClCompile Include="Private\Scene_Tool.cpp" />
     <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
-    <ClCompile Include="Private\RailGunner_Bullet.cpp" />
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp" />
     <ClCompile Include="Private\RailGunner_State.cpp" />
     <ClCompile Include="Private\System.cpp" />

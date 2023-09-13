@@ -39,7 +39,7 @@ void CObjectPool::Late_Tick(_float _fTimeDelta)
 	}
 }
 
-shared_ptr<CGameObject> CObjectPool::Pop()
+shared_ptr<CGameObject> CObjectPool::Pop(any _aFetchArg)
 {
 	if (m_deqPool.empty())
 	{
@@ -47,8 +47,9 @@ shared_ptr<CGameObject> CObjectPool::Pop()
 	}
 
 	shared_ptr<CGameObject> pObject = m_deqPool.front();
-	pObject->Fetch(m_fetchArg);
+	pObject->Fetch(_aFetchArg);
 	m_deqPool.pop_front();
+	m_usetPop.emplace(pObject);
 
 	return pObject;
 }

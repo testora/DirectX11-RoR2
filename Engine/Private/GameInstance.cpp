@@ -367,14 +367,14 @@ void CGameInstance::CheckFocus_OnKeyboard(_bool _bCheck)
 #pragma endregion
 #pragma region Event Handler
 
-void CGameInstance::Register_TickListener(shared_ptr<void> _pSubscriber, function<_bool(_float)> _funcListener)
+void CGameInstance::Register_OnTickListener(shared_ptr<void> _pSubscriber, function<_bool(_float)> _funcListener)
 {
 	if (nullptr == m_pEvent_Handler)
 	{
-		MSG_RETURN(, "CGameInstance::Register_TickListener", "Null Exception: m_pEvent_Handler");
+		MSG_RETURN(, "CGameInstance::Register_OnTickListener", "Null Exception: m_pEvent_Handler");
 	}
 
-	return m_pEvent_Handler->Register_TickListener(_pSubscriber, _funcListener);
+	return m_pEvent_Handler->Register_OnTickListener(_pSubscriber, _funcListener);
 }
 
 #pragma endregion

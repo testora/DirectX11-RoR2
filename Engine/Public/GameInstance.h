@@ -66,7 +66,7 @@ public:
 #pragma endregion
 #pragma region Event Handler
 
-	void										Register_TickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)>);
+	void										Register_OnTickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)>);
 
 #pragma endregion
 #pragma region Scene Manager

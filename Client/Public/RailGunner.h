@@ -27,9 +27,10 @@ public:
 	virtual HRESULT										Render() override;
 
 private:
-	HRESULT												Ready_RailGunner();
 	virtual HRESULT										Ready_Components() override;
 	virtual HRESULT										Ready_Behaviors() override;
+	HRESULT												Ready_RailGunner();
+	HRESULT												Ready_Bullets();
 
 public:
 #pragma region RailGunner State

@@ -15,7 +15,7 @@ public:
 	void											Late_Tick(_float fTimeDelta);
 
 public:
-	shared_ptr<class CGameObject>					Pop();
+	shared_ptr<class CGameObject>					Pop(any aFetchArg);
 	HRESULT											Push(shared_ptr<class CGameObject>);
 
 private:
@@ -30,7 +30,6 @@ private:
 	shared_ptr<class CGameObject>					m_pPrototype;
 
 	std::function<shared_ptr<class CGameObject>()>	m_funcPush;
-	any												m_fetchArg;
 
 	const SCENE										m_eScene;
 

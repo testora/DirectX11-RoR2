@@ -789,6 +789,15 @@ namespace Engine
 		return XMMatrixInverse(nullptr, *this);
 	}
 
+	__forceinline float4
+	float4x4::row(_uint _index) const noexcept
+	{
+		float4 out;
+		XMStoreFloat4(&out, XMLoadFloat4x4(this).r[_index]);
+
+		return out;
+	}
+
 #pragma region Assignment Operators
 
 	__forceinline float4x4&

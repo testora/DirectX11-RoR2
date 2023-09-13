@@ -36,6 +36,8 @@ protected:
 	virtual HRESULT												Delete_Component(const COMPONENT);
 	virtual HRESULT												Delete_Behavior(const BEHAVIOR);
 
+	HRESULT														Add_RenderObject(const RENDER_GROUP);
+
 protected:
 	CHARACTERDESC												m_tCharacterDesc{};
 
@@ -48,6 +50,7 @@ protected:
 	bitset<IDX(BEHAVIOR::MAX)>									m_bitBehavior;
 
 private:
+	weak_ptr<class CRenderer>									m_pRenderer;
 	weak_ptr<class CTransform>									m_pTransform;
 	weak_ptr<class CShader>										m_pShader;
 	weak_ptr<class CCollider>									m_pCollider;

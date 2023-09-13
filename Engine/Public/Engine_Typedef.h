@@ -185,6 +185,7 @@ namespace Engine
 		float4x4(XMMATRIX _matrix) { XMStoreFloat4x4(this, _matrix); }
 
 		float4x4 inverse() const noexcept;
+		float4 row(_uint _index) const noexcept;
 
 		// assignment operators
 		float4x4& operator = (const XMMATRIX&) noexcept;

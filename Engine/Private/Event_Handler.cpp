@@ -23,12 +23,12 @@ void CEvent_Handler::Tick(_float _fTimeDelta)
 	}
 }
 
-void CEvent_Handler::Register_TickListener(shared_ptr<void> _pSubscriber, function<_bool(_float)> _func)
+void CEvent_Handler::Register_OnTickListener(shared_ptr<void> _pSubscriber, function<_bool(_float)> _func)
 {
 	m_mmapTickListener.emplace(_pSubscriber, _func);
 }
 
-void CEvent_Handler::Erase_TickListener(shared_ptr<void> _pSubscriber)
+void CEvent_Handler::Erase_OnTickListener(shared_ptr<void> _pSubscriber)
 {
 	m_mmapTickListener.erase(_pSubscriber);
 }

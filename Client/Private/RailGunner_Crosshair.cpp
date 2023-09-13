@@ -76,41 +76,10 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 		m_pTransform[IDX(ELEMENT::RELOAD_SLIDE)]->Set_State(TRANSFORM::POSITION,
 			_float4((m_fCurrentTagPosition - 0.5f) * RELOAD_BAR_SCALE.x, RELOAD_POSITION.y, 0.f, 1.f));
 	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('9'))
-	{
-		Visualize(RG_CROSSHAIR::MAIN);
-	}
-	
-	if (CGameInstance::Get_Instance()->Key_Down('8'))
-	{
-		Visualize(RG_CROSSHAIR::SPRINT);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('7'))
-	{
-		Visualize(RG_CROSSHAIR::SCOPE);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('6'))
-	{
-		Visualize_Bracket();
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('5'))
-	{
-		Visualize(RG_CROSSHAIR::RELOAD);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('4'))
-	{
-		m_bHitTag = true;
-	}
 }
 
 void CRailGunner_Crosshair::Late_Tick(_float _fTimeDelta)
 {
-
 }
 
 HRESULT CRailGunner_Crosshair::Render()
@@ -458,7 +427,7 @@ void CRailGunner_Crosshair::Bounce_Bracket()
 	if (m_bitElement.test(IDX(ELEMENT::MAIN_BRACKET)))
 	{
 		_float	fAcc(0.f);
-		CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+		CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 			[=](_float _fTimeDelta) mutable->_bool
 			{
 				if (fAcc < 1.f)
@@ -486,7 +455,7 @@ void CRailGunner_Crosshair::Visualize_Main()
 	m_bitElement.set(IDX(ELEMENT::MAIN_NIBS));
 
 	_float	fInAcc(0.f), fOutAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fInAcc < 1.f)
@@ -513,7 +482,7 @@ void CRailGunner_Crosshair::Visualize_Bracket()
 	m_bitElement.set(IDX(ELEMENT::MAIN_NIBS));
 
 	_float	fBracketAcc(0.f), fNibsAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fBracketAcc >= 0.5f)
@@ -558,7 +527,7 @@ void CRailGunner_Crosshair::Visualize_Flavor()
 	m_bitElement.set(IDX(ELEMENT::MAIN_FLAVOR));
 
 	_float fAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fAcc < 1.f)
@@ -581,7 +550,7 @@ void CRailGunner_Crosshair::Visualize_Scope()
 	m_bitElement.set(IDX(ELEMENT::SCOPE_BOUND_OUT));
 
 	_float	fInAcc(0.f), fOutAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fInAcc < 1.f)
@@ -621,7 +590,7 @@ void CRailGunner_Crosshair::Visualize_Reload()
 	m_bSuccessReload	= false;
 
 	_float fAcc(0.f), fHitAcc(0.f), fMissAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (!m_bHitTag)

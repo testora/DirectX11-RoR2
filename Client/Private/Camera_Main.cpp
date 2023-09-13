@@ -8,15 +8,14 @@ CCamera_Main::CCamera_Main(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceCon
 {
 }
 
-HRESULT CCamera_Main::Initialize(any _desc)
+HRESULT CCamera_Main::Initialize(any _aDesc)
 {
-	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM);
+	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
+	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX, g_aNull);
 
-	m_umapComponentArg[COMPONENT::RENDERER] = make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
-
-	if (_desc.has_value())
+	if (_aDesc.has_value())
 	{
-		m_tCameraMainDesc = any_cast<CAMERA_MAIN_DESC>(_desc);
+		m_tCameraMainDesc = any_cast<CAMERA_MAIN_DESC>(_aDesc);
 	}
 	else
 	{
@@ -74,8 +73,6 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 		ImGui::End();
 	}
 #endif
-
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::CAMERA, shared_from_this());
 }
 
 HRESULT CCamera_Main::Render()
@@ -88,7 +85,7 @@ HRESULT CCamera_Main::Render()
 	return S_OK;
 }
 
-HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _float4 _vOffset)
+HRESULT CCamera_Main::Attach(shared_ptr<CTransform> _pTargetTransform, _float4 _vOffset)
 {
 	if (nullptr == _pTargetTransform)
 	{
@@ -104,7 +101,7 @@ HRESULT CCamera_Main::Attach(shared_ptr<class CTransform> _pTargetTransform, _fl
 void CCamera_Main::Rebound_Pistol()
 {
 	_float fAcc(0.f);
-	CGameInstance::Get_Instance()->Register_TickListener(shared_from_this(),
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fAcc < 0.5f)
@@ -170,72 +167,6 @@ void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
 		_float	fFinal		= fNewPitch - fCurPitch;
 
 		m_pTransform->Rotate(TRANSFORM::RIGHT, fFinal);
-	}
-}
-
-void CCamera_Main::Debug_MouseControl(_float _fTimeDelta)
-{
-	POINT ptCursorMove{};
-
-	if (!CGameInstance::Get_Instance()->Is_CursorOn() || CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_MOUSE_CONTROL))
-	{
-		ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
-	}
-
-	if (ptCursorMove.x)
-	{
-		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), MAINCAM_SENSITIVITY_YAW * ptCursorMove.x * _fTimeDelta);
-	}
-
-	if (ptCursorMove.y)
-	{
-		_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
-		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
-		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
-		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
-		_float	fFinal		= fNewPitch - fCurPitch;
-
-		m_pTransform->Rotate(m_pTransform->Get_State(TRANSFORM::RIGHT), fFinal);
-	}
-}
-
-void CCamera_Main::Debug_KeyControl(_float _fTimeDelta)
-{
-	_float3 vMove{};
-
-	if (CGameInstance::Get_Instance()->Is_CursorOn())
-	{
-		return;
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_FORWARD))
-	{
-		vMove += m_pTransform->Get_State(TRANSFORM::LOOK);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_BACKWARD))
-	{
-		vMove -= m_pTransform->Get_State(TRANSFORM::LOOK);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_LEFT))
-	{
-		vMove -= m_pTransform->Get_State(TRANSFORM::RIGHT);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_RIGHT))
-	{
-		vMove += m_pTransform->Get_State(TRANSFORM::RIGHT);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_UP))
-	{
-		vMove += _float3(0.f, 1.f, 0.f);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold(MAINCAM_DEBUG_DOWN))
-	{
-		vMove -= _float3(0.f, 1.f, 0.f);
-	}
-
-	if (vMove != _float3(0.f, 0.f, 0.f))
-	{
-		m_pTransform->Translate(MAINCAM_DEBUG_SPEED * vMove * _fTimeDelta);
 	}
 }
 

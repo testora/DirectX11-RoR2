@@ -117,26 +117,26 @@ void CTransform::Rotate(const TRANSFORM _eState, const _float _fDegree)
 	Rotate(Get_State(_eState), _fDegree);
 }
 
-void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp)
+void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp, const _bool _bPipeLineUp)
 {
 	Set_State(TRANSFORM::LOOK, _vPosition - Get_State(TRANSFORM::POSITION));
 	if (_bFixUp)
 	{
-		Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+		Set_State(TRANSFORM::UP, _bPipeLineUp ? CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::UP) :_float4(0.f, 1.f, 0.f, 0.f));
 	}
 }
 
-void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bFixUp, const _float _fInterpolationDuration, const _float _fWeight)
+void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bFixUp, const _bool _bPipeLineUp, const _float _fInterpolationDuration, const _float _fWeight)
 {
 	_float	fAcc(0.f);
 	_vector	vLook = _vPosition - Get_State(TRANSFORM::POSITION);
-	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+	CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fAcc < 1.f)
 			{
 				fAcc += _fTimeDelta / _fInterpolationDuration;
-				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp);
+				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp, _bPipeLineUp);
 			}
 
 			return fAcc < 1.f;
@@ -144,25 +144,25 @@ void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bF
 	);
 }
 
-void CTransform::LookTo(const _vectorf _vDirection, const _bool _bFixUp)
+void CTransform::LookTo(const _vectorf _vDirection, const _bool _bFixUp, const _bool _bPipeLineUp)
 {
 	Set_State(TRANSFORM::LOOK, _vDirection);
 	if (_bFixUp)
 	{
-		Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+		Set_State(TRANSFORM::UP, _bPipeLineUp ? CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::UP) : _float4(0.f, 1.f, 0.f, 0.f));
 	}
 }
 
-void CTransform::LookTo_Interpolation(const _vectorf _vDirection, const _bool _bFixUp, const _float _fInterpolationDuration, const _float _fWeight)
+void CTransform::LookTo_Interpolation(const _vectorf _vDirection, const _bool _bFixUp, const _bool _bPipeLineUp, const _float _fInterpolationDuration, const _float _fWeight)
 {
 	_float	fAcc(0.f);
-	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+	CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
 			if (fAcc < 1.f)
 			{
 				fAcc += _fTimeDelta / _fInterpolationDuration;
-				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), _vDirection, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp);
+				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), _vDirection, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp, _bPipeLineUp);
 			}
 
 			return fAcc < 1.f;

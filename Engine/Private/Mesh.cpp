@@ -410,8 +410,8 @@ void CMesh::Set_Interpolation(vector<shared_ptr<CBone>>::iterator _itBegin, _flo
 
 	m_fInterpolationRatio = 0.f;
 	
-	CEvent_Handler::Get_Instance()->Erase_TickListener(shared_from_this());
-	CEvent_Handler::Get_Instance()->Register_TickListener(shared_from_this(),
+	CEvent_Handler::Get_Instance()->Erase_OnTickListener(shared_from_this());
+	CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[this, _fDuration](_float _fDeltaTime)->_bool
 		{
 			m_fInterpolationRatio += _fDeltaTime / _fDuration;

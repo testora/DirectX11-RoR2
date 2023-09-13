@@ -49,8 +49,8 @@ void CControl_RailGunner::Late_Tick(_float _fTimeDelta)
 		}
 		else
 		{
-			m_pRailGunner->Set_State(RG_STATE::AIR);
 			m_pTargetPhysics->Force(TRANSFORM::UP, m_pCharacterDesc->fJumpPower);
+			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_START, 1.f, false, g_fDefaultInterpolationDuration, false);
 		}
 	}
 
@@ -158,8 +158,9 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 {
 	shared_ptr<CGameInstance>	pGameInstance			= CGameInstance::Get_Instance();
-	shared_ptr<CTransform>		pMainCameraTransform	= CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	shared_ptr<CPipeLine>		pPipeLine				= CPipeLine::Get_Instance();
 	_bool						bIsAim					= m_pRailGunner->Is_State(BIT(RG_STATE::AIM));
+	_bool						bIsAir					= m_pRailGunner->Is_State(BIT(RG_STATE::AIR));
 	_bool						bIsSprint				= m_pRailGunner->Is_State(BIT(RG_STATE::SPRINT));
 
 	switch (static_cast<_uint>(m_bitState.to_ulong()))
@@ -171,30 +172,42 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 			m_pRailGunner->Set_State(RG_STATE::SPRINT);
 		}
 
-		m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
+		m_pTargetTransform->LookTo_Interpolation(pPipeLine->Get_Transform(TRANSFORM::LOOK));
 		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_FORWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_FORWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_BACKWARD:
 	{
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : -pMainCameraTransform->Get_State(TRANSFORM::LOOK));
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : -pPipeLine->Get_Transform(TRANSFORM::LOOK));
 		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pCharacterDesc->fBackwardSpeed * (bIsAim ? -1.f : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsAim ? ANIMATION::RAILGUNNER::RUN_BACKWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsAim ? ANIMATION::RAILGUNNER::RUN_BACKWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_LEFT:
 	{
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : -pMainCameraTransform->Get_State(TRANSFORM::RIGHT));
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : -pPipeLine->Get_Transform(TRANSFORM::RIGHT));
 		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pCharacterDesc->fLeftSpeed * (bIsAim ? -1.f : 1.f) * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_RIGHT:
 	{
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : pMainCameraTransform->Get_State(TRANSFORM::RIGHT));
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : pPipeLine->Get_Transform(TRANSFORM::RIGHT));
 		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pCharacterDesc->fRightSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_FORWARDLEFT:
@@ -204,10 +217,13 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 			m_pRailGunner->Set_State(RG_STATE::SPRINT);
 		}
 
-		_float3 vDirection = pMainCameraTransform->Get_State(TRANSFORM::LOOK) - pMainCameraTransform->Get_State(TRANSFORM::RIGHT);
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? vDirection : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) - pPipeLine->Get_Transform(TRANSFORM::RIGHT);
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_FORWARDRIGHT:
@@ -217,26 +233,35 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 			m_pRailGunner->Set_State(RG_STATE::SPRINT);
 
 		}
-		_float3 vDirection = pMainCameraTransform->Get_State(TRANSFORM::LOOK) + pMainCameraTransform->Get_State(TRANSFORM::RIGHT);
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? vDirection : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) + pPipeLine->Get_Transform(TRANSFORM::RIGHT);
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_BACKWARDLEFT:
 	{
-		_float3 vDirection = -pMainCameraTransform->Get_State(TRANSFORM::LOOK) - pMainCameraTransform->Get_State(TRANSFORM::RIGHT);
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? vDirection : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		_float4 vDirection = -pPipeLine->Get_Transform(TRANSFORM::LOOK) - pPipeLine->Get_Transform(TRANSFORM::RIGHT);
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 	case BITMASK_BACKWARDRIGHT:
 	{
-		_float3 vDirection = -pMainCameraTransform->Get_State(TRANSFORM::LOOK) + pMainCameraTransform->Get_State(TRANSFORM::RIGHT);
-		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pMainCameraTransform->Get_State(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? vDirection : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
-		m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		_float4 vDirection = -pPipeLine->Get_Transform(TRANSFORM::LOOK) + pPipeLine->Get_Transform(TRANSFORM::RIGHT);
+		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
+		if (!bIsAir)
+		{
+			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
+		}
 	}
 	break;
 

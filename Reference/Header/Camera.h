@@ -12,7 +12,7 @@ public:
 	typedef struct tagCameraDesc
 	{
 		TYPE			eType	= TYPE::MAX;
-		_float4			vEye{}, vAt{};
+		_float4			vEye{}, vAt{}, vUp{};
 		_float			fFovAngleY{}, fAspect{};
 		_float			fWidth{}, fHeight{};
 		_float			fNear{}, fFar{};
@@ -39,14 +39,15 @@ protected:
 
 	shared_ptr<class CRenderer>			m_pRenderer;
 	shared_ptr<class CTransform>		m_pTransform;
+	shared_ptr<class CShader>			m_pShader;
+
+	_float4x4							m_mView;
+	_float4x4							m_mProjection;
 
 private:
 	CAMERA_DESC							m_tCameraDesc;
 
 	_float								m_fTargetFovAngleY	= 0.f;
-
-	_float4x4							m_mView;
-	_float4x4							m_mProjection;
 
 public:
 	virtual shared_ptr<CGameObject>		Clone(any = g_aNull) override	PURE;

@@ -6,6 +6,7 @@
 #include "System.h"
 #include "RailGunner_State.h"
 #include "RailGunner_Crosshair.h"
+#include "RailGunner_PistolBullet.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -59,6 +60,11 @@ HRESULT CRailGunner::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to Ready_RailGunner");
 	}
 	
+	if (FAILED(Ready_Bullets()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to Ready_Bullets");
+	}
+	
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
 	return S_OK;
@@ -71,6 +77,11 @@ void CRailGunner::Tick(_float _fTimeDelta)
 	for (auto& system : m_umapSystem)
 	{
 		system.second->Tick(_fTimeDelta);
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('J'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET)->Pop(m_pTransform->Get_State(TRANSFORM::POSITION));
 	}
 }
 
@@ -113,7 +124,7 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+	Add_RenderObject(RENDER_GROUP::PRIORITY);
 }
 
 HRESULT CRailGunner::Render()
@@ -127,16 +138,6 @@ HRESULT CRailGunner::Render()
 	{
 		system.second->Render();
 	}
-
-	return S_OK;
-}
-
-HRESULT CRailGunner::Ready_RailGunner()
-{
-	m_umapSystem.reserve(IDX(SYSTEM::MAX));
-
-	m_umapSystem[SYSTEM::STATE]		= CRailGunner_State::Create(dynamic_pointer_cast<CRailGunner>(shared_from_this()));
-	m_umapSystem[SYSTEM::CROSSHAIR]	= CRailGunner_Crosshair::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -171,6 +172,23 @@ HRESULT CRailGunner::Ready_Behaviors()
 	}
 
 	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_this(), &m_tCharacterDesc));
+
+	return S_OK;
+}
+
+HRESULT CRailGunner::Ready_RailGunner()
+{
+	m_umapSystem.reserve(IDX(SYSTEM::MAX));
+
+	m_umapSystem[SYSTEM::STATE] = CRailGunner_State::Create(dynamic_pointer_cast<CRailGunner>(shared_from_this()));
+	m_umapSystem[SYSTEM::CROSSHAIR] = CRailGunner_Crosshair::Create(m_pDevice, m_pContext);
+
+	return S_OK;
+}
+
+HRESULT CRailGunner::Ready_Bullets()
+{
+	CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET, PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET, 50);
 
 	return S_OK;
 }

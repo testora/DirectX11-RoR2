@@ -8,7 +8,7 @@
 #define PROTOTYPE_GAMEOBJECT_TERRAIN						TEXT("Prototype:GameObject:Terrain")
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS					TEXT("Prototype:GameObject:GolemPlains")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER						TEXT("Prototype:GameObject:RailGunner")
-#define PROTOTYPE_GAMEOBJECT_RAILGUNNER_CROSSHAIR			TEXT("Prototype:GameObject:RailGunner:Crosshair")
+#define PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET		TEXT("Prototype:GameObject:RailGunner:PistolBullet")
 
 #pragma	endregion
 #pragma region Component
@@ -50,8 +50,13 @@
 #define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layers:Player")
 
 #pragma endregion
+#pragma region Pool
+
+#define SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET				TEXT("Scene:Test:Pool:RailGunner:PistolBullet")
+
+#pragma endregion
 #pragma region Grid Layer
 
-#define GRID_TERRAIN										TEXT("Grid:Terrain")
+#define GRID_TERRAIN										TEXT("Grid:Terrain") 
 
 #pragma endregion

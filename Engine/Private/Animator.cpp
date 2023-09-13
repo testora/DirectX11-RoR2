@@ -45,6 +45,11 @@ void CAnimator::Late_Tick(_float _fTimeDelta)
 {
 }
 
+_bool CAnimator::Is_Finished() const
+{
+	return m_pTargetModel->Is_AnimationFinished();
+}
+
 _uint CAnimator::Get_Animation() const
 {
 	return m_pTargetModel->Get_AnimationIndex();
