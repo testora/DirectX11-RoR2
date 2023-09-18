@@ -1,9 +1,10 @@
 #pragma once
 #include "Engine_Define.h"
+#include "System.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CComponent abstract : public std::enable_shared_from_this<CComponent>
+class ENGINE_DLL CComponent abstract : public ISystem
 {
 protected:
 	explicit CComponent(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);
@@ -12,6 +13,9 @@ protected:
 
 public:
 	const COMPONENT						Type() const	{ return m_eType; }
+
+protected:
+	inline shared_ptr<CComponent>		shared_from_componenet();
 
 private:
 	const COMPONENT						m_eType;

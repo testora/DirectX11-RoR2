@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "RailGunner_PistolBullet.h"
 #include "GameInstance.h"
+#include "Monster.h"
 #include "Camera_Main.h"
 
 #define MASK_COLOR1		_color(0.99f, 0.95f, 0.70f, 1.00f)
@@ -32,6 +33,10 @@ HRESULT CRailGunner_PistolBullet::Initialize_Prototype()
 	m_umapComponentArg[COMPONENT::VIBUFFER_RECT]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_RECT, g_aNull);
 	m_umapComponentArg[COMPONENT::COLLIDER]			= make_pair(PROTOTYPE_COMPONENT_COLLIDER, tColliderDesc);
 
+	m_tEntityDesc.fForwardSpeed	= PISTOLBULLET_SPEED_FORWARD;
+	m_tEntityDesc.vMaxSpeed		= PISTOLBULLET_SPEED_TERMINAL;
+	m_tEntityDesc.vResist		= PISTOLBULLET_SPEED_RESIST;
+
 	m_pTexMask = CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/RailGunner/Bullet/texRailgunPistolSquare.png"));
 
 	return S_OK;
@@ -44,6 +49,8 @@ HRESULT CRailGunner_PistolBullet::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Initialize", "__super::Initialize Failed");
 	}
 
+	m_pPhysics->Set_Gravity(false);
+
 	return S_OK;
 }
 
@@ -51,14 +58,15 @@ void CRailGunner_PistolBullet::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	m_pTransform->LookTo(CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::LOOK), true, true);
+	Manage_State(_fTimeDelta);
+	Search_Target();
 }
 
 void CRailGunner_PistolBullet::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	Add_RenderObject(RENDER_GROUP::PRIORITY);
+	Add_RenderObject(RENDER_GROUP::BLEND);
 }
 
 HRESULT CRailGunner_PistolBullet::Render()
@@ -76,9 +84,18 @@ HRESULT CRailGunner_PistolBullet::Render()
 	return S_OK;
 }
 
-HRESULT CRailGunner_PistolBullet::Fetch(any _aPosition)
+HRESULT CRailGunner_PistolBullet::Fetch(any _aPoolPosition)
 {
-	m_pTransform->Set_State(TRANSFORM::POSITION, any_cast<_float3>(_aPosition));
+	pair<shared_ptr<CObjectPool>, _float3> pairPoolPosition = any_cast<pair<shared_ptr<CObjectPool>, _float3>>(_aPoolPosition);
+	m_pPool		= pairPoolPosition.first;
+	
+	m_pTransform->Set_State(TRANSFORM::POSITION, pairPoolPosition.second);
+	m_vDirection = _float3(
+		CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::RIGHT)	* Function::RandomFloat(-0.15f, 0.15f) +
+		CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::UP)		* Function::RandomFloat(-0.05f, 0.05f) +
+		CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::LOOK));
+	m_pPhysics->Flattern(true, true, true);
+	m_pPhysics->Force(m_vDirection, m_tEntityDesc.fForwardSpeed);
 
 	return S_OK;
 }
@@ -103,6 +120,95 @@ HRESULT CRailGunner_PistolBullet::Ready_Components()
 	}
 
 	return S_OK;
+}
+
+HRESULT CRailGunner_PistolBullet::Ready_Behaviors()
+{
+	if (FAILED(__super::Ready_Behaviors()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
+	}
+
+	m_pPhysics = Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS);
+	if (nullptr == m_pPhysics)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Ready_Behaviors", "Nullptr Exception: m_pPhysics");
+	}
+
+	return S_OK;
+}
+
+void CRailGunner_PistolBullet::Set_Target(shared_ptr<CMonster> _pTargetMonster)
+{
+	m_eState = STATE::TARGET;
+
+	m_pTarget = _pTargetMonster;
+	m_pTargetTransform = _pTargetMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+}
+
+void CRailGunner_PistolBullet::Manage_State(_float _fTimeDelta)
+{
+	m_fTimeAcc += _fTimeDelta;
+	if (m_fTimeAcc >= PISTOLBULLET_LIFESPAN)
+	{
+		Destroy();
+		return;
+	}
+
+	m_pTransform->LookTo(CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::LOOK), true, true);
+
+	switch (m_eState)
+	{
+	case STATE::UNTARGET:
+	{
+	}
+	break;
+	case STATE::TARGET:
+	{
+		m_pPhysics->Force(m_pTargetTransform->Get_State(TRANSFORM::POSITION) - m_pTransform->Get_State(TRANSFORM::POSITION), m_tEntityDesc.fForwardSpeed, _fTimeDelta);
+		if (_float3(m_pTransform->Get_State(TRANSFORM::POSITION) - m_pTargetTransform->Get_State(TRANSFORM::POSITION)).length() < 10.f)
+		{
+			m_pTarget->Hit();
+			m_pPool->Push(shared_from_gameobject());
+		}
+	}
+	break;
+	}
+}
+
+void CRailGunner_PistolBullet::Search_Target()
+{
+	CGameInstance::Get_Instance()->Iterate_Pools(CGameInstance::Get_Instance()->Current_Scene(),
+		[&](pair<wstring, shared_ptr<CObjectPool>> pair)->_bool
+		{
+			pair.second->Iterate_Objects(
+				[&](shared_ptr<CGameObject> pObject)->_bool
+				{
+					shared_ptr<CMonster> pMonster = dynamic_pointer_cast<CMonster>(pObject);
+					if (nullptr != pMonster)
+					{
+						if (PISTOLBULLET_TARGET_RANGE / 3.f > pMonster->Distance(shared_from_gameobject()))
+						{
+							Set_Target(pMonster);
+						}
+					}
+
+					return false;
+				}
+			);
+
+			return false;
+		}
+	);
+}
+
+void CRailGunner_PistolBullet::Destroy()
+{
+	m_pPool->Push(shared_from_gameobject());
+	m_pPool				= nullptr;
+	m_fTimeAcc			= 0.f;
+	m_eState			= STATE::UNTARGET;
+	m_pTargetTransform	= nullptr;
 }
 
 shared_ptr<CRailGunner_PistolBullet> CRailGunner_PistolBullet::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

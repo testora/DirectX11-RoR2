@@ -11,11 +11,11 @@ CPhysics::CPhysics()
 CPhysics::CPhysics(const CPhysics& _rhs)
 	: CBehavior			(_rhs)
 	, m_vVelocity		(_rhs.m_vVelocity)
-	, m_pCharacterDesc	(_rhs.m_pCharacterDesc)
+	, m_pEntityDesc	(_rhs.m_pEntityDesc)
 {
 }
 
-HRESULT CPhysics::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+HRESULT CPhysics::Initialize(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
 	if (FAILED(__super::Initialize(_pOwner)))
 	{
@@ -34,7 +34,7 @@ HRESULT CPhysics::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDES
 	}
 
 	m_pTargetTransform	= pTargetTransform;
-	m_pCharacterDesc	= _pCharacterDesc;
+	m_pEntityDesc		= _pEntityDesc;
 
 	return S_OK;
 }
@@ -78,26 +78,29 @@ void CPhysics::Flattern(_bool _bX, _bool _bY, _bool _bZ)
 
 void CPhysics::Execute_Gravity(_float _fTimeDelta)
 {
-	Force(_float3(0.f, -1.f, 0.f), g_fGravity, _fTimeDelta);
+	if (m_bEnableGravity)
+	{
+		Force(_float3(0.f, -1.f, 0.f), g_fGravity, _fTimeDelta);
+	}
 }
 
 void CPhysics::Resist(_float _fTimeDelta)
 {
-	m_vVelocity.x *= powf(m_pCharacterDesc->vResist.x, _fTimeDelta);
-	m_vVelocity.y *= powf(m_pCharacterDesc->vResist.y, _fTimeDelta);
-	m_vVelocity.z *= powf(m_pCharacterDesc->vResist.z, _fTimeDelta);
+	m_vVelocity.x *= powf(m_pEntityDesc->vResist.x, _fTimeDelta);
+	m_vVelocity.y *= powf(m_pEntityDesc->vResist.y, _fTimeDelta);
+	m_vVelocity.z *= powf(m_pEntityDesc->vResist.z, _fTimeDelta);
 }
 
 void CPhysics::Terminate()
 {
-	m_vVelocity = XMVectorClamp(m_vVelocity, -_float3(m_pCharacterDesc->vMaxSpeed), _float3(m_pCharacterDesc->vMaxSpeed));
+	m_vVelocity = XMVectorClamp(m_vVelocity, -_float3(m_pEntityDesc->vMaxSpeed), _float3(m_pEntityDesc->vMaxSpeed));
 }
 
-shared_ptr<CPhysics> CPhysics::Create(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+shared_ptr<CPhysics> CPhysics::Create(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
 	shared_ptr<CPhysics> pInstance = make_private_shared(CPhysics);
 
-	if (FAILED(pInstance->Initialize(_pOwner, _pCharacterDesc)))
+	if (FAILED(pInstance->Initialize(_pOwner, _pEntityDesc)))
 	{
 		MSG_RETURN(nullptr, "CPhysics::Create", "Failed to Initialize");
 	}

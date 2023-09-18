@@ -78,6 +78,16 @@ namespace Function
 		return XMVector4NearEqual(XMVectorZero(), _fVector4, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
 	}
 
+	_float RandomFloat(_float _fMin, _float _fMax)
+	{
+		static std::random_device	device;
+		static std::mt19937			generator(device());
+
+		std::uniform_real_distribution<_float> value(_fMin, _fMax);
+
+		return value(generator);
+	}
+
 	_float QuaternionToAngle(FXMVECTOR _vQuaternion, _bool _bToRadians)
 	{
 		_float fTheta = acosf(XMVectorGetW(XMQuaternionNormalize(_vQuaternion))) * 2.f;

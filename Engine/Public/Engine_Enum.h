@@ -35,6 +35,7 @@ enum class BEHAVIOR
 	GROUNDING,
 	ANIMATOR,
 	CONTROL,
+	CUSTOM,
 	MAX
 };
 

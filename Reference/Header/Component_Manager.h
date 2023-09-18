@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine_Define.h"
-
+#pragma region Component
 #include "Renderer.h"
 #include "Transform.h"
 #include "Shader.h"
@@ -10,6 +10,13 @@
 #include "Mesh.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
+#pragma endregion
+#pragma region Behavior
+#include "Physics.h"
+#include "Grounding.h"
+#include "Animator.h"
+#include "Control.h"
+#pragma endregion
 
 BEGIN(Engine)
 

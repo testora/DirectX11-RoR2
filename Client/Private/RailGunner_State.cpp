@@ -39,11 +39,6 @@ void CRailGunner_State::Late_Tick(_float _fTimeDelta)
 {
 }
 
-HRESULT CRailGunner_State::Render()
-{
-	return S_OK;
-}
-
 _bool CRailGunner_State::Is_State(bitset<IDX(RG_STATE::MAX)> _bit) const
 {
 	return (m_bitState & _bit) == _bit;
@@ -74,38 +69,39 @@ void CRailGunner_State::Handle_State()
 		{
 			if (pAnimator->Is_Finished())
 			{
-				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_LOOP_UP, 1.f, false, 0.25f, false);
+				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_UP, 1.f, false, 0.25f, false);
 			}
 		}
 		break;
-		case ANIMATION::RAILGUNNER::JUMP_LOOP_UP:
+		case ANIMATION::RAILGUNNER::AIR_LOOP_UP:
 		{
 			if (pAnimator->Is_Finished())
 			{
 				if (pPhysics->Get_Velocity().y < 0.f)
 				{
-					pAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_LOOP_DOWN, 1.f, false, 0.25f, false);
+					pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_DOWN, 1.f, false, 0.25f, false);
 				}
 			}
 		}
 		break;
-		case ANIMATION::RAILGUNNER::JUMP_LOOP_DOWN:
+		case ANIMATION::RAILGUNNER::AIR_LOOP_DOWN:
 		break;
 
 		default:
 		{
 			if (pPhysics->Get_Velocity().y >= 15.f)
 			{
-				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_LOOP_UP, 1.f, false, 0.25f, false);
+				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_UP, 1.f, false, 0.25f, false);
 			}
 			if (pPhysics->Get_Velocity().y < -15.f)
 			{
-				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_LOOP_DOWN, 1.f, false, 0.25f, false);
+				pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_DOWN, 1.f, false, 0.25f, false);
 			}
 		}
 		break;
 		}
 	}
+	m_bitState.set(IDX(RG_STATE::AIR), !m_pGrounding->Is_Grounding());
 #pragma endregion
 #pragma region Sprint
 	if (m_bitState.test(IDX(RG_STATE::SPRINT)))
@@ -130,9 +126,6 @@ void CRailGunner_State::Handle_State()
 			m_pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::SCOPE);
 		}
 	}
-#pragma endregion
-#pragma region Grounding
-	m_bitState.set(IDX(RG_STATE::AIR), !m_pGrounding->Is_Grounding());
 #pragma endregion
 }
 

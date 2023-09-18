@@ -104,7 +104,7 @@ void CGolemPlains::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
 HRESULT CGolemPlains::Render()

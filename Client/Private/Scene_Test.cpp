@@ -41,6 +41,11 @@ HRESULT CScene_Test::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Player");
 	}
 
+	if (FAILED(Ready_Monster()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Monster");
+	}
+
 	return S_OK;
 }
 
@@ -49,6 +54,11 @@ void CScene_Test::Tick(_float _fTimeDelta)
 	if (CGameInstance::Get_Instance()->Key_Down(MAINCAM_TOGGLE_MOUSE))
 	{
 		CGameInstance::Get_Instance()->Toggle_Cursor();
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('K'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(g_aNull);
 	}
 }
 
@@ -82,11 +92,11 @@ HRESULT CScene_Test::Ready_Light()
 
 HRESULT CScene_Test::Ready_Camera()
 {
-	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_CAMERA);
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, LAYER_CAMERA);
 
 	if (nullptr == pLayer)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Camera", "Failed to Add_Layer: SCENE_TEST_LAYER_CAMERA");
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Camera", "Failed to Add_Layer: LAYER_CAMERA");
 	}
 
 	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN))))
@@ -99,11 +109,11 @@ HRESULT CScene_Test::Ready_Camera()
 
 HRESULT CScene_Test::Ready_Terrain()
 {
-	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_TERRAIN);
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, LAYER_TERRAIN);
 
 	if (nullptr == pLayer)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Add_Layer: SCENE_TEST_LAYER_TERRAIN");
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Add_Layer: LAYER_TERRAIN");
 	}
 
 	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_GOLEMPLAINS))))
@@ -125,11 +135,10 @@ HRESULT CScene_Test::Ready_Terrain()
 
 HRESULT CScene_Test::Ready_Player()
 {
-	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, SCENE_TEST_LAYER_PLAYER);
-
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, LAYER_PLAYER);
 	if (nullptr == pLayer)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Add_Layer: SCENE_TEST_LAYER_PLAYER");
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Add_Layer: LAYER_PLAYER");
 	}
 
 	shared_ptr<CGameObject> pPlayer;
@@ -148,6 +157,17 @@ HRESULT CScene_Test::Ready_Player()
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
 	}
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Test::Ready_Monster()
+{
+	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_MONSTER_GOLEM, PROTOTYPE_GAMEOBJECT_GOLEM, 10);
+	if (nullptr == pPool)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_GOLEM");
+	}
 
 	return S_OK;
 }

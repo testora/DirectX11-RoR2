@@ -7,6 +7,7 @@
 #include "GolemPlains.h"
 #include "RailGunner.h"
 #include "RailGunner_PistolBullet.h"
+#include "Golem.h"
 
 HRESULT CLoader::Load_Test()
 {
@@ -24,12 +25,19 @@ HRESULT CLoader::Load_Test()
 #pragma region Prototype Model
 
 //	PROTOTYPE_COMPONENT_MODEL_RAILGUNNER
+//	PROTOTYPE_COMPONENT_MODEL_GOLEM
 //	PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/RailGunner/RailGunner.mdl")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_GOLEM,
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/Golem/Golem.mdl")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEM");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS,
@@ -94,6 +102,12 @@ HRESULT CLoader::Load_Test()
 		CRailGunner_PistolBullet::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_GOLEM,
+		CGolem::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_GOLEM");
 	}
 
 #pragma endregion

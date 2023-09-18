@@ -37,3 +37,8 @@ void CBehavior::Tick(_float _fTimeDelta)
 void CBehavior::Late_Tick(_float _fTimeDelta)
 {
 }
+
+shared_ptr<CBehavior> CBehavior::shared_from_behavior()
+{
+	return static_pointer_cast<CBehavior>(shared_from_this());
+}

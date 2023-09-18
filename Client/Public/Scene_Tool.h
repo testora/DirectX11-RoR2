@@ -5,6 +5,8 @@
 #if ACTIVATE_TOOL
 
 BEGIN(Engine)
+class CRenderer;
+class CShader;
 class CModel;
 END
 
@@ -37,8 +39,13 @@ private:
 
 	map<string, shared_ptr<CModel>>		m_mapAnimModels;
 	map<string, shared_ptr<CModel>>		m_mapNonAnimModels;
+
 	pair<string, shared_ptr<CModel>>	m_pairSelectedModel;
 	MATERIAL							m_tSelectedMaterial;
+
+	shared_ptr<CRenderer>				m_pRenderer;
+	shared_ptr<CShader>					m_pShader_NonAnimMesh;
+	shared_ptr<CShader>					m_pShader_AnimMesh;
 
 public:
 	static shared_ptr<CScene_Tool>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

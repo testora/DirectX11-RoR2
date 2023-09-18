@@ -2,6 +2,7 @@
 #include "RailGunner_Crosshair.h"
 #include "GameInstance.h"
 #include "Camera_Main.h"
+#include "Monster.h"
 
 #define MAIN_INBOUND_SCALE			_float3(_float3(384.f, 128.f, 1.f) + _float3(7.f, 7.f, 0.f))
 #define MAIN_OUTBOUND_SCALE			_float3(MAIN_INBOUND_SCALE + _float3(8.f, 8.f, 0.f))
@@ -76,10 +77,16 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 		m_pTransform[IDX(ELEMENT::RELOAD_SLIDE)]->Set_State(TRANSFORM::POSITION,
 			_float4((m_fCurrentTagPosition - 0.5f) * RELOAD_BAR_SCALE.x, RELOAD_POSITION.y, 0.f, 1.f));
 	}
+
+	if (m_bitElement.test(IDX(ELEMENT::SCOPE_SCOPE)))
+	{
+		Search_WeakPoints();
+	}
 }
 
 void CRailGunner_Crosshair::Late_Tick(_float _fTimeDelta)
 {
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::UI, shared_from_this());
 }
 
 HRESULT CRailGunner_Crosshair::Render()
@@ -240,6 +247,12 @@ HRESULT CRailGunner_Crosshair::Render()
 		}
 	}
 #pragma endregion
+#pragma region Weak Point
+	if (FAILED(Render_WeakPoints()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to Render_WeakPoints");
+	}
+#pragma endregion
 
 	return S_OK;
 }
@@ -301,6 +314,33 @@ HRESULT CRailGunner_Crosshair::Ready_Transforms()
 	return S_OK;
 }
 
+HRESULT CRailGunner_Crosshair::Ready_Diffuses()
+{
+	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)]		= _color(0.84f, 0.73f, 0.30f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_OUT)]	= _color(0.84f, 0.73f, 0.30f, 0.50f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_BRACKET)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_NIBS)]			= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::SCOPE_SCOPE)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_CROSS)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_IN)]	= _color(0.95f, 0.67f, 0.76f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_OUT)]	= _color(0.95f, 0.67f, 0.76f, 0.50f);
+
+	m_vDiffuse[IDX(ELEMENT::WEAKPOINT_BOUND)]	= _color(0.98f, 0.40f, 0.42f, 1.00f);
+	m_vDiffuse[IDX(ELEMENT::WEAKPOINT_STRIPE)]	= _color(0.50f, 0.50f, 0.50f, 0.24f);
+
+	m_vDiffuse[IDX(ELEMENT::RELOAD_STRIPE)]		= _color(0.85f, 0.55f, 0.70f, 0.25f);
+	m_vDiffuse[IDX(ELEMENT::RELOAD_BAR)]		= _color(0.00f, 0.00f, 0.00f, 0.50f);
+	m_vDiffuse[IDX(ELEMENT::RELOAD_SLIDE)]		= _color(1.00f, 0.86f, 0.92f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::DOT)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	m_vDiffuse[IDX(ELEMENT::ARROW)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
+
+	return S_OK;
+}
+
 HRESULT CRailGunner_Crosshair::Ready_Textures()
 {
 	m_pTexSinglePixel	= CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/White1px.png"));
@@ -323,30 +363,6 @@ HRESULT CRailGunner_Crosshair::Ready_Textures()
 	return S_OK;
 }
 
-HRESULT CRailGunner_Crosshair::Ready_Diffuses()
-{
-	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_IN)]		= _color(0.84f, 0.73f, 0.30f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_BOUND_OUT)]	= _color(0.84f, 0.73f, 0.30f, 0.50f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_BRACKET)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_NIBS)]			= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::MAIN_FLAVOR)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::SCOPE_SCOPE)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_CROSS)]		= _color(1.00f, 1.00f, 1.00f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_IN)]	= _color(0.95f, 0.67f, 0.76f, 1.00f);
-	m_vDiffuse[IDX(ELEMENT::SCOPE_BOUND_OUT)]	= _color(0.95f, 0.67f, 0.76f, 0.50f);
-
-	m_vDiffuse[IDX(ELEMENT::RELOAD_STRIPE)]		= _color(0.85f, 0.55f, 0.70f, 0.25f);
-	m_vDiffuse[IDX(ELEMENT::RELOAD_BAR)]		= _color(0.00f, 0.00f, 0.00f, 0.50f);
-	m_vDiffuse[IDX(ELEMENT::RELOAD_SLIDE)]		= _color(1.00f, 0.86f, 0.92f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::DOT)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-	m_vDiffuse[IDX(ELEMENT::ARROW)]				= _color(1.00f, 1.00f, 1.00f, 1.00f);
-
-	return S_OK;
-}
-
 HRESULT CRailGunner_Crosshair::Render_Element(const ELEMENT _eElement, _uint _iPassIndex)
 {
 	if (m_bitElement.test(IDX(_eElement)))
@@ -365,6 +381,47 @@ HRESULT CRailGunner_Crosshair::Render_Element(const ELEMENT _eElement, _uint _iP
 	return S_OK;
 }
 
+HRESULT CRailGunner_Crosshair::Render_WeakPoints()
+{
+	if (m_bitElement.test(IDX(ELEMENT::WEAKPOINT_BOUND)))
+	{
+		for (auto& matrix : m_lstWeakPoints)
+		{
+			m_pTransform[IDX(ELEMENT::WEAKPOINT_BOUND)]->Set_Matrix(matrix);
+
+			if (FAILED(m_pTexBounds_Glowy->Bind_ShaderResourceViews(m_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
+			{
+				MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to CTexture::Bind_ShaderResourceViews");
+			}
+			if (FAILED(Render_Element(ELEMENT::WEAKPOINT_BOUND, 2)))
+			{
+				MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to Render_Element: WEAKPOINT_BOUND");
+			}
+		}
+	}
+
+	if (m_bitElement.test(IDX(ELEMENT::WEAKPOINT_STRIPE)))
+	{
+		for (auto& matrix : m_lstWeakPoints)
+		{
+			m_pTransform[IDX(ELEMENT::WEAKPOINT_STRIPE)]->Set_Matrix(matrix);
+
+			if (FAILED(m_pTexStripes->Bind_ShaderResourceViews(m_pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
+			{
+				MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to CTexture::Bind_ShaderResourceViews");
+			}
+			if (FAILED(Render_Element(ELEMENT::WEAKPOINT_STRIPE, 1)))
+			{
+				MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to Render_Element: WEAKPOINT_STRIPE");
+			}
+		}
+	}
+
+	m_lstWeakPoints.clear();
+
+	return S_OK;
+}
+
 void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 {
 	if (m_eState == _eState)
@@ -373,11 +430,6 @@ void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 	}
 
 	m_bitElement.reset();
-
-	if (RG_CROSSHAIR::SCOPE == m_eState && RG_CROSSHAIR::SCOPE != _eState)
-	{
-		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Release_FOV();
-	}
 
 	switch (_eState)
 	{
@@ -391,8 +443,8 @@ void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 		break;
 
 	case RG_CROSSHAIR::SCOPE:
-		CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
 		Visualize_Scope();
+		Visualize_WeakPoint();
 		break;
 
 	case RG_CROSSHAIR::SUPER_CHARGE:
@@ -445,6 +497,14 @@ void CRailGunner_Crosshair::Bounce_Bracket()
 void CRailGunner_Crosshair::Hit_Reload()
 {
 	m_bHitTag = true;
+}
+
+void CRailGunner_Crosshair::Fire_Sniper()
+{
+	for (auto& pMonster : m_lstWeakPointMonsters)
+	{
+		pMonster->Hit_WeakPoint();
+	}
 }
 
 void CRailGunner_Crosshair::Visualize_Main()
@@ -537,7 +597,7 @@ void CRailGunner_Crosshair::Visualize_Flavor()
 				m_pTransform[IDX(ELEMENT::MAIN_FLAVOR)]->Set_State(TRANSFORM::POSITION, Function::Lerp(_float4(0.f, 0.f, 0.f, 1.f), MAIN_FLAVOR_POSITION, Function::Clamp(0.f, 1.f, fAcc)));
 			}
 
-			return !(fAcc >= 1.f);
+			return fAcc < 1.f;
 		}
 	);
 }
@@ -565,6 +625,51 @@ void CRailGunner_Crosshair::Visualize_Scope()
 			}
 
 			return !(fInAcc >= 1.f && fOutAcc >= 1.f);
+		}
+	);
+}
+
+void CRailGunner_Crosshair::Visualize_WeakPoint()
+{
+	m_bitElement.set(IDX(ELEMENT::WEAKPOINT_BOUND));
+	m_bitElement.set(IDX(ELEMENT::WEAKPOINT_STRIPE));
+}
+
+void CRailGunner_Crosshair::Search_WeakPoints()
+{
+	m_lstWeakPointMonsters.clear();
+
+	CGameInstance::Get_Instance()->Iterate_Pools(CGameInstance::Get_Instance()->Current_Scene(),
+		[&](pair<wstring, shared_ptr<CObjectPool>> pair)->_bool
+		{
+			pair.second->Iterate_Objects(
+				[&](shared_ptr<CGameObject> pObject)->_bool
+				{
+					shared_ptr<CMonster> pMonster = dynamic_pointer_cast<CMonster>(pObject);
+					if (nullptr != pMonster)
+					{
+						_float4x4	mWeakPoint		= pMonster->Get_WeakPoint();
+						_float3		vClipWeakPoint	= CPipeLine::Get_Instance()->To_ClipSpace(mWeakPoint);
+						if (CPipeLine::Get_Instance()->Is_InClipSpace(vClipWeakPoint))
+						{
+							_float3		vScreenScl	= WEAKPOINT_SCALE_FACTOR / Function::Distance_Camera(_float3(mWeakPoint.row(3)));
+							_float2		vScreenPos	= Function::Clip_To_Screen(vClipWeakPoint, true);
+							_float4x4	mTransform	= XMMatrixScalingFromVector(vScreenScl) * XMMatrixTranslationFromVector(vScreenPos);
+
+							m_lstWeakPoints.emplace_back(mTransform);
+
+							if (Function::Is_Cursor_In(Function::Clip_To_Screen(vClipWeakPoint), _float2(vScreenScl)))
+							{
+								m_lstWeakPointMonsters.emplace_back(pMonster);
+							}
+						}
+					}
+
+					return false;
+				}
+			);
+
+			return false;
 		}
 	);
 }

@@ -411,7 +411,7 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bR
 		MSG_RETURN(, "CModel::Set_Animation", "Invalid Index");
 	}
 
-	for (auto pMesh : m_vecMeshes)
+	for (auto& pMesh : m_vecMeshes)
 	{
 		pMesh->Set_Interpolation(m_vecBones.begin(), _fInterpolationDuration);
 	}
@@ -420,6 +420,12 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bR
 	m_fAnimationPlaySpeed		= _fPlaySpeed;
 	m_bAnimReverse				= _bReverse;
 	m_bAnimLoop					= _bLoop;
+}
+
+void CModel::Reset_Animation()
+{
+	m_vecAnimations[m_iCurrentAnimationIndex]->Reset();
+	Tick_Animation(0.f);
 }
 
 void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _funcCallback)

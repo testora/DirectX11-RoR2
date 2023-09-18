@@ -12,7 +12,7 @@ END
 
 BEGIN(Client)
 
-class CRailGunner_Crosshair final : public ISystem
+class CRailGunner_Crosshair final : public Engine::ISystem
 {
 private:
 	enum class ELEMENT
@@ -22,6 +22,7 @@ private:
 		RELOAD_BOUND, RELOAD_STRIPE, RELOAD_BAR, RELOAD_SLIDE, RELOAD_TAG, RELOAD_BOOST,
 		DOT,
 		ARROW,
+		WEAKPOINT_BOUND, WEAKPOINT_STRIPE,
 		MAX
 	};
 
@@ -30,7 +31,7 @@ private:
 	virtual ~CRailGunner_Crosshair() DEFAULT;
 
 public:
-	virtual HRESULT								Initialize(any = g_aNull) override;
+	HRESULT										Initialize(any = g_aNull);
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
@@ -44,14 +45,16 @@ public:
 
 	void										Bounce_Bracket();
 	void										Hit_Reload();
+	void										Fire_Sniper();
 
 private:
 	HRESULT										Ready_Components();
 	HRESULT										Ready_Transforms();
-	HRESULT										Ready_Textures();
 	HRESULT										Ready_Diffuses();
+	HRESULT										Ready_Textures();
 
 	HRESULT										Render_Element(const ELEMENT, _uint iPassIndex);
+	HRESULT										Render_WeakPoints();
 
 	void										Visualize_Main();
 	void										Visualize_Bracket();
@@ -59,6 +62,9 @@ private:
 	void										Visualize_Scope();	
 	void										Visualize_Reload();
 	void										Visualize_Sprint();
+	void										Visualize_WeakPoint();
+
+	void										Search_WeakPoints();
 
 private:
 	RG_CROSSHAIR								m_eState					= RG_CROSSHAIR::MAX;
@@ -93,6 +99,9 @@ private:
 
 	shared_ptr<CTexture>						m_pTexDot;
 	shared_ptr<CTexture>						m_pTexArrow;
+
+	list<_float4x4>								m_lstWeakPoints;
+	list<shared_ptr<class CMonster>>			m_lstWeakPointMonsters;
 
 	ComPtr<ID3D11Device>						m_pDevice;
 	ComPtr<ID3D11DeviceContext>					m_pContext;

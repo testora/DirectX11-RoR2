@@ -138,9 +138,9 @@ namespace Engine
 	} COLLIDERDESC;
 
 #pragma endregion
-#pragma region Character
+#pragma region Entity
 
-	typedef struct tagCharacterDesc
+	typedef struct tagEntityDesc
 	{
 		_float		fForwardSpeed;
 		_float		fLeftSpeed;
@@ -151,7 +151,7 @@ namespace Engine
 
 		XMFLOAT3	vMaxSpeed;
 		XMFLOAT3	vResist;
-	} CHARACTERDESC;
+	} ENTITYDESC;
 
 #pragma endregion
 #pragma region Etc

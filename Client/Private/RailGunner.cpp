@@ -3,10 +3,10 @@
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
 #include "Control_RailGunner.h"
-#include "System.h"
 #include "RailGunner_State.h"
 #include "RailGunner_Crosshair.h"
 #include "RailGunner_PistolBullet.h"
+#include "Bone.h"
 
 CRailGunner::CRailGunner(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -35,15 +35,15 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
-	m_tCharacterDesc.fForwardSpeed			= PLAYER_SPEED_FORWARD;
-	m_tCharacterDesc.fBackwardSpeed			= PLAYER_SPEED_BACKWARD;
-	m_tCharacterDesc.fLeftSpeed				= PLAYER_SPEED_LEFT;
-	m_tCharacterDesc.fRightSpeed			= PLAYER_SPEED_RIGHT;
-	m_tCharacterDesc.fSpritPower			= PLAYER_SPRINT_POWER;
-	m_tCharacterDesc.fJumpPower				= PLAYER_JUMP_POWER;
+	m_tEntityDesc.fForwardSpeed				= PLAYER_SPEED_FORWARD;
+	m_tEntityDesc.fBackwardSpeed			= PLAYER_SPEED_BACKWARD;
+	m_tEntityDesc.fLeftSpeed				= PLAYER_SPEED_LEFT;
+	m_tEntityDesc.fRightSpeed				= PLAYER_SPEED_RIGHT;
+	m_tEntityDesc.fSpritPower				= PLAYER_SPRINT_POWER;
+	m_tEntityDesc.fJumpPower				= PLAYER_JUMP_POWER;
 
-	m_tCharacterDesc.vMaxSpeed				= PLAYER_SPEED_TERMINAL;
-	m_tCharacterDesc.vResist				= PLAYER_SPEED_RESIST;
+	m_tEntityDesc.vMaxSpeed					= PLAYER_SPEED_TERMINAL;
+	m_tEntityDesc.vResist					= PLAYER_SPEED_RESIST;
 
 	return S_OK;
 }
@@ -65,6 +65,8 @@ HRESULT CRailGunner::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to Ready_Bullets");
 	}
 	
+	m_pPistolOffset = Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone("SMGBarrel_end")->Get_CombinedTransformationPointer();
+
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
 	return S_OK;
@@ -77,11 +79,6 @@ void CRailGunner::Tick(_float _fTimeDelta)
 	for (auto& system : m_umapSystem)
 	{
 		system.second->Tick(_fTimeDelta);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('J'))
-	{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET)->Pop(m_pTransform->Get_State(TRANSFORM::POSITION));
 	}
 }
 
@@ -112,19 +109,19 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 		ImGui::DragFloat3("Velocity", reinterpret_cast<_float*>(&pVelocity));
 
 		ImGui::Text("Desc: ");
-		ImGui::SliderFloat("ForwardSpeed",	&m_tCharacterDesc.fForwardSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("BackwardSpeed",	&m_tCharacterDesc.fBackwardSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("LeftSpeed",		&m_tCharacterDesc.fLeftSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("RightSpeed",	&m_tCharacterDesc.fRightSpeed, 0.f, 1000.f);
-		ImGui::SliderFloat("JumpPower",		&m_tCharacterDesc.fJumpPower, 0.f, 1000.f);
-		ImGui::SliderFloat3("MaxSpeed",		reinterpret_cast<_float*>(&m_tCharacterDesc.vMaxSpeed), 0.f, 1000.f);
-		ImGui::SliderFloat3("Resist",		reinterpret_cast<_float*>(&m_tCharacterDesc.vResist), 0.f, 0.5f);
+		ImGui::SliderFloat("ForwardSpeed",	&m_tEntityDesc.fForwardSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("BackwardSpeed",	&m_tEntityDesc.fBackwardSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("LeftSpeed",		&m_tEntityDesc.fLeftSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("RightSpeed",	&m_tEntityDesc.fRightSpeed, 0.f, 1000.f);
+		ImGui::SliderFloat("JumpPower",		&m_tEntityDesc.fJumpPower, 0.f, 1000.f);
+		ImGui::SliderFloat3("MaxSpeed",		reinterpret_cast<_float*>(&m_tEntityDesc.vMaxSpeed), 0.f, 1000.f);
+		ImGui::SliderFloat3("Resist",		reinterpret_cast<_float*>(&m_tEntityDesc.vResist), 0.f, 0.5f);
 
 		ImGui::End();
 	}
 #endif
 
-	Add_RenderObject(RENDER_GROUP::PRIORITY);
+	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
 HRESULT CRailGunner::Render()
@@ -132,11 +129,6 @@ HRESULT CRailGunner::Render()
 	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to __super::Render");
-	}
-
-	for (auto& system : m_umapSystem)
-	{
-		system.second->Render();
 	}
 
 	return S_OK;
@@ -171,7 +163,7 @@ HRESULT CRailGunner::Ready_Behaviors()
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
 	}
 
-	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_this(), &m_tCharacterDesc));
+	m_umapBehavior.emplace(BEHAVIOR::CONTROL, CControl_RailGunner::Create(shared_from_gameobject(), &m_tEntityDesc));
 
 	return S_OK;
 }
@@ -188,7 +180,9 @@ HRESULT CRailGunner::Ready_RailGunner()
 
 HRESULT CRailGunner::Ready_Bullets()
 {
-	CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET, PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET, 50);
+	CGameInstance::Get_Instance()->Add_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_RAILGUNNER_PISTOLBULLET, PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET, 50);
+
+	m_pPistolBulletPool = CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_RAILGUNNER_PISTOLBULLET);
 
 	return S_OK;
 }
@@ -295,6 +289,23 @@ void CRailGunner::Hit_Reload()
 	}
 
 	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Hit_Reload();
+}
+
+void CRailGunner::Fire_Sniper()
+{
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Fire_Sniper", "Nullptr Exception: m_pCrosshair");
+	}
+
+	return static_pointer_cast<CRailGunner_Crosshair>(m_umapSystem[SYSTEM::CROSSHAIR])->Fire_Sniper();
+}
+
+void CRailGunner::Fire_Pistol()
+{
+	auto a = *m_pPistolOffset * m_pTransform->Get_Matrix();
+	m_pPistolBulletPool->Pop(make_pair(m_pPistolBulletPool, _float3(a.row(3))));
 }
 
 #pragma endregion

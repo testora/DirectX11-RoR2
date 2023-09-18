@@ -15,6 +15,8 @@ namespace Function
 	inline _bool						NearZero3(FXMVECTOR fVector3);
 	inline _bool						NearZero4(FXMVECTOR fVector4);
 
+	inline _float						RandomFloat(_float fMin = -FLT_MAX, _float fMax = FLT_MAX);
+
 	inline _float						QuaternionToAngle(FXMVECTOR vQuaternion, _bool bToRadians = true);
 	inline XMVECTOR						QuaternionToEuler(FXMVECTOR vQuaternion, _bool bToRadians = true);
 	inline XMVECTOR						DegreesToRadians(FXMVECTOR vDegrees);

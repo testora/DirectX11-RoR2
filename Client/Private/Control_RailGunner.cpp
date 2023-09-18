@@ -16,9 +16,9 @@
 #define BITMASK_BACKWARDLEFT	BIT(STATE::BACKWARD)	| BIT(STATE::LEFT)
 #define BITMASK_BACKWARDRIGHT	BIT(STATE::BACKWARD)	| BIT(STATE::RIGHT)
 
-HRESULT CControl_RailGunner::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+HRESULT CControl_RailGunner::Initialize(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
-	if (FAILED(__super::Initialize(_pOwner, _pCharacterDesc)))
+	if (FAILED(__super::Initialize(_pOwner, _pEntityDesc)))
 	{
 		MSG_RETURN(E_FAIL, "CControl_RailGunner::Initialize", "Failed to __super::Initialize");
 	}
@@ -49,7 +49,7 @@ void CControl_RailGunner::Late_Tick(_float _fTimeDelta)
 		}
 		else
 		{
-			m_pTargetPhysics->Force(TRANSFORM::UP, m_pCharacterDesc->fJumpPower);
+			m_pTargetPhysics->Force(TRANSFORM::UP, m_pEntityDesc->fJumpPower);
 			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_START, 1.f, false, g_fDefaultInterpolationDuration, false);
 		}
 	}
@@ -62,7 +62,6 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 	shared_ptr<CGameInstance>	pGameInstance			= CGameInstance::Get_Instance();
 	shared_ptr<CCamera_Main>	pMainCamera				= CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>();
 	shared_ptr<CTransform>		pMainCameraTransform	= pMainCamera->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	shared_ptr<CTransform>		pTransfrom				= m_pRailGunner->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 
 	switch (m_pRailGunner->Get_Crosshair())
 	{
@@ -74,6 +73,9 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 			{
 				m_pRailGunner->Bounce_Bracket();
 				m_pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
+				m_pRailGunner->Fire_Pistol();
+				m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
+				m_pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
 				pMainCamera->Rebound_Pistol();
 			}
 		}
@@ -85,6 +87,9 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 			{
 				m_pRailGunner->Bounce_Bracket();
 				m_pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
+				m_pRailGunner->Fire_Pistol();
+				m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
+				m_pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
 				pMainCamera->Rebound_Pistol();
 			}
 		}
@@ -92,11 +97,13 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 		{
 			m_pRailGunner->Set_State(RG_STATE::AIM, false);
 		}
-		if (pGameInstance->Key_Down(CONTROL_ATTACK2))
+		if (pGameInstance->Key_Hold(CONTROL_ATTACK2))
 		{
+			m_pRailGunner->Set_State(RG_STATE::READY_SNIPER);
 			m_pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::SCOPE);
-			pTransfrom->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
-			pMainCamera->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
+			m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
+			pMainCamera->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT,
+				_float2(RAILGUNNER_SCOPE_SENSITIVITY_YAW, RAILGUNNER_SCOPE_SENSITIVITY_PITCH));
 		}
 	}
 	break;
@@ -104,8 +111,13 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_ATTACK1))
 		{
-			m_pRailGunner->Set_State(RG_STATE::READY_SNIPER, false);
-			m_pRailGunner->Set_State(RG_STATE::READY_RELOAD, true);
+			if (m_pRailGunner->Is_State(BIT(RG_STATE::READY_SNIPER)))
+			{
+				m_pRailGunner->Fire_Sniper();
+				m_pRailGunner->Set_State(RG_STATE::READY_SNIPER, false);
+				m_pRailGunner->Set_State(RG_STATE::READY_RELOAD);
+				pMainCamera->Rebound_Sniper();
+			}
 		}
 		if (pGameInstance->Key_Up(CONTROL_ATTACK2))
 		{
@@ -141,6 +153,7 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 		if (pGameInstance->Key_Down(CONTROL_ATTACK1))
 		{
 			m_pRailGunner->Hit_Reload();
+			m_pRailGunner->Set_State(RG_STATE::READY_RELOAD, false);
 		}
 	}
 	break;
@@ -173,7 +186,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 		}
 
 		m_pTargetTransform->LookTo_Interpolation(pPipeLine->Get_Transform(TRANSFORM::LOOK));
-		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pEntityDesc->fForwardSpeed * (bIsSprint ? m_pEntityDesc->fSpritPower : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_FORWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -183,7 +196,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	case BITMASK_BACKWARD:
 	{
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : -pPipeLine->Get_Transform(TRANSFORM::LOOK));
-		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pCharacterDesc->fBackwardSpeed * (bIsAim ? -1.f : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(TRANSFORM::LOOK, m_pEntityDesc->fBackwardSpeed * (bIsAim ? -1.f : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsAim ? ANIMATION::RAILGUNNER::RUN_BACKWARD : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -193,7 +206,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	case BITMASK_LEFT:
 	{
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : -pPipeLine->Get_Transform(TRANSFORM::RIGHT));
-		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pCharacterDesc->fLeftSpeed * (bIsAim ? -1.f : 1.f) * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pEntityDesc->fLeftSpeed * (bIsAim ? -1.f : 1.f) * (bIsSprint ? m_pEntityDesc->fSpritPower : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -203,7 +216,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	case BITMASK_RIGHT:
 	{
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : pPipeLine->Get_Transform(TRANSFORM::RIGHT));
-		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pCharacterDesc->fRightSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? TRANSFORM::RIGHT : TRANSFORM::LOOK, m_pEntityDesc->fRightSpeed * (bIsSprint ? m_pEntityDesc->fSpritPower : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -219,7 +232,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 
 		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) - pPipeLine->Get_Transform(TRANSFORM::RIGHT);
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pEntityDesc->fForwardSpeed * (bIsSprint ? m_pEntityDesc->fSpritPower : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -235,7 +248,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 		}
 		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) + pPipeLine->Get_Transform(TRANSFORM::RIGHT);
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed * (bIsSprint ? m_pCharacterDesc->fSpritPower : 1.f), _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pEntityDesc->fForwardSpeed * (bIsSprint ? m_pEntityDesc->fSpritPower : 1.f), _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -246,7 +259,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	{
 		_float4 vDirection = -pPipeLine->Get_Transform(TRANSFORM::LOOK) - pPipeLine->Get_Transform(TRANSFORM::RIGHT);
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pEntityDesc->fForwardSpeed, _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_LEFT : bIsAim ? ANIMATION::RAILGUNNER::RUN_LEFT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -257,7 +270,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	{
 		_float4 vDirection = -pPipeLine->Get_Transform(TRANSFORM::LOOK) + pPipeLine->Get_Transform(TRANSFORM::RIGHT);
 		m_pTargetTransform->LookTo_Interpolation(bIsAim ? pPipeLine->Get_Transform(TRANSFORM::LOOK) : vDirection);
-		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pCharacterDesc->fForwardSpeed, _fTimeDelta);
+		m_pTargetPhysics->Force(bIsAim ? _float3(vDirection) : m_pTargetTransform->Get_State(TRANSFORM::LOOK), m_pEntityDesc->fForwardSpeed, _fTimeDelta);
 		if (!bIsAir)
 		{
 			m_pTargetAnimator->Play_Animation(bIsSprint ? ANIMATION::RAILGUNNER::SPRINT_RIGHT : bIsAim ? ANIMATION::RAILGUNNER::RUN_RIGHT : ANIMATION::RAILGUNNER::RUN_FORWARD);
@@ -309,11 +322,11 @@ void CControl_RailGunner::Handle_Bitset()
 	}
 }
 
-shared_ptr<CControl_RailGunner> CControl_RailGunner::Create(shared_ptr<class CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+shared_ptr<CControl_RailGunner> CControl_RailGunner::Create(shared_ptr<class CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
 	shared_ptr<CControl_RailGunner> pInstance = make_private_shared(CControl_RailGunner);
 
-	if (FAILED(pInstance->Initialize(_pOwner, _pCharacterDesc)))
+	if (FAILED(pInstance->Initialize(_pOwner, _pEntityDesc)))
 	{
 		MSG_RETURN(nullptr, "CControl_RailGunner::Create", "Failed to Initialize");
 	}

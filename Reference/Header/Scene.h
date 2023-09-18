@@ -1,9 +1,10 @@
 #pragma once
 #include "Engine_Define.h"
+#include "System.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CScene abstract
+class ENGINE_DLL CScene abstract : public ISystem
 {
 protected:
 	explicit CScene(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const SCENE);

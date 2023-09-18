@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\System.h" />
     <ClInclude Include="Public\Event_Handler.h" />
     <ClInclude Include="Public\Animator.h" />
     <ClInclude Include="Public\Bounding.h" />
@@ -44,7 +45,6 @@
     <ClInclude Include="Public\Mouse_Manager.h" />
     <ClInclude Include="Public\Picker.h" />
     <ClInclude Include="Public\HandleRAII.h" />
-    <ClInclude Include="Public\Behavior_Manager.h" />
     <ClInclude Include="Public\Component_Manager.h" />
     <ClInclude Include="Public\Object_Manager.h" />
     <ClInclude Include="Public\PipeLine.h" />
@@ -78,6 +78,8 @@
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\PipeLine.cpp" />
+    <ClCompile Include="Private\System.cpp" />
     <ClCompile Include="Private\Event_Handler.cpp" />
     <ClCompile Include="Private\Animator.cpp" />
     <ClCompile Include="Private\Bounding.cpp" />
@@ -101,7 +103,6 @@
     <ClCompile Include="Private\Light_Manager.cpp" />
     <ClCompile Include="Private\Mouse_Manager.cpp" />
     <ClCompile Include="Private\Picker.cpp" />
-    <ClCompile Include="Private\Behavior_Manager.cpp" />
     <ClCompile Include="Private\Component_Manager.cpp" />
     <ClCompile Include="Private\Engine_Header.cpp" />
     <ClCompile Include="Private\Object_Manager.cpp" />

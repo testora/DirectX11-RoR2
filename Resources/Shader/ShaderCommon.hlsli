@@ -32,6 +32,11 @@ float		g_fMtrlShininess		= 32.f;
 
 float		g_fTPSharpness			= 2.f;
 
+float AvgGrayScale(float3 vRGB)
+{
+    return (vRGB.r + vRGB.g + vRGB.b) / 3.f;
+}
+
 float2 RotateUV(float2 vUV, float fRadian)
 {
 	float fSin = sin(fRadian);

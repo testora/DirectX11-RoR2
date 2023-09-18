@@ -107,5 +107,5 @@ shared_ptr<CVIBuffer_Rect> CVIBuffer_Rect::Create(ComPtr<ID3D11Device> _pDevice,
 
 shared_ptr<CComponent> CVIBuffer_Rect::Clone(any _arg)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }

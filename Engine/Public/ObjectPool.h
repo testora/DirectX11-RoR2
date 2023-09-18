@@ -18,12 +18,16 @@ public:
 	shared_ptr<class CGameObject>					Pop(any aFetchArg);
 	HRESULT											Push(shared_ptr<class CGameObject>);
 
+	void											Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)>);
+
 private:
 	void											Add();
 
 private:
-	deque<shared_ptr<class CGameObject>>			m_deqPool;
  	unordered_set<shared_ptr<class CGameObject>>	m_usetPop;
+	deque<shared_ptr<class CGameObject>>			m_deqPool;
+	list<shared_ptr<class CGameObject>>				m_lstPop;
+	list<shared_ptr<class CGameObject>>				m_lstPush;
 
 	_uint											m_iPoolSize;
 

@@ -1,9 +1,10 @@
 #pragma once
 #include "Engine_Define.h"
+#include "System.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CGameObject abstract : public std::enable_shared_from_this<CGameObject>
+class ENGINE_DLL CGameObject abstract : public ISystem
 {
 protected:
 	explicit CGameObject(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
@@ -39,7 +40,10 @@ protected:
 	HRESULT														Add_RenderObject(const RENDER_GROUP);
 
 protected:
-	CHARACTERDESC												m_tCharacterDesc{};
+	inline shared_ptr<CGameObject>								shared_from_gameobject();
+
+protected:
+	ENTITYDESC													m_tEntityDesc{};
 
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
 	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;
@@ -50,12 +54,12 @@ protected:
 	bitset<IDX(BEHAVIOR::MAX)>									m_bitBehavior;
 
 private:
-	weak_ptr<class CRenderer>									m_pRenderer;
-	weak_ptr<class CTransform>									m_pTransform;
-	weak_ptr<class CShader>										m_pShader;
-	weak_ptr<class CCollider>									m_pCollider;
-	weak_ptr<class CModel>										m_pModel;
-	weak_ptr<class CVIBuffer>									m_pVIBuffer;
+	weak_ptr<class CRenderer>									m_pWeakRenderer;
+	weak_ptr<class CTransform>									m_pWeakTransform;
+	weak_ptr<class CShader>										m_pWeakShader;
+	weak_ptr<class CCollider>									m_pWeakCollider;
+	weak_ptr<class CModel>										m_pWeakModel;
+	weak_ptr<class CVIBuffer>									m_pWeakVIBuffer;
 
 protected:
 	ComPtr<ID3D11Device>										m_pDevice;

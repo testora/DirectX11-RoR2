@@ -15,6 +15,7 @@
 #include <process.h>
 
 #include <cmath>
+#include <random>
 #include <memory>
 #include <fstream>
 #include <iostream>

@@ -12,14 +12,15 @@ private:
 	virtual ~CPhysics() DEFAULT;
 
 public:
-	HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*);
+	HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*);
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 #ifdef _DEBUG
 public:
-	const _float3					Get_Velocity() const { return m_vVelocity; }
+	const _float3					Get_Velocity() const				{ return m_vVelocity; }
 #endif
+	void							Set_Gravity(_bool bEnable = true)	{ m_bEnableGravity = bEnable; }
 
 public:
 	void							Force(_vectorf vDirection, _float fMagnitude, _float fTimeDelta = 1.f);
@@ -34,12 +35,13 @@ private:
 private:
 	_float3							m_vVelocity;
 
-	const CHARACTERDESC*			m_pCharacterDesc{};
+	_bool							m_bEnableGravity	= true;
 
+	const ENTITYDESC*				m_pEntityDesc{};
 	shared_ptr<class CTransform>	m_pTargetTransform;
 
 public:
-	static shared_ptr<CPhysics>		Create(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*);
+	static shared_ptr<CPhysics>		Create(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*);
 	virtual shared_ptr<CBehavior>	Clone(any = g_aNull) override;
 };
 

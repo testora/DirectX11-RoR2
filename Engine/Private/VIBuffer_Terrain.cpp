@@ -173,5 +173,5 @@ shared_ptr<CVIBuffer_Terrain> CVIBuffer_Terrain::Create(ComPtr<ID3D11Device> _pD
 
 shared_ptr<CComponent> CVIBuffer_Terrain::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }

@@ -24,6 +24,7 @@ public:
 public:
 	template<typename T>
 	void							Play_Animation(T eAnimation, _float fPlaySpeed = 1.f, _bool bReverse = false, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
+	void							Reset();
 
 private:
 	_uint							Get_Animation() const;

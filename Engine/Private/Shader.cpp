@@ -369,5 +369,5 @@ shared_ptr<CShader> CShader::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11
 
 shared_ptr<CComponent> CShader::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }

@@ -16,8 +16,8 @@
 
 #pragma region INGAME - Camera
 
-#define MAINCAM_SENSITIVITY_PITCH				75.0f
-#define MAINCAM_SENSITIVITY_YAW					50.0f
+#define MAINCAM_SENSITIVITY_YAW					50.f
+#define MAINCAM_SENSITIVITY_PITCH				50.f
 
 #define MAINCAM_PITCH_MIN						-90.0f
 #define MAINCAM_PITCH_MAX						+90.0f
@@ -36,7 +36,26 @@
 
 #define MAINCAM_PISTOL_REBOUND_DURATION			0.1f
 
+#define MAINCAM_SNIPER_REBOUND_DURATION			0.5f
+#define MAINCAM_SNIPER_REBOUND_RATIO			0.2f
+#define MAINCAM_SNIPER_RECOVER_RATIO			1.f - MAINCAM_SNIPER_REBOUND_RATIO
+
 #pragma endregion
+
+#pragma region INGAME - Control
+
+#define CONTROL_FORWARD							'W'
+#define CONTROL_LEFT							'A'
+#define CONTROL_BACKWARD						'S'
+#define CONTROL_RIGHT							'D'
+#define CONTROL_JUMP							VK_SPACE
+#define CONTROL_SPRINT							VK_CONTROL
+#define CONTROL_ATTACK1							VK_LBUTTON
+#define CONTROL_ATTACK2							VK_RBUTTON
+#define CONTROL_UTILITY							VK_SHIFT
+#define CONTROL_SPECIAL							'R'
+
+#pragma endregion 
 
 #pragma region INGAME - Player
 
@@ -46,7 +65,7 @@
 #define PLAYER_SPEED_BACKWARD					60.f;
 #define PLAYER_SPEED_LEFT						75.f;
 #define PLAYER_SPEED_RIGHT						75.f;
-#define PLAYER_SPRINT_POWER						2.f;
+#define PLAYER_SPRINT_POWER						1.5f;
 #define PLAYER_JUMP_POWER						60.f;
 
 #define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
@@ -61,5 +80,48 @@
 #define RAILGUNNER_SCOPE_ZOOM_WEIGHT			0.25f
 #define RAILGUNNER_SCOPE_ZOOM_IN_DURATION		0.1f
 #define RAILGUNNER_SCOPE_ZOOM_OUT_DURATION		0.2f
+
+#define RAILGUNNER_SCOPE_SENSITIVITY_YAW		2.5f
+#define RAILGUNNER_SCOPE_SENSITIVITY_PITCH		2.5f
+
+#pragma region RailGunner - PistolBullet
+
+#define PISTOLBULLET_SPEED_FORWARD				200.f;
+
+#define PISTOLBULLET_SPEED_TERMINAL				_float3(1000.f, 1000.f, 1000.f);
+#define PISTOLBULLET_SPEED_RESIST				_float3(0.9f, 0.9f, 0.9f);
+
+#define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
+#define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f);
+
+
+#define PISTOLBULLET_LIFESPAN					2.f
+#define PISTOLBULLET_TARGET_RANGE				20.f
+
+#pragma endregion
+#pragma region RailGunner - Sniper
+
+#define WEAKPOINT_SCALE_FACTOR					_float3(5000.f, 5000.f, 5000.f)
+
+#pragma endregion
+#pragma endregion
+
+
+#pragma region INGAME - Golem
+
+#define GOLEM_SPEED_FORWARD						90.f;
+#define GOLEM_SPEED_BACKWARD					60.f;
+#define GOLEM_SPEED_LEFT						75.f;
+#define GOLEM_SPEED_RIGHT						75.f;
+#define GOLEM_SPRINT_POWER						2.f;
+#define GOLEM_JUMP_POWER						60.f;
+
+#define GOLEM_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
+#define GOLEM_SPEED_RESIST						_float3(0.000001f, 0.2f, 0.000001f);
+
+#define GOLEM_MOVEMENT_TIME_MIN					1.5f
+#define GOLEM_MOVEMENT_TIME_MAX					3.f
+#define GOLEM_MOTION_GAP_MIN					0.5f
+#define GOLEM_MOTION_GAP_MAX					1.f
 
 #pragma endregion

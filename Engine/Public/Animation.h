@@ -18,15 +18,20 @@ public:
 	void								Tick(_float fTimeDelta, vector<shared_ptr<class CBone>>::iterator itBegin, _bool bReverse = false, _bool bLoop = true);
 
 public:
-	_bool								Is_Finished() const					{ return m_fTrackPosition > m_fDuration; }
+	_bool								Is_Finished() const					{ return !m_bReverse ? m_fTrackPosition > m_fDuration : m_fTrackPosition <= 0.f; }
 	const _char*						Get_Name() const					{ return m_szName; }
+
+public:
+	void								Reset()								{ m_bReverse = false;	m_fTrackPosition = 0.f; }
 
 private:
 	_char								m_szName[MAX_PATH]					= "";
 
+	_bool								m_bReverse							= false;
+
 	_float								m_fDuration							= 0.f;
-	_float								m_fTicksPerSecond					= 0.f;
 	_float								m_fTrackPosition					= 0.f;
+	_float								m_fTicksPerSecond					= 0.f;
 
 	_uint								m_iNumChannels						= 0;
 	vector<shared_ptr<class CChannel>>	m_vecChannels;

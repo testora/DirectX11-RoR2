@@ -58,6 +58,8 @@ HRESULT CAnimation::Initialize_FromBinary(std::ifstream& _inFile)
 
 void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>>::iterator _itBegin, _bool _bReverse, _bool _bLoop)
 {
+	m_bReverse = _bReverse;
+
 	if (false == _bReverse)
 	{
 		m_fTrackPosition += m_fTicksPerSecond * _fTimeDelta;

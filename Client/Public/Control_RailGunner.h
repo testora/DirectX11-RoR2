@@ -14,7 +14,7 @@ private:
 	virtual ~CControl_RailGunner() DEFAULT;
 
 public:
-	virtual HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*) override;
+	virtual HRESULT							Initialize(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*) override;
 	virtual void							Tick(_float fTimeDelta) override;
 	virtual void							Late_Tick(_float fTimeDelta) override;
 
@@ -31,7 +31,7 @@ private:
 	shared_ptr<class CRailGunner>			m_pRailGunner;
 
 public:
-	static shared_ptr<CControl_RailGunner>	Create(shared_ptr<class CGameObject> pOwner, const CHARACTERDESC*);
+	static shared_ptr<CControl_RailGunner>	Create(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*);
 	virtual shared_ptr<CBehavior>			Clone(any = g_aNull) override;
 };
 

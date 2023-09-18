@@ -454,7 +454,7 @@ shared_ptr<CMesh> CMesh::Read(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11Device
 
 shared_ptr<CComponent> CMesh::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }
 
 #if ACTIVATE_TOOL

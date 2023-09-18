@@ -8,17 +8,16 @@ END
 
 BEGIN(Client)
 
-class CRailGunner_State final : public ISystem
+class CRailGunner_State final : public Engine::ISystem
 {
 private:
 	explicit CRailGunner_State() DEFAULT;
 	virtual ~CRailGunner_State() DEFAULT;
 
 public:
-	virtual HRESULT							Initialize(any pRailGunner) override;
+	HRESULT									Initialize(any pRailGunner);
 	virtual void							Tick(_float fTimeDelta) override;
 	virtual void							Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT							Render() override;
 
 public:
 	_bool									Is_State(bitset<IDX(RG_STATE::MAX)>) const;
@@ -31,7 +30,7 @@ private:
 
 private:
 	bitset<IDX(RG_STATE::MAX)>				m_bitState;
-	array<_float, IDX(RG_STATE::MAX)>		m_arrStateTime;
+	array<_float, IDX(RG_STATE::MAX)>		m_arrStateTime{};
 
 	shared_ptr<class CRailGunner>			m_pRailGunner;
 	shared_ptr<class CGrounding>			m_pGrounding;

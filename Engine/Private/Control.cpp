@@ -8,7 +8,7 @@ CControl::CControl()
 {
 }
 
-HRESULT CControl::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDESC* _pCharacterDesc)
+HRESULT CControl::Initialize(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
 	if (FAILED(__super::Initialize(_pOwner)))
 	{
@@ -41,7 +41,7 @@ HRESULT CControl::Initialize(shared_ptr<CGameObject> _pOwner, const CHARACTERDES
 	m_pTargetTransform	= pTargetTransform;
 	m_pTargetPhysics	= pTargetPhysics;
 	m_pTargetAnimator	= pTargetAnimator;
-	m_pCharacterDesc	= _pCharacterDesc;
+	m_pEntityDesc		= _pEntityDesc;
 	
 	return S_OK;
 }

@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00. Header", "00. Header", 
 	ProjectSection(SolutionItems) = preProject
 		Public\Header\Public_Define.h = Public\Header\Public_Define.h
 		Public\Header\Public_Macro.h = Public\Header\Public_Macro.h
-		Public\Header\Public_Settings.h = Public\Header\Public_Settings.h
 		Public\Header\Public_Typedef.h = Public\Header\Public_Typedef.h
 	EndProjectSection
 EndProject

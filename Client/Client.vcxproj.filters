@@ -61,9 +61,6 @@
     <Filter Include="03. Tool\00. Manager">
       <UniqueIdentifier>{e9ff588c-200f-4c81-8694-957f4011a305}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00. Header\01. Tool">
-      <UniqueIdentifier>{f2f50fbe-0bc0-46cb-9842-df561502b0a0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Tool\02. ImGuizmo">
       <UniqueIdentifier>{3341e528-1a3c-420e-830f-42bf3fbe5472}</UniqueIdentifier>
     </Filter>
@@ -124,9 +121,6 @@
     <Filter Include="06. GameObject\05. Survivor\01. RailGunner\00. Behavior\01. Control">
       <UniqueIdentifier>{def1028c-f18b-4c90-933d-35a4d1d8e97e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\00. System">
-      <UniqueIdentifier>{0905afb7-845f-41cc-9bd7-e9c040df3037}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\05. Survivor\01. RailGunner\01. System">
       <UniqueIdentifier>{607403cb-648a-46b2-a4f5-2bc28cc78413}</UniqueIdentifier>
     </Filter>
@@ -147,6 +141,51 @@
     </Filter>
     <Filter Include="06. GameObject\05. Survivor\01. RailGunner\02. Bullet\03. Super">
       <UniqueIdentifier>{397ab4c9-ed7b-411f-8492-b20198afe12f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster">
+      <UniqueIdentifier>{52191b82-4bcd-4ad4-932c-5c5ed43f9ded}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem">
+      <UniqueIdentifier>{1cc5cfb9-b538-4d93-a584-f9700ef59258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\00. Behavior">
+      <UniqueIdentifier>{57ad35a8-1deb-41c3-b23f-f7e5dc1bc90d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior">
+      <UniqueIdentifier>{5a41e553-4950-448c-8108-30f8cbe524f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\00. Behavior\01. Custom">
+      <UniqueIdentifier>{6efb9f9e-4644-43c6-9236-539d195f1b67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom">
+      <UniqueIdentifier>{ccbf8776-626c-47de-9bec-5c86a8a0bbfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. Header\01. Inline">
+      <UniqueIdentifier>{1a6ec9b3-709e-4b88-a979-16b852284794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. Header\02. Source">
+      <UniqueIdentifier>{45e2723a-144f-484e-a5aa-de94af4c7700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. Header\03. Tool">
+      <UniqueIdentifier>{f2f50fbe-0bc0-46cb-9842-df561502b0a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State">
+      <UniqueIdentifier>{1f7b3589-3ffc-4f5e-b42e-43fb44dcb8d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget">
+      <UniqueIdentifier>{6334c617-94c6-4b38-8e92-ca562224a2e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target">
+      <UniqueIdentifier>{da410491-7049-4a6f-bff5-77ebb46f17f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader\01. Forward">
+      <UniqueIdentifier>{cdcc84d8-04ba-42c8-b8cb-b3e44775125e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Shader\02. Deferred">
+      <UniqueIdentifier>{cbd4c466-994d-44b5-b95a-799e1ecdc6a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit">
+      <UniqueIdentifier>{21b582e8-ef9d-46e0-a6ff-4949c687c7e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -247,7 +286,7 @@
       <Filter>03. Tool\03. ImGuiFileDialog\01. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Tool_Define.h">
-      <Filter>00. Header\01. Tool</Filter>
+      <Filter>00. Header\03. Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGuizmo\GraphEditor.h">
       <Filter>03. Tool\02. ImGuizmo\01. Header</Filter>
@@ -285,11 +324,32 @@
     <ClInclude Include="Public\RailGunner_State.h">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
     </ClInclude>
-    <ClInclude Include="Public\System.h">
-      <Filter>06. GameObject\00. System</Filter>
-    </ClInclude>
     <ClInclude Include="Public\RailGunner_PistolBullet.h">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Golem.h">
+      <Filter>06. GameObject\06. Monster\01. Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Golem_Behavior.h">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Client_Function.h">
+      <Filter>00. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Golem_Untarget.h">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Golem_Target.h">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Hostile.h">
+      <Filter>06. GameObject\06. Monster\00. Behavior\01. Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Monster.h">
+      <Filter>06. GameObject\06. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Golem_Hit.h">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -380,11 +440,32 @@
     <ClCompile Include="Private\RailGunner_State.cpp">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\01. System\01. State</Filter>
     </ClCompile>
-    <ClCompile Include="Private\System.cpp">
-      <Filter>06. GameObject\00. System</Filter>
-    </ClCompile>
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp">
       <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Golem.cpp">
+      <Filter>06. GameObject\06. Monster\01. Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Golem_Behavior.cpp">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Client_Function.cpp">
+      <Filter>00. Header\02. Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Golem_Untarget.cpp">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Golem_Target.cpp">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Hostile.cpp">
+      <Filter>06. GameObject\06. Monster\00. Behavior\01. Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Monster.cpp">
+      <Filter>06. GameObject\06. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Golem_Hit.cpp">
+      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -401,17 +482,17 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Resources\Shader\PosTex.hlsl">
-      <Filter>04. Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Resources\Shader\PosNorTex.hlsl">
-      <Filter>04. Shader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl">
-      <Filter>04. Shader</Filter>
+      <Filter>04. Shader\01. Forward</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\PosNorTanTexBone.hlsl">
-      <Filter>04. Shader</Filter>
+      <Filter>04. Shader\01. Forward</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\PosNorTex.hlsl">
+      <Filter>04. Shader\01. Forward</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\PosTex.hlsl">
+      <Filter>04. Shader\01. Forward</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

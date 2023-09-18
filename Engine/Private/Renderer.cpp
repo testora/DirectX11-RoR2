@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "Renderer.h"
-#include "GameObject.h"
+#include "System.h"
 
 CRenderer::CRenderer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::RENDERER)
@@ -18,7 +18,7 @@ HRESULT CRenderer::Initialize(any _arg)
 	return S_OK;
 }
 
-HRESULT CRenderer::Add_RenderObject(const RENDER_GROUP _eRenderGroup, shared_ptr<CGameObject> _pGameObject)
+HRESULT CRenderer::Add_RenderObject(const RENDER_GROUP _eRenderGroup, shared_ptr<ISystem> _pGameObject)
 {
 	if (nullptr == _pGameObject)
 	{
@@ -157,5 +157,5 @@ shared_ptr<CRenderer> CRenderer::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID
 
 shared_ptr<CComponent> CRenderer::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }

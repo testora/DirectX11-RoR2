@@ -1,7 +1,7 @@
 #include "EnginePCH.h"
 #include "GameObject.h"
+#include "System.h"
 #include "Component_Manager.h"
-#include "Behavior_Manager.h"
 #include "Scene_Manager.h"
 #include "Object_Manager.h"
 #include "PipeLine.h"
@@ -34,7 +34,7 @@ CGameObject::CGameObject(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 CGameObject::CGameObject(const CGameObject& _rhs)
 	: m_pDevice			(_rhs.m_pDevice)
 	, m_pContext		(_rhs.m_pContext)
-	, m_tCharacterDesc	(_rhs.m_tCharacterDesc)
+	, m_tEntityDesc		(_rhs.m_tEntityDesc)
 	, m_bitComponent	(_rhs.m_bitComponent)
 	, m_bitBehavior		(_rhs.m_bitBehavior)
 	, m_umapComponentArg(_rhs.m_umapComponentArg)
@@ -64,9 +64,9 @@ HRESULT CGameObject::Initialize(any _arg)
 
 void CGameObject::Tick(_float _fTimeDelta)
 {
-	if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
+	if (shared_ptr<CTransform> pTransform = m_pWeakTransform.lock())
 	{
-		if (shared_ptr<CCollider> pCollider = m_pCollider.lock())
+		if (shared_ptr<CCollider> pCollider = m_pWeakCollider.lock())
 		{
 			pCollider->Tick_Transformation(pTransform->Get_Matrix());
 		}
@@ -88,23 +88,23 @@ void CGameObject::Late_Tick(_float _fTimeDelta)
 
 HRESULT CGameObject::Render(_uint _iPassIndex)
 {
-	if (shared_ptr<CShader> pShader = m_pShader.lock())
+	if (shared_ptr<CShader> pShader = m_pWeakShader.lock())
 	{
-		if (shared_ptr<CTransform> pTransform = m_pTransform.lock())
+		if (shared_ptr<CTransform> pTransform = m_pWeakTransform.lock())
 		{
 			if (FAILED(pTransform->Bind_OnShader(pShader)))
 			{
 				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CTransform::Bind_OnShader");
 			}
 		}
-		if (shared_ptr<CVIBuffer> pVIBuffer = m_pVIBuffer.lock())
+		if (shared_ptr<CVIBuffer> pVIBuffer = m_pWeakVIBuffer.lock())
 		{
 			if (FAILED(pVIBuffer->Render(pShader, _iPassIndex)))
 			{
 				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CVIBuffer::Render");
 			}
 		}
-		if (shared_ptr<CModel> pModel = m_pModel.lock())
+		if (shared_ptr<CModel> pModel = m_pWeakModel.lock())
 		{
 			if (FAILED(pModel->Render(pShader, _iPassIndex)))
 			{
@@ -114,7 +114,7 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 	}
 
 #ifdef _DEBUG
-	if (shared_ptr<CCollider> pCollider = m_pCollider.lock())
+	if (shared_ptr<CCollider> pCollider = m_pWeakCollider.lock())
 	{
 		if (FAILED(pCollider->Render()))
 		{
@@ -224,24 +224,24 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	switch (_eComponent)
 	{
 	case COMPONENT::RENDERER:
-		m_pRenderer		= Get_Component<CRenderer>(_eComponent);
+		m_pWeakRenderer		= Get_Component<CRenderer>(_eComponent);
 		break;
 	case COMPONENT::TRANSFORM:
-		m_pTransform	= Get_Component<CTransform>(_eComponent);
+		m_pWeakTransform	= Get_Component<CTransform>(_eComponent);
 		break;
 	case COMPONENT::SHADER:
-		m_pShader		= Get_Component<CShader>(_eComponent);
+		m_pWeakShader		= Get_Component<CShader>(_eComponent);
 		break;
 	case COMPONENT::COLLIDER:
-		m_pCollider		= Get_Component<CCollider>(_eComponent);
+		m_pWeakCollider		= Get_Component<CCollider>(_eComponent);
 		break;
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_TERRAIN:
-		m_pVIBuffer		= Get_Component<CVIBuffer>(_eComponent);
+		m_pWeakVIBuffer		= Get_Component<CVIBuffer>(_eComponent);
 		break;
 	case COMPONENT::MODEL:
-		m_pModel		= Get_Component<CModel>(_eComponent);
+		m_pWeakModel		= Get_Component<CModel>(_eComponent);
 		break;
 	}
 #pragma endregion
@@ -256,18 +256,19 @@ HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(shared_from_this(), &m_tCharacterDesc));
+		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(shared_from_gameobject(), &m_tEntityDesc));
 		break;
 
 	case BEHAVIOR::GROUNDING:
-		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(shared_from_this(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
+		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(shared_from_gameobject(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
 		break;
 
 	case BEHAVIOR::ANIMATOR:
-		m_umapBehavior.emplace(_eBehavior, CAnimator::Create(shared_from_this()));
+		m_umapBehavior.emplace(_eBehavior, CAnimator::Create(shared_from_gameobject()));
 		break;
 
 	case BEHAVIOR::CONTROL:
+	case BEHAVIOR::CUSTOM:
 		break;
 
 	default:
@@ -320,7 +321,7 @@ HRESULT CGameObject::Delete_Behavior(const BEHAVIOR _eBehavior)
 
 HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
 {
-	if (shared_ptr<CRenderer> pRenderer = m_pRenderer.lock())
+	if (shared_ptr<CRenderer> pRenderer = m_pWeakRenderer.lock())
 	{
 		if (SUCCEEDED(pRenderer->Add_RenderObject(_eRenderGroup, shared_from_this())))
 		{
@@ -333,4 +334,9 @@ HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
 	}
 
 	return S_FALSE;
+}
+
+shared_ptr<CGameObject> CGameObject::shared_from_gameobject()
+{
+	return static_pointer_cast<CGameObject>(ISystem::shared_from_this());
 }

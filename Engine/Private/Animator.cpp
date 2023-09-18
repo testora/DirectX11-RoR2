@@ -50,6 +50,11 @@ _bool CAnimator::Is_Finished() const
 	return m_pTargetModel->Is_AnimationFinished();
 }
 
+void CAnimator::Reset()
+{
+	m_pTargetModel->Reset_Animation();
+}
+
 _uint CAnimator::Get_Animation() const
 {
 	return m_pTargetModel->Get_AnimationIndex();

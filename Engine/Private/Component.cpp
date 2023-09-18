@@ -14,3 +14,8 @@ CComponent::CComponent(const CComponent& _rhs)
 	, m_eType	(_rhs.m_eType)
 {
 }
+
+shared_ptr<CComponent> CComponent::shared_from_componenet()
+{
+	return static_pointer_cast<CComponent>(shared_from_this());
+}

@@ -3,7 +3,6 @@
 #include "PipeLine.h"
 #include "Event_Handler.h"
 #include "Component_Manager.h"
-#include "Behavior_Manager.h"
 
 CCamera::CCamera(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject	(_pDevice, _pContext)

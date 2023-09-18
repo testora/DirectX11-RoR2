@@ -14,7 +14,7 @@ public:
 	HRESULT									Initialize(any = g_aNull);
 
 public:
-	HRESULT									Add_RenderObject(const RENDER_GROUP, shared_ptr<class CGameObject>);
+	HRESULT									Add_RenderObject(const RENDER_GROUP, shared_ptr<class ISystem>);
 
 	HRESULT									Draw_RenderGroup();
 
@@ -28,7 +28,7 @@ private:
 private:
 	vector<function<HRESULT()>>				m_vecFnRenderGroup;
 
-	list<shared_ptr<class CGameObject>>		m_lstRenderGroup[IDX(RENDER_GROUP::MAX)];
+	list<shared_ptr<class ISystem>>			m_lstRenderGroup[IDX(RENDER_GROUP::MAX)];
 
 public:
 	static shared_ptr<CRenderer>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

@@ -8,7 +8,6 @@
 #include "Scene_Manager.h"
 #include "Object_Manager.h"
 #include "Component_Manager.h"
-#include "Behavior_Manager.h"
 #include "Grid_Manager.h"
 #include "Light_Manager.h"
 #include "Picker.h"
@@ -22,7 +21,6 @@ CGameInstance::CGameInstance()
 	, m_pScene_Manager		(CScene_Manager::Get_Instance())
 	, m_pObject_Manager		(CObject_Manager::Get_Instance())
 	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
-	, m_pBehavior_Manager	(CBehavior_Manager::Get_Instance())
 	, m_pGrid_Manager		(CGrid_Manager::Get_Instance())
 	, m_pLight_Manager		(CLight_Manager::Get_Instance())
 	, m_pPicker				(CPicker::Get_Instance())
@@ -66,11 +64,6 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(_eMax)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pComponent_Manager->Reserve_Manager");
-	}
-
-	if (FAILED(m_pBehavior_Manager->Reserve_Manager(_eMax)))
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pBehavior_Manager->Reserve_Manager");
 	}
 
 	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, g_vGridSize)))
@@ -507,29 +500,6 @@ shared_ptr<CComponent> CGameInstance::Clone_Component(const SCENE _eScene, const
 }
 
 #pragma endregion
-#pragma region Behavior Manager
-
-HRESULT CGameInstance::Add_Behavior_Prototype(const SCENE _eScene, const wstring& _wstrPrototypeTag, shared_ptr<CBehavior> _pPrototype)
-{
-	if (nullptr == m_pBehavior_Manager)
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Add_Behavior_Prototype", "Null Exception: m_pBehavior_Manager");
-	}
-
-	return m_pBehavior_Manager->Add_Prototype(_eScene, _wstrPrototypeTag, _pPrototype);
-}
-
-shared_ptr<CBehavior> CGameInstance::Clone_Behavior(const SCENE _eScene, const wstring& _wstrPrototypeTag, any _arg)
-{
-	if (nullptr == m_pBehavior_Manager)
-	{
-		MSG_RETURN(nullptr, "CGameInstance::Clone_Component", "Null Exception: m_pBehavior_Manager");
-	}
-
-	return m_pBehavior_Manager->Clone_Behavior(_eScene, _wstrPrototypeTag, _arg);
-}
-
-#pragma endregion
 #pragma region Grid Manager
 
 _float3 CGameInstance::Get_GridSize()
@@ -623,7 +593,6 @@ void CGameInstance::Release_Engine()
 	CPicker::Destroy_Instance();
 	CLight_Manager::Destroy_Instance();
 	CGrid_Manager::Destroy_Instance();
-	CBehavior_Manager::Destroy_Instance();
 	CComponent_Manager::Destroy_Instance();
 	CObject_Manager::Destroy_Instance();
 	CScene_Manager::Destroy_Instance();

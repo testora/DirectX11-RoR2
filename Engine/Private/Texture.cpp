@@ -303,7 +303,7 @@ shared_ptr<CTexture> CTexture::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 
 shared_ptr<CComponent> CTexture::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_componenet();
 }
 
 #if ACTIVATE_TOOL

@@ -39,7 +39,7 @@ HRESULT CCamera_Main::Initialize(any _aDesc)
 	CGameInstance::Get_Instance()->Fix_Cursor();
 	m_pPipeLine->Set_Camera(static_pointer_cast<CCamera>(shared_from_this()));
 
-	m_vPistolReboundQuaternion = QuaternionBetweenAxis(_float3(0.f, 1.f, 0.f), _float3(0.02f, 1.f, -0.05f));
+	m_vSensitivty = _float2(MAINCAM_SENSITIVITY_YAW, MAINCAM_SENSITIVITY_PITCH);
 
 	return S_OK;
 }
@@ -100,6 +100,10 @@ HRESULT CCamera_Main::Attach(shared_ptr<CTransform> _pTargetTransform, _float4 _
 
 void CCamera_Main::Rebound_Pistol()
 {
+	_float4 vPistolReboundQuaternion = QuaternionBetweenAxis(
+		XMVector3TransformNormal(_float3(0.f, 1.f, 0.f), m_pTransform->Get_Matrix()),
+		XMVector3TransformNormal(_float3(0.02f, 1.00f, -0.05f), m_pTransform->Get_Matrix()));
+
 	_float fAcc(0.f);
 	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
@@ -114,7 +118,7 @@ void CCamera_Main::Rebound_Pistol()
 					fRatio -= (fAcc - 0.5f) * 2.f;
 				}
 		
-				m_pTransform->Rotate(Function::Slerp(m_vPistolReboundQuaternion, fRatio));
+				m_pTransform->Rotate(Function::Slerp(vPistolReboundQuaternion, fRatio));
 			}
 			else if (fAcc < 1.f)
 			{
@@ -126,7 +130,7 @@ void CCamera_Main::Rebound_Pistol()
 					fRatio -= fAcc - 1.f;
 				}
 		
-				m_pTransform->Rotate(Function::Slerp(m_vPistolReboundQuaternion, -fRatio));
+				m_pTransform->Rotate(Function::Slerp(vPistolReboundQuaternion, -fRatio));
 			}
 
 			return fAcc < 1.f;
@@ -134,14 +138,65 @@ void CCamera_Main::Rebound_Pistol()
 	);
 }
 
-void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight)
+void CCamera_Main::Rebound_Sniper()
+{
+	_float4 vSniperReboundQuaternion = QuaternionBetweenAxis(
+		XMVector3TransformNormal(_float3(0.f, 1.f, 0.f), m_pTransform->Get_Matrix()),
+		XMVector3TransformNormal(_float3(0.00f, 1.00f, -0.02f), m_pTransform->Get_Matrix()));
+
+	_float fAcc(0.f);
+	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fAcc < 1.f)
+			{
+				fAcc += _fTimeDelta / 0.4f;
+
+				m_pTransform->Rotate(Function::Slerp(vSniperReboundQuaternion, (-powf(fAcc, 0.25f) + 0.85f)) * 1.5f);
+			}
+
+		//	if (fAcc < 0.5f)
+		//	{
+		//		fAcc += _fTimeDelta / 0.55f;
+		//
+		//		_float fRatio(_fTimeDelta / 0.55f);
+		//		if (fAcc > 0.5f)
+		//		{
+		//			fRatio -= (fAcc - 0.5f) * 2.f;
+		//		}
+		//
+		//		m_pTransform->Rotate(Function::Slerp(m_vSniperReboundQuaternion, fRatio, 0.5f));
+		//	}
+		//	else if (fAcc < 1.f)
+		//	{
+		//		fAcc += _fTimeDelta / 0.55f;
+		//
+		//		_float fRatio(_fTimeDelta / 0.55f);
+		//		if (fAcc > 1.f)
+		//		{
+		//			fRatio -= fAcc - 1.f;
+		//		}
+		//
+		//		m_pTransform->Rotate(Function::Slerp(m_vSniperReboundQuaternion, -fRatio, 0.5f));
+		//	}
+
+			return fAcc < 1.f;
+		}
+	);
+}
+
+void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight, _float2 _vSensitivity)
 {
 	__super::Adjust_FOV(_fRadian, _fDuration, _fWeight);
+
+	m_vSensitivty =	_vSensitivity;
 }
 
 void CCamera_Main::Release_FOV(_float _fDuration, _float _fWeight)
 {
 	__super::Release_FOV(_fDuration, _fWeight);
+
+	m_vSensitivty = _float2(MAINCAM_SENSITIVITY_YAW, MAINCAM_SENSITIVITY_PITCH);
 }
 
 void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
@@ -155,14 +210,14 @@ void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
 
 	if (ptCursorMove.x)
 	{
-		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), MAINCAM_SENSITIVITY_YAW * ptCursorMove.x * _fTimeDelta);
+		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.y * ptCursorMove.x * _fTimeDelta);
 	}
 
 	if (ptCursorMove.y)
 	{
 		_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
 		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
-		_float	fChgPitch	= MAINCAM_SENSITIVITY_PITCH * ptCursorMove.y * _fTimeDelta;
+		_float	fChgPitch	= m_vSensitivty.x * ptCursorMove.y * _fTimeDelta;
 		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 		_float	fFinal		= fNewPitch - fCurPitch;
 
@@ -193,5 +248,5 @@ shared_ptr<CCamera_Main> CCamera_Main::Create(ComPtr<ID3D11Device> _pDevice, Com
 
 shared_ptr<CGameObject> CCamera_Main::Clone(any)
 {
-	return shared_from_this();
+	return shared_from_gameobject();
 }

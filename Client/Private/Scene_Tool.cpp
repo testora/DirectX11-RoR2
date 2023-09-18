@@ -24,6 +24,21 @@ HRESULT CScene_Tool::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to __super::Initialize");
 	}
 
+	m_pRenderer				= dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+	if (nullptr == m_pRenderer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Clone_Component: RENDERER");
+	}
+
+	m_pShader_NonAnimMesh	= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESH));
+	m_pShader_AnimMesh		= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM));
+
+	if (nullptr == m_pShader_NonAnimMesh
+	||	nullptr == m_pShader_AnimMesh)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Clone_Component: SHADER");
+	}
+
 	CImGui_Manager::Get_Instance()->Enable();
 
 	return S_OK;
@@ -37,6 +52,7 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 
 void CScene_Tool::Late_Tick(_float _fTimeDelta)
 {
+	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
 }
 
 HRESULT CScene_Tool::Render()

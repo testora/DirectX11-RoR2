@@ -35,6 +35,14 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\Golem_Hit.h" />
+    <ClInclude Include="Public\Monster.h" />
+    <ClInclude Include="Public\Golem_Target.h" />
+    <ClInclude Include="Public\Golem_Untarget.h" />
+    <ClInclude Include="Public\Client_Function.h" />
+    <ClInclude Include="Public\Golem_Behavior.h" />
+    <ClInclude Include="Public\Hostile.h" />
+    <ClInclude Include="Public\Golem.h" />
     <ClInclude Include="Public\Control_RailGunner.h" />
     <ClInclude Include="Public\Client_Variable.h" />
     <ClInclude Include="Public\Background.h" />
@@ -65,7 +73,6 @@
     <ClInclude Include="Public\RailGunner_Crosshair.h" />
     <ClInclude Include="Public\RailGunner_PistolBullet.h" />
     <ClInclude Include="Public\RailGunner_State.h" />
-    <ClInclude Include="Public\System.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -130,6 +137,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\Golem_Hit.cpp" />
+    <ClCompile Include="Private\Monster.cpp" />
+    <ClCompile Include="Private\Golem_Target.cpp" />
+    <ClCompile Include="Private\Golem_Untarget.cpp" />
+    <ClCompile Include="Private\Client_Function.cpp" />
+    <ClCompile Include="Private\Golem_Behavior.cpp" />
+    <ClCompile Include="Private\Hostile.cpp" />
+    <ClCompile Include="Private\Golem.cpp" />
     <ClCompile Include="Private\Control_RailGunner.cpp" />
     <ClCompile Include="Private\Background.cpp" />
     <ClCompile Include="Private\Camera_Main.cpp" />
@@ -153,7 +168,6 @@
     <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp" />
     <ClCompile Include="Private\RailGunner_State.cpp" />
-    <ClCompile Include="Private\System.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />

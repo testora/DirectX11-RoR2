@@ -1,9 +1,9 @@
 #pragma once
 #include "Engine_Define.h"
+#include "PipeLine.h"
 #include "Object_Manager.h"
 #include "Component_Manager.h"
-#include "Behavior_Manager.h"
-#include "PipeLine.h"
+#include "System.h"
 
 BEGIN(Engine)
 
@@ -96,12 +96,6 @@ public:
 	shared_ptr<class CComponent>				Clone_Component(const SCENE, const wstring& strPrototypeTag, any = g_aNull);
 
 #pragma endregion
-#pragma region Behavior Manager
-
-	HRESULT										Add_Behavior_Prototype(const SCENE, const wstring& wstrPrototypeTag, shared_ptr<class CBehavior> pPrototype);
-	shared_ptr<class CBehavior>					Clone_Behavior(const SCENE, const wstring& wstrPrototypeTag, any = g_aNull);
-
-#pragma endregion
 #pragma region Grid Manager
 
 	_float3										Get_GridSize();
@@ -131,7 +125,6 @@ private:
 	shared_ptr<class CScene_Manager>			m_pScene_Manager;
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
-	shared_ptr<class CBehavior_Manager>			m_pBehavior_Manager;
 	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
 	shared_ptr<class CLight_Manager>			m_pLight_Manager;
 	shared_ptr<class CPicker>					m_pPicker;

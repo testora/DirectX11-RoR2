@@ -56,7 +56,7 @@ HRESULT CScene_Menu::Render()
 
 HRESULT CScene_Menu::Ready_Background()
 {
-	auto pLayer_Background = CGameInstance::Get_Instance()->Add_Layer(SCENE::MENU, SCENE_MENU_LAYER_BACKGROUND);
+	auto pLayer_Background = CGameInstance::Get_Instance()->Add_Layer(SCENE::MENU, LAYER_BACKGROUND);
 	if (nullptr == pLayer_Background)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Menu::Ready_Background", "Failed to Add_Layer");

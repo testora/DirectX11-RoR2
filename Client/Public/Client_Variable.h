@@ -9,6 +9,7 @@
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS					TEXT("Prototype:GameObject:GolemPlains")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER						TEXT("Prototype:GameObject:RailGunner")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET		TEXT("Prototype:GameObject:RailGunner:PistolBullet")
+#define PROTOTYPE_GAMEOBJECT_GOLEM							TEXT("Prototype:GameObject:Golem")
 
 #pragma	endregion
 #pragma region Component
@@ -18,8 +19,8 @@
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX				TEXT("Prototype:Component:Shader:VTXPOSTEX")
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX				TEXT("Prototype:Component:Shader:VTXPOSNORTEX")
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEX			TEXT("Prototype:Component:Shader:VTXPOSNORTANTEX")
-#define PROTOTYPE_COMPONENT_SHADER_VTXMESH					PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEX
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEXBONE		TEXT("Prototype:Component:Shader:VTXPOSNORTANTEXBONE")
+#define PROTOTYPE_COMPONENT_SHADER_VTXMESH					PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEX
 #define PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM				PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEXBONE
 
 #define PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND				TEXT("Prototype:Component:Texture:Background")
@@ -33,6 +34,7 @@
 #define PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN				TEXT("Prototype:Component:VIBuffer:Terrain")
 
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER				TEXT("Prototype:Component:Model:RailGunner")
+#define PROTOTYPE_COMPONENT_MODEL_GOLEM						TEXT("Prototype:Component:Model:Golem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS				TEXT("Prototype:Component:Model:GolemPlains")
 
 #ifdef _DEBUG
@@ -42,17 +44,18 @@
 
 #pragma region Layer
 
-#define SCENE_MENU_LAYER_BACKGROUND							TEXT("Scene:Menu:Layers:Background")
+#define LAYER_BACKGROUND									TEXT("Layer:Background")
 
-#define SCENE_TEST_LAYER_LIGHT								TEXT("Scene:Test:Layers:Light")
-#define SCENE_TEST_LAYER_CAMERA								TEXT("Scene:Test:Layers:Camera")
-#define SCENE_TEST_LAYER_TERRAIN							TEXT("Scene:Test:Layers:Terrain")
-#define SCENE_TEST_LAYER_PLAYER								TEXT("Scene:Test:Layers:Player")
+#define LAYER_LIGHT											TEXT("Layer:Light")
+#define LAYER_CAMERA										TEXT("Layer:Camera")
+#define LAYER_TERRAIN										TEXT("Layer:Terrain")
+#define LAYER_PLAYER										TEXT("Layer:Player")
 
 #pragma endregion
 #pragma region Pool
 
-#define SCENE_TEST_POOL_RAILGUNNER_PISTOLBULLET				TEXT("Scene:Test:Pool:RailGunner:PistolBullet")
+#define POOL_MONSTER_GOLEM									TEXT("Pool:Monster:Golem")
+#define POOL_RAILGUNNER_PISTOLBULLET						TEXT("Pool:RailGunner:PistolBullet")
 
 #pragma endregion
 #pragma region Grid Layer

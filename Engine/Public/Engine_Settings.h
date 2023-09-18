@@ -24,3 +24,7 @@
 #define ACTIVATE_TOOL			FALSE
 #endif
 #pragma endregion
+
+#pragma region TODO
+#define TODO_MOVE_PIVOT_TO_MODEL
+#pragma endregion

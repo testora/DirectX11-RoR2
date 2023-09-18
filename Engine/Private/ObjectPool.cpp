@@ -37,6 +37,19 @@ void CObjectPool::Late_Tick(_float _fTimeDelta)
 	{
 		iter->Late_Tick(_fTimeDelta);
 	}
+
+	for (auto& iter : m_lstPush)
+	{
+		m_usetPop.erase(iter);
+		m_deqPool.emplace_back(iter);
+	}
+	for (auto& iter : m_lstPop)
+	{
+		m_deqPool.pop_front();
+		m_usetPop.emplace(iter);
+	}
+	m_lstPush.clear();
+	m_lstPop.clear();
 }
 
 shared_ptr<CGameObject> CObjectPool::Pop(any _aFetchArg)
@@ -48,8 +61,8 @@ shared_ptr<CGameObject> CObjectPool::Pop(any _aFetchArg)
 
 	shared_ptr<CGameObject> pObject = m_deqPool.front();
 	pObject->Fetch(_aFetchArg);
-	m_deqPool.pop_front();
-	m_usetPop.emplace(pObject);
+
+	m_lstPop.emplace_back(pObject);
 
 	return pObject;
 }
@@ -61,10 +74,20 @@ HRESULT CObjectPool::Push(shared_ptr<CGameObject> _pObject)
 		MSG_RETURN(E_FAIL, "CObjectPool::Push", "Null Exception");
 	}
 
-	m_usetPop.erase(_pObject);
-	m_deqPool.emplace_back(_pObject);
+	m_lstPush.emplace_back(_pObject);
 
 	return S_OK;
+}
+
+void CObjectPool::Iterate_Objects(function<_bool(shared_ptr<CGameObject>)> _funcCallback)
+{
+	for (auto iter : m_usetPop)
+	{
+		if (!_funcCallback(iter))
+		{
+			return;
+		}
+	}
 }
 
 void CObjectPool::Add()
