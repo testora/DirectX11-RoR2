@@ -13,7 +13,7 @@ private:
 public:
 	virtual HRESULT						Initialize(any pColliderDesc) override;
 #ifdef _DEBUG
-	virtual HRESULT						Render(shared_ptr<PrimitiveBatch<VertexPositionColor>>) override;
+	virtual HRESULT						Render(shared_ptr<PrimitiveBatch<VertexPositionColor>>, _vectorf vColor) override;
 #endif
 
 public:

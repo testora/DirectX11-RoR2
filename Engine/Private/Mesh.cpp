@@ -11,11 +11,10 @@ CMesh::CMesh(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContex
 }
 
 #if ACTIVATE_TOOL
-HRESULT CMesh::Initialize_FromAssimp(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
+HRESULT CMesh::Initialize_FromAssimp(MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel)
 {
 	strcpy_s(m_szName, _pAIMesh->mName.C_Str());
 
-	m_mPivot			= _mPivot;
 	m_iMaterialIndex	= _pAIMesh->mMaterialIndex;
 
 	m_iNumVB			= 1;
@@ -103,7 +102,6 @@ HRESULT CMesh::Initialize_FromBinary(MODEL _eType, std::ifstream& _inFile)
 	m_eTopology		= D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	_inFile.read(reinterpret_cast<_byte*>(m_szName),			MAX_PATH);
-	_inFile.read(reinterpret_cast<_byte*>(&m_mPivot),			sizeof(_float4x4));
 	_inFile.read(reinterpret_cast<_byte*>(&m_iMaterialIndex),	sizeof(_uint));
 	_inFile.read(reinterpret_cast<_byte*>(&m_iNumVB),			sizeof(_uint));
 	_inFile.read(reinterpret_cast<_byte*>(&m_iNumVertices),		sizeof(_uint));
@@ -263,7 +261,7 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
-		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Ready_VertexBuffer_Anim", "Failed to CreateBuffer");
+		MSG_RETURN(E_FAIL, "CMesh::Ready_VertexBuffer_Anim", "Failed to CreateBuffer");
 	}
 
 	return S_OK;
@@ -315,7 +313,7 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(const aiMesh* _pAIMesh)
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
-		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Ready_VertexBuffer_NonAnim", "Failed to CreateBuffer");
+		MSG_RETURN(E_FAIL, "CMesh::Ready_VertexBuffer_NonAnim", "Failed to CreateBuffer");
 	}
 
 	return S_OK;
@@ -344,13 +342,18 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(std::ifstream& _inFile)
 	_inFile.read(reinterpret_cast<_byte*>(m_vecBoneOffsets.data()),	sizeof(_float4x4)	* m_iNumBones);
 	_inFile.read(reinterpret_cast<_byte*>(pVertices.get()),			m_iVertexStride		* m_iNumVertices);
 
+#if ACTIVATE_TOOL
+	m_pVertices_Anim = Function::CreateDynamicArray<VTXMESHANIM>(m_iNumVertices);
+	memcpy(m_pVertices_Anim.get(), pVertices.get(), m_iVertexStride * m_iNumVertices);
+#endif
+
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 
 	m_tInitializeData.pSysMem = pVertices.get();
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
-		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Ready_VertexBuffer_Anim", "Failed to CreateBuffer");
+		MSG_RETURN(E_FAIL, "CMesh::Ready_VertexBuffer_Anim", "Failed to CreateBuffer");
 	}
 
 	return S_OK;
@@ -371,26 +374,31 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(std::ifstream& _inFile)
 
 	_inFile.read(reinterpret_cast<_byte*>(pVertices.get()), m_iVertexStride * m_iNumVertices);
 
+#if ACTIVATE_TOOL
+	m_pVertices_NonAnim = Function::CreateDynamicArray<VTXMESH>(m_iNumVertices);
+	memcpy(m_pVertices_NonAnim.get(), pVertices.get(), m_iVertexStride * m_iNumVertices);
+#endif
+
 	ZeroMemory(&m_tInitializeData, sizeof m_tInitializeData);
 
 	m_tInitializeData.pSysMem = pVertices.get();
 
 	if (FAILED(m_pDevice->CreateBuffer(&m_tBufferDesc, &m_tInitializeData, m_pVB.GetAddressOf())))
 	{
-		MSG_RETURN(E_FAIL, "CVIBuffer_Rect::Ready_VertexBuffer_NonAnim", "Failed to CreateBuffer");
+		MSG_RETURN(E_FAIL, "CMesh::Ready_VertexBuffer_NonAnim", "Failed to CreateBuffer");
 	}
 
 	return S_OK;
 }
 
-_float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<CBone>>::iterator _itBegin)
+const _float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<CBone>>::iterator _itBegin, _matrixf _mPivot)
 {
 	m_arrBones.fill(g_mUnit);
 
 	for (size_t i = 0; i < m_iNumBones; ++i)
 	{
 		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
-		m_arrBones[i] = m_vecBoneOffsets[i] * mInterpolation * m_mPivot;
+		m_arrBones[i] = m_vecBoneOffsets[i] * mInterpolation * _mPivot;
 	}
 
 	return m_arrBones.data();
@@ -427,11 +435,11 @@ void CMesh::Set_Interpolation(vector<shared_ptr<CBone>>::iterator _itBegin, _flo
 }
 
 #if ACTIVATE_TOOL
-shared_ptr<CMesh> CMesh::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel, _matrixf _mPivot)
+shared_ptr<CMesh> CMesh::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, MODEL _eType, const aiMesh* _pAIMesh, shared_ptr<CModel> _pModel)
 {
 	shared_ptr<CMesh> pInstance = make_private_shared(CMesh, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize_FromAssimp(_eType, _pAIMesh, _pModel, _mPivot)))
+	if (FAILED(pInstance->Initialize_FromAssimp(_eType, _pAIMesh, _pModel)))
 	{
 		MSG_RETURN(nullptr, "CMesh::Create", "Failed to Initialize_FromAssimp");
 	}
@@ -461,7 +469,6 @@ shared_ptr<CComponent> CMesh::Clone(any)
 void CMesh::Export(std::ofstream& _outFile, MODEL _eType)
 {
 	_outFile.write(reinterpret_cast<const _byte*>(m_szName),			MAX_PATH);
-	_outFile.write(reinterpret_cast<const _byte*>(&m_mPivot),			sizeof(_float4x4));
 	_outFile.write(reinterpret_cast<const _byte*>(&m_iMaterialIndex),	sizeof(_uint));
 	_outFile.write(reinterpret_cast<const _byte*>(&m_iNumVB),			sizeof(_uint));
 	_outFile.write(reinterpret_cast<const _byte*>(&m_iNumVertices),		sizeof(_uint));

@@ -18,9 +18,9 @@ HRESULT CBounding_AABB::Initialize(any _pColliderDesc)
 }
 
 #ifdef _DEBUG
-HRESULT CBounding_AABB::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _pBatch)
+HRESULT CBounding_AABB::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _pBatch, _vectorf _vColor)
 {
-	DX::Draw(_pBatch.get(), m_tAABB);
+	DX::Draw(_pBatch.get(), m_tAABB, _vColor);
 
 	return S_OK;
 }

@@ -14,6 +14,7 @@ CModel::CModel(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCont
 CModel::CModel(const CModel& _rhs)
 	: CComponent				(_rhs)
 	, m_eType					(_rhs.m_eType)
+	, m_mPivot					(_rhs.m_mPivot)
 	, m_iNumMeshes				(_rhs.m_iNumMeshes)
 	, m_iNumMaterials			(_rhs.m_iNumMaterials)
 	, m_iNumAnimations			(_rhs.m_iNumAnimations)
@@ -137,7 +138,8 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 #if ACTIVATE_TOOL
 HRESULT CModel::Initialize_FromAssimp(const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
 {
-	m_eType = _eType;
+	m_eType		= _eType;
+	m_mPivot	= _mPivot;
 
 	Assimp::Importer	aiImporter;
 	const aiScene*		pAIScene	= nullptr;
@@ -190,6 +192,7 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 	}
 
 	inFile.read(reinterpret_cast<_byte*>(&m_eType),				sizeof(MODEL));
+	inFile.read(reinterpret_cast<_byte*>(&m_mPivot),			sizeof(_float4x4));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumBones),			sizeof(_uint));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumAnimations),	sizeof(_uint));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumMeshes),		sizeof(_uint));
@@ -326,7 +329,7 @@ HRESULT CModel::Ready_Meshes(const aiScene* _pAIScene, _matrixf _mPivot)
 
 	for (size_t i = 0; i < m_iNumMeshes; ++i)
 	{
-		shared_ptr<CMesh> pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, _pAIScene->mMeshes[i], static_pointer_cast<CModel>(shared_from_this()), _mPivot);
+		shared_ptr<CMesh> pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, _pAIScene->mMeshes[i], static_pointer_cast<CModel>(shared_from_this()));
 		if (nullptr == pMesh)
 		{
 			hr = E_FAIL;
@@ -605,7 +608,7 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin()), g_iMaxBones);
+	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin(), m_mPivot), g_iMaxBones);
 }
 
 shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
@@ -658,6 +661,7 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 
 #pragma region Model
 	outFile.write(reinterpret_cast<const _byte*>(&m_eType),				sizeof(MODEL));
+	outFile.write(reinterpret_cast<const _byte*>(&m_mPivot),			sizeof(_float4x4));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumBones),			sizeof(_uint));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumAnimations),	sizeof(_uint));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumMeshes),		sizeof(_uint));

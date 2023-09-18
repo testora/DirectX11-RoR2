@@ -12,7 +12,6 @@ CCollider::CCollider(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> 
 
 CCollider::CCollider(const CCollider& _rhs)
 	: CComponent		(_rhs)
-	, m_eType			(_rhs.m_eType)
 #ifdef _DEBUG
 	, m_pBatch			(_rhs.m_pBatch)
 	, m_pEffect			(_rhs.m_pEffect)
@@ -24,7 +23,6 @@ CCollider::CCollider(const CCollider& _rhs)
 HRESULT CCollider::Initialize_Prototype()
 {
 #ifdef _DEBUG
-
 	m_pEffect	= make_shared<BasicEffect>(m_pDevice.Get());
 	m_pBatch	= make_shared<PrimitiveBatch<VertexPositionColor>>(m_pContext.Get());
 
@@ -38,7 +36,6 @@ HRESULT CCollider::Initialize_Prototype()
 	{
 		MSG_RETURN(E_FAIL, "CCollider::Initialize_Prototype", "Failed to CreateInputLayout");
 	}
-
 #endif
 
 	return S_OK;

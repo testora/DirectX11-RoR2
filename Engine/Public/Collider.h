@@ -22,7 +22,6 @@ public:
 	void												Tick_Transformation(_matrixf mWorld);
 
 private:
-	COLLIDER											m_eType	= COLLIDER::MAX;
 	COLLIDERDESC										m_tColliderDesc{};
 
 	shared_ptr<class CBounding>							m_pBounding;

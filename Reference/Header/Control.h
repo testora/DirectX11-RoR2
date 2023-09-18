@@ -20,7 +20,7 @@ protected:
 	virtual void					Handle_KeyInput(_float fTimeDelta)		PURE;
 
 protected:
-	const ENTITYDESC*			m_pEntityDesc	= nullptr;
+	const ENTITYDESC*				m_pEntityDesc	= nullptr;
 	
 	shared_ptr<class CTransform>	m_pTargetTransform;
 	shared_ptr<class CPhysics>		m_pTargetPhysics;

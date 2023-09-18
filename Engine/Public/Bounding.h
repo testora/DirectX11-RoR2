@@ -10,16 +10,16 @@ protected:
 	virtual ~CBounding() DEFAULT;
 
 public:
-	virtual HRESULT			Initialize(any pColliderDesc)							PURE;
+	virtual HRESULT			Initialize(any pColliderDesc)																				PURE;
 #ifdef _DEBUG
-	virtual HRESULT			Render(shared_ptr<PrimitiveBatch<VertexPositionColor>>)	PURE;
+	virtual HRESULT			Render(shared_ptr<PrimitiveBatch<VertexPositionColor>>, _vectorf vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f))	PURE;
 #endif
 
 protected:
 	const COLLIDERDESC*		m_pColliderDesc	= nullptr;
 
 public:
-	virtual void			Tick_Transformation(_matrixf)							PURE;
+	virtual void			Tick_Transformation(_matrixf)																				PURE;
 };
 
 END

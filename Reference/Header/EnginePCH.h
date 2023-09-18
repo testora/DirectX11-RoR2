@@ -105,6 +105,8 @@ using std::any_cast;
 #include "DirectXTK/Effects.h"
 #include "DirectXTK/PrimitiveBatch.h"
 #include "DirectXTK/VertexTypes.h"
+#include "DirectXTK/SpriteBatch.h"
+#include "DirectXTK/SpriteFont.h"
 #include "FX11/d3dx11effect.h"
 
 #include <d3d11.h>

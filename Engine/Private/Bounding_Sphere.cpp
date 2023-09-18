@@ -18,9 +18,9 @@ HRESULT CBounding_Sphere::Initialize(any _pColliderDesc)
 }
 
 #ifdef _DEBUG
-HRESULT CBounding_Sphere::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _pBatch)
+HRESULT CBounding_Sphere::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _pBatch, _vectorf _vColor)
 {
-	DX::Draw(_pBatch.get(), m_tSphere);
+	DX::Draw(_pBatch.get(), m_tSphere, _vColor);
 
 	return S_OK;
 }

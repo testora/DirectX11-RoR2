@@ -12,6 +12,18 @@ CMonster::CMonster(const CMonster& _rhs)
 {
 }
 
+HRESULT CMonster::Initialize(any)
+{
+	if (FAILED(__super::Initialize()))
+	{
+		MSG_RETURN(E_FAIL, "CMonster::Initialize", "Failed to __super::Initialize");
+	}
+
+	m_mPivot = Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
+
+	return S_OK;
+}
+
 HRESULT CMonster::Ready_Components()
 {
 	if (FAILED(__super::Ready_Components()))
@@ -52,9 +64,7 @@ HRESULT CMonster::Ready_Behaviors()
 
 _float4x4 CMonster::Get_WeakPoint() const
 {
-#ifdef TODO_WeakPoint
-#endif
-	return *m_pWeakPointWorld * XMMatrixRotationY(XM_PI) * XMMatrixTranslation(0.f, 1.25f, 0.f) * m_pTransform->Get_Matrix();
+	return *m_pWeakPointWorld * m_mPivot * m_pTransform->Get_Matrix();
 }
 
 _float CMonster::Distance(shared_ptr<CGameObject> _pObject)

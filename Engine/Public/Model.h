@@ -33,8 +33,8 @@ public:
 	_bool														Is_AnimationFinished() const;
 
 	_uint														Get_AnimationIndex() const				{ return m_iCurrentAnimationIndex; }
-
 	_uint														Get_BoneIndex(const _char* szBoneName) const;
+	_float4x4													Get_Pivot() const						{ return m_mPivot; }
 #if ACTIVATE_TOOL
 	const _uint													Get_NumBones() const					{ return m_iNumBones; }
 	const _uint													Get_NumAnimations() const				{ return m_iNumAnimations; }
@@ -64,6 +64,7 @@ private:
 
 private:
 	MODEL														m_eType						= MODEL::MAX;
+	_float4x4													m_mPivot					= g_mUnit;
 
 	_uint														m_iNumBones					= 0;
 	vector<shared_ptr<class CBone>>								m_vecBones;

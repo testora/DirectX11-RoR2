@@ -18,6 +18,7 @@ protected:
 	virtual ~CMonster() DEFAULT;
 
 protected:
+	virtual HRESULT				Initialize(any = g_aNull) override;
 	virtual HRESULT				Ready_Components() override;
 	virtual HRESULT				Ready_Behaviors() override;
 
@@ -38,6 +39,7 @@ protected:
 	shared_ptr<CAnimator>		m_pAnimator;
 
 	const _float4x4*			m_pWeakPointWorld	= nullptr;
+	_float4x4					m_mPivot			= g_mUnit;
 };
 
 END

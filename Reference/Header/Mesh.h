@@ -12,7 +12,7 @@ private:
 
 public:
 #if ACTIVATE_TOOL
-	HRESULT							Initialize_FromAssimp(MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
+	HRESULT							Initialize_FromAssimp(MODEL, const aiMesh*, shared_ptr<class CModel>);
 #endif
 	HRESULT							Initialize_FromBinary(MODEL, std::ifstream&);
 
@@ -29,14 +29,13 @@ public:
 	const _char*					Get_Name() const				{ return m_szName; }
 #endif
 	_uint							Get_MaterialIndex() const		{ return m_iMaterialIndex; }
-	_float4x4*						Get_BoneMatrices(vector<shared_ptr<class CBone>>::iterator itBegin);
+	const _float4x4*				Get_BoneMatrices(vector<shared_ptr<class CBone>>::iterator itBegin, _matrixf mPivot);
 
 	void							Set_Interpolation(vector<shared_ptr<class CBone>>::iterator itBegin, _float fDuration);
 
 private:
 	_char							m_szName[MAX_PATH]		= "";
 
-	_float4x4						m_mPivot;
 	_uint							m_iMaterialIndex		= 0;
 
 	_uint							m_iNumBones				= 0;
@@ -54,7 +53,7 @@ private:
 
 public:
 #if ACTIVATE_TOOL
-	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>, _matrixf mPivot);
+	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>);
 #endif
 	static shared_ptr<CMesh>		Read(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, std::ifstream&);
 	virtual shared_ptr<CComponent>	Clone(any = g_aNull) override;

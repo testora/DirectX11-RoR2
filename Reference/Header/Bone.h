@@ -19,7 +19,7 @@ public:
 public:
 	const _char*				Get_Name() const								{ return m_szName; }
 	_float4x4					Get_CombinedTransformation() const				{ return m_mCombinedTransformation; }
-	_float4x4*					Get_CombinedTransformationPointer()				{ return &m_mCombinedTransformation; }
+	const _float4x4*			Get_CombinedTransformationPointer()				{ return &m_mCombinedTransformation; }
 
 	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
 
