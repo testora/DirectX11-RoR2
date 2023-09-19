@@ -62,6 +62,14 @@ namespace Engine
 #pragma endregion
 #pragma region Vertex
 
+	typedef struct ENGINE_DLL tagVertexPosition
+	{
+		XMFLOAT3		vPosition;
+
+		const static _uint						iNumElement = 1;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXPOS;
+
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;
@@ -123,6 +131,15 @@ namespace Engine
 		XMFLOAT4	vTranslation;
 		_float		fTime;
 	} KEYFRAME;
+
+#pragma endregion
+#pragma region Navigation
+
+	typedef struct tagNavigationDesc
+	{
+		_uint		iInitialIndex;
+		XMFLOAT4X4	mWorld;
+	} NAVIGATIONDESC;
 
 #pragma endregion
 #pragma region Collider

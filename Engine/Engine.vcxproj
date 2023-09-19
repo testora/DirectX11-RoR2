@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Cell.h" />
+    <ClInclude Include="Public\Navigation.h" />
     <ClInclude Include="Public\System.h" />
     <ClInclude Include="Public\Event_Handler.h" />
     <ClInclude Include="Public\Animator.h" />
@@ -76,8 +78,11 @@
     <ClInclude Include="Public\VIBuffer.h" />
     <ClInclude Include="Public\VIBuffer_Rect.h" />
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
+    <ClInclude Include="Public\VIBuffer_Cell.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Cell.cpp" />
+    <ClCompile Include="Private\Navigation.cpp" />
     <ClCompile Include="Private\PipeLine.cpp" />
     <ClCompile Include="Private\System.cpp" />
     <ClCompile Include="Private\Event_Handler.cpp" />
@@ -131,12 +136,18 @@
     <ClCompile Include="Private\VIBuffer.cpp" />
     <ClCompile Include="Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="Private\VIBuffer_Terrain.cpp" />
+    <ClCompile Include="Private\VIBuffer_Cell.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Animator.inl" />
     <None Include="Public\Engine_Function.inl" />
     <None Include="Public\Engine_Typedef.inl" />
     <None Include="Public\GameObject.inl" />
+    <None Include="Resources\Shader\ShaderCommon.hlsli" />
+    <None Include="Resources\Shader\ShaderDefine.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\Shader\Pos.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -232,6 +243,12 @@ call "UpdatePath_Engine.bat"
 call "UpdateLib.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -263,6 +280,12 @@ call "UpdatePath_Engine.bat"
 call "UpdateLib.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -290,6 +313,12 @@ call "UpdatePath_Engine.bat"
 call "UpdateLib.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -321,6 +350,12 @@ call "UpdatePath_Engine.bat"
 call "UpdateLib.bat"</Command>
     </PostBuildEvent>
     <PreBuildEvent />
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

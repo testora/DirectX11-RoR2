@@ -34,7 +34,7 @@ CModel::CModel(const CModel& _rhs)
 	}
 }
 
-HRESULT CModel::Initialize(const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
+HRESULT CModel::Initialize_Prototype(const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
 {
 	wstring strExt(_wstrModelPath.substr(_wstrModelPath.rfind(L'.')));
 
@@ -57,6 +57,32 @@ HRESULT CModel::Initialize(const MODEL _eType, const wstring& _wstrModelPath, _m
 	else
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize", "Invalid Extension");
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Initialize(any _mapDesc)
+{
+	if (_mapDesc.has_value())
+	{
+		auto a = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
+		for (auto& pair : a)
+		{
+			m_vecMaterialDescs[pair.first] = std::get<0>(pair.second);
+
+			_flags iShaderFlags = std::get<1>(pair.second);
+			if (iShaderFlags)
+			{
+				m_mapMeshShaderFlags[pair.first] = iShaderFlags;
+			}
+
+			function<HRESULT(shared_ptr<class CShader>)> funcCallback = std::get<2>(pair.second);
+			if (funcCallback)
+			{
+				m_mapMeshShaderBindings[pair.first] = funcCallback;
+			}
+		}
 	}
 
 	return S_OK;
@@ -615,9 +641,9 @@ shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11De
 {
 	shared_ptr<CModel> pInstance = make_private_shared(CModel, _pDevice, _pContext);
 
-	if (FAILED(pInstance->Initialize(_eType, _wstrModelPath, _mPivot)))
+	if (FAILED(pInstance->Initialize_Prototype(_eType, _wstrModelPath, _mPivot)))
 	{
-		MSG_RETURN(nullptr, "CModel::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CModel::Create", "Failed to Initialize_Prototype");
 	}
 
 	return pInstance;
@@ -626,25 +652,10 @@ shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11De
 shared_ptr<CComponent> CModel::Clone(any _mapDesc)
 {
 	shared_ptr<CModel> pInstance = make_private_shared_copy(CModel, *this);
-	if (_mapDesc.has_value())
+
+	if (FAILED(pInstance->Initialize(_mapDesc)))
 	{
-		auto a = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
-		for (auto& pair : a)
-		{
-			pInstance->m_vecMaterialDescs[pair.first]		= std::get<0>(pair.second);
-
-			_flags iShaderFlags = std::get<1>(pair.second);
-			if (iShaderFlags)
-			{
-				pInstance->m_mapMeshShaderFlags[pair.first] = iShaderFlags;
-			}
-
-			function<HRESULT(shared_ptr<class CShader>)> funcCallback = std::get<2>(pair.second);
-			if (funcCallback)
-			{
-				pInstance->m_mapMeshShaderBindings[pair.first] = funcCallback;
-			}
-		}
+		MSG_RETURN(nullptr, "CModel::Clone", "Failed to Initialize");
 	}
 	
 	return pInstance;

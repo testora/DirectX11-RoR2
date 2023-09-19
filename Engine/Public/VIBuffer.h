@@ -12,6 +12,7 @@ protected:
 
 public:
 	HRESULT							Initialize(any = g_aNull);
+	HRESULT							Render();
 	HRESULT							Render(shared_ptr<class CShader>, _uint iPassIndex, _bool bResetFlag = true);
 	HRESULT							Render(shared_ptr<class CShader>, shared_ptr<class CTransform>, _uint iPassIndex, _bool bResetFlag = true);
 

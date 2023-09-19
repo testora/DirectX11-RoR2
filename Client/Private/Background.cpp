@@ -12,7 +12,7 @@ CBackground::CBackground(const CBackground& _rhs)
 {
 }
 
-HRESULT CBackground::Initialize(any _arg)
+HRESULT CBackground::Initialize(any)
 {
 	m_bitComponent |= BIT(COMPONENT::RENDERER) | BIT(COMPONENT::TRANSFORM) | BIT(COMPONENT::SHADER) | BIT(COMPONENT::TEXTURE) | BIT(COMPONENT::VIBUFFER_RECT);
 

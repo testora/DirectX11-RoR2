@@ -38,6 +38,16 @@ HRESULT CVIBuffer::Initialize(any)
 	return S_OK;
 }
 
+HRESULT CVIBuffer::Render()
+{
+	m_pContext->IASetPrimitiveTopology(m_eTopology);
+	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::ConvertToRawPtrVector(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
+	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
+	m_pContext->DrawIndexed(m_iNumIndices, 0, 0);
+
+	return S_OK;
+}
+
 HRESULT CVIBuffer::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex, _bool _bResetFlag)
 {
 	if (FAILED(_pShader->BeginPass(_iPassIndex)))
@@ -45,10 +55,10 @@ HRESULT CVIBuffer::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex, _bool
 		MSG_RETURN(E_FAIL, "CVIBuffer::Render", "Failed to CShader::BeginPass");
 	}
 
-	m_pContext->IASetPrimitiveTopology(m_eTopology);
-	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::ConvertToRawPtrVector(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
-	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
-	m_pContext->DrawIndexed(m_iNumIndices, 0, 0);
+	if (FAILED(Render()))
+	{
+		MSG_RETURN(E_FAIL, "CVIBuffer::Render", "Failed to CVIBuffer::Render");
+	}
 
 	if (_bResetFlag)
 	{

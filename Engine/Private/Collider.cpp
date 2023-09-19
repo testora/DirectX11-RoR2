@@ -41,10 +41,8 @@ HRESULT CCollider::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCollider::Initialize(any _tColliderDesc)
+HRESULT CCollider::Initialize(COLLIDERDESC _tColliderDesc)
 {
-	m_tColliderDesc = any_cast<COLLIDERDESC>(_tColliderDesc);
-
 	switch (m_tColliderDesc.eType)
 	{
 	case COLLIDER::SPHERE:
@@ -107,12 +105,21 @@ shared_ptr<CCollider> CCollider::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID
 
 shared_ptr<CComponent> CCollider::Clone(any _tColliderDesc)
 {
-	shared_ptr<CCollider> pInstance = make_private_shared_copy(CCollider, *this);
-
-	if (FAILED(pInstance->Initialize(_tColliderDesc)))
+	if (_tColliderDesc.has_value())
 	{
-		MSG_RETURN(nullptr, "CCollider::Create", "Failed to Initialize");
-	}
+		shared_ptr<CCollider> pInstance = make_private_shared_copy(CCollider, *this);
 
-	return pInstance;
+		COLLIDERDESC tDesc = any_cast<COLLIDERDESC>(_tColliderDesc);
+
+		if (FAILED(pInstance->Initialize(tDesc)))
+		{
+			MSG_RETURN(nullptr, "CCollider::Create", "Failed to Initialize");
+		}
+
+		return pInstance;
+	}
+	else
+	{
+		MSG_RETURN(nullptr, "CCollider::Clone", "Invalid Parameter");
+	}
 }

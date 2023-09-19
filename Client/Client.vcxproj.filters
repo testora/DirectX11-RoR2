@@ -79,9 +79,6 @@
     <Filter Include="03. Tool\02. ImGuizmo\02. Source">
       <UniqueIdentifier>{e0dfafc4-1ca2-4087-ab1c-0e9e2030eec1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Shader\00. Include">
-      <UniqueIdentifier>{06cd7987-a95a-411c-bd85-19cb670e144f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\01. Demo">
       <UniqueIdentifier>{794baa40-c63a-4b05-bad3-9fd303f0d4d7}</UniqueIdentifier>
     </Filter>
@@ -494,13 +491,5 @@
     <FxCompile Include="..\Resources\Shader\PosTex.hlsl">
       <Filter>04. Shader\01. Forward</Filter>
     </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Resources\Shader\ShaderCommon.hlsli">
-      <Filter>04. Shader\00. Include</Filter>
-    </None>
-    <None Include="..\Resources\Shader\ShaderDefine.hlsli">
-      <Filter>04. Shader\00. Include</Filter>
-    </None>
   </ItemGroup>
 </Project>

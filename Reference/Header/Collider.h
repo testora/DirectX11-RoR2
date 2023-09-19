@@ -12,8 +12,8 @@ private:
 	virtual ~CCollider() DEFAULT;
 
 public:
-	virtual HRESULT										Initialize_Prototype();
-	virtual HRESULT										Initialize(any _tColliderDesc);
+	HRESULT												Initialize_Prototype();
+	HRESULT												Initialize(COLLIDERDESC);
 #ifdef _DEBUG
 	HRESULT												Render();
 #endif

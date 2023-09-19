@@ -7,7 +7,7 @@ CRenderer::CRenderer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> 
 {
 }
 
-HRESULT CRenderer::Initialize(any _arg)
+HRESULT CRenderer::Initialize(any)
 {
 	m_vecFnRenderGroup.emplace_back([this] { return this->Ready_Camera(); });
 	m_vecFnRenderGroup.emplace_back([this] { return this->Render_Priority(); });

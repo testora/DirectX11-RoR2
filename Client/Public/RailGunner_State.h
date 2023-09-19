@@ -15,7 +15,7 @@ private:
 	virtual ~CRailGunner_State() DEFAULT;
 
 public:
-	HRESULT									Initialize(any pRailGunner);
+	HRESULT									Initialize(shared_ptr<class CRailGunner>);
 	virtual void							Tick(_float fTimeDelta) override;
 	virtual void							Late_Tick(_float fTimeDelta) override;
 

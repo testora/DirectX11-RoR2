@@ -3,18 +3,13 @@
 #include "RailGunner.h"
 #include "GameInstance.h"
 
-HRESULT CRailGunner_State::Initialize(any _pRailGunner)
+HRESULT CRailGunner_State::Initialize(shared_ptr<CRailGunner> _pRailGunner)
 {
-	if (!_pRailGunner.has_value())
+	if (nullptr == _pRailGunner)
 	{
-		MSG_RETURN(E_FAIL, "CRailGunner_State::Initialize", "Invalid Parameter");
+		MSG_RETURN(E_FAIL, "CRailGunner_State::Initialize", "Invaild Parameter");
 	}
-
-	m_pRailGunner = any_cast<shared_ptr<CRailGunner>>(_pRailGunner);
-	if (nullptr == m_pRailGunner)
-	{
-		MSG_RETURN(E_FAIL, "CRailGunner_State::Initialize", "Failed to Cast RailGunner");
-	}
+	m_pRailGunner = _pRailGunner;
 
 	m_pGrounding = m_pRailGunner->Get_Behavior<CGrounding>(BEHAVIOR::GROUNDING);
 	if (nullptr == m_pGrounding)
