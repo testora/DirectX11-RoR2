@@ -55,7 +55,7 @@ private:
 	unordered_map<SYSTEM, shared_ptr<class Engine::ISystem>>	m_umapSystem;
 
 	shared_ptr<class CObjectPool>								m_pPistolBulletPool;
-	const _float4x4*											m_pPistolOffset;
+	const _float4x4*											m_pPistolOffset	= nullptr;
 
 	shared_ptr<CRenderer>										m_pRenderer;
 	shared_ptr<CTransform>										m_pTransform;

@@ -61,7 +61,7 @@
 
 #define PLAYER_CAMERA_OFFSET					_float4(0.f, 3.f, -6.f, 1.f)
 
-#define PLAYER_SPEED_FORWARD					90.f;
+#define PLAYER_SPEED_FORWARD					120.f;
 #define PLAYER_SPEED_BACKWARD					60.f;
 #define PLAYER_SPEED_LEFT						75.f;
 #define PLAYER_SPEED_RIGHT						75.f;
@@ -106,7 +106,30 @@
 #pragma endregion
 #pragma endregion
 
+#pragma region INGAME - Brother
 
+#define BROTHER_SPEED_FORWARD					150.f;
+#define BROTHER_SPEED_BACKWARD					60.f;
+#define BROTHER_SPEED_LEFT						75.f;
+#define BROTHER_SPEED_RIGHT						75.f;
+#define BROTHER_SPRINT_POWER					2.f;
+#define BROTHER_JUMP_POWER						60.f;
+
+#define BROTHER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
+#define BROTHER_SPEED_RESIST					_float3(0.01f, 0.2f, 0.01f);
+
+#define BROTHER_MOVEMENT_TIME_MIN				1.5f
+#define BROTHER_MOVEMENT_TIME_MAX				3.f
+#define BROTHER_MOTION_GAP_MIN					0.5f
+#define BROTHER_MOTION_GAP_MAX					1.f
+
+#define	BROTHER_CHASE_LIMIT_DISTANCE			10.f
+#define	BROTHER_SPRINT_SMASH_DISTANCE			50.f
+#define	BROTHER_SPRINT_SMASH_FORCE				200.f
+
+#define BROTHER_DASH_FORCE						100.f
+
+#pragma endregion
 #pragma region INGAME - Golem
 
 #define GOLEM_SPEED_FORWARD						90.f;

@@ -19,8 +19,8 @@ HRESULT CGolemPlains::Initialize_Prototype()
 	MATERIALDESC tTerrainMaterial;
 	tTerrainMaterial.vDiffuse = _float4(0.58f, 0.56f, 0.64f, 1.f);
 
-	map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<CShader>)>>> mapDesc;
-	mapDesc.emplace(0, make_tuple(
+	map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<CShader>)>>> mapMeshDesc;
+	mapMeshDesc.emplace(0, make_tuple(
 		MATERIALDESC(),
 		SHADER_FLAG_TRIPLANER_POSITIVE_Y,
 		[](shared_ptr<CShader> _pShader)->HRESULT
@@ -36,7 +36,7 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
-	mapDesc.emplace(2, make_tuple(
+	mapMeshDesc.emplace(2, make_tuple(
 		MATERIALDESC(),
 		0,
 		[](shared_ptr<CShader> _pShader)->HRESULT
@@ -52,7 +52,7 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
-	mapDesc.emplace(7, make_tuple(
+	mapMeshDesc.emplace(7, make_tuple(
 		tTerrainMaterial,
 		SHADER_FLAG_TRIPLANER_POSITIVE_X	| SHADER_FLAG_TRIPLANER_POSITIVE_Y	| SHADER_FLAG_TRIPLANER_POSITIVE_Z	|
 		SHADER_FLAG_TRIPLANER_NEGATIVE_X	| SHADER_FLAG_TRIPLANER_NEGATIVE_Y	| SHADER_FLAG_TRIPLANER_NEGATIVE_Z	|
@@ -72,7 +72,8 @@ HRESULT CGolemPlains::Initialize_Prototype()
 			return S_OK;
 		})
 	);
-	mapDesc.emplace(8, make_tuple(
+
+	mapMeshDesc.emplace(8, make_tuple(
 		tTerrainMaterial,
 		0,
 		nullptr
@@ -80,7 +81,7 @@ HRESULT CGolemPlains::Initialize_Prototype()
 
 	m_umapComponentArg[COMPONENT::RENDERER]	= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
 	m_umapComponentArg[COMPONENT::SHADER]	= make_pair(PROTOTYPE_COMPONENT_SHADER_VTXMESH, g_aNull);
-	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS, mapDesc);
+	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS, mapMeshDesc);
 
 	return S_OK;
 }
@@ -113,6 +114,7 @@ HRESULT CGolemPlains::Render()
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Render", "Failed to __super::Render");
 	}
+
 	return S_OK;
 }
 

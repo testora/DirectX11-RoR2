@@ -75,10 +75,10 @@ HRESULT CScene_Test::Ready_Light()
 {
 	LIGHTDESC				tLightDesc{};
 	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
-	tLightDesc.vDirection	= _float3(1.f, -2.f, 1.f);
+	tLightDesc.vDirection	= _float3(0.36f, -0.93f, 0.07f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
 	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.f, 0.f, 0.f, 1.f);
+	tLightDesc.vSpecular	= _color(0.5f, 0.5f, 0.5f, 1.f);
 	tLightDesc.vAmbient		= _color(0.3f, 0.3f, 0.3f, 1.f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
@@ -156,7 +156,6 @@ HRESULT CScene_Test::Ready_Player()
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Player", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_RAILGUNNER");
 	}
-
 
 	return S_OK;
 }

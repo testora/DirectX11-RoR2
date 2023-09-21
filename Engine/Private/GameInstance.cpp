@@ -102,7 +102,7 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 		MSG_RETURN(, "CGameInstance::Tick_Engine", "Null Exception");
 	}
 
-	m_pMouse_Manager->Tick(m_tWndProcDesc);
+	m_pMouse_Manager->Tick();
 	m_pKey_Manager->Tick();
 
 	m_pScene_Manager->Tick(_fTimeDelta);
@@ -122,17 +122,12 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 
 LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
 {
-	m_tWndProcDesc.hWnd		= _hWnd;
-	m_tWndProcDesc.message	= _message;
-	m_tWndProcDesc.wParam	= _wParam;
-	m_tWndProcDesc.lParam	= _lParam;
+	if (nullptr != m_pMouse_Manager)
+	{
+		m_pMouse_Manager->Handle_MessageProc(_hWnd, _message, _wParam, _lParam);
+	}
 
 	return 1;
-}
-
-WNDPROCDESC CGameInstance::Get_WndProcDesc() const
-{
-	return m_tWndProcDesc;
 }
 
 #pragma endregion
@@ -252,6 +247,16 @@ POINT CGameInstance::Get_CursorMove()
 	}
 
 	return m_pMouse_Manager->Get_CursorMove();
+}
+
+POINTS CGameInstance::Get_CursorScroll()
+{
+	if (nullptr == m_pMouse_Manager)
+	{
+		MSG_RETURN(POINTS{}, "CGameInstance::Get_CursorScroll", "Null Exception: m_pMouse_Manager");
+	}
+
+	return m_pMouse_Manager->Get_CursorScroll();
 }
 
 _bool CGameInstance::Is_CursorOn()
@@ -590,6 +595,7 @@ HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::Destroy_Instance();
+	CPipeLine::Destroy_Instance();
 	CPicker::Destroy_Instance();
 	CLight_Manager::Destroy_Instance();
 	CGrid_Manager::Destroy_Instance();

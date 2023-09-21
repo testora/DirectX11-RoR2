@@ -37,6 +37,9 @@ public:
 
 private:
 	void							Handle_MouseInput(_float fTimeDelta);
+#ifdef _DEBUG
+	void							Handle_MouseInput_Debug(_float fTimeDelta);
+#endif
 
 	void							Smooth_Tranformation(_float fTimeDelta);
 
@@ -49,6 +52,10 @@ private:
 
 	_float4							m_vMainOffset;
 	_float3							m_vShakeAxis;
+
+#ifdef _DEBUG
+	_bool							m_bDebug	= false;
+#endif
 
 public:
 	static shared_ptr<CCamera_Main>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

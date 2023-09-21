@@ -7,9 +7,6 @@ BEGIN(Client)
 class CControl_RailGunner final : public CControl
 {
 private:
-	enum class STATE	{ FORWARD, BACKWARD, LEFT, RIGHT, MAX };
-
-private:
 	explicit CControl_RailGunner() DEFAULT;
 	virtual ~CControl_RailGunner() DEFAULT;
 
@@ -24,7 +21,7 @@ private:
 	void									Handle_Bitset();
 
 private:
-	bitset<IDX(STATE::MAX)>					m_bitState;
+	bitset<IDX(DIRECTION::MAX)>				m_bitDirection;
 
 	_bool									m_bSnipeAvailable	= false;
 

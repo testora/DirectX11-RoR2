@@ -18,9 +18,12 @@ protected:
 	virtual ~CMonster() DEFAULT;
 
 protected:
-	virtual HRESULT				Initialize(any = g_aNull) override;
+	virtual HRESULT				Initialize(any szWeakPoint= g_aNull) override;
 	virtual HRESULT				Ready_Components() override;
 	virtual HRESULT				Ready_Behaviors() override;
+
+protected:
+	virtual HRESULT				Fetch(any vPosition3 = g_aNull) override;
 
 public:
 	_float4x4					Get_WeakPoint() const;

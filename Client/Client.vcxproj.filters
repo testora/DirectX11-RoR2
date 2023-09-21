@@ -142,20 +142,11 @@
     <Filter Include="06. GameObject\06. Monster">
       <UniqueIdentifier>{52191b82-4bcd-4ad4-932c-5c5ed43f9ded}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem">
-      <UniqueIdentifier>{1cc5cfb9-b538-4d93-a584-f9700ef59258}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\06. Monster\00. Behavior">
       <UniqueIdentifier>{57ad35a8-1deb-41c3-b23f-f7e5dc1bc90d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior">
-      <UniqueIdentifier>{5a41e553-4950-448c-8108-30f8cbe524f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. GameObject\06. Monster\00. Behavior\01. Custom">
       <UniqueIdentifier>{6efb9f9e-4644-43c6-9236-539d195f1b67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom">
-      <UniqueIdentifier>{ccbf8776-626c-47de-9bec-5c86a8a0bbfd}</UniqueIdentifier>
     </Filter>
     <Filter Include="00. Header\01. Inline">
       <UniqueIdentifier>{1a6ec9b3-709e-4b88-a979-16b852284794}</UniqueIdentifier>
@@ -166,23 +157,65 @@
     <Filter Include="00. Header\03. Tool">
       <UniqueIdentifier>{f2f50fbe-0bc0-46cb-9842-df561502b0a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State">
-      <UniqueIdentifier>{1f7b3589-3ffc-4f5e-b42e-43fb44dcb8d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget">
-      <UniqueIdentifier>{6334c617-94c6-4b38-8e92-ca562224a2e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target">
-      <UniqueIdentifier>{da410491-7049-4a6f-bff5-77ebb46f17f5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Shader\01. Forward">
       <UniqueIdentifier>{cdcc84d8-04ba-42c8-b8cb-b3e44775125e}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Shader\02. Deferred">
       <UniqueIdentifier>{cbd4c466-994d-44b5-b95a-799e1ecdc6a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit">
+    <Filter Include="05. Scene\09. Moon">
+      <UniqueIdentifier>{f3f6d265-c768-4dc8-8cff-d79846edca71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\04. Terrain\06. Moon">
+      <UniqueIdentifier>{cce9257e-e069-41bd-9fb4-15b93054e949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem">
+      <UniqueIdentifier>{1cc5cfb9-b538-4d93-a584-f9700ef59258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior">
+      <UniqueIdentifier>{5a41e553-4950-448c-8108-30f8cbe524f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother">
+      <UniqueIdentifier>{3009909c-1eaa-4f2e-87dd-69f8f3f93487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior">
+      <UniqueIdentifier>{4747ffa5-eba2-48e8-812b-001a9e0efb26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom">
+      <UniqueIdentifier>{18b5d739-8ca7-4443-9c6f-fb0642053916}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom">
+      <UniqueIdentifier>{ccbf8776-626c-47de-9bec-5c86a8a0bbfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State">
+      <UniqueIdentifier>{1f7b3589-3ffc-4f5e-b42e-43fb44dcb8d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\01. Untarget">
+      <UniqueIdentifier>{6334c617-94c6-4b38-8e92-ca562224a2e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\02. Target">
+      <UniqueIdentifier>{da410491-7049-4a6f-bff5-77ebb46f17f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\03. Hit">
       <UniqueIdentifier>{21b582e8-ef9d-46e0-a6ff-4949c687c7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase">
+      <UniqueIdentifier>{ceeb2e7a-d8fb-49de-ada8-1833ce3a2499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0">
+      <UniqueIdentifier>{af8394b9-592a-4522-a196-3e00f8079fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1">
+      <UniqueIdentifier>{427bb5f7-dd30-45e8-8b92-52134a8f5078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\02. Phase 2">
+      <UniqueIdentifier>{cce585d0-6980-4498-9aec-8b3cd925d652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\03. Phase 3">
+      <UniqueIdentifier>{11b709f1-ff66-42fd-ad36-bc3e8a452dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\04. Phase 4">
+      <UniqueIdentifier>{336fe9e5-a322-4fec-96bf-1c4d1b132d2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -325,19 +358,19 @@
       <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
     </ClInclude>
     <ClInclude Include="Public\Golem.h">
-      <Filter>06. GameObject\06. Monster\01. Golem</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem</Filter>
     </ClInclude>
     <ClInclude Include="Public\Golem_Behavior.h">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom</Filter>
     </ClInclude>
     <ClInclude Include="Public\Client_Function.h">
       <Filter>00. Header</Filter>
     </ClInclude>
     <ClInclude Include="Public\Golem_Untarget.h">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\01. Untarget</Filter>
     </ClInclude>
     <ClInclude Include="Public\Golem_Target.h">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\02. Target</Filter>
     </ClInclude>
     <ClInclude Include="Public\Hostile.h">
       <Filter>06. GameObject\06. Monster\00. Behavior\01. Custom</Filter>
@@ -346,7 +379,31 @@
       <Filter>06. GameObject\06. Monster</Filter>
     </ClInclude>
     <ClInclude Include="Public\Golem_Hit.h">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\03. Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Moon.h">
+      <Filter>06. GameObject\04. Terrain\06. Moon</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scene_Moon.h">
+      <Filter>05. Scene\09. Moon</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Loader_Moon.h">
+      <Filter>05. Scene\09. Moon</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother.h">
+      <Filter>06. GameObject\06. Monster\01. Brother</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother_Behavior.h">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother_Phase.h">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother_Phase_0.h">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother_Phase_1.h">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -441,19 +498,19 @@
       <Filter>06. GameObject\05. Survivor\01. RailGunner\02. Bullet\01. Pistol</Filter>
     </ClCompile>
     <ClCompile Include="Private\Golem.cpp">
-      <Filter>06. GameObject\06. Monster\01. Golem</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem</Filter>
     </ClCompile>
     <ClCompile Include="Private\Golem_Behavior.cpp">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom</Filter>
     </ClCompile>
     <ClCompile Include="Private\Client_Function.cpp">
       <Filter>00. Header\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="Private\Golem_Untarget.cpp">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\01. Untarget</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\01. Untarget</Filter>
     </ClCompile>
     <ClCompile Include="Private\Golem_Target.cpp">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\02. Target</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\02. Target</Filter>
     </ClCompile>
     <ClCompile Include="Private\Hostile.cpp">
       <Filter>06. GameObject\06. Monster\00. Behavior\01. Custom</Filter>
@@ -462,7 +519,28 @@
       <Filter>06. GameObject\06. Monster</Filter>
     </ClCompile>
     <ClCompile Include="Private\Golem_Hit.cpp">
-      <Filter>06. GameObject\06. Monster\01. Golem\00. Behavior\01. Custom\00. State\03. Hit</Filter>
+      <Filter>06. GameObject\06. Monster\02. Golem\00. Behavior\00. Custom\00. State\03. Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Moon.cpp">
+      <Filter>06. GameObject\04. Terrain\06. Moon</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Scene_Moon.cpp">
+      <Filter>05. Scene\09. Moon</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother.cpp">
+      <Filter>06. GameObject\06. Monster\01. Brother</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother_Behavior.cpp">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother_Phase_0.cpp">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother_Phase.cpp">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother_Phase_1.cpp">
+      <Filter>06. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

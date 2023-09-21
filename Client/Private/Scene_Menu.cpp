@@ -43,6 +43,14 @@ void CScene_Menu::Tick(_float _fTimeDelta)
 			MSG_BOX("CScene_Menu::Tick", "Failed to Open_Scene: TEST");
 		}
 	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('4'))
+	{
+		if (FAILED(CGameInstance::Get_Instance()->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::MOON))))
+		{
+			MSG_BOX("CScene_Menu::Tick", "Failed to Open_Scene: MOON");
+		}
+	}
 }
 
 void CScene_Menu::Late_Tick(_float _fTimeDelta)

@@ -66,8 +66,8 @@ HRESULT CModel::Initialize(any _mapDesc)
 {
 	if (_mapDesc.has_value())
 	{
-		auto a = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
-		for (auto& pair : a)
+		auto desc = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
+		for (auto& pair : desc)
 		{
 			m_vecMaterialDescs[pair.first] = std::get<0>(pair.second);
 

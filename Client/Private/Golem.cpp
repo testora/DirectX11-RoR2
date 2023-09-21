@@ -2,7 +2,6 @@
 #include "Golem.h"
 #include "Golem_Behavior.h"
 #include "GameInstance.h"
-#include "Bone.h"
 
 CGolem::CGolem(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CMonster(_pDevice, _pContext)
@@ -46,12 +45,10 @@ HRESULT CGolem::Initialize_Prototype()
 
 HRESULT CGolem::Initialize(any)
 {
-	if (FAILED(__super::Initialize()))
+	if (FAILED(__super::Initialize("Eye")))
 	{
 		MSG_RETURN(E_FAIL, "CGolem::Initialize", "Failed to __super::Initialize");
 	}
-
-	m_pWeakPointWorld = Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone("Eye")->Get_CombinedTransformationPointer();
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::GOLEM::IDLE);
 
@@ -163,6 +160,7 @@ void CGolem::Hit_WeakPoint()
 			}
 		}
 	);
+
 	Get_Behavior<CGolem_Behavior>(BEHAVIOR::CUSTOM)->Set_State(CGolem_Behavior::STATE::HIT);
 }
 
@@ -184,7 +182,7 @@ shared_ptr<CGameObject> CGolem::Clone(any)
 
 	if (FAILED(pInstance->Initialize()))
 	{
-		MSG_RETURN(nullptr, "CGolem::Create", "Failed to Initialize");
+		MSG_RETURN(nullptr, "CGolem::Clone", "Failed to Initialize");
 	}
 
 	return pInstance;

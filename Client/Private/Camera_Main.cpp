@@ -48,12 +48,23 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	Handle_MouseInput(_fTimeDelta);
-
-	if (nullptr != m_pTargetTransform)
+#ifdef _DEBUG
+	if (false == m_bDebug)
 	{
-		Smooth_Tranformation(_fTimeDelta);
+#endif
+		Handle_MouseInput(_fTimeDelta);
+
+		if (nullptr != m_pTargetTransform)
+		{
+			Smooth_Tranformation(_fTimeDelta);
+		}
+#ifdef _DEBUG
 	}
+	else
+	{
+		Handle_MouseInput_Debug(_fTimeDelta);
+	}
+#endif
 }
 
 void CCamera_Main::Late_Tick(_float _fTimeDelta)
@@ -64,12 +75,16 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 	if (CImGui_Manager::Get_Instance()->Is_Enable())
 	{
 		ImGui::Begin("MainCam");
+		
 		ImGui::Text("Position: ");
 		ImGui::Text("X: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).x);
 		ImGui::SameLine();
 		ImGui::Text("Y: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).y);
 		ImGui::SameLine();
 		ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
+
+		ImGui::Checkbox("Debug", &m_bDebug);
+
 		ImGui::End();
 	}
 #endif
@@ -100,6 +115,13 @@ HRESULT CCamera_Main::Attach(shared_ptr<CTransform> _pTargetTransform, _float4 _
 
 void CCamera_Main::Rebound_Pistol()
 {
+#ifdef _DEBUG
+	if (m_bDebug)
+	{
+		return;
+	}
+#endif
+
 	_float4 vPistolReboundQuaternion = QuaternionBetweenAxis(
 		XMVector3TransformNormal(_float3(0.f, 1.f, 0.f), m_pTransform->Get_Matrix()),
 		XMVector3TransformNormal(_float3(0.02f, 1.00f, -0.05f), m_pTransform->Get_Matrix()));
@@ -140,6 +162,12 @@ void CCamera_Main::Rebound_Pistol()
 
 void CCamera_Main::Rebound_Sniper()
 {
+#ifdef _DEBUG
+	if (m_bDebug)
+	{
+		return;
+	}
+#endif
 	_float4 vSniperReboundQuaternion = QuaternionBetweenAxis(
 		XMVector3TransformNormal(_float3(0.f, 1.f, 0.f), m_pTransform->Get_Matrix()),
 		XMVector3TransformNormal(_float3(0.00f, 1.00f, -0.02f), m_pTransform->Get_Matrix()));
@@ -187,6 +215,13 @@ void CCamera_Main::Rebound_Sniper()
 
 void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeight, _float2 _vSensitivity)
 {
+#ifdef _DEBUG
+	if (m_bDebug)
+	{
+		return;
+	}
+#endif
+
 	__super::Adjust_FOV(_fRadian, _fDuration, _fWeight);
 
 	m_vSensitivty =	_vSensitivity;
@@ -194,6 +229,13 @@ void CCamera_Main::Adjust_FOV(_float _fRadian, _float _fDuration, _float _fWeigh
 
 void CCamera_Main::Release_FOV(_float _fDuration, _float _fWeight)
 {
+#ifdef _DEBUG
+	if (m_bDebug)
+	{
+		return;
+	}
+#endif
+
 	__super::Release_FOV(_fDuration, _fWeight);
 
 	m_vSensitivty = _float2(MAINCAM_SENSITIVITY_YAW, MAINCAM_SENSITIVITY_PITCH);
@@ -224,6 +266,43 @@ void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
 		m_pTransform->Rotate(TRANSFORM::RIGHT, fFinal);
 	}
 }
+
+#ifdef _DEBUG
+void CCamera_Main::Handle_MouseInput_Debug(_float _fTimeDelta)
+{
+	if (CGameInstance::Get_Instance()->Key_Hold(VK_RBUTTON))
+	{
+		POINT ptCursorMove = CGameInstance::Get_Instance()->Get_CursorMove();
+
+		if (ptCursorMove.x)
+		{
+			m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.y * ptCursorMove.x * _fTimeDelta);
+		}
+
+		if (ptCursorMove.y)
+		{
+			_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
+			_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
+			_float	fChgPitch	= m_vSensitivty.x * ptCursorMove.y * _fTimeDelta;
+			_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
+			_float	fFinal		= fNewPitch - fCurPitch;
+
+			m_pTransform->Rotate(TRANSFORM::RIGHT, fFinal);
+		}
+	}
+	if (CGameInstance::Get_Instance()->Key_Hold(VK_MBUTTON))
+	{
+		POINT ptMove = CGameInstance::Get_Instance()->Get_CursorMove();
+		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::RIGHT)	* static_cast<_float>(-ptMove.x));
+		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::UP)		* static_cast<_float>(-ptMove.y));
+	}
+
+	if (_short sVerticalScroll = CGameInstance::Get_Instance()->Get_CursorScroll().y)
+	{
+		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::LOOK) * sVerticalScroll * 0.1f);
+	}
+}
+#endif
 
 void CCamera_Main::Smooth_Tranformation(_float _fTimeDelta)
 {

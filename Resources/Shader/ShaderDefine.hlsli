@@ -4,6 +4,7 @@
 #define PI								3.141592654f
 
 #define DIFFUSE_OFFSET					0.f
+#define TRIPLANAR_SLOT					1
 
 #define DIRECTIONAL						0
 #define POINT							1
@@ -42,44 +43,44 @@ sampler PointSampler = sampler_state
 
 RasterizerState RS_Default
 {
-    FillMode                = solid;
-    CullMode                = back;
-    FrontCounterClockwise   = false;
+	FillMode                = solid;
+	CullMode                = back;
+	FrontCounterClockwise   = false;
 };
 
 RasterizerState RS_InverseCull
 {
-    FillMode                = solid;
-    CullMode                = front;
-    FrontCounterClockwise   = false;
+	FillMode                = solid;
+	CullMode                = front;
+	FrontCounterClockwise   = false;
 };
 
 // BlendState
 
 BlendState BS_Default
 {
-    BlendEnable[0]          = false;
+	BlendEnable[0]          = false;
 };
 
 BlendState BS_AlphaBlend
 {
-    BlendEnable[0]          = true;
-    SrcBlend                = Src_Alpha;
-    DestBlend               = Inv_Src_Alpha;
-    BlendOp                 = Add;
+	BlendEnable[0]          = true;
+	SrcBlend                = Src_Alpha;
+	DestBlend               = Inv_Src_Alpha;
+	BlendOp                 = Add;
 };
 
 // DepthStencilState
 
 DepthStencilState DSS_Default
 {
-    DepthEnable             = true;
-    DepthWriteMask          = all;
-    DepthFunc               = less_equal;
+	DepthEnable             = true;
+	DepthWriteMask          = all;
+	DepthFunc               = less_equal;
 };
 
 DepthStencilState DSS_IgnoreDepth
 {
-    DepthEnable             = false;
-    DepthWriteMask          = zero;
+	DepthEnable             = false;
+	DepthWriteMask          = zero;
 };

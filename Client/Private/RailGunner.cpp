@@ -172,8 +172,8 @@ HRESULT CRailGunner::Ready_RailGunner()
 {
 	m_umapSystem.reserve(IDX(SYSTEM::MAX));
 
-	m_umapSystem[SYSTEM::STATE] = CRailGunner_State::Create(dynamic_pointer_cast<CRailGunner>(shared_from_this()));
-	m_umapSystem[SYSTEM::CROSSHAIR] = CRailGunner_Crosshair::Create(m_pDevice, m_pContext);
+	m_umapSystem[SYSTEM::STATE]		= CRailGunner_State::Create(dynamic_pointer_cast<CRailGunner>(shared_from_this()));
+	m_umapSystem[SYSTEM::CROSSHAIR]	= CRailGunner_Crosshair::Create(m_pDevice, m_pContext);
 
 	return S_OK;
 }

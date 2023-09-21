@@ -20,7 +20,6 @@ public:
 	void										Tick_Engine(_float fTimeDelta);
 
 	LRESULT										WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	WNDPROCDESC									Get_WndProcDesc() const;
 
 #pragma endregion
 #pragma region Graphic Device
@@ -45,6 +44,7 @@ public:
 
 	POINT										Get_CursorPos();
 	POINT										Get_CursorMove();
+	POINTS										Get_CursorScroll();
 	_bool										Is_CursorOn();
 
 	void										Fix_Cursor(_bool bFix = true);
@@ -128,9 +128,6 @@ private:
 	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
 	shared_ptr<class CLight_Manager>			m_pLight_Manager;
 	shared_ptr<class CPicker>					m_pPicker;
-
-private:
-	WNDPROCDESC									m_tWndProcDesc{};
 
 public:
 	static void									Release_Engine();

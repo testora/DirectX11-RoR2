@@ -6,15 +6,15 @@
 #include "Camera_Main.h"
 #include "GameInstance.h"
 
-#define BITMASK_FORWARD			BIT(STATE::FORWARD)
-#define BITMASK_BACKWARD		BIT(STATE::BACKWARD)
-#define BITMASK_LEFT			BIT(STATE::LEFT)
-#define BITMASK_RIGHT			BIT(STATE::RIGHT)
+#define BITMASK_FORWARD			BIT(DIRECTION::FORWARD)
+#define BITMASK_BACKWARD		BIT(DIRECTION::BACKWARD)
+#define BITMASK_LEFT			BIT(DIRECTION::LEFT)
+#define BITMASK_RIGHT			BIT(DIRECTION::RIGHT)
 
-#define BITMASK_FORWARDLEFT		BIT(STATE::FORWARD)		| BIT(STATE::LEFT)
-#define BITMASK_FORWARDRIGHT	BIT(STATE::FORWARD)		| BIT(STATE::RIGHT)
-#define BITMASK_BACKWARDLEFT	BIT(STATE::BACKWARD)	| BIT(STATE::LEFT)
-#define BITMASK_BACKWARDRIGHT	BIT(STATE::BACKWARD)	| BIT(STATE::RIGHT)
+#define BITMASK_FORWARDLEFT		BIT(DIRECTION::FORWARD)		| BIT(DIRECTION::LEFT)
+#define BITMASK_FORWARDRIGHT	BIT(DIRECTION::FORWARD)		| BIT(DIRECTION::RIGHT)
+#define BITMASK_BACKWARDLEFT	BIT(DIRECTION::BACKWARD)	| BIT(DIRECTION::LEFT)
+#define BITMASK_BACKWARDRIGHT	BIT(DIRECTION::BACKWARD)	| BIT(DIRECTION::RIGHT)
 
 HRESULT CControl_RailGunner::Initialize(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)
 {
@@ -176,7 +176,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	_bool						bIsAir					= m_pRailGunner->Is_State(BIT(RG_STATE::AIR));
 	_bool						bIsSprint				= m_pRailGunner->Is_State(BIT(RG_STATE::SPRINT));
 
-	switch (static_cast<_uint>(m_bitState.to_ulong()))
+	switch (static_cast<_uint>(m_bitDirection.to_ulong()))
 	{
 	case BITMASK_FORWARD:
 	{
@@ -290,35 +290,35 @@ void CControl_RailGunner::Handle_Bitset()
 
 	if (pGameInstance->Key_Down(CONTROL_FORWARD))
 	{
-		m_bitState.set(IDX(STATE::FORWARD));
+		m_bitDirection.set(IDX(DIRECTION::FORWARD));
 	}
 	else if (pGameInstance->Key_Up(CONTROL_FORWARD))
 	{
-		m_bitState.set(IDX(STATE::FORWARD), false);
+		m_bitDirection.set(IDX(DIRECTION::FORWARD), false);
 	}
 	if (pGameInstance->Key_Down(CONTROL_BACKWARD))
 	{
-		m_bitState.set(IDX(STATE::BACKWARD));
+		m_bitDirection.set(IDX(DIRECTION::BACKWARD));
 	}
 	else if (pGameInstance->Key_Up(CONTROL_BACKWARD))
 	{
-		m_bitState.set(IDX(STATE::BACKWARD), false);
+		m_bitDirection.set(IDX(DIRECTION::BACKWARD), false);
 	}
 	if (pGameInstance->Key_Down(CONTROL_LEFT))
 	{
-		m_bitState.set(IDX(STATE::LEFT));
+		m_bitDirection.set(IDX(DIRECTION::LEFT));
 	}
 	else if (pGameInstance->Key_Up(CONTROL_LEFT))
 	{
-		m_bitState.set(IDX(STATE::LEFT), false);
+		m_bitDirection.set(IDX(DIRECTION::LEFT), false);
 	}
 	if (pGameInstance->Key_Down(CONTROL_RIGHT))
 	{
-		m_bitState.set(IDX(STATE::RIGHT));
+		m_bitDirection.set(IDX(DIRECTION::RIGHT));
 	}
 	else if (pGameInstance->Key_Up(CONTROL_RIGHT))
 	{
-		m_bitState.set(IDX(STATE::RIGHT), false);
+		m_bitDirection.set(IDX(DIRECTION::RIGHT), false);
 	}
 }
 

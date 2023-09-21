@@ -5,6 +5,7 @@
 #include "Scene_Menu.h"
 #include "Scene_Tool.h"
 #include "Scene_Test.h"
+#include "Scene_Moon.h"
 #include "GameInstance.h"
 
 CScene_Load::CScene_Load(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const SCENE _eLoadScene)
@@ -51,6 +52,10 @@ void CScene_Load::Late_Tick(_float _fTimeDelta)
 
 		case SCENE::TEST:
 			pScene = CScene_Test::Create(m_pDevice, m_pContext);
+			break;
+
+		case SCENE::MOON:
+			pScene = CScene_Moon::Create(m_pDevice, m_pContext);
 			break;
 		}
 

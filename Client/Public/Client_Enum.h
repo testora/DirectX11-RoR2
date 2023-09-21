@@ -9,11 +9,20 @@ enum class	SCENE
 	TOOL,
 #endif
 	TEST,
+	MOON,
+	MAX
+};
+
+enum class DIRECTION
+{
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT,
 	MAX
 };
 
 #pragma region RAILGUNNER
-
 enum class RG_STATE
 {
 	SPRINT,
@@ -39,5 +48,15 @@ enum class RG_CROSSHAIR
 	SPRINT,
 	MAX
 };
-
+#pragma endregion
+#pragma region BROTHER
+enum class BROTHER_PHASE
+{
+	PHASE0,
+	PHASE1,
+	PHASE2,
+	PHASE3,
+	PHASE4,
+	MAX
+};
 #pragma endregion

@@ -11,14 +11,14 @@ private:
 
 public:
 	HRESULT		Initialize(HWND, POINT ptWinSize);
-	void		Tick(WNDPROCDESC);
+	void		Tick();
 
 public:
 	_bool		Is_CursorOn() const					{ return m_bShow; }
 	
 	POINT		Get_CursorPos() const				{ return m_ptCurPos; }
 	POINT		Get_CursorMove() const				{ return m_ptMovement; }
-	POINTS		Get_CursorScroll() const			{ return m_ptScroll; }
+	POINTS		Get_CursorScroll()					{ POINTS ptScroll = m_ptScroll; m_ptScroll = POINTS{}; return ptScroll; }
 
 	void		CheckFocus(_bool bCheck = true)		{ m_bCheckFocus = bCheck; }
 
@@ -26,13 +26,11 @@ public:
 	void		Show_Cursor(_bool bShow = true);
 	void		Toggle_Cursor();
 
-private:
-	void		MessageProc(HWND, UINT, WPARAM, LPARAM);
+	void		Handle_MessageProc(HWND, UINT, WPARAM, LPARAM);
 
 private:
 	POINT		m_ptWinSize{};
 	POINT		m_ptCurPos{};
-	POINT		m_ptPrevPos{};
 	POINT		m_ptMovement{};
 	POINTS		m_ptScroll{};
 

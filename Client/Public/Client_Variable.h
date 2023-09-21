@@ -7,8 +7,10 @@
 #define PROTOTYPE_GAMEOBJECT_BACKGROUND						TEXT("Prototype:GameObject:Background")
 #define PROTOTYPE_GAMEOBJECT_TERRAIN						TEXT("Prototype:GameObject:Terrain")
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS					TEXT("Prototype:GameObject:GolemPlains")
+#define PROTOTYPE_GAMEOBJECT_MOON							TEXT("Prototype:GameObject:Moon")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER						TEXT("Prototype:GameObject:RailGunner")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET		TEXT("Prototype:GameObject:RailGunner:PistolBullet")
+#define PROTOTYPE_GAMEOBJECT_BROTHER						TEXT("Prototype:GameObject:Brother")
 #define PROTOTYPE_GAMEOBJECT_GOLEM							TEXT("Prototype:GameObject:Golem")
 
 #pragma	endregion
@@ -34,8 +36,10 @@
 #define PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN				TEXT("Prototype:Component:VIBuffer:Terrain")
 
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER				TEXT("Prototype:Component:Model:RailGunner")
+#define PROTOTYPE_COMPONENT_MODEL_BROTHER					TEXT("Prototype:Component:Model:Brother")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEM						TEXT("Prototype:Component:Model:Golem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS				TEXT("Prototype:Component:Model:GolemPlains")
+#define PROTOTYPE_COMPONENT_MODEL_MOON						TEXT("Prototype:Component:Model:Moon")
 
 #ifdef _DEBUG
 #define PROTOTYPE_COMPONENT_MODEL_CUBE						TEXT("Prototype:Component:Model:Cube")
@@ -54,6 +58,7 @@
 #pragma endregion
 #pragma region Pool
 
+#define POOL_MONSTER_BROTHER								TEXT("Pool:Monster:Brother")
 #define POOL_MONSTER_GOLEM									TEXT("Pool:Monster:Golem")
 #define POOL_RAILGUNNER_PISTOLBULLET						TEXT("Pool:RailGunner:PistolBullet")
 

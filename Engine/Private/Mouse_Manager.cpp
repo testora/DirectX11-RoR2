@@ -9,21 +9,19 @@ HRESULT CMouse_Manager::Initialize(HWND _hWnd, POINT _ptWinSize)
 	return S_OK;
 }
 
-void CMouse_Manager::Tick(WNDPROCDESC _tWndProcDesc)
+void CMouse_Manager::Tick()
 {
 	if (m_bCheckFocus ? m_hWnd == GetFocus() : true)
 	{
-		MessageProc(m_hWnd, _tWndProcDesc.message, _tWndProcDesc.wParam, _tWndProcDesc.lParam);
+		POINT ptPos;
+		POINT ptPrevPos = m_ptCurPos;
+		GetCursorPos(&ptPos);
+		ScreenToClient(m_hWnd, &ptPos);
 
-		POINT pt;
-		GetCursorPos(&pt);
-		ScreenToClient(m_hWnd, &pt);
+		m_ptCurPos = ptPos;
 
-		m_ptPrevPos = m_ptCurPos;
-		m_ptCurPos = pt;
-
-		m_ptMovement.x = m_ptCurPos.x - m_ptPrevPos.x;
-		m_ptMovement.y = m_ptCurPos.y - m_ptPrevPos.y;
+		m_ptMovement.x = m_ptCurPos.x - ptPrevPos.x;
+		m_ptMovement.y = m_ptCurPos.y - ptPrevPos.y;
 
 		if (m_bFix && m_hWnd == GetFocus())
 		{
@@ -59,7 +57,7 @@ void CMouse_Manager::Toggle_Cursor()
 	m_bShow ? Show_Cursor(false) : Show_Cursor(true);
 }
 
-void CMouse_Manager::MessageProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
+void CMouse_Manager::Handle_MessageProc(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
 {
 	switch (_message)
 	{

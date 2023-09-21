@@ -23,7 +23,7 @@ public:
 	virtual HRESULT					Render() override;
 
 protected:
-	_bool							Is_Target_InRange(_float fDistance) const;
+	_bool							Is_Target_InRange(_float fRange) const;
 
 protected:
 	void							Chase_Target(_float fTimeDelta);

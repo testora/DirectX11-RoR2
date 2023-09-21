@@ -64,9 +64,9 @@ HRESULT CHostile::Render()
 	return S_OK;
 }
 
-_bool CHostile::Is_Target_InRange(_float _fDistance) const
+_bool CHostile::Is_Target_InRange(_float _fRange) const
 {
-	return _fDistance > _float3(m_pTransform->Get_State(TRANSFORM::POSITION) - m_pTargetTransform->Get_State(TRANSFORM::POSITION)).length();
+	return _fRange > _float3(m_pTransform->Get_State(TRANSFORM::POSITION) - m_pTargetTransform->Get_State(TRANSFORM::POSITION)).length();
 }
 
 void CHostile::Chase_Target(_float _fTimeDelta)

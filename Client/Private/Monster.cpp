@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "Monster.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CMonster::CMonster(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -12,7 +13,7 @@ CMonster::CMonster(const CMonster& _rhs)
 {
 }
 
-HRESULT CMonster::Initialize(any)
+HRESULT CMonster::Initialize(any _szWeakPoint)
 {
 	if (FAILED(__super::Initialize()))
 	{
@@ -20,6 +21,11 @@ HRESULT CMonster::Initialize(any)
 	}
 
 	m_mPivot = Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
+
+	if (_szWeakPoint.has_value())
+	{
+		m_pWeakPointWorld = Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(any_cast<const _char*>(_szWeakPoint))->Get_CombinedTransformationPointer();
+	}
 
 	return S_OK;
 }
@@ -62,9 +68,23 @@ HRESULT CMonster::Ready_Behaviors()
 	return S_OK;
 }
 
+HRESULT CMonster::Fetch(any _vPosition3)
+{
+	if (_vPosition3.has_value())
+	{
+		if (nullptr != m_pTransform)
+		{
+			m_pTransform->Set_State(TRANSFORM::POSITION, any_cast<_float3>(_vPosition3));
+		}
+
+	}
+	
+	return S_OK;
+}
+
 _float4x4 CMonster::Get_WeakPoint() const
 {
-	return *m_pWeakPointWorld * m_mPivot * m_pTransform->Get_Matrix();
+	return (m_pWeakPointWorld ? XMLoadFloat4x4(m_pWeakPointWorld) : g_mUnit) * m_mPivot * m_pTransform->Get_Matrix();
 }
 
 _float CMonster::Distance(shared_ptr<CGameObject> _pObject)
