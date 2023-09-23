@@ -10,7 +10,7 @@ private:
 	virtual ~CPicker() DEFAULT;
 
 public:
-	HRESULT						Initialize(HWND, ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	HRESULT						Initialize(HWND);
 	void						Tick();
 
 private:
@@ -21,9 +21,6 @@ private:
 	_float3						m_vOrg[IDX(PICKER::MAX)]{};
 
 	HWND						m_hWnd	= 0;
-
-	ComPtr<ID3D11Device>		m_pDevice;
-	ComPtr<ID3D11DeviceContext>	m_pContext;
 
 	friend class CVIBuffer;
 	friend CSingleton<CPicker>;

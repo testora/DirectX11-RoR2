@@ -17,6 +17,9 @@ public:
 	_bool						Is_Expired() const;
 	LIGHTDESC					Get_LightDesc() const	{ return m_tLightDesc; }
 
+public:
+	HRESULT						Bind_Light(shared_ptr<class CShader>, shared_ptr<class CVIBuffer_Rect>);
+
 private:
 	LIGHTDESC					m_tLightDesc{};
 	weak_ptr<class CTransform>	m_pTransform;

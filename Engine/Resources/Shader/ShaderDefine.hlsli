@@ -3,6 +3,8 @@
 #define MAX_BONE						256
 #define PI								3.141592654f
 
+#define CELL_SHADE_FREQUENCY			4.f
+
 #define DIFFUSE_OFFSET					0.f
 #define TRIPLANAR_SLOT					1
 
@@ -60,6 +62,16 @@ RasterizerState RS_InverseCull
 BlendState BS_Default
 {
 	BlendEnable[0]          = false;
+};
+
+BlendState BS_Accumulate
+{
+	BlendEnable[0]			= true;
+	BlendEnable[1]			= true;
+
+	SrcBlend				= One;
+	DestBlend				= One;
+	BlendOp					= Add;
 };
 
 BlendState BS_AlphaBlend

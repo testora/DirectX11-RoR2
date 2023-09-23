@@ -6,10 +6,12 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "Collider.h"
+#include "Navigation.h"
 #include "Model.h"
 #include "Mesh.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Cell.h"
 #pragma endregion
 #pragma region Behavior
 #include "Physics.h"

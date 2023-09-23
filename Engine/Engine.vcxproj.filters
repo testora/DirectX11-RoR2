@@ -73,9 +73,6 @@
     <Filter Include="04. Utility\05. GameObject\00. Manager\01. Pool">
       <UniqueIdentifier>{16c6642a-aae0-4842-a973-8f3660647782}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\05. GameObject\02. Camera">
-      <UniqueIdentifier>{f0c52343-3c6a-4ac1-958c-783d60158b1c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Utility\06. Component">
       <UniqueIdentifier>{4abb1a6e-dce2-4f37-8ca4-1318be1a0a95}</UniqueIdentifier>
     </Filter>
@@ -190,6 +187,18 @@
     <Filter Include="05. Shader\01. Forward">
       <UniqueIdentifier>{e590ab1a-70bf-40bc-8b43-6f57c5496337}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. System\00. GraphicDevice\00. RenderTarget">
+      <UniqueIdentifier>{64903809-58ca-44e9-b70e-c8909f8abc26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. System\00. GraphicDevice\00. RenderTarget\00. Manager">
+      <UniqueIdentifier>{1193feda-46a0-4706-ba83-9c07086262b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Shader\02. Deferred">
+      <UniqueIdentifier>{7f68c9af-aac4-4512-b073-f1378b04fb65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\05. GameObject\01. Camera">
+      <UniqueIdentifier>{f0c52343-3c6a-4ac1-958c-783d60158b1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\GameInstance.cpp">
@@ -229,7 +238,7 @@
       <Filter>04. Utility\06. Component\01. Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Private\Camera.cpp">
-      <Filter>04. Utility\05. GameObject\02. Camera</Filter>
+      <Filter>04. Utility\05. GameObject\01. Camera</Filter>
     </ClCompile>
     <ClCompile Include="Private\Object_Manager.cpp">
       <Filter>04. Utility\05. GameObject\00. Manager</Filter>
@@ -344,6 +353,12 @@
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Cell.cpp">
       <Filter>04. Utility\06. Component\08. VIBuffer\03. Cell</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RenderTarget.cpp">
+      <Filter>03. System\00. GraphicDevice\00. RenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\RenderTarget_Manager.cpp">
+      <Filter>03. System\00. GraphicDevice\00. RenderTarget\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -468,7 +483,7 @@
       <Filter>04. Utility\09. Grid\00. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Public\Camera.h">
-      <Filter>04. Utility\05. GameObject\02. Camera</Filter>
+      <Filter>04. Utility\05. GameObject\01. Camera</Filter>
     </ClInclude>
     <ClInclude Include="Public\Collider.h">
       <Filter>04. Utility\06. Component\05. Collider</Filter>
@@ -527,6 +542,12 @@
     <ClInclude Include="Public\VIBuffer_Cell.h">
       <Filter>04. Utility\06. Component\08. VIBuffer\03. Cell</Filter>
     </ClInclude>
+    <ClInclude Include="Public\RenderTarget.h">
+      <Filter>03. System\00. GraphicDevice\00. RenderTarget</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\RenderTarget_Manager.h">
+      <Filter>03. System\00. GraphicDevice\00. RenderTarget\00. Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Typedef.inl">
@@ -551,6 +572,9 @@
   <ItemGroup>
     <FxCompile Include="Resources\Shader\Pos.hlsl">
       <Filter>05. Shader\01. Forward</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\Shader\PosTex_Deffered.hlsl">
+      <Filter>05. Shader\02. Deferred</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

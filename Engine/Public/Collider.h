@@ -15,7 +15,7 @@ public:
 	HRESULT												Initialize_Prototype();
 	HRESULT												Initialize(COLLIDERDESC);
 #ifdef _DEBUG
-	HRESULT												Render();
+	virtual HRESULT										Render() override;
 #endif
 
 public:

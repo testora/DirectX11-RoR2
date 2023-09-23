@@ -148,3 +148,10 @@
 #define GOLEM_MOTION_GAP_MAX					1.f
 
 #pragma endregion
+
+#pragma region MOON
+
+#define	ARENA_POINT		_float3(-1900.f, 1060.f, 710.f)
+#define	ARENA_CENTER	_float3(-2050.f, 1000.f, 590.f)
+
+#pragma endregion

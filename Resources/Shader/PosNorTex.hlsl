@@ -13,6 +13,7 @@ struct VS_OUT
 	float4	vNormal		: NORMAL;
 	float2	vTexCoord	: TEXCOORD0;
 	float4	vWorldPos	: TEXCOORD1;
+	float4	vProjPos	: TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -28,6 +29,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vNormal		= normalize(mul(float4(In.vNormal, 0.f), g_mWorld));
 	Out.vTexCoord	= In.vTexCoord;
 	Out.vWorldPos	= mul(float4(In.vPosition, 1.f), g_mWorld);
+	Out.vProjPos    = Out.vPosition;
 
 	return Out;
 }
@@ -38,11 +40,18 @@ struct PS_IN
 	float4	vNormal		: NORMAL;
 	float2	vTexCoord	: TEXCOORD0;
 	float4	vWorldPos	: TEXCOORD1;
+	float4	vProjPos	: TEXCOORD2;
 };
 
 struct PS_OUT
 {
-	float4	vColor		: SV_TARGET0;
+//	float4	vColor		: SV_TARGET0;
+	float4	vDiffuse	: SV_TARGET0;
+	float4	vAmbient	: SV_TARGET1;
+	float4	vSpecular	: SV_TARGET2;
+	float4	vEmissive	: SV_TARGET3;
+	float4	vNormal		: SV_TARGET4;
+	float4	vDepth		: SV_TARGET5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -56,52 +65,59 @@ PS_OUT PS_MAIN(PS_IN In)
 	// Normal
 	float3	vNormal			=	In.vNormal.xyz;
 	
-	// Specular
-	float3	vViewDir		=	normalize(g_vCamPosition - In.vWorldPos).xyz;
+	Out.vDiffuse	= vTexColor * g_vMtrlDiffuse;
+	Out.vAmbient	= vTexColor * g_vMtrlAmbient;
+	Out.vSpecular	= g_vMtrlSpecular;
+	Out.vEmissive	= g_vMtrlEmissive;
+	Out.vNormal		= float4(vNormal, 0.f);
+	Out.vDepth		= float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w, 0.f, 0.f);
 	
-	for (int i = 0; i < g_iLightCount; ++i)
-	{
-		// Lighting
-		float3	vLightDir	=	float3(0.f, 0.f, 0.f);
-		switch (g_iLightType[i])
-		{
-		case POINT:
-			vLightDir		=	normalize(In.vWorldPos - g_vLightPosition[i]).xyz;
-			break;
-		case DIRECTIONAL:
-			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
-			break;
-		}
-		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
-		
-		// Specular
-		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
-		float	fSpc		=	pow(max(dot(vViewDir, vHalfDir), 0.f), g_fMtrlShininess);
-		
-		// Attenuation
-		float	fSmoothAtt	= 1.f;
-		if (POINT == g_iLightType[i])
-		{
-			float	fDist		=	distance(g_vLightPosition[i], In.vWorldPos);
-			float	fAtt		=	1.f / (g_fLightAttenuation0[i] + g_fLightAttenuation1[i] * fDist + g_fLightAttenuation2[i] * fDist * fDist);
-			float	fLightDist	=	1.f - saturate(fDist / g_fLightRange[i]);
-			fSmoothAtt			=	smoothstep(0.f, 1.f, fAtt * fLightDist);
-		}
-		
-		// Final
-		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * fDiffuse + g_vLightAmbient[i].rgb)
-							+	fSpc * g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb;
-		
-		vFinalColor			*=	fSmoothAtt;
-	}
-	
-	// Final
-	vFinalColor			+=	g_vMtrlEmissive.rgb;
-	
-	// Out
-	Out.vColor.rgb		= vFinalColor;
-	Out.vColor.a		= vTexColor.a;
+//	// Specular
+//	float3	vViewDir		=	normalize(g_vCamPosition - In.vWorldPos).xyz;
+//	
+//	for (int i = 0; i < g_iLightCount; ++i)
+//	{
+//		// Lighting
+//		float3	vLightDir	=	float3(0.f, 0.f, 0.f);
+//		switch (g_iLightType[i])
+//		{
+//		case POINT:
+//			vLightDir		=	normalize(In.vWorldPos - g_vLightPosition[i]).xyz;
+//			break;
+//		case DIRECTIONAL:
+//			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
+//			break;
+//		}
+//		
+//		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
+//		
+//		// Specular
+//		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
+//		float	fSpc		=	pow(max(dot(vViewDir, vHalfDir), 0.f), g_fMtrlShininess);
+//		
+//		// Attenuation
+//		float	fSmoothAtt	= 1.f;
+//		if (POINT == g_iLightType[i])
+//		{
+//			float	fDist		=	distance(g_vLightPosition[i], In.vWorldPos);
+//			float	fAtt		=	1.f / (g_fLightAttenuation0[i] + g_fLightAttenuation1[i] * fDist + g_fLightAttenuation2[i] * fDist * fDist);
+//			float	fLightDist	=	1.f - saturate(fDist / g_fLightRange[i]);
+//			fSmoothAtt			=	smoothstep(0.f, 1.f, fAtt * fLightDist);
+//		}
+//		
+//		// Final
+//		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * fDiffuse + g_vLightAmbient[i].rgb)
+//							+	fSpc * g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb;
+//		
+//		vFinalColor			*=	fSmoothAtt;
+//	}
+//	
+//	// Final
+//	vFinalColor			+=	g_vMtrlEmissive.rgb;
+//	
+//	// Out
+//	Out.vColor.rgb		= vFinalColor;
+//	Out.vColor.a		= vTexColor.a;
 
 	return Out;
 }
@@ -117,52 +133,59 @@ PS_OUT PS_TERRAIN(PS_IN In)
 	// Normal
 	float3	vNormal			=	In.vNormal.xyz;
 	
-	// Specular
-	float3	vViewDir		=	normalize(g_vCamPosition - In.vWorldPos).xyz;
+	Out.vDiffuse	= vTexColor * g_vMtrlDiffuse;
+	Out.vAmbient	= vTexColor * g_vMtrlAmbient;
+	Out.vSpecular	= g_vMtrlSpecular;
+	Out.vEmissive	= g_vMtrlEmissive;
+	Out.vNormal		= float4(vNormal, 0.f);
+	Out.vDepth		= float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
 	
-	for (int i = 0; i < g_iLightCount; ++i)
-	{
-		// Lighting
-		float3	vLightDir	=	float3(0.f, 0.f, 0.f);
-		switch (g_iLightType[i])
-		{
-		case POINT:
-			vLightDir		=	normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
-			break;
-		case DIRECTIONAL:
-			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
-			break;
-		}
-		
-		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
-		
-		// Specular
-		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
-		float	fSpc		=	pow(max(dot(vViewDir, vHalfDir), 0.f), g_fMtrlShininess);
-		
-		// Attenuation
-		float	fSmoothAtt	= 1.f;
-		if (POINT == g_iLightType[i])
-		{
-			float	fDist		=	distance(g_vLightPosition[i], In.vWorldPos);
-			float	fAtt		=	1.f / (g_fLightAttenuation0[i] + g_fLightAttenuation1[i] * fDist + g_fLightAttenuation2[i] * fDist * fDist);
-			float	fLightDist	=	1.f - saturate(fDist / g_fLightRange[i]);
-			fSmoothAtt			=	smoothstep(0.f, 1.f, fAtt * fLightDist);
-		}
-		
-		// Final
-		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * g_vMtrlDiffuse.rgb * fDiffuse + g_vLightAmbient[i].rgb * g_vMtrlAmbient.rgb)
-							+	g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb * fSpc;
-		
-		vFinalColor			*=	fSmoothAtt;
-	}
-	
-	// Final
-	vFinalColor			+=	g_vMtrlEmissive.rgb;
-	
-	// Out
-	Out.vColor.rgb		=	vFinalColor;
-	Out.vColor.a		=	vTexColor.a;
+//	// Specular
+//	float3	vViewDir		=	normalize(g_vCamPosition - In.vWorldPos).xyz;
+//	
+//	for (int i = 0; i < g_iLightCount; ++i)
+//	{
+//		// Lighting
+//		float3	vLightDir	=	float3(0.f, 0.f, 0.f);
+//		switch (g_iLightType[i])
+//		{
+//		case POINT:
+//			vLightDir		=	normalize(In.vWorldPos - g_vLightDirection[i]).xyz;
+//			break;
+//		case DIRECTIONAL:
+//			vLightDir		=	normalize(g_vLightDirection[i]).xyz;
+//			break;
+//		}
+//		
+//		float	fDiffuse	=	saturate(dot(-vLightDir, vNormal) + DIFFUSE_OFFSET);
+//		
+//		// Specular
+//		float3	vHalfDir	=	normalize(vViewDir - vLightDir);
+//		float	fSpc		=	pow(max(dot(vViewDir, vHalfDir), 0.f), g_fMtrlShininess);
+//		
+//		// Attenuation
+//		float	fSmoothAtt	= 1.f;
+//		if (POINT == g_iLightType[i])
+//		{
+//			float	fDist		=	distance(g_vLightPosition[i], In.vWorldPos);
+//			float	fAtt		=	1.f / (g_fLightAttenuation0[i] + g_fLightAttenuation1[i] * fDist + g_fLightAttenuation2[i] * fDist * fDist);
+//			float	fLightDist	=	1.f - saturate(fDist / g_fLightRange[i]);
+//			fSmoothAtt			=	smoothstep(0.f, 1.f, fAtt * fLightDist);
+//		}
+//		
+//		// Final
+//		vFinalColor			+=	vTexColor.rgb * (g_vLightDiffuse[i].rgb * g_vMtrlDiffuse.rgb * fDiffuse + g_vLightAmbient[i].rgb * g_vMtrlAmbient.rgb)
+//							+	g_vLightSpecular[i].rgb * g_vMtrlSpecular.rgb * fSpc;
+//		
+//		vFinalColor			*=	fSmoothAtt;
+//	}
+//	
+//	// Final
+//	vFinalColor			+=	g_vMtrlEmissive.rgb;
+//	
+//	// Out
+//	Out.vColor.rgb		=	vFinalColor;
+//	Out.vColor.a		=	vTexColor.a;
 
 	return Out;
 }

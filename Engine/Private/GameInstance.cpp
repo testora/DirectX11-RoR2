@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "GameInstance.h"
 #include "GraphicDevice.h"
+#include "RenderTarget_Manager.h"
 #include "Timer_Manager.h"
 #include "Mouse_Manager.h"
 #include "Key_Manager.h"
@@ -13,17 +14,18 @@
 #include "Picker.h"
 
 CGameInstance::CGameInstance()
-	: m_pGraphic_Device		(CGraphicDevice::Get_Instance())
-	, m_pTimer_Manager		(CTimer_Manager::Get_Instance())
-	, m_pMouse_Manager		(CMouse_Manager::Get_Instance())
-	, m_pKey_Manager		(CKey_Manager::Get_Instance())
-	, m_pEvent_Handler		(CEvent_Handler::Get_Instance())
-	, m_pScene_Manager		(CScene_Manager::Get_Instance())
-	, m_pObject_Manager		(CObject_Manager::Get_Instance())
-	, m_pComponent_Manager	(CComponent_Manager::Get_Instance())
-	, m_pGrid_Manager		(CGrid_Manager::Get_Instance())
-	, m_pLight_Manager		(CLight_Manager::Get_Instance())
-	, m_pPicker				(CPicker::Get_Instance())
+	: m_pGraphic_Device			(CGraphicDevice::Get_Instance())
+	, m_pRenderTarget_Manager	(CRenderTarget_Manager::Get_Instance())
+	, m_pTimer_Manager			(CTimer_Manager::Get_Instance())
+	, m_pMouse_Manager			(CMouse_Manager::Get_Instance())
+	, m_pKey_Manager			(CKey_Manager::Get_Instance())
+	, m_pEvent_Handler			(CEvent_Handler::Get_Instance())
+	, m_pScene_Manager			(CScene_Manager::Get_Instance())
+	, m_pObject_Manager			(CObject_Manager::Get_Instance())
+	, m_pComponent_Manager		(CComponent_Manager::Get_Instance())
+	, m_pGrid_Manager			(CGrid_Manager::Get_Instance())
+	, m_pLight_Manager			(CLight_Manager::Get_Instance())
+	, m_pPicker					(CPicker::Get_Instance())
 {
 }
 
@@ -36,7 +38,12 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
 	}
 
-	if (FAILED(m_pPicker->Initialize(_tGraphicDesc.hWnd, _pDevice, _pContext)))
+	if (FAILED(m_pRenderTarget_Manager->Initialize(_pDevice, _pContext)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pRenderTarget_Manager->Initialize");
+	}
+
+	if (FAILED(m_pPicker->Initialize(_tGraphicDesc.hWnd)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pPicker->Initialize");
 	}
@@ -115,8 +122,6 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
 
-	m_pLight_Manager->Late_Tick();
-
 	m_pEvent_Handler->Tick(_fTimeDelta);
 }
 
@@ -162,6 +167,21 @@ HRESULT CGameInstance::Present()
 
 	return m_pGraphic_Device->Present();
 }
+
+#pragma endregion
+#pragma region RenderTarget Manager
+
+#ifdef _DEBUG
+ComPtr<ID3D11ShaderResourceView> CGameInstance::Get_RenderTarget_ShaderResourceView(const wstring& _wstrTargetTag)
+{
+	if (nullptr == m_pRenderTarget_Manager)
+	{
+		MSG_RETURN(nullptr, "CGameInstance::Get_RenderTarget_ShaderResourceView", "Null Exception: m_pRenderTarget_Manager");
+	}
+
+	return m_pRenderTarget_Manager->Get_ShaderResourceView(_wstrTargetTag);
+}
+#endif
 
 #pragma endregion
 #pragma region Timer Manager
@@ -560,34 +580,14 @@ _float3 CGameInstance::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayO
 #pragma endregion
 #pragma region Light Manager
 
-HRESULT CGameInstance::Add_BindShaders(shared_ptr<class CShader> _pShader)
+HRESULT CGameInstance::Add_Light(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<class CTransform> _pTransform)
 {
 	if (nullptr == m_pLight_Manager)
 	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Add_BindShaders", "Null Exception: m_pLight_Manager");
+		MSG_RETURN(E_FAIL, "CGameInstance::Add_Light", "Null Exception: m_pLight_Manager");
 	}
 
-	return m_pLight_Manager->Add_Shaders(_pShader);
-}
-
-HRESULT CGameInstance::Add_Lights(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<class CTransform> _pTransform)
-{
-	if (nullptr == m_pLight_Manager)
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Add_Lights", "Null Exception: m_pLight_Manager");
-	}
-
-	return m_pLight_Manager->Add_Lights(_eScene, _tLightDesc, _pTransform);
-}
-
-HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
-{
-	if (nullptr == m_pLight_Manager)
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Clear_Lights", "Null Exception: m_pLight_Manager");
-	}
-
-	return m_pLight_Manager->Clear_Lights(_eScene);
+	return m_pLight_Manager->Add_Light(_eScene, _tLightDesc, _pTransform);
 }
 
 #pragma endregion
@@ -603,6 +603,7 @@ void CGameInstance::Release_Engine()
 	CObject_Manager::Destroy_Instance();
 	CScene_Manager::Destroy_Instance();
 	CGraphicDevice::Destroy_Instance();
+	CRenderTarget_Manager::Destroy_Instance();
 	CKey_Manager::Destroy_Instance();
 	CMouse_Manager::Destroy_Instance();
 	CTimer_Manager::Destroy_Instance();

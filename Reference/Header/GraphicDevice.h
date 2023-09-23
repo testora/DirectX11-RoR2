@@ -22,12 +22,12 @@ private:
 	HRESULT							Ready_DepthStencilView(_uint iWinCX, _uint iWinCY);
 
 private:
-	ComPtr<ID3D11Device>			m_pDevice;
-	ComPtr<ID3D11DeviceContext>		m_pContext;
-
 	ComPtr<IDXGISwapChain>			m_pSwapChain;
 	ComPtr<ID3D11RenderTargetView>	m_pRenderTargetView;
 	ComPtr<ID3D11DepthStencilView>	m_pDepthStencilView;
+
+	ComPtr<ID3D11Device>			m_pDevice;
+	ComPtr<ID3D11DeviceContext>		m_pContext;
 
 	friend CSingleton<CGraphicDevice>;
 };

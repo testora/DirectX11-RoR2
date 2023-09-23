@@ -4,9 +4,6 @@
 #include "ImGui_Manager.h"
 #include "Camera_Main.h"
 
-#define	ARENA_POINT		_float3(-1900.f, 1060.f, 710.f)
-#define	ARENA_CENTER	_float3(-2050.f, 1000.f, 590.f)
-
 CScene_Moon::CScene_Moon(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::MOON)
 {
@@ -81,13 +78,13 @@ HRESULT CScene_Moon::Ready_Light()
 	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
 	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.f, 0.f, 0.f, 1.f);
-	tLightDesc.vAmbient		= _color(0.3f, 0.3f, 0.3f, 1.f);
+	tLightDesc.vSpecular	= _color(0.5f, 0.5f, 0.5f, 1.f);
+	tLightDesc.vAmbient		= _color(0.1f, 0.1f, 0.1f, 1.f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Lights(SCENE::MOON, tLightDesc, nullptr)))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, nullptr)))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Light", "Failed to Add_Lights");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Light", "Failed to Add_Light");
 	}
 
 	return S_OK;

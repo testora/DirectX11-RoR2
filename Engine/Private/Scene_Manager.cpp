@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Scene_Manager.h"
 #include "Scene.h"
+#include "Light_Manager.h"
 #include "Object_Manager.h"
 #include "Grid_Manager.h"
 
@@ -41,6 +42,11 @@ HRESULT CScene_Manager::Open_Scene(SCENE _eScene, shared_ptr<class CScene> _pSce
 	{
 		hr = S_FALSE;
 		MSG_BOX("CScene_Manager::Open_Scene", "Failed: Clear_Scene_Object");
+	}
+	if (FAILED(CLight_Manager::Get_Instance()->Clear_Lights(m_eScene)))
+	{
+		hr = S_FALSE;
+		MSG_BOX("CScene_Manager::Open_Scene", "Failed: Clear_Lights");
 	}
 
 	m_eScene = _eScene;

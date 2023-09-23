@@ -2,11 +2,9 @@
 #include "Picker.h"
 #include "PipeLine.h"
 
-HRESULT CPicker::Initialize(HWND _hWnd, ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
+HRESULT CPicker::Initialize(HWND _hWnd)
 {
 	m_hWnd		= _hWnd;
-	m_pDevice	= _pDevice;
-	m_pContext	= _pContext;
 
 	return S_OK;
 }

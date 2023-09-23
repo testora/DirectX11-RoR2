@@ -2,8 +2,10 @@
 
 int			g_iShaderFlag;
 
-matrix		g_mWorld, g_mView, g_mProj, g_mOrthographic;
-vector		g_vCamPosition;
+float4x4	g_mWorld, g_mView, g_mProj, g_mOrthographic;
+float4x4	g_mViewInv, g_mProjInv;
+float4		g_vCamPosition;
+float		g_fCamFar				= 10000.f;
 
 Texture2D	g_texDiffuse			[MAX_TEXTURE];
 Texture2D	g_texNormal				[MAX_TEXTURE];
@@ -11,23 +13,23 @@ float		g_fTilingDiffuse		[MAX_TEXTURE];
 float		g_fTilingNormal			[MAX_TEXTURE];
 
 int			g_iLightCount			= 1;
-int			g_iLightType			[MAX_LIGHT];
-vector		g_vLightPosition		[MAX_LIGHT];
-vector		g_vLightDirection		[MAX_LIGHT];
-vector		g_vLightDiffuse			[MAX_LIGHT];
-vector		g_vLightAmbient			[MAX_LIGHT];
-vector		g_vLightSpecular		[MAX_LIGHT];
-float		g_fLightRange			[MAX_LIGHT];
-float		g_fLightAttenuation0	[MAX_LIGHT];
-float		g_fLightAttenuation1	[MAX_LIGHT];
-float		g_fLightAttenuation2	[MAX_LIGHT];
+int			g_iLightType;			//	[MAX_LIGHT];
+float4		g_vLightPosition;		//	[MAX_LIGHT];
+float4		g_vLightDirection;		//	[MAX_LIGHT];
+float4		g_vLightDiffuse;		//	[MAX_LIGHT];
+float4		g_vLightAmbient;		//	[MAX_LIGHT];
+float4		g_vLightSpecular;		//	[MAX_LIGHT];
+float		g_fLightRange;			//	[MAX_LIGHT];
+float		g_fLightAttenuation0;	//	[MAX_LIGHT];
+float		g_fLightAttenuation1;	//	[MAX_LIGHT];
+float		g_fLightAttenuation2;	//	[MAX_LIGHT];
 
-matrix		g_mBones				[MAX_BONE];
+float4x4	g_mBones				[MAX_BONE];
 
-vector		g_vMtrlDiffuse;
-vector		g_vMtrlAmbient;
-vector		g_vMtrlSpecular;
-vector		g_vMtrlEmissive;
+float4		g_vMtrlDiffuse;
+float4		g_vMtrlAmbient;
+float4		g_vMtrlSpecular;
+float4		g_vMtrlEmissive;
 float		g_fMtrlShininess		= 32.f;
 
 float		g_fTPSharpness			= 2.f;

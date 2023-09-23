@@ -11,11 +11,14 @@ private:
 	{
 		APPEAR,
 		READY,
+		WALK,
 		CHASE,
 		CHASE_TO_SMASH,
 		CHASE_SMASH,
 		DASH,
+		DASH_SMASH,
 		SMASH,
+		RESET,
 		MAX
 	};
 

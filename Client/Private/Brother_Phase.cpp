@@ -145,7 +145,7 @@ void CBrother_Phase::Smash()
 {
 	m_pPhysics->Flattern(true, false, true);
 	m_pTransform->LookAt(m_pTargetTransform->Get_State(TRANSFORM::POSITION));
-	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f, false, g_fDefaultInterpolationDuration, false);
+	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 3.f, false, g_fDefaultInterpolationDuration, false);
 	m_pAnimator->Reset();
 }
 

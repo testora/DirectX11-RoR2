@@ -113,22 +113,32 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 		}
 	}
 
-#ifdef _DEBUG
-	if (shared_ptr<CCollider> pCollider = m_pWeakCollider.lock())
-	{
-		if (FAILED(pCollider->Render()))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CCollider::Render");
-		}
-	}
-#endif
-
 	return S_OK;
 }
 
 HRESULT CGameObject::Fetch(any _arg)
 {
 	return S_OK;
+}
+
+shared_ptr<CComponent> CGameObject::Get_Component(const COMPONENT _eComponent)
+{
+	if (m_umapComponent.end() != m_umapComponent.find(_eComponent))
+	{
+		return m_umapComponent[_eComponent];
+	}
+
+	return nullptr;
+}
+
+shared_ptr<CBehavior> CGameObject::Get_Behavior(const BEHAVIOR _eBehavior)
+{
+	if (m_umapBehavior.end() != m_umapBehavior.find(_eBehavior))
+	{
+		return m_umapBehavior[_eBehavior];
+	}
+
+	return nullptr;
 }
 
 HRESULT CGameObject::Ready_Components()
@@ -325,6 +335,23 @@ HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
 	{
 		if (SUCCEEDED(pRenderer->Add_RenderObject(_eRenderGroup, shared_from_this())))
 		{
+#ifdef _DEBUG
+			if (m_bitComponent.test(IDX(COMPONENT::COLLIDER)))
+			{
+				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::NONLIGHT, m_umapComponent[COMPONENT::COLLIDER])))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+				}
+			}
+			if (m_bitComponent.test(IDX(COMPONENT::NAVIGATION)))
+			{
+				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::NONLIGHT, m_umapComponent[COMPONENT::NAVIGATION])))
+				{
+					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+				}
+			}
+#endif
+
 			return S_OK;
 		}
 		else

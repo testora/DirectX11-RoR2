@@ -79,6 +79,8 @@
     <ClInclude Include="Public\VIBuffer_Rect.h" />
     <ClInclude Include="Public\VIBuffer_Terrain.h" />
     <ClInclude Include="Public\VIBuffer_Cell.h" />
+    <ClInclude Include="Public\RenderTarget.h" />
+    <ClInclude Include="Public\RenderTarget_Manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Cell.cpp" />
@@ -137,6 +139,8 @@
     <ClCompile Include="Private\VIBuffer_Rect.cpp" />
     <ClCompile Include="Private\VIBuffer_Terrain.cpp" />
     <ClCompile Include="Private\VIBuffer_Cell.cpp" />
+    <ClCompile Include="Private\RenderTarget.cpp" />
+    <ClCompile Include="Private\RenderTarget_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Animator.inl" />
@@ -148,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shader\Pos.hlsl" />
+    <FxCompile Include="Resources\Shader\PosTex_Deffered.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

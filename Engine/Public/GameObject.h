@@ -23,9 +23,11 @@ public:
 public:
 	template <typename T>
 	shared_ptr<T>												Get_Component(const COMPONENT);
+	shared_ptr<class CComponent>								Get_Component(const COMPONENT);
 	template <typename T>
 	shared_ptr<T>												Get_Behavior(const BEHAVIOR);
-
+	shared_ptr<class CBehavior>									Get_Behavior(const BEHAVIOR);
+		
 protected:
 	virtual HRESULT												Render(_uint iPassIndex);
 

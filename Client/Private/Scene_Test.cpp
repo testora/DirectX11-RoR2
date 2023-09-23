@@ -64,6 +64,22 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 void CScene_Test::Late_Tick(_float _fTimeDelta)
 {
+	ImGui::Begin("MATERIAL");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Diffuse")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Ambient")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Specular")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Emissive")).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("NONBLEND");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Normal")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Depth")).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("LIGHT");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Shade")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Specular")).Get(), ImVec2(200, 200));
+	ImGui::End();
 }
 
 HRESULT CScene_Test::Render()
@@ -78,13 +94,13 @@ HRESULT CScene_Test::Ready_Light()
 	tLightDesc.vDirection	= _float3(0.36f, -0.93f, 0.07f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
 	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.5f, 0.5f, 0.5f, 1.f);
+	tLightDesc.vSpecular	= _color(0.1f, 0.1f, 0.1f, 1.f);
 	tLightDesc.vAmbient		= _color(0.3f, 0.3f, 0.3f, 1.f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Lights(SCENE::TEST, tLightDesc, nullptr)))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::TEST, tLightDesc, nullptr)))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Light", "Failed to Add_Lights");
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Light", "Failed to Add_Light");
 	}
 
 	return S_OK;

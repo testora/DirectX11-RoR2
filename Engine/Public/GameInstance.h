@@ -29,6 +29,13 @@ public:
 	HRESULT										Present();
 
 #pragma endregion
+#pragma region RenderTarget Manager
+
+#ifdef _DEBUG
+	ComPtr<ID3D11ShaderResourceView>			Get_RenderTarget_ShaderResourceView(const wstring& wstrTargetTag);
+#endif
+
+#pragma endregion
 #pragma region Timer Manager
 
 	void										Tick_Timer();
@@ -107,17 +114,15 @@ public:
 	_float3										Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
 
 #pragma endregion
-#pragma region Grid Manager
+#pragma region Light Manager
 
-	HRESULT										Add_BindShaders(shared_ptr<class CShader>);
-	HRESULT										Add_Lights(const SCENE, LIGHTDESC, shared_ptr<class CTransform>);
-	HRESULT										Clear_Lights(const SCENE);
-
+	HRESULT										Add_Light(const SCENE, LIGHTDESC, shared_ptr<class CTransform>);
 
 #pragma endregion
 
 private:
 	shared_ptr<class CGraphicDevice>			m_pGraphic_Device;
+	shared_ptr<class CRenderTarget_Manager>		m_pRenderTarget_Manager;
 	shared_ptr<class CTimer_Manager>			m_pTimer_Manager;
 	shared_ptr<class CMouse_Manager>			m_pMouse_Manager;
 	shared_ptr<class CKey_Manager>				m_pKey_Manager;

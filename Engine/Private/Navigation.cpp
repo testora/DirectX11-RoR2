@@ -117,21 +117,31 @@ HRESULT CNavigation::Render()
 
 	if (-1 == m_iCurrentCellIndex)
 	{
+//		if (FAILED(m_pShader->Bind_Vector("g_vColor", _color(1.f, 1.f, 1.f, 1.f))))
+//		{
+//			MSG_RETURN(E_FAIL, "CNavigation::Render", "Failed to Bind_Vector: g_vColor");
+//		}
+//
 		HRESULT hr = S_OK;
-
-		for (auto& pCell : m_vecCell)
-		{
-			if (FAILED(pCell->Render()))
-			{
-				MSG_CONTINUE("CNavigation::Render", "Failed to Render: Navigation Mesh");
-				hr = E_FAIL;
-			}
-		}
-
+//
+//		for (auto& pCell : m_vecCell)
+//		{
+//			if (FAILED(pCell->Render()))
+//			{
+//				MSG_CONTINUE("CNavigation::Render", "Failed to Render: Navigation Mesh");
+//				hr = E_FAIL;
+//			}
+//		}
+//
 		return hr;
 	}
 	else
 	{
+		if (FAILED(m_pShader->Bind_Vector("g_vColor", _color(0.f, 1.f, 0.f, 1.f))))
+		{
+			MSG_RETURN(E_FAIL, "CNavigation::Render", "Failed to Bind_Vector: g_vColor");
+		}
+
 		if (FAILED(m_vecCell[m_iCurrentCellIndex]->Render()))
 		{
 			MSG_RETURN(E_FAIL, "CNavigation::Render", "Failed to Render: Object Cell");
