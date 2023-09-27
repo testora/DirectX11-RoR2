@@ -190,24 +190,6 @@
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom">
       <UniqueIdentifier>{18b5d739-8ca7-4443-9c6f-fb0642053916}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase">
-      <UniqueIdentifier>{ceeb2e7a-d8fb-49de-ada8-1833ce3a2499}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0">
-      <UniqueIdentifier>{af8394b9-592a-4522-a196-3e00f8079fd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1">
-      <UniqueIdentifier>{427bb5f7-dd30-45e8-8b92-52134a8f5078}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\02. Phase 2">
-      <UniqueIdentifier>{cce585d0-6980-4498-9aec-8b3cd925d652}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\03. Phase 3">
-      <UniqueIdentifier>{11b709f1-ff66-42fd-ad36-bc3e8a452dec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\04. Phase 4">
-      <UniqueIdentifier>{336fe9e5-a322-4fec-96bf-1c4d1b132d2a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. Shader">
       <UniqueIdentifier>{f23dff80-195c-4c9d-9d13-b93329daf7a1}</UniqueIdentifier>
     </Filter>
@@ -216,6 +198,30 @@
     </Filter>
     <Filter Include="06. Shader\02. Deferred">
       <UniqueIdentifier>{cbd4c466-994d-44b5-b95a-799e1ecdc6a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused">
+      <UniqueIdentifier>{3bedfa0b-0e15-4145-90d3-cb3aef4538e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase">
+      <UniqueIdentifier>{ceeb2e7a-d8fb-49de-ada8-1833ce3a2499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\00. Phase 0">
+      <UniqueIdentifier>{af8394b9-592a-4522-a196-3e00f8079fd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\01. Phase 1">
+      <UniqueIdentifier>{427bb5f7-dd30-45e8-8b92-52134a8f5078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\02. Phase 2">
+      <UniqueIdentifier>{cce585d0-6980-4498-9aec-8b3cd925d652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\03. Phase 3">
+      <UniqueIdentifier>{11b709f1-ff66-42fd-ad36-bc3e8a452dec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\04. Phase 4">
+      <UniqueIdentifier>{336fe9e5-a322-4fec-96bf-1c4d1b132d2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree">
+      <UniqueIdentifier>{98a95a83-56eb-4fcb-b22c-1c7423236b59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -393,17 +399,17 @@
     <ClInclude Include="Public\Brother.h">
       <Filter>05. GameObject\06. Monster\01. Brother</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Brother_Behavior.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom</Filter>
-    </ClInclude>
     <ClInclude Include="Public\Brother_Phase.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase</Filter>
     </ClInclude>
     <ClInclude Include="Public\Brother_Phase_0.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\00. Phase 0</Filter>
     </ClInclude>
     <ClInclude Include="Public\Brother_Phase_1.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\01. Phase 1</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Brother_Behavior.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -530,17 +536,17 @@
     <ClCompile Include="Private\Brother.cpp">
       <Filter>05. GameObject\06. Monster\01. Brother</Filter>
     </ClCompile>
-    <ClCompile Include="Private\Brother_Behavior.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom</Filter>
-    </ClCompile>
     <ClCompile Include="Private\Brother_Phase_0.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\00. Phase 0</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\00. Phase 0</Filter>
     </ClCompile>
     <ClCompile Include="Private\Brother_Phase.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase</Filter>
     </ClCompile>
     <ClCompile Include="Private\Brother_Phase_1.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. Phase\01. Phase 1</Filter>
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused\00. Phase\01. Phase 1</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Brother_Behavior.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -151,8 +151,8 @@ PS_OUT PS_TRIPLANER_MIX(PS_IN In)
 		vNormal				=	TriPlanar_Mix_Normal(In.vNormal.xyz, In.vTangent.xyz, In.vWorldPos.xyz, vBlendFactor);
 	}
 	
-	Out.vDiffuse	= vTexColor * g_vMtrlDiffuse;
-	Out.vAmbient	= vTexColor * g_vMtrlAmbient;
+	Out.vDiffuse	= g_vMtrlDiffuse * vTexColor;
+	Out.vAmbient	= g_vMtrlAmbient * vTexColor;
 	Out.vSpecular	= g_vMtrlSpecular;
 	Out.vEmissive	= g_vMtrlEmissive;
 	Out.vNormal		= float4(vNormal, 0.f) * 0.5f + 0.5f;

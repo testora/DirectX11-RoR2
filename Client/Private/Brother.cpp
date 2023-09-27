@@ -138,6 +138,50 @@ HRESULT CBrother::Ready_Components()
 		MSG_RETURN(E_FAIL, "CBrother::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
+	shared_ptr<CModel> pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	if (nullptr == pModel)
+	{
+		MSG_RETURN(E_FAIL, "CBrother::Ready_Components", "Failed to Get_Component: MODEL");
+	}
+
+	_uint iHammerIndex			= pModel->Get_MeshIndex("BrotherHammerConcrete");
+	_uint iConstellationIndex	= pModel->Get_MeshIndex("mdlConstellationBrother");
+	
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iConstellationIndex);
+
+//	AIM_YAW
+//	AIM_PITCH
+//	LUNARSHARD_FIRE_FORWARD
+//	FLINCH1
+//	FLINCH2
+//	FLINCH3
+//	HURT_LUNARSHARD_EXIT_LEFT
+//	HURT_LUNARSHARD_EXIT_RIGHT
+//	HURT_LUNARSHARD_FIRE_FORWARD
+//	HURT_LUNARSHARD_FIRE_LEFT
+//	HURT_LUNARSHARD_FIRE_RIGHT
+//	HURT_LUNARSHARD_EXIT_FORWARD
+//	HURT_LUNARSHARD_ENTER_FORWARD
+	
 	return S_OK;
 }
 
@@ -148,7 +192,7 @@ HRESULT CBrother::Ready_Behaviors()
 		MSG_RETURN(E_FAIL, "CBrother::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
 	}
 
-	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_Behavior::Create(shared_from_gameobject(), Function::Find_Player(), &m_tEntityDesc));
+//	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_Behavior::Create(shared_from_gameobject(), Function::Find_Player(), &m_tEntityDesc));
 
 	return S_OK;
 }

@@ -47,7 +47,7 @@ HRESULT CChannel::Initialize_FromAssimp(const aiNodeAnim* _pAIChannel, shared_pt
 
 		m_vecKeyFrames.push_back(tKeyFrame);
 	}
-		
+
 	return S_OK;
 }
 #endif

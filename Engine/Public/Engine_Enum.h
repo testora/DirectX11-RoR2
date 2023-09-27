@@ -42,6 +42,14 @@ enum class BEHAVIOR
 	MAX
 };
 
+enum class STATUS
+{
+	RUNNING,
+	SUCCESS,
+	FAILURE,
+	MAX
+};
+
 enum class PIPELINE		{ WORLD, VIEW, PROJECTION, MAX };
 enum class TRANSFORM	{ RIGHT, UP, LOOK, POSITION, MAX };
 enum class MODEL		{ ANIM, NONANIM, MAX };

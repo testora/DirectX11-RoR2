@@ -65,20 +65,20 @@ void CScene_Test::Tick(_float _fTimeDelta)
 void CScene_Test::Late_Tick(_float _fTimeDelta)
 {
 	ImGui::Begin("MATERIAL");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Diffuse")).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Ambient")).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Specular")).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Material:Emissive")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
 	ImGui::End();
 
 	ImGui::Begin("NONBLEND");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Normal")).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Depth")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
 	ImGui::End();
 
 	ImGui::Begin("LIGHT");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Shade")).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(TEXT("RenderTarget:Specular")).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
 	ImGui::End();
 }
 

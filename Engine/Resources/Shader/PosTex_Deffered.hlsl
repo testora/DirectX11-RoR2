@@ -131,6 +131,10 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	PS_OUT	Out;
 	
 	float4	vMtrlDiffuse	= g_texMtrlDiffuseTarget.Sample(LinearSampler, In.vTexCoord);
+	if (vMtrlDiffuse.a == 0.f)
+    {
+        discard;
+    }
 	float4	vMtrlAmbient	= g_texMtrlAmbientTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vMtrlSpecular	= g_texMtrlSpecularTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vMtrlEmissive	= g_texMtrlEmissiveTarget.Sample(LinearSampler, In.vTexCoord);

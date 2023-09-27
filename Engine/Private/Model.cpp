@@ -62,11 +62,11 @@ HRESULT CModel::Initialize_Prototype(const MODEL _eType, const wstring& _wstrMod
 	return S_OK;
 }
 
-HRESULT CModel::Initialize(any _mapDesc)
+HRESULT CModel::Initialize(any _mapMeshDesc)
 {
-	if (_mapDesc.has_value())
+	if (_mapMeshDesc.has_value())
 	{
-		auto desc = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapDesc);
+		auto desc = any_cast<map<_uint, tuple<MATERIALDESC, _flags, function<HRESULT(shared_ptr<class CShader>)>>>>(_mapMeshDesc);
 		for (auto& pair : desc)
 		{
 			m_vecMaterialDescs[pair.first] = std::get<0>(pair.second);
@@ -131,6 +131,18 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 {
 	if (m_vecMeshes[_iMeshIndex])
 	{
+		if (m_mapHideMeshFromAnimations.end() != m_mapHideMeshFromAnimations.find(m_iCurrentAnimationIndex))
+		{
+			auto range = m_mapHideMeshFromAnimations.equal_range(m_iCurrentAnimationIndex);
+			for (auto iter = range.first; iter != range.second; ++iter)
+			{
+				if (iter->second == _iMeshIndex)
+				{
+					return S_FALSE;
+				}
+			}
+		}
+
 		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, m_vecMaterialDescs[_iMeshIndex].vDiffuse)))
 		{
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
@@ -418,6 +430,19 @@ _uint CModel::Get_BoneIndex(const _char* _szBoneName) const
 	return static_cast<_uint>(m_vecBones.size());
 }
 
+_uint CModel::Get_MeshIndex(const _char* _szMeshName) const
+{
+	for (_uint i = 0; i < m_vecMeshes.size(); ++i)
+	{
+		if (!strcmp(m_vecMeshes[i]->Get_Name(), _szMeshName))
+		{
+			return i;
+		}
+	}
+
+	return static_cast<_uint>(m_vecMeshes.size());
+}
+
 void CModel::Tick_Animation(_float _fTimeDelta)
 {
 	if (MODEL::NONANIM == m_eType)
@@ -466,6 +491,40 @@ void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _funcCallback)
 			return;
 		}
 	}
+}
+
+HRESULT CModel::Show_MeshFromAnimations(_uint _iAnimationIndex, _uint _iMeshIndex)
+{
+	auto range = m_mapHideMeshFromAnimations.equal_range(_iAnimationIndex);
+	for (auto iter = range.first; iter != range.second; ++iter)
+	{
+		if (iter->second == _iMeshIndex)
+		{
+			m_mapHideMeshFromAnimations.erase(iter);
+			return S_OK;
+		}
+	}
+
+	return S_FALSE;
+}
+
+HRESULT CModel::Hide_MeshFromAnimations(_uint _iAnimationIndex, _uint _iMeshIndex)
+{
+	if (m_mapHideMeshFromAnimations.end() != m_mapHideMeshFromAnimations.find(_iAnimationIndex))
+	{
+		auto range = m_mapHideMeshFromAnimations.equal_range(_iAnimationIndex);
+		for (auto iter = range.first; iter != range.second; ++iter)
+		{
+			if (iter->second == _iMeshIndex)
+			{
+				return S_FALSE;
+			}
+		}
+	}
+
+	m_mapHideMeshFromAnimations.emplace(_iAnimationIndex, _iMeshIndex);
+	
+	return S_OK;
 }
 
 HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, _uint _iTextureIndex)

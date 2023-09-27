@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\BehaviorTree.h" />
+    <ClInclude Include="Public\Composite.h" />
+    <ClInclude Include="Public\Decorator.h" />
+    <ClInclude Include="Public\Node.h" />
+    <ClInclude Include="Public\Parallel.h" />
     <ClInclude Include="Public\Cell.h" />
     <ClInclude Include="Public\Navigation.h" />
     <ClInclude Include="Public\System.h" />
@@ -81,8 +86,15 @@
     <ClInclude Include="Public\VIBuffer_Cell.h" />
     <ClInclude Include="Public\RenderTarget.h" />
     <ClInclude Include="Public\RenderTarget_Manager.h" />
+    <ClInclude Include="Public\Selector.h" />
+    <ClInclude Include="Public\Sequence.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Node.cpp" />
+    <ClCompile Include="Private\Composite.cpp" />
+    <ClCompile Include="Private\Decorator.cpp" />
+    <ClCompile Include="Private\BehaviorTree.cpp" />
+    <ClCompile Include="Private\Parallel.cpp" />
     <ClCompile Include="Private\Cell.cpp" />
     <ClCompile Include="Private\Navigation.cpp" />
     <ClCompile Include="Private\PipeLine.cpp" />
@@ -141,8 +153,11 @@
     <ClCompile Include="Private\VIBuffer_Cell.cpp" />
     <ClCompile Include="Private\RenderTarget.cpp" />
     <ClCompile Include="Private\RenderTarget_Manager.cpp" />
+    <ClCompile Include="Private\Selector.cpp" />
+    <ClCompile Include="Private\Sequence.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Public\BehaviorTree.inl" />
     <None Include="Public\Animator.inl" />
     <None Include="Public\Engine_Function.inl" />
     <None Include="Public\Engine_Typedef.inl" />

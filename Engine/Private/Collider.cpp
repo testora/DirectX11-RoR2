@@ -27,12 +27,12 @@ HRESULT CCollider::Initialize_Prototype()
 	m_pBatch	= make_shared<PrimitiveBatch<VertexPositionColor>>(m_pContext.Get());
 
 	const void*	pShaderByteCode			= nullptr;
-	size_t		szShaderByteCodeLength	= 0;
+	size_t		nShaderByteCodeLength	= 0;
 	m_pEffect->SetVertexColorEnabled(true);
-	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &szShaderByteCodeLength);
+	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &nShaderByteCodeLength);
 
 	if (FAILED(m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
-		pShaderByteCode, szShaderByteCodeLength, m_pInputLayout.GetAddressOf())))
+		pShaderByteCode, nShaderByteCodeLength, m_pInputLayout.GetAddressOf())))
 	{
 		MSG_RETURN(E_FAIL, "CCollider::Initialize_Prototype", "Failed to CreateInputLayout");
 	}

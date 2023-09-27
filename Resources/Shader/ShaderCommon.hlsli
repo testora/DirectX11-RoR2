@@ -24,7 +24,7 @@ float		g_fLightAttenuation0;	//	[MAX_LIGHT];
 float		g_fLightAttenuation1;	//	[MAX_LIGHT];
 float		g_fLightAttenuation2;	//	[MAX_LIGHT];
 
-matrix		g_mBones				[MAX_BONE];
+float4x4	g_mBones				[MAX_BONE];
 
 float4		g_vMtrlDiffuse;
 float4		g_vMtrlAmbient;
