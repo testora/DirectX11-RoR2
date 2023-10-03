@@ -31,30 +31,43 @@ private:
 #endif
 
 public:
-	_bool														Is_AnimationFinished() const;
+	_bool														Is_AnimationPlaying(_uint iAnimationIndex) const;
+	_bool														Is_AnimationFinished(_uint iAnimationIndex) const;
 
-	_uint														Get_AnimationIndex() const				{ return m_iCurrentAnimationIndex; }
 	_uint														Get_BoneIndex(const _char* szBoneName) const;
 	_uint														Get_MeshIndex(const _char* szMeshName) const;
-	_float4x4													Get_Pivot() const						{ return m_mPivot; }
+	_float4x4													Get_Pivot() const												{ return m_mPivot; }
 #if ACTIVATE_TOOL
-	const _uint													Get_NumBones() const					{ return m_iNumBones; }
-	const _uint													Get_NumAnimations() const				{ return m_iNumAnimations; }
-	const _uint													Get_NumMeshes() const					{ return m_iNumMeshes; }
-	const _uint													Get_NumMaterials() const				{ return m_iNumMaterials; }
-
-	shared_ptr<class CBone>										Get_Bone(const _char* szBoneName) const	{ return m_vecBones[Get_BoneIndex(szBoneName)]; }
-	shared_ptr<class CBone>										Get_Bone(_uint iIndex) const			{ return m_vecBones[iIndex]; }
-	shared_ptr<class CAnimation>								Get_Animation(_uint iIndex) const		{ return m_vecAnimations[iIndex]; }
-	shared_ptr<class CMesh>										Get_Mesh(const _char* szMeshName) const { return m_vecMeshes[Get_MeshIndex(szMeshName)]; }
-	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const			{ return m_vecMeshes[iIndex]; }
-	MATERIAL													Get_Material(_uint iIndex) const		{ return m_vecMaterials[iIndex]; }
+	const _uint													Get_NumBones() const											{ return m_iNumBones; }
+	const _uint													Get_NumAnimations() const										{ return m_iNumAnimations; }
+	const _uint													Get_NumMeshes() const											{ return m_iNumMeshes; }
+	const _uint													Get_NumMaterials() const										{ return m_iNumMaterials; }
 #endif
 
+	shared_ptr<class CBone>										Get_Bone(const _char* szBoneName) const							{ return m_vecBones[Get_BoneIndex(szBoneName)]; }
+	shared_ptr<class CBone>										Get_Bone(_uint iIndex) const									{ return m_vecBones[iIndex]; }
+#if ACTIVATE_TOOL
+	shared_ptr<class CAnimation>								Get_Animation(_uint iIndex) const								{ return m_vecAnimations[iIndex]; }
+	shared_ptr<class CMesh>										Get_Mesh(const _char* szMeshName) const							{ return m_vecMeshes[Get_MeshIndex(szMeshName)]; }
+	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const									{ return m_vecMeshes[iIndex]; }
+	MATERIAL													Get_Material(_uint iIndex) const								{ return m_vecMaterials[iIndex]; }
+
+	_uint														Get_BoneAnimationIndex(_uint iBoneIndex) const					{ return m_vecBoneAnimationIndices[iBoneIndex]; }
+	
+	void														Set_DefaultAnimation(_uint iAnimationIndex);
+
+	void														Set_BoneAnimationIndex(_uint iBoneIndex, _uint iAnimationIndex)	{ m_vecBoneAnimationIndices[iBoneIndex] = iAnimationIndex; }
+#endif
+
+	void														Set_BonePivot(_uint iBoneIndex, _matrixf mPivot)				{ m_vecBonePivot[iBoneIndex] = mPivot; };
+
 public:
-	void														Tick_Animation(_float fTimeDelta);
 	void														Set_Animation(_uint iAnimationIndex, _float fPlaySpeed = 1.f, _bool bReverse = false, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
-	void														Reset_Animation();
+	void														Fix_Animation(_uint iAnimationIndex, _float fRatio);
+	void														Blend_Animation(_uint iAnimationIndex, _float fRatio);
+
+	void														Reset_Animation(_uint iAnimationIndex);
+	void														Tick_Animation(_float fTimeDelta);
 
 	void														Iterate_Meshes(function<_bool(shared_ptr<class CMesh>)>);
 
@@ -85,7 +98,10 @@ private:
 	vector<MATERIAL>											m_vecMaterials;
 	vector<MATERIALDESC>										m_vecMaterialDescs;
 
-	_uint														m_iCurrentAnimationIndex	= 0;
+	vector<_uint>												m_vecBoneAnimationIndices;
+	vector<_float4x4>											m_vecBonePivot;
+	unordered_set<_uint>										m_usetAnimationPlayingIndices;
+	unordered_map<_uint, _float>								m_umapAnimationFixRatio;
 	_float														m_fAnimationPlaySpeed		= 1.f;
 	_bool														m_bAnimReverse				= false;
 	_bool														m_bAnimLoop					= true;

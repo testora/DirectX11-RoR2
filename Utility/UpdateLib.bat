@@ -14,9 +14,10 @@ echo	Inline Complete!
 
 xcopy	/y		..\Engine\Bin\*.lib					..\Reference\Library\
 xcopy	/y		..\Engine\ThirdPartyLib\*.lib		..\Reference\Library\
+xcopy	/y		..\Reference\Library\*.dll			..\Client\Bin\
 echo	Library Complete!
 
 xcopy	/y		..\Engine\Bin\*.dll					..\Client\Bin\
-echo	Bin Complete!
+echo	Engine Complete!
 
 echo	Done!

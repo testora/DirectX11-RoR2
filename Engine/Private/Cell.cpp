@@ -19,7 +19,7 @@ HRESULT CCell::Initialize(const POLYGON _arrPoint)
 	return S_OK;
 }
 
-#pragma region _DEBUG
+#ifdef _DEBUG
 HRESULT CCell::Render()
 {
 	if (nullptr == m_pVIBuffer)
@@ -34,7 +34,7 @@ HRESULT CCell::Render()
 
 	return S_OK;
 }
-#pragma endregion
+#endif
 
 _bool CCell::Contain_Points(shared_ptr<CCell> _pCell, POINT _ePointA, POINT _ePointB) const
 {

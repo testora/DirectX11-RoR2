@@ -32,12 +32,19 @@ void CBone::Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _
 	m_mTransformation = XMMatrixAffineTransformation(_vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), _vRotation, _vTranslation);
 }
 
-void CBone::Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator _itBegin)
+void CBone::Blend_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation, _matrixc _mBase)
+{
+	m_mBlendTransformation *= _float4x4(_mBase).inverse() * XMMatrixAffineTransformation(_vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), _vRotation, _vTranslation);
+}
+
+void CBone::Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator _itBegin, _matrixf _mPivot)
 {
 	if (m_iParentBoneIndex != g_iMaxBones)
 	{
-		m_mCombinedTransformation = m_mTransformation * _itBegin[m_iParentBoneIndex]->m_mCombinedTransformation;
+		m_mCombinedTransformation = m_mTransformation * m_mBlendTransformation * _mPivot * _itBegin[m_iParentBoneIndex]->m_mCombinedTransformation;
 	}
+
+	m_mBlendTransformation = g_mUnit;
 }
 
 #if ACTIVATE_TOOL

@@ -88,9 +88,11 @@ HRESULT CRenderTarget_Manager::Begin_MultiRenderTaget(const wstring& _wstrMultiT
 		MSG_RETURN(E_FAIL, "CRenderTarget_Manager::Begin_MultiRenderTaget", "Invalid MultiRenderTarget");
 	}
 
-	m_pContext->OMGetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencilView.GetAddressOf());
+	ID3D11ShaderResourceView*	pShaderResourceView[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = { nullptr };
+	ID3D11RenderTargetView*		pRenderTargetView[MAX_RENDERTARGET] = { nullptr };
 
-	ID3D11RenderTargetView* pRenderTargetView[MAX_RENDERTARGET] = { nullptr };
+	m_pContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, pShaderResourceView);
+	m_pContext->OMGetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencilView.GetAddressOf());
 
 	_uint iIndex(0);
 	for (auto& pRenderTarget : m_umapMultiRenderTarget[_wstrMultiTargetTag])

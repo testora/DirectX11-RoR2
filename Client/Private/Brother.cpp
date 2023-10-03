@@ -146,7 +146,6 @@ HRESULT CBrother::Ready_Components()
 
 	_uint iHammerIndex			= pModel->Get_MeshIndex("BrotherHammerConcrete");
 	_uint iConstellationIndex	= pModel->Get_MeshIndex("mdlConstellationBrother");
-	
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iConstellationIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iHammerIndex);
@@ -167,6 +166,8 @@ HRESULT CBrother::Ready_Components()
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iConstellationIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iConstellationIndex);
+
+	pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
 
 //	AIM_YAW
 //	AIM_PITCH

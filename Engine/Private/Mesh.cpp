@@ -1,13 +1,13 @@
 #include "EnginePCH.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Animation.h"
 #include "Bone.h"
 #include "Event_Handler.h"
 
 CMesh::CMesh(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CVIBuffer(_pDevice, _pContext, COMPONENT::MESH)
 {
-	m_arrInterpolationMatrices.fill(g_mUnit);
 }
 
 #if ACTIVATE_TOOL
@@ -174,6 +174,8 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 	m_iNumBones = _pAIMesh->mNumBones;
 	m_vecBoneIndices.reserve(m_iNumBones);
 	m_vecBoneOffsets.reserve(m_iNumBones);
+	m_vecBones.resize(m_iNumBones, g_mUnit);
+	m_vecInterpolationMatrices.resize(m_iNumBones, g_mUnit);
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
 
@@ -326,6 +328,8 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(std::ifstream& _inFile)
 	
 	m_vecBoneIndices.resize(m_iNumBones);
 	m_vecBoneOffsets.resize(m_iNumBones);
+	m_vecBones.resize(m_iNumBones, g_mUnit);
+	m_vecInterpolationMatrices.resize(m_iNumBones, g_mUnit);
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
 
@@ -393,45 +397,46 @@ HRESULT CMesh::Ready_VertexBuffer_NonAnim(std::ifstream& _inFile)
 
 const _float4x4* CMesh::Get_BoneMatrices(vector<shared_ptr<CBone>>::iterator _itBegin, _matrixf _mPivot)
 {
-	m_arrBones.fill(g_mUnit);
-
-	for (size_t i = 0; i < m_iNumBones; ++i)
+	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
-		_matrix mInterpolation = Function::Lerp(m_arrInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
-		m_arrBones[i] = m_vecBoneOffsets[i] * mInterpolation * _mPivot;
+		_matrix mInterpolation = Function::Lerp(m_vecInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+		m_vecBones[i] = m_vecBoneOffsets[i] * mInterpolation * _mPivot;
 	}
 
-	return m_arrBones.data();
+	return m_vecBones.data();
 }
 
-void CMesh::Set_Interpolation(vector<shared_ptr<CBone>>::iterator _itBegin, _float _fDuration)
+void CMesh::Set_InterpolationMatrix(vector<shared_ptr<CBone>>::iterator _itBegin, _float _fDuration)
 {
 	if (0.f == _fDuration)
 	{
-		return;
+		m_fInterpolationRatio = 1.f;
 	}
-
-	for (size_t i = 0; i < m_iNumBones; ++i)
+	else
 	{
-		m_arrInterpolationMatrices[i] = Function::Lerp(m_arrInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
-	}
-
-	m_fInterpolationRatio = 0.f;
-	
-	CEvent_Handler::Get_Instance()->Erase_OnTickListener(shared_from_this());
-	CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
-		[this, _fDuration](_float _fDeltaTime)->_bool
+		for (_uint i = 0; i < m_iNumBones; ++i)
 		{
-			m_fInterpolationRatio += _fDeltaTime / _fDuration;
-
-			if (m_fInterpolationRatio >= 1.f)
+			m_vecInterpolationMatrices[i] = Function::Lerp(m_vecInterpolationMatrices[i], _itBegin[m_vecBoneIndices[i]]->Get_CombinedTransformation(), m_fInterpolationRatio);
+		}
+		
+		m_fInterpolationRatio = 0.f;
+		
+		CEvent_Handler::Get_Instance()->Erase_OnTickListener(shared_from_this());
+		CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
+			[this, _fDuration](_float _fDeltaTime)->_bool
 			{
-				m_fInterpolationRatio = 1.f;
-				return false;
-			}
+				m_fInterpolationRatio += _fDeltaTime / _fDuration;
 
-			return true;
-		});
+				if (m_fInterpolationRatio >= 1.f)
+				{
+					m_fInterpolationRatio = 1.f;
+					return false;
+				}
+
+				return true;
+			}
+		);
+	}
 }
 
 #if ACTIVATE_TOOL

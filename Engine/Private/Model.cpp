@@ -12,16 +12,19 @@ CModel::CModel(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pCont
 }
 
 CModel::CModel(const CModel& _rhs)
-	: CComponent				(_rhs)
-	, m_eType					(_rhs.m_eType)
-	, m_mPivot					(_rhs.m_mPivot)
-	, m_iNumMeshes				(_rhs.m_iNumMeshes)
-	, m_iNumMaterials			(_rhs.m_iNumMaterials)
-	, m_iNumAnimations			(_rhs.m_iNumAnimations)
-	, m_vecMeshes				(_rhs.m_vecMeshes)
-	, m_vecMaterials			(_rhs.m_vecMaterials)
-	, m_vecMaterialDescs		(_rhs.m_vecMaterialDescs)
-	, m_iCurrentAnimationIndex	(_rhs.m_iCurrentAnimationIndex)
+	: CComponent					(_rhs)
+	, m_eType						(_rhs.m_eType)
+	, m_mPivot						(_rhs.m_mPivot)
+	, m_iNumBones					(_rhs.m_iNumBones)
+	, m_iNumMeshes					(_rhs.m_iNumMeshes)
+	, m_iNumMaterials				(_rhs.m_iNumMaterials)
+	, m_iNumAnimations				(_rhs.m_iNumAnimations)
+	, m_vecMeshes					(_rhs.m_vecMeshes)
+	, m_vecMaterials				(_rhs.m_vecMaterials)
+	, m_vecMaterialDescs			(_rhs.m_vecMaterialDescs)
+	, m_vecBoneAnimationIndices		(_rhs.m_vecBoneAnimationIndices)
+	, m_vecBonePivot				(_rhs.m_vecBonePivot)
+	, m_mapHideMeshFromAnimations	(_rhs.m_mapHideMeshFromAnimations)
 {
 	for (auto pOriginal : _rhs.m_vecAnimations)
 	{
@@ -131,9 +134,9 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 {
 	if (m_vecMeshes[_iMeshIndex])
 	{
-		if (m_mapHideMeshFromAnimations.end() != m_mapHideMeshFromAnimations.find(m_iCurrentAnimationIndex))
+		for (_uint iAnimationIndex : m_usetAnimationPlayingIndices)
 		{
-			auto range = m_mapHideMeshFromAnimations.equal_range(m_iCurrentAnimationIndex);
+			auto range = m_mapHideMeshFromAnimations.equal_range(iAnimationIndex);
 			for (auto iter = range.first; iter != range.second; ++iter)
 			{
 				if (iter->second == _iMeshIndex)
@@ -200,6 +203,9 @@ HRESULT CModel::Initialize_FromAssimp(const MODEL _eType, const wstring& _wstrMo
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromAssimp", "Failed to Ready_Bones");
 	}
 	m_iNumBones = static_cast<_uint>(m_vecBones.size());
+	m_vecBoneAnimationIndices.resize(m_iNumBones);
+	m_vecBonePivot.resize(m_iNumBones);
+	std::fill(m_vecBonePivot.begin(), m_vecBonePivot.end(), g_mUnit);
 
 	if (FAILED(Ready_Animations(pAIScene)))
 	{
@@ -312,6 +318,9 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 	inFile.close();
 
 	m_vecMaterialDescs.resize(m_iNumMeshes);
+	m_vecBoneAnimationIndices.resize(m_iNumBones);
+	m_vecBonePivot.resize(m_iNumBones);
+	std::fill(m_vecBonePivot.begin(), m_vecBonePivot.end(), g_mUnit);
 
 	return S_OK;
 }
@@ -412,9 +421,14 @@ HRESULT CModel::Ready_Materials(const aiScene* _pAIScene, const wstring& _wstrMo
 }
 #endif
 
-_bool CModel::Is_AnimationFinished() const
+_bool CModel::Is_AnimationPlaying(_uint _iAnimationIndex) const
 {
-	return m_vecAnimations[m_iCurrentAnimationIndex]->Is_Finished();
+	return m_usetAnimationPlayingIndices.find(_iAnimationIndex) != m_usetAnimationPlayingIndices.end();
+}
+
+_bool CModel::Is_AnimationFinished(_uint _iAnimationIndex) const
+{
+	return m_vecAnimations[_iAnimationIndex]->Is_Finished();
 }
 
 _uint CModel::Get_BoneIndex(const _char* _szBoneName) const
@@ -443,19 +457,9 @@ _uint CModel::Get_MeshIndex(const _char* _szMeshName) const
 	return static_cast<_uint>(m_vecMeshes.size());
 }
 
-void CModel::Tick_Animation(_float _fTimeDelta)
+void CModel::Set_DefaultAnimation(_uint _iAnimationIndex)
 {
-	if (MODEL::NONANIM == m_eType)
-	{
-		return;
-	}
-
-	m_vecAnimations[m_iCurrentAnimationIndex]->Tick(m_fAnimationPlaySpeed * _fTimeDelta, m_vecBones.begin(), m_bAnimReverse, m_bAnimLoop);
-
-	for (auto pBone : m_vecBones)
-	{
-		pBone->Update_CombinedTransformation(m_vecBones.begin());
-	}
+	std::fill(m_vecBoneAnimationIndices.begin(), m_vecBoneAnimationIndices.end(), _iAnimationIndex);
 }
 
 void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)
@@ -467,19 +471,79 @@ void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bR
 
 	for (auto& pMesh : m_vecMeshes)
 	{
-		pMesh->Set_Interpolation(m_vecBones.begin(), _fInterpolationDuration);
+		pMesh->Set_InterpolationMatrix(m_vecBones.begin(), _fInterpolationDuration);
 	}
 
-	m_iCurrentAnimationIndex	= _iAnimationIndex;
+	m_usetAnimationPlayingIndices.clear();
+	m_vecAnimations[_iAnimationIndex]->Set_AnimationIndex(m_vecBoneAnimationIndices.begin(), _iAnimationIndex);
+	for (auto iAnimationIndex : m_vecBoneAnimationIndices)
+	{
+		m_usetAnimationPlayingIndices.emplace(iAnimationIndex);
+	}
+
 	m_fAnimationPlaySpeed		= _fPlaySpeed;
 	m_bAnimReverse				= _bReverse;
 	m_bAnimLoop					= _bLoop;
 }
 
-void CModel::Reset_Animation()
+void CModel::Fix_Animation(_uint _iAnimationIndex, _float _fRatio)
 {
-	m_vecAnimations[m_iCurrentAnimationIndex]->Reset();
+	if (_iAnimationIndex >= m_iNumAnimations)
+	{
+		MSG_RETURN(, "CModel::Fix_Animation", "Invalid Index");
+	}
+
+	m_usetAnimationPlayingIndices.clear();
+	m_vecAnimations[_iAnimationIndex]->Set_AnimationIndex(m_vecBoneAnimationIndices.begin(), _iAnimationIndex);
+	for (auto iAnimationIndex : m_vecBoneAnimationIndices)
+	{
+		m_usetAnimationPlayingIndices.emplace(iAnimationIndex);
+	}
+
+	m_umapAnimationFixRatio.emplace(_iAnimationIndex, _fRatio);
+}
+
+void CModel::Blend_Animation(_uint _iAnimationIndex, _float _fRatio)
+{
+	if (_iAnimationIndex >= m_iNumAnimations)
+	{
+		MSG_RETURN(, "CModel::Fix_Animation", "Invalid Index");
+	}
+
+	m_vecAnimations[_iAnimationIndex]->Blend(m_vecAnimations.begin(), m_vecBones.begin(), m_vecBoneAnimationIndices.begin(), _fRatio);
+}
+
+void CModel::Reset_Animation(_uint _iAnimationIndex)
+{
+	m_vecAnimations[_iAnimationIndex]->Reset();
 	Tick_Animation(0.f);
+}
+
+void CModel::Tick_Animation(_float _fTimeDelta)
+{
+	if (MODEL::NONANIM == m_eType)
+	{
+		return;
+	}
+
+	for (_uint iAnimationIndex : m_usetAnimationPlayingIndices)
+	{
+		if (m_umapAnimationFixRatio.find(iAnimationIndex) == m_umapAnimationFixRatio.end())
+		{
+			m_vecAnimations[iAnimationIndex]->Tick(m_fAnimationPlaySpeed * _fTimeDelta, m_vecBones.begin(), m_bAnimReverse, m_bAnimLoop);
+		}
+		else
+		{
+			m_vecAnimations[iAnimationIndex]->Fix(m_vecBones.begin(), m_umapAnimationFixRatio[iAnimationIndex]);
+		}
+	}
+
+	for (_uint i = 0; i < m_iNumBones; ++i)
+	{
+		m_vecBones[i]->Update_CombinedTransformation(m_vecBones.begin(), m_vecBonePivot[i]);
+	}
+
+	m_umapAnimationFixRatio.clear();
 }
 
 void CModel::Iterate_Meshes(function<_bool(shared_ptr<CMesh>)> _funcCallback)
@@ -693,7 +757,7 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
 	}
 
-	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin(), m_mPivot), g_iMaxBones);
+	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin(), m_mPivot), m_vecMeshes[_iMeshIndex]->Get_NumBones());
 }
 
 shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)

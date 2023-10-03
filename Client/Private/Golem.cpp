@@ -142,19 +142,19 @@ void CGolem::Hit()
 void CGolem::Hit_WeakPoint()
 {
 	m_pAnimator->Play_Animation(ANIMATION::GOLEM::HIT_HURT1, 2.f, false, g_fDefaultInterpolationDuration, false);
-	m_pAnimator->Reset();
+//	m_pAnimator->Reset();
 
 	_float fAcc(0.f);
 	CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
 		[=](_float _fTimeDelta) mutable->_bool
 		{
-			if (m_pAnimator->Is_Finished())
+		//	if (m_pAnimator->Is_Finished())
 			{
 				m_pAnimator->Play_Animation(ANIMATION::GOLEM::IDLE);
 
 				return false;
 			}
-			else
+		//	else
 			{
 				return true;
 			}

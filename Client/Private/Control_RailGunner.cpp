@@ -24,7 +24,7 @@ HRESULT CControl_RailGunner::Initialize(shared_ptr<CGameObject> _pOwner, const E
 	}
 
 	m_pRailGunner = dynamic_pointer_cast<CRailGunner>(_pOwner);
-	if (nullptr == m_pRailGunner)
+	if (m_pRailGunner.expired())
 	{
 		MSG_RETURN(E_FAIL, "CControl_RailGunner::Initialize", "Nullptr Exception: m_pRailGunner");
 	}
@@ -41,9 +41,11 @@ void CControl_RailGunner::Tick(_float _fTimeDelta)
 
 void CControl_RailGunner::Late_Tick(_float _fTimeDelta)
 {
+	shared_ptr<CRailGunner> pRailGunner = m_pRailGunner.lock();
+
 	if (CGameInstance::Get_Instance()->Key_Down(CONTROL_JUMP))
 	{
-		if (m_pRailGunner->Is_State(BIT(RG_STATE::AIR)))
+		if (pRailGunner->Is_State(BIT(RG_STATE::AIR)))
 		{
 			return;
 		}
@@ -51,6 +53,7 @@ void CControl_RailGunner::Late_Tick(_float _fTimeDelta)
 		{
 			m_pTargetPhysics->Force(TRANSFORM::UP, m_pEntityDesc->fJumpPower);
 			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_START, 1.f, false, g_fDefaultInterpolationDuration, false);
+			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
 		}
 	}
 
@@ -62,45 +65,46 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 	shared_ptr<CGameInstance>	pGameInstance			= CGameInstance::Get_Instance();
 	shared_ptr<CCamera_Main>	pMainCamera				= CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>();
 	shared_ptr<CTransform>		pMainCameraTransform	= pMainCamera->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	shared_ptr<CRailGunner>		pRailGunner				= m_pRailGunner.lock();
 
-	switch (m_pRailGunner->Get_Crosshair())
+	switch (pRailGunner->Get_Crosshair())
 	{
 	case RG_CROSSHAIR::MAIN:
 	{
 		if (pGameInstance->Key_Down(CONTROL_ATTACK1))
 		{
-			if (m_pRailGunner->Is_State(BIT(RG_STATE::READY_PISTOL)))
+			if (pRailGunner->Is_State(BIT(RG_STATE::READY_PISTOL)))
 			{
-				m_pRailGunner->Bounce_Bracket();
-				m_pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
-				m_pRailGunner->Fire_Pistol();
+				pRailGunner->Bounce_Bracket();
+				pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
+				pRailGunner->Fire_Pistol();
 				m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
-				m_pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
+				pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
 				pMainCamera->Rebound_Pistol();
 			}
 		}
 		if (pGameInstance->Key_Hold(CONTROL_ATTACK1))
 		{
-			m_pRailGunner->Set_State(RG_STATE::AIM);
+			pRailGunner->Set_State(RG_STATE::AIM);
 
-			if (m_pRailGunner->Is_State(BIT(RG_STATE::READY_PISTOL)))
+			if (pRailGunner->Is_State(BIT(RG_STATE::READY_PISTOL)))
 			{
-				m_pRailGunner->Bounce_Bracket();
-				m_pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
-				m_pRailGunner->Fire_Pistol();
+				pRailGunner->Bounce_Bracket();
+				pRailGunner->Set_State(RG_STATE::READY_PISTOL, false);
+				pRailGunner->Fire_Pistol();
 				m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
-				m_pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
+				pRailGunner->Set_State(RG_STATE::FIRE_PISTOL);
 				pMainCamera->Rebound_Pistol();
 			}
 		}
 		if (pGameInstance->Key_Up(CONTROL_ATTACK1))
 		{
-			m_pRailGunner->Set_State(RG_STATE::AIM, false);
+			pRailGunner->Set_State(RG_STATE::AIM, false);
 		}
 		if (pGameInstance->Key_Hold(CONTROL_ATTACK2))
 		{
-			m_pRailGunner->Set_State(RG_STATE::READY_SNIPER);
-			m_pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::SCOPE);
+			pRailGunner->Set_State(RG_STATE::READY_SNIPER);
+			pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::SCOPE);
 			m_pTargetTransform->LookTo_Interpolation(pMainCameraTransform->Get_State(TRANSFORM::LOOK));
 			pMainCamera->Adjust_FOV(RAILGUNNER_SCOPE_FOV, RAILGUNNER_SCOPE_ZOOM_IN_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT,
 				_float2(RAILGUNNER_SCOPE_SENSITIVITY_YAW, RAILGUNNER_SCOPE_SENSITIVITY_PITCH));
@@ -111,23 +115,23 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_ATTACK1))
 		{
-			if (m_pRailGunner->Is_State(BIT(RG_STATE::READY_SNIPER)))
+			if (pRailGunner->Is_State(BIT(RG_STATE::READY_SNIPER)))
 			{
-				m_pRailGunner->Fire_Sniper();
-				m_pRailGunner->Set_State(RG_STATE::READY_SNIPER, false);
-				m_pRailGunner->Set_State(RG_STATE::READY_RELOAD);
+				pRailGunner->Fire_Sniper();
+				pRailGunner->Set_State(RG_STATE::READY_SNIPER, false);
+				pRailGunner->Set_State(RG_STATE::READY_RELOAD);
 				pMainCamera->Rebound_Sniper();
 			}
 		}
 		if (pGameInstance->Key_Up(CONTROL_ATTACK2))
 		{
-			if (!m_pRailGunner->Is_State(BIT(RG_STATE::READY_RELOAD)))
+			if (!pRailGunner->Is_State(BIT(RG_STATE::READY_RELOAD)))
 			{
-				m_pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::MAIN);
+				pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::MAIN);
 			}
-			if (m_pRailGunner->Is_State(BIT(RG_STATE::READY_RELOAD)))
+			if (pRailGunner->Is_State(BIT(RG_STATE::READY_RELOAD)))
 			{
-				m_pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::RELOAD);
+				pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::RELOAD);
 			}
 			pMainCamera->Release_FOV(RAILGUNNER_SCOPE_ZOOM_OUT_DURATION, RAILGUNNER_SCOPE_ZOOM_WEIGHT);
 		}
@@ -152,14 +156,14 @@ void CControl_RailGunner::Handle_MouseInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_ATTACK1))
 		{
-			m_pRailGunner->Hit_Reload();
-			m_pRailGunner->Set_State(RG_STATE::READY_RELOAD, false);
+			pRailGunner->Hit_Reload();
+			pRailGunner->Set_State(RG_STATE::READY_RELOAD, false);
 		}
 	}
 	break;
 	case RG_CROSSHAIR::SPRINT:
 	{
-		if (!m_pRailGunner->Is_State(BIT(RG_STATE::SPRINT)))
+		if (!pRailGunner->Is_State(BIT(RG_STATE::SPRINT)))
 		{
 			
 		}
@@ -172,9 +176,10 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 {
 	shared_ptr<CGameInstance>	pGameInstance			= CGameInstance::Get_Instance();
 	shared_ptr<CPipeLine>		pPipeLine				= CPipeLine::Get_Instance();
-	_bool						bIsAim					= m_pRailGunner->Is_State(BIT(RG_STATE::AIM));
-	_bool						bIsAir					= m_pRailGunner->Is_State(BIT(RG_STATE::AIR));
-	_bool						bIsSprint				= m_pRailGunner->Is_State(BIT(RG_STATE::SPRINT));
+	shared_ptr<CRailGunner>		pRailGunner				= m_pRailGunner.lock();
+	_bool						bIsAim					= pRailGunner->Is_State(BIT(RG_STATE::AIM));
+	_bool						bIsAir					= pRailGunner->Is_State(BIT(RG_STATE::AIR));
+	_bool						bIsSprint				= pRailGunner->Is_State(BIT(RG_STATE::SPRINT));
 
 	switch (static_cast<_uint>(m_bitDirection.to_ulong()))
 	{
@@ -182,7 +187,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_SPRINT))
 		{
-			m_pRailGunner->Set_State(RG_STATE::SPRINT);
+			pRailGunner->Set_State(RG_STATE::SPRINT);
 		}
 
 		m_pTargetTransform->LookTo_Interpolation(pPipeLine->Get_Transform(TRANSFORM::LOOK));
@@ -227,7 +232,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_SPRINT))
 		{
-			m_pRailGunner->Set_State(RG_STATE::SPRINT);
+			pRailGunner->Set_State(RG_STATE::SPRINT);
 		}
 
 		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) - pPipeLine->Get_Transform(TRANSFORM::RIGHT);
@@ -243,7 +248,7 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	{
 		if (pGameInstance->Key_Down(CONTROL_SPRINT))
 		{
-			m_pRailGunner->Set_State(RG_STATE::SPRINT);
+			pRailGunner->Set_State(RG_STATE::SPRINT);
 
 		}
 		_float4 vDirection = pPipeLine->Get_Transform(TRANSFORM::LOOK) + pPipeLine->Get_Transform(TRANSFORM::RIGHT);
@@ -279,8 +284,16 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 	break;
 
 	default:
-		m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
-		break;
+	{
+		if (!CGameInstance::Get_Instance()->Key_Hold())
+		{
+			if (!pRailGunner->Is_State(BIT(RG_STATE::AIR)))
+			{
+				m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
+			}
+		}
+	}
+	break;
 	}
 }
 

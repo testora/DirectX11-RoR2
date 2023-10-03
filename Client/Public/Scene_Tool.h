@@ -8,6 +8,7 @@ BEGIN(Engine)
 class CRenderer;
 class CShader;
 class CModel;
+class CAnimation;
 END
 
 BEGIN(Client)
@@ -39,6 +40,8 @@ private:
 
 	map<string, shared_ptr<CModel>>		m_mapAnimModels;
 	map<string, shared_ptr<CModel>>		m_mapNonAnimModels;
+
+	shared_ptr<CAnimation>				m_pSelectedAnimation;
 
 	pair<string, shared_ptr<CModel>>	m_pairSelectedModel;
 	MATERIAL							m_tSelectedMaterial;

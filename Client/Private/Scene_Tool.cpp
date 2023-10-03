@@ -60,6 +60,8 @@ HRESULT CScene_Tool::Render()
 	return S_OK;
 }
 
+static _int iSelectedKeyFrame(0);
+
 void CScene_Tool::System_Model()
 {
 	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
@@ -256,6 +258,7 @@ void CScene_Tool::System_Model()
 		m_mapAnimModels.erase(m_pairSelectedModel.first);
 		m_pairSelectedModel.first.clear();
 		m_pairSelectedModel.second = nullptr;
+		iSelectedKeyFrame = -1;
 	}
 	if (ImGui::BeginListBox("Anim", ImVec2(-FLT_MIN, 0.f)))
 	{
@@ -314,9 +317,13 @@ void CScene_Tool::Info_Model()
 	static _uint			iSelectedItem(-1);
 	static _uint			iItemIdx;
 	
+	static _uint			iSelectedAnimation(-1);
 	static _uint			iSelectedMaterial(-1);
+	static _uint			iAnimationIdx;
 	static _uint			iMaterialIdx;
 
+	static _uint			iCurrentChannelIdx(0);
+	static _uint			iKeyFrameIdx;
 	static _uint			iSelectedTexture(-1);
 	static _uint			iTextureIdx;
 
@@ -361,13 +368,19 @@ void CScene_Tool::Info_Model()
 		{
 			if (ImGui::BeginListBox("Animation: ", ImVec2(-FLT_MIN, 0.f)))
 			{
+				iAnimationIdx = 0;
 				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumAnimations(); ++i)
 				{
-					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Animation(i)->Get_Name(), iSelectedItem == iItemIdx))
+					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Animation(iAnimationIdx)->Get_Name(), iSelectedItem == iItemIdx))
 					{
-						iSelectedItem = iItemIdx;
+						iSelectedItem			= iItemIdx;
+						iSelectedAnimation		= iAnimationIdx;
+						iCurrentChannelIdx		= 0;
+						iSelectedKeyFrame		= 0;
+						m_pSelectedAnimation	= m_pairSelectedModel.second->Get_Animation(i);
 					}
 					++iItemIdx;
+					++iAnimationIdx;
 				}
 				ImGui::EndListBox();
 			}
@@ -432,177 +445,393 @@ void CScene_Tool::Info_Model()
 #pragma endregion
 	}
 
-#pragma region Bones
-	if (Function::InRange(iSelectedItem, 0u, iRangeBone))
+	if (m_pairSelectedModel.second)
 	{
-		ImGui::NewLine();
-		ImGui::SeparatorText("Bones");
-	}
+#pragma region Bones
+		if (Function::InRange(iSelectedItem, 0u, iRangeBone))
+		{
+			ImGui::NewLine();
+			ImGui::SeparatorText("Bones");
+		}
 #pragma endregion
 #pragma region Animations
-	if (Function::InRange(iSelectedItem, iRangeBone, iRangeAnimation))
-	{
-		ImGui::NewLine();
-		ImGui::SeparatorText("Animations");
-	}
+		if (Function::InRange(iSelectedItem, iRangeBone, iRangeAnimation))
+		{
+			ImGui::NewLine();
+			ImGui::SeparatorText("Animations");
+	
+			if (ImGui::TreeNodeEx(m_pSelectedAnimation->Get_Name(), ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				ImGui::SetNextItemWidth(120.f);
+				if (ImGui::BeginCombo(string("Channel(" + std::to_string(m_pSelectedAnimation->Get_NumChannels()) + ")").c_str(), string("Channel " + std::to_string(iCurrentChannelIdx)).c_str()))
+				{
+					for (_uint i = 0; i < m_pSelectedAnimation->Get_NumChannels(); ++i)
+					{
+						const _bool bSelected = iCurrentChannelIdx == i;
+						if (ImGui::Selectable((string("Channel ") + std::to_string(i)).c_str(), bSelected))
+						{
+							iCurrentChannelIdx = i;
+							iSelectedKeyFrame = 0;
+						}
+	
+						if (bSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				if (ImGui::IsItemHovered())
+				{
+					if (_float fWheelDeltaV = ImGui::GetIO().MouseWheel)
+					{
+						if (0 > fWheelDeltaV)
+						{
+							if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
+							{
+								iCurrentChannelIdx += 1;
+								iSelectedKeyFrame = 0;
+							}
+						}
+						else
+						{
+							if (iCurrentChannelIdx > 0)
+							{
+								iCurrentChannelIdx -= 1;
+								iSelectedKeyFrame = 0;
+							}
+						}
+					}
+	
+					if (CGameInstance::Get_Instance()->Key_Down(VK_DOWN))
+					{
+						if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames() - 1))
+						{
+							iSelectedKeyFrame += 1;
+						}
+					}
+					if (CGameInstance::Get_Instance()->Key_Down(VK_UP))
+					{
+						if (iSelectedKeyFrame > 0)
+						{
+							iSelectedKeyFrame -= 1;
+						}
+					}
+					if (CGameInstance::Get_Instance()->Key_Down(VK_LEFT))
+					{
+						if (iCurrentChannelIdx > 0)
+						{
+							iCurrentChannelIdx -= 1;
+							iSelectedKeyFrame = 0;
+						}
+					}
+					if (CGameInstance::Get_Instance()->Key_Down(VK_RIGHT))
+					{
+						if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
+						{
+							iCurrentChannelIdx += 1;
+							iSelectedKeyFrame = 0;
+						}
+					}
+	
+					if (CGameInstance::Get_Instance()->Key_Down(VK_DELETE))
+					{
+						if (iCurrentChannelIdx != -1)
+						{
+							if (FAILED(m_pSelectedAnimation->Remove_Channel(iCurrentChannelIdx)))
+							{
+								MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove_Channel");
+							}
+	
+							if (iCurrentChannelIdx == m_pSelectedAnimation->Get_NumChannels())
+							{
+								iCurrentChannelIdx -= 1;
+							}
+	
+							iSelectedKeyFrame = 0;
+						}
+					}
+				}
+	
+				_float fWindowWidth1 = ImGui::GetWindowWidth();
+				_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+				_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
+	
+				static _char szBoneIndex[32]	= "0";
+				static _uint iFindBoneIndex		= 0;
+				ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
+				ImGui::Button("~##FindChannel", ImVec2(fButtonWidth1, fButtonWidth1));
+				if (ImGui::BeginPopupContextItem())
+				{
+					ImGui::Text("Find by Bone Index:");
+					if (ImGui::InputText("##Input_FindChannel", szBoneIndex, IM_ARRAYSIZE(szBoneIndex), ImGuiInputTextFlags_CharsDecimal))
+					{
+						_uint iChannelIdx = m_pSelectedAnimation->Get_ChannelIndex(atoi(szBoneIndex));
+						if (m_pSelectedAnimation->Get_NumChannels() != iChannelIdx)
+						{
+							iCurrentChannelIdx = iChannelIdx;
+						}
+					}
+					if (ImGui::Button("Close"))
+					{
+						ImGui::CloseCurrentPopup();
+					}
+	
+					ImGui::EndPopup();
+				}
+	
+				if (iCurrentChannelIdx != -1)
+				{
+					ImGui::Text("Channel: %d, KeyFrame: %d, BoneIndex: %d", iCurrentChannelIdx, iSelectedKeyFrame, m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex());
+	
+					ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
+					if (ImGui::Button("-##RemoveChannel", ImVec2(fButtonWidth1, fButtonWidth1)))
+					{
+						if (FAILED(m_pSelectedAnimation->Remove_Channel(iCurrentChannelIdx)))
+						{
+							MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove_Channel");
+						}
+	
+						if (iCurrentChannelIdx == m_pSelectedAnimation->Get_NumChannels())
+						{
+							iCurrentChannelIdx -= 1;
+						}
+	
+						iSelectedKeyFrame = 0;
+					}
+	
+					if (ImGui::BeginListBox("Keyframe Listbox", ImVec2(-FLT_MIN, 0.f)))
+					{
+						iKeyFrameIdx = 0;
+						for (_uint i = 0; i < m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames(); ++i)
+						{
+							ImGui::PushID(iKeyFrameIdx);
+							if (ImGui::Selectable(string("KeyFrame " + std::to_string(i)).c_str(), iSelectedKeyFrame == iKeyFrameIdx))
+							{
+								iSelectedKeyFrame = iKeyFrameIdx;
+							}
+							ImGui::PopID();
+	
+							++iKeyFrameIdx;
+						}
+						ImGui::EndListBox();
+					}
+	
+					if (iSelectedKeyFrame != -1)
+					{
+						KEYFRAME tSelectKeyFrame{}, tCompareKeyFrame{};
+	
+						if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames()))
+						{
+							ImGui::SeparatorText(m_pairSelectedModel.second->Get_Bone(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex())->Get_Name());
+							ImGui::BeginGroup();
+							{
+								tSelectKeyFrame = m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_KeyFrame(iSelectedKeyFrame);
+	
+								ImGui::InputFloat4	("Scale",		reinterpret_cast<_float*>(&tSelectKeyFrame.vScale),				"%.3f", ImGuiInputTextFlags_ReadOnly);
+								ImGui::InputFloat4	("Rotation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+								ImGui::InputFloat4	("Translation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
+								ImGui::InputFloat	("Time",		reinterpret_cast<_float*>(&tSelectKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
+	
+								m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Set_KeyFrame(iSelectedKeyFrame, tSelectKeyFrame);
+							}
+							ImGui::EndGroup();
+							ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
+	
+							_uint iCompareAnimation = 15;
+	
+							shared_ptr<CChannel> pCompareChannel = m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Channel(
+								m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex(), true);
+							if (nullptr != pCompareChannel
+							&&	iSelectedKeyFrame < static_cast<_int>(pCompareChannel->Get_NumKeyFrames()))
+							{
+								ImGui::SeparatorText(string("Compare: " + string(m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Name())).c_str());
+								ImGui::BeginGroup();
+								{
+									tCompareKeyFrame = pCompareChannel->Get_KeyFrame(iSelectedKeyFrame);
+	
+									ImGui::InputFloat4	("Scale##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.vScale),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat4	("Rotation##Compare",		reinterpret_cast<_float*>(&tCompareKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat4	("Translation##Compare",	reinterpret_cast<_float*>(&tCompareKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat	("Time##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
+								}
+								ImGui::EndGroup();
+								ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
+	
+								_bool bKeyFrameEqual =
+									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vScale),			XMLoadFloat4(&tCompareKeyFrame.vScale))) &&
+									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vRotation),		XMLoadFloat4(&tCompareKeyFrame.vRotation))) &&
+									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vTranslation),	XMLoadFloat4(&tCompareKeyFrame.vTranslation)));
+								
+								ImGui::Text(bKeyFrameEqual ? "Equal" : "Not Equal");
+							}
+						}
+					}
+				}
+				
+				ImGui::TreePop();
+			}
+		}
+	
 #pragma endregion
 #pragma region Meshes
-	if (Function::InRange(iSelectedItem, iRangeAnimation, iRangeMesh))
-	{
-		ImGui::NewLine();
-		ImGui::SeparatorText("Meshes");
-	}
+		if (Function::InRange(iSelectedItem, iRangeAnimation, iRangeMesh))
+		{
+			ImGui::NewLine();
+			ImGui::SeparatorText("Meshes");
+		}
 #pragma endregion
 #pragma region Materials
-	if (Function::InRange(iSelectedItem, iRangeMesh, iRangeMaterial))
-	{
-		ImGui::NewLine();
-		ImGui::SeparatorText("Materials");
-
-		static _int		iCurrentIdx(0);
-		const _char*	szTextureTypes[]	= { "Diffuse", "Normal" };
-		const _char*	szPreview			= szTextureTypes[iCurrentIdx];
-		if (ImGui::TreeNodeEx(string("Material " + std::to_string(iSelectedMaterial)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+		if (Function::InRange(iSelectedItem, iRangeMesh, iRangeMaterial))
 		{
-			ImGui::SetNextItemWidth(120.f);
-			if (ImGui::BeginCombo("Type", szPreview))
+			ImGui::NewLine();
+			ImGui::SeparatorText("Materials");
+	
+			static _int		iCurrentMaterialIdx(0);
+			const _char*	szTextureTypes[]	= { "Diffuse", "Normal" };
+			const _char*	szPreview			= szTextureTypes[iCurrentMaterialIdx];
+			if (ImGui::TreeNodeEx(string("Material " + std::to_string(iSelectedMaterial)).c_str(), ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				for (int i = 0; i < IM_ARRAYSIZE(szTextureTypes); ++i)
+				ImGui::SetNextItemWidth(120.f);
+				if (ImGui::BeginCombo("Type", szPreview))
 				{
-					const _bool bSelected = iCurrentIdx == i;
-					if (ImGui::Selectable(szTextureTypes[i], bSelected))
+					for (int i = 0; i < IM_ARRAYSIZE(szTextureTypes); ++i)
 					{
-						iSelectedTexture	= -1;
-						iCurrentIdx			= i;
-						szPreview			= szTextureTypes[i];
+						const _bool bSelected = iCurrentMaterialIdx == i;
+						if (ImGui::Selectable(szTextureTypes[i], bSelected))
+						{
+							iSelectedTexture	= -1;
+							iCurrentMaterialIdx	= i;
+							szPreview			= szTextureTypes[i];
+						}
+	
+						if (bSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
 					}
-
-					if (bSelected)
+					ImGui::EndCombo();
+				}
+	
+				switch (iCurrentMaterialIdx)
+				{
+				case 0:
+					eTexType = aiTextureType_DIFFUSE;
+					break;
+				case 1:
+					eTexType = aiTextureType_NORMALS;
+					break;
+				}
+	
+				_float fWindowWidth1 = ImGui::GetWindowWidth();
+				_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+				_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
+			
+				ImGui::SameLine(fWindowWidth1 - fButtonWidth1 * 5.f - fButtonSpace1 * 4.f - ImGui::GetStyle().WindowPadding.x);
+				if (ImGui::Button("*##DuplicateFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
+				{
+					if (iSelectedTexture != -1)
 					{
-						ImGui::SetItemDefaultFocus();
+						if (FAILED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Push_ShaderResourceView(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(iSelectedTexture))))
+						{
+							MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove Push_ShaderResourceView");
+						}
 					}
 				}
-				ImGui::EndCombo();
-			}
-
-			switch (iCurrentIdx)
-			{
-			case 0:
-				eTexType = aiTextureType_DIFFUSE;
-				break;
-			case 1:
-				eTexType = aiTextureType_NORMALS;
-				break;
-			}
-
-			_float fWindowWidth1 = ImGui::GetWindowWidth();
-			_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
-			_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
-		
-			ImGui::SameLine(fWindowWidth1 - fButtonWidth1 * 5.f - fButtonSpace1 * 4.f - ImGui::GetStyle().WindowPadding.x);
-			if (ImGui::Button("*##DuplicateFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
-			{
-				if (iSelectedTexture != -1)
+				ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+				if (ImGui::Button("+##AddFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
 				{
-					if (FAILED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Push_ShaderResourceView(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(iSelectedTexture))))
+					const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
+					ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				}
+				ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+				if (ImGui::Button("-##EraseFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
+				{
+					if (iSelectedTexture != -1)
 					{
-						MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove Push_ShaderResourceView");
+						if (SUCCEEDED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Remove_ShaderResourceView(iSelectedTexture)))
+						{
+							iSelectedTexture = -1;
+						}
+						else
+						{
+							MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove ShaderResourceView");
+						}
 					}
 				}
-			}
-			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("+##AddFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
-			{
-				const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
-				ImGuiFileDialog::Instance()->OpenDialog(DIALOG_OPEN_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
-			}
-			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::Button("-##EraseFromMaterial", ImVec2(fButtonWidth1, fButtonWidth1)))
-			{
+				ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+				if (ImGui::ArrowButton("##UpFromMaterial", ImGuiDir_Up))
+				{
+					if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture - 1))
+					{
+						--iSelectedTexture;
+					}
+				}
+				ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+				if (ImGui::ArrowButton("##DownFromMaterial", ImGuiDir_Down))
+				{
+					if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture + 1))
+					{
+						++iSelectedTexture;
+					}
+				}
+	
+				if (ImGui::BeginListBox("Texture Listbox", ImVec2(-FLT_MIN, 0.f)))
+				{
+					iTextureIdx = 0;
+					for (_uint i = 0; i < m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_NumTextures(); ++i)
+					{
+						wstring wstrTexturePath = m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(i);
+						wstring wstrFileName, wstrExtension;
+						Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
+	
+						ImGui::PushID(iTextureIdx);
+						if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
+						{
+							iSelectedTexture = iTextureIdx;
+						}
+						ImGui::PopID();
+	
+						++iTextureIdx;
+					}
+					ImGui::EndListBox();	
+				}
+	
 				if (iSelectedTexture != -1)
 				{
-					if (SUCCEEDED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Remove_ShaderResourceView(iSelectedTexture)))
+					ImVec2 imgSize;
+	
+					D3D11_TEXTURE2D_DESC tTexture2dDesc{};
+					m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_Texture2D(iSelectedTexture)->GetDesc(&tTexture2dDesc);
+	
+					_float fWidth	= static_cast<_float>(tTexture2dDesc.Width);
+					_float fHeight	= static_cast<_float>(tTexture2dDesc.Height);
+					_float fAspect	= fWidth / fHeight;
+	
+					if (fAspect > 1.f)
 					{
-						iSelectedTexture = -1;
+						imgSize.x = 300.f;
+						imgSize.y = 300.f / fAspect;
 					}
 					else
 					{
-						MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove ShaderResourceView");
+						imgSize.x = 300.f * fAspect;
+						imgSize.y = 300.f;
 					}
-				}
-			}
-			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::ArrowButton("##UpFromMaterial", ImGuiDir_Up))
-			{
-				if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture - 1))
-				{
-					--iSelectedTexture;
-				}
-			}
-			ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
-			if (ImGui::ArrowButton("##DownFromMaterial", ImGuiDir_Down))
-			{
-				if (m_tSelectedMaterial.pTexture[IDX(eTexType)]->Swap_ShaderResourceView(iSelectedTexture, iSelectedTexture + 1))
-				{
-					++iSelectedTexture;
-				}
-			}
-
-			if (ImGui::BeginListBox(szPreview, ImVec2(-FLT_MIN, 0.f)))
-			{
-				iTextureIdx = 0;
-				for (_uint i = 0; i < m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_NumTextures(); ++i)
-				{
-					wstring wstrTexturePath = m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(i);
-					wstring wstrFileName, wstrExtension;
-					Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
-
-					ImGui::PushID(iTextureIdx);
-					if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
+	
+					ImGui::Image(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_ShaderResourceView(iSelectedTexture).Get(), imgSize);
+					if (ImGui::BeginItemTooltip())
 					{
-						iSelectedTexture = iTextureIdx;
+						ImGui::Text("%.0fx%.0f", fWidth, fHeight);
+						ImGui::EndTooltip();
 					}
-					ImGui::PopID();
-
-					++iTextureIdx;
 				}
-				ImGui::EndListBox();	
+	
+				ImGui::TreePop();
 			}
-
-			if (iSelectedTexture != -1)
-			{
-				ImVec2 imgSize;
-
-				D3D11_TEXTURE2D_DESC tTexture2dDesc{};
-				m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_Texture2D(iSelectedTexture)->GetDesc(&tTexture2dDesc);
-
-				_float fWidth	= static_cast<_float>(tTexture2dDesc.Width);
-				_float fHeight	= static_cast<_float>(tTexture2dDesc.Height);
-				_float fAspect	= fWidth / fHeight;
-
-				if (fAspect > 1.f)
-				{
-					imgSize.x = 300.f;
-					imgSize.y = 300.f / fAspect;
-				}
-				else
-				{
-					imgSize.x = 300.f * fAspect;
-					imgSize.y = 300.f;
-				}
-
-				ImGui::Image(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_ShaderResourceView(iSelectedTexture).Get(), imgSize);
-				if (ImGui::BeginItemTooltip())
-				{
-					ImGui::Text("%.0fx%.0f", fWidth, fHeight);
-					ImGui::EndTooltip();
-				}
-			}
-
-			ImGui::TreePop();
 		}
-	}
 #pragma endregion
+	}
 #pragma region File Dialog
 
 	if (ImGuiFileDialog::Instance()->Display(DIALOG_OPEN_TEXTURE))
@@ -618,7 +847,6 @@ void CScene_Tool::Info_Model()
 	}
 
 #pragma endregion
-
 	ImGui::End();
 }
 

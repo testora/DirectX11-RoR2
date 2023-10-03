@@ -181,7 +181,7 @@ namespace Engine
 			_c.x, _c.y, _c.z, _c.w,
 			_d.x, _d.y, _d.z, _d.w
 		) {}
-		float4x4(XMFLOAT4X4 _float4) : XMFLOAT4X4(_float4) {}
+		float4x4(XMFLOAT4X4 _float4x4) : XMFLOAT4X4(_float4x4) {}
 		float4x4(XMMATRIX _matrix) { XMStoreFloat4x4(this, _matrix); }
 
 		float4x4 inverse() const noexcept;

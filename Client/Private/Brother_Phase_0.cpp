@@ -41,7 +41,7 @@ void CBrother_Phase_0::Handle_State(_float _fTimeDelta)
 	{
 		m_pTransform->LookAt(m_pTargetTransform->Get_State(TRANSFORM::POSITION));
 		m_pAnimator->Play_Animation(ANIMATION::BROTHER::LEAP_END, 1.f, false, g_fDefaultInterpolationDuration, false);
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			m_eState = STATE::READY;
 			m_fStateTimerAcc = 0.f;
@@ -123,10 +123,10 @@ void CBrother_Phase_0::Handle_State(_float _fTimeDelta)
 			m_fStateTimerAcc = 0.f;
 			return;
 		}
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			Dash();
-			m_pAnimator->Reset();
+		//	m_pAnimator->Reset();
 			m_eState = STATE::DASH;
 			return;
 		}
@@ -134,7 +134,7 @@ void CBrother_Phase_0::Handle_State(_float _fTimeDelta)
 	break;
 	case STATE::DASH_SMASH:
 	{
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			Smash();
 			m_eState = STATE::SMASH;
@@ -145,7 +145,7 @@ void CBrother_Phase_0::Handle_State(_float _fTimeDelta)
 	break;
 	case STATE::SMASH:
 	{
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			m_eState = rand() % 3 ? STATE::CHASE : STATE::WALK;
 			m_fStateTimerAcc = 0.f;
@@ -156,13 +156,13 @@ void CBrother_Phase_0::Handle_State(_float _fTimeDelta)
 	case STATE::RESET:
 	{
 		m_pAnimator->Play_Animation(ANIMATION::BROTHER::LEAP_BEGIN, 1.f, false, g_fDefaultInterpolationDuration, false);
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			if (8.f < m_fPhaseTimerAcc)
 			{
 				m_pTransform->Set_State(TRANSFORM::POSITION, ARENA_CENTER);
 				m_pAnimator->Play_Animation(ANIMATION::BROTHER::LEAP_END, 1.f, false, g_fDefaultInterpolationDuration, false);
-				m_pAnimator->Reset();
+			//	m_pAnimator->Reset();
 				m_eState = STATE::APPEAR;
 				m_fPhaseTimerAcc = 0.f;
 				m_fStateTimerAcc = 0.f;

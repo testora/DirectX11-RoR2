@@ -65,8 +65,13 @@ HRESULT CRailGunner::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner::Initialize", "Failed to Ready_Bullets");
 	}
 	
-	m_pPistolOffset = Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone("SMGBarrel_end")->Get_CombinedTransformationPointer();
+	shared_ptr<CModel> pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	
+	pModel->Set_DefaultAnimation(IDX(ANIMATION::RAILGUNNER::IDLE));
 
+	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
+
+	m_pPistolOffset = pModel->Get_Bone("SMGBarrel_end")->Get_CombinedTransformationPointer();
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
 	return S_OK;
@@ -75,6 +80,7 @@ HRESULT CRailGunner::Initialize(any)
 void CRailGunner::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::BACKPACK_CHARGED);
 
 	for (auto& system : m_umapSystem)
 	{
@@ -122,6 +128,15 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 #endif
 
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
+
+	if (CGameInstance::Get_Instance()->Key_Down('O'))
+	{
+		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::MINE_THROW);
+	}
+	if (CGameInstance::Get_Instance()->Key_Hold('P'))
+	{
+		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::SNIPER_TO_PISTOL);
+	}
 }
 
 HRESULT CRailGunner::Render()

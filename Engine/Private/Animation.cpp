@@ -79,11 +79,119 @@ void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>>::itera
 		}
 	}
 	
-	for (size_t i = 0; i < m_iNumChannels; ++i)
+	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
 		m_vecChannels[i]->Update_Transformation(_itBegin, m_vecChannelKeyFrames[i], m_fTrackPosition);
 	}
 }
+
+_bool CAnimation::Is_ChannelExist(_uint _iBoneIndex) const
+{
+	for (auto& pChannel : m_vecChannels)
+	{
+		if (pChannel->Get_BoneIndex() == _iBoneIndex)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CAnimation::Fix(vector<shared_ptr<CBone>>::iterator _itBegin, _float _fRatio)
+{
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		for (_uint j = 0; j < m_vecChannels[i]->Get_NumKeyFrames() - 1; ++j)
+		{
+			if (Function::InRange(m_fDuration * _fRatio, m_vecChannels[i]->Get_KeyFrame(j).fTime, m_vecChannels[i]->Get_KeyFrame(j + 1).fTime))
+			{
+				m_vecChannelKeyFrames[i] = j;
+				break;
+			}
+		}
+
+		m_vecChannels[i]->Update_Transformation(_itBegin, m_vecChannelKeyFrames[i], m_fDuration * _fRatio);
+	}
+}
+
+void CAnimation::Blend(vector<shared_ptr<CAnimation>>::iterator _itAnimationBegin, vector<shared_ptr<CBone>>::iterator _itBoneBegin, vector<_uint>::iterator _itBoneAnimationBegin, _float _fRatio)
+{
+	_uint iKeyFrameIndex(0);
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		for (_uint j = 0; j < m_vecChannels[i]->Get_NumKeyFrames() - 1; ++j)
+		{
+			if (Function::InRange(m_fDuration * _fRatio, m_vecChannels[i]->Get_KeyFrame(j).fTime, m_vecChannels[i]->Get_KeyFrame(j + 1).fTime))
+			{
+				iKeyFrameIndex = j;
+				break;
+			}
+		}
+
+		m_vecChannels[i]->Blend_Transformation(_itBoneBegin, iKeyFrameIndex, m_fDuration * _fRatio, _itAnimationBegin[_itBoneAnimationBegin[m_vecChannels[i]->Get_BoneIndex()]]);
+	}
+}
+
+#if ACTIVATE_TOOL
+shared_ptr<CChannel> CAnimation::Get_Channel(_uint _iChannelIndex, _bool _bBoneIndex) const
+{
+	if (false == _bBoneIndex)
+	{
+		return m_vecChannels[_iChannelIndex];
+	}
+	else
+	{
+		for (auto& pChannel : m_vecChannels)
+		{
+			if (pChannel->Get_BoneIndex() == _iChannelIndex)
+			{
+				return pChannel;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+_uint CAnimation::Get_ChannelIndex(_uint _iBoneIndex) const
+{
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (m_vecChannels[i]->Get_BoneIndex() == _iBoneIndex)
+		{
+			return i;
+		}
+	}
+
+	return m_iNumChannels;
+}
+#endif
+
+void CAnimation::Set_AnimationIndex(vector<_uint>::iterator _itBegin, _uint _iAnimationIndex)
+{
+	for (auto& pChannel : m_vecChannels)
+	{
+		_itBegin[pChannel->Get_BoneIndex()] = _iAnimationIndex;
+	}
+}
+
+#if ACTIVATE_TOOL
+HRESULT CAnimation::Remove_Channel(_uint _iChannelIndex)
+{
+	if (_iChannelIndex >= m_iNumChannels)
+	{
+		MSG_RETURN(E_FAIL, "CAnimation::Remove_Channel", "Invalid Channel Index");
+	}
+
+	--m_iNumChannels;
+	m_vecChannels.erase(m_vecChannels.begin() + _iChannelIndex);
+	m_vecChannelKeyFrames.erase(m_vecChannelKeyFrames.begin() + _iChannelIndex);
+
+	return S_OK;
+}
+#endif
 
 #if ACTIVATE_TOOL
 shared_ptr<CAnimation> CAnimation::Create(const aiAnimation* _pAIAnimation, shared_ptr<class CModel> _pModel)

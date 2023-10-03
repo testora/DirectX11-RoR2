@@ -16,10 +16,8 @@ public:
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
-#ifdef _DEBUG
 public:
 	const _float3					Get_Velocity() const				{ return m_vVelocity; }
-#endif
 	void							Set_Gravity(_bool bEnable = true)	{ m_bEnableGravity = bEnable; }
 
 public:

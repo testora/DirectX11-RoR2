@@ -21,6 +21,8 @@
 
 #define MAINCAM_PITCH_MIN						-90.0f
 #define MAINCAM_PITCH_MAX						+90.0f
+#define MAINCAM_YAW_MIN							-90.0f
+#define MAINCAM_YAW_MAX							+90.0f
 
 #define MAINCAM_DEBUG_SPEED						25.f
 

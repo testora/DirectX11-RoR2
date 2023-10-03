@@ -12,8 +12,8 @@ namespace ANIMATION
 		AIR_LOOP_UP						= 10,
 		AIR_LOOP_DOWN					= 3,
 	//	LOOK
-		AIM_PITCH						= 34,
-		AIM_YAW							= 13,
+		AIM_PITCH						= 34,	// BONE
+		AIM_YAW							= 13,	// BONE
 	//	MOVEMENT
 		RUN_FORWARD						= 24,
 		RUN_BACKWARD					= 7,
@@ -23,38 +23,38 @@ namespace ANIMATION
 		SPRINT_LEFT						= 16,
 		SPRINT_RIGHT					= 26,
 	//	PISTOL
-		PISTOL_CLICK					= 28,
-		PISTOL_FIRE1					= 33,
-		PISTOL_FIRE2					= 9,
-		PISTOL_FIRE3					= 8,
-		PISTOL_TO_SNIPER				= 12,
+		PISTOL							= 28,	// POSE
+		PISTOL_FIRE1					= 33,	// BONE
+		PISTOL_FIRE2					= 9,	// BONE
+		PISTOL_FIRE3					= 8,	// BONE
+		PISTOL_TO_SNIPER				= 12,	// BONE
 	//	SNIPER
-		SNIPER_CLICK					= 17,
-		SNIPER_FIRE						= 5,
-		SNIPER_TO_PISTOL				= 6,
+		SNIPER							= 17,	// POSE
+		SNIPER_FIRE						= 5,	// BONE
+		SNIPER_TO_PISTOL				= 6,	// BONE
 	//	SUPER
-		SUPER_CHARGE					= 19,	// Before Ready: Slow Rotation
-		SUPER_CHARGED					= 30,	// Ready : Rapid Rotation
-		SUPER_FIRE						= 18,	// Fire
-		SUPER_EXPIRE					= 4,	// Expired
-		SUPER_WINDUP					= 0,	// After Expired : Rotation Loop Before Shot
+		SUPER_CHARGE					= 19,	// BONE		// Before Ready: Slow Rotation
+		SUPER_CHARGED					= 30,	// BONE		// Ready : Rapid Rotation
+		SUPER_FIRE						= 18,	// BONE		// Fire
+		SUPER_EXPIRE					= 4,	// BONE		// Expired
+		SUPER_WINDUP					= 0,	// BONE		// After Expired : Rotation Loop Before Shot
 	//	BACKPACK
-		BACKPACK_IDLE					= 11,
-		BACKPACK_CHARGE					= 37,	// Single Movement
-		BACKPACK_CHARGED				= 1,	// Vibration Loop
-		BACKPACK_OFFLINE				= 25,	// After Fire : Pop Pilar
-		BACKPACK_REBOOT					= 21,	// After Penalty : Push in Pilar
+		BACKPACK_IDLE					= 11,	// BONE
+		BACKPACK_CHARGE					= 37,	// BONE		// Single Movement
+		BACKPACK_CHARGED				= 1,	// BONE		// Vibration Loop
+		BACKPACK_OFFLINE				= 25,	// BONE		// After Fire : Pop Pilar
+		BACKPACK_REBOOT					= 21,	// BONE		// After Penalty : Push in Pilar
 	//	MINE
-		MINE_THROW						= 14,	// Throw
+		MINE_THROW						= 14,	// BONE		// Throw
 	//	HIT
-		HIT_LIGHTIMPACT					= 31,	// Hit
+		HIT_LIGHTIMPACT					= 31,				// Hit
 	//	SELECT
 		SELECT_ENTRY					= 36,
 		SELECT_IDLE						= 20,
 		SELECT_LOOK1					= 22,
 		SELECT_LOOK2					= 32,
 	//	TEST
-		TEST							= 2		// IconicTestPose
+		TEST							= 2					// IconicTestPose
 	};
 #pragma endregion
 #pragma region MONSTER
@@ -117,13 +117,13 @@ namespace ANIMATION
 	//	WALK
 		HURT_WALK_FORWARD				= 11,	// NO_WEAPON
 	//	LUNARSHARD
-		HURT_LUNARSHARD_EXIT_LEFT		= 1,	// BONE
-		HURT_LUNARSHARD_EXIT_RIGHT		= 2,	// BONE
+		HURT_LUNARSHARD_ENTER_FORWARD	= 18,	// BONE
 		HURT_LUNARSHARD_FIRE_FORWARD	= 3,	// BONE
 		HURT_LUNARSHARD_FIRE_LEFT		= 4,	// BONE
 		HURT_LUNARSHARD_FIRE_RIGHT		= 5,	// BONE
 		HURT_LUNARSHARD_EXIT_FORWARD	= 15,	// BONE
-		HURT_LUNARSHARD_ENTER_FORWARD	= 18,	// BONE
+		HURT_LUNARSHARD_EXIT_LEFT		= 1,	// BONE
+		HURT_LUNARSHARD_EXIT_RIGHT		= 2,	// BONE
 	//	STRAGGER
 		HURT_STRAGGER_ENTER				= 8,	// NO_WEAPON
 		HURT_STRAGGER_EXIT				= 9,	// NO_WEAPON

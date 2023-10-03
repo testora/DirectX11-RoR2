@@ -25,7 +25,7 @@ private:
 
 	_bool									m_bSnipeAvailable	= false;
 
-	shared_ptr<class CRailGunner>			m_pRailGunner;
+	weak_ptr<class CRailGunner>				m_pRailGunner;
 
 public:
 	static shared_ptr<CControl_RailGunner>	Create(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*);

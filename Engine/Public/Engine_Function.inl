@@ -16,17 +16,44 @@ namespace Function
 
 	XMMATRIX Lerp(FXMMATRIX _mStart, CXMMATRIX _mEnd, _float _fRatio, _float _fWeight, _bool _bScale, _bool _bRotation, _bool _bTranslation)
 	{
+		if (0.f == _fRatio) return _mStart;
+		if (1.f == _fRatio) return _mEnd;
+
 		XMVECTOR vStartScale, vStartRotation, vStartTranslation;
 		XMVECTOR vEndScale,	vEndRotation, vEndTranslation;
 
 		if (!XMMatrixDecompose(&vStartScale, &vStartRotation, &vStartTranslation, _mStart))
 		{
-			return XMMATRIX{};
+			XMMATRIX mRotation;
+			mRotation.r[0] = XMVector3Normalize(_mStart.r[0]);
+			mRotation.r[1] = XMVector3Normalize(_mStart.r[1]);
+			mRotation.r[2] = XMVector3Normalize(_mStart.r[2]);
+
+			vStartScale			= XMVectorSet(
+				XMVectorGetX(XMVector3Length(_mStart.r[0])),
+				XMVectorGetY(XMVector3Length(_mStart.r[1])),
+				XMVectorGetZ(XMVector3Length(_mStart.r[2])),
+				1.f
+			);
+			vStartRotation		= XMQuaternionRotationMatrix(mRotation);
+			vStartTranslation	= _mStart.r[3];
 		}
 
 		if (!XMMatrixDecompose(&vEndScale, &vEndRotation, &vEndTranslation, _mEnd))
 		{
-			return XMMATRIX{};
+			XMMATRIX mRotation;
+			mRotation.r[0] = XMVector3Normalize(_mEnd.r[0]);
+			mRotation.r[1] = XMVector3Normalize(_mEnd.r[1]);
+			mRotation.r[2] = XMVector3Normalize(_mEnd.r[2]);
+
+			vEndScale			= XMVectorSet(
+				XMVectorGetX(XMVector3Length(_mEnd.r[0])),
+				XMVectorGetY(XMVector3Length(_mEnd.r[1])),
+				XMVectorGetZ(XMVector3Length(_mEnd.r[2])),
+				1.f
+			);
+			vEndRotation		= XMQuaternionRotationMatrix(mRotation);
+			vEndTranslation		= _mEnd.r[3];
 		}
 
 		_float fRatio(powf(_fRatio, _fWeight));
@@ -55,7 +82,7 @@ namespace Function
 	_float ProportionalRatio(_float _fMin, _float _fMax, _float _fValue)
 	{
 		if (_fMin == _fMax) return 0.f;
-		else return (_fValue - _fMin) / (_fMax - _fMin);
+		return (_fValue - _fMin) / (_fMax - _fMin);
 	}
 
 	_bool NearZero(_float _fValue)

@@ -25,13 +25,13 @@ private:
 	HRESULT							Ready_VertexBuffer_NonAnim(std::ifstream&);
 
 public:
-#if ACTIVATE_TOOL
-	const _char*					Get_Name() const				{ return m_szName; }
-#endif
-	_uint							Get_MaterialIndex() const		{ return m_iMaterialIndex; }
+	_uint							Get_NumBones() const					{ return m_iNumBones; }
+
+	const _char*					Get_Name() const						{ return m_szName; }
+	_uint							Get_MaterialIndex() const				{ return m_iMaterialIndex; }
 	const _float4x4*				Get_BoneMatrices(vector<shared_ptr<class CBone>>::iterator itBegin, _matrixf mPivot);
 
-	void							Set_Interpolation(vector<shared_ptr<class CBone>>::iterator itBegin, _float fDuration);
+	void							Set_InterpolationMatrix(vector<shared_ptr<class CBone>>::iterator itBegin, _float fDuration);
 
 private:
 	_char							m_szName[MAX_PATH]		= "";
@@ -42,8 +42,8 @@ private:
 	vector<_uint>					m_vecBoneIndices;
 	vector<float4x4>				m_vecBoneOffsets;
 
-	array<_float4x4, g_iMaxBones>	m_arrBones;
-	array<_float4x4, g_iMaxBones>	m_arrInterpolationMatrices;
+	vector<_float4x4>				m_vecBones;
+	vector<_float4x4>				m_vecInterpolationMatrices;
 	_float							m_fInterpolationRatio	= 0.f;
 
 #if ACTIVATE_TOOL

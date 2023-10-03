@@ -45,24 +45,38 @@ void CAnimator::Late_Tick(_float _fTimeDelta)
 {
 }
 
-_bool CAnimator::Is_Finished() const
+_bool CAnimator::Is_Playing(_uint _iAnimationIndex) const
 {
-	return m_pTargetModel->Is_AnimationFinished();
+	return m_pTargetModel->Is_AnimationPlaying(_iAnimationIndex);
 }
 
-void CAnimator::Reset()
+_bool CAnimator::Is_Finished(_uint _iAnimationIndex) const
 {
-	m_pTargetModel->Reset_Animation();
+	return m_pTargetModel->Is_AnimationFinished(_iAnimationIndex);
 }
 
-_uint CAnimator::Get_Animation() const
+void CAnimator::Set_DefaultAnimation(_uint _iAnimationIndex)
 {
-	return m_pTargetModel->Get_AnimationIndex();
+	m_pTargetModel->Set_DefaultAnimation(_iAnimationIndex);
 }
 
 void CAnimator::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)
 {
 	m_pTargetModel->Set_Animation(IDX(_iAnimationIndex), _fPlaySpeed, _bReverse, _fInterpolationDuration, _bLoop);
+	if (false == _bLoop)
+	{
+		m_pTargetModel->Reset_Animation(_iAnimationIndex);
+	}
+}
+
+void CAnimator::Fix_Animation(_uint _iAnimationIndex, _float _fRatio)
+{
+	m_pTargetModel->Fix_Animation(_iAnimationIndex, _fRatio);
+}
+
+void CAnimator::Blend_Animation(_uint _iAnimationIndex, _float _fRatio)
+{
+	m_pTargetModel->Blend_Animation(_iAnimationIndex, _fRatio);
 }
 
 shared_ptr<CAnimator> CAnimator::Create(shared_ptr<class CGameObject> _pOwner)

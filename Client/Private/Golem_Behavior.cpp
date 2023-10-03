@@ -93,9 +93,9 @@ void CGolem_Behavior::Manage_State()
 
 void CGolem_Behavior::Handle_State(_float _fTimeDelta)
 {
-	if (m_pAnimator->Current_Animation<ANIMATION::GOLEM>() == ANIMATION::GOLEM::HIT_LIGHTIMPACT)
+//	if (m_pAnimator->Current_Animation<ANIMATION::GOLEM>() == ANIMATION::GOLEM::HIT_LIGHTIMPACT)
 	{
-		if (!m_pAnimator->Is_Finished())
+	//	if (!m_pAnimator->Is_Finished())
 			return;
 	}
 
@@ -124,9 +124,9 @@ void CGolem_Behavior::Handle_State(_float _fTimeDelta)
 			if (m_fAtkAcc > 3.f)
 			{
 				m_pAnimator->Play_Animation(ANIMATION::GOLEM::ATTACK_SMACK, 1.5f, false, g_fDefaultInterpolationDuration, false);
-				if(m_pAnimator->Is_Finished())
+			//	if(m_pAnimator->Is_Finished())
 				{
-					m_pAnimator->Reset();
+				//	m_pAnimator->Reset();
 					m_fAtkAcc = 0.f;
 				}
 			}
@@ -140,7 +140,7 @@ void CGolem_Behavior::Handle_State(_float _fTimeDelta)
 	case STATE::HIT:
 	{
 		m_pTarget = Function::Find_Player();
-		if (m_pAnimator->Is_Finished())
+	//	if (m_pAnimator->Is_Finished())
 		{
 			Set_State(STATE::TARGET);
 		}

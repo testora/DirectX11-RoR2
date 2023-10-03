@@ -21,17 +21,19 @@ public:
 	_float4x4					Get_CombinedTransformation() const				{ return m_mCombinedTransformation; }
 	const _float4x4*			Get_CombinedTransformationPointer()				{ return &m_mCombinedTransformation; }
 
-	void						Set_Transformation(_vectorf _vScale, _vectorf _vRotation, _vectorf _vTranslation);
+	void						Set_Transformation(_vectorf vScale, _vectorf vRotation, _vectorf vTranslation);
+	void						Blend_Transformation(_vectorf vScale, _vectorf vRotation, _vectorf vTranslation, _matrixc mBase);
 
 public:
-	void						Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator itBegin);
+	void						Update_CombinedTransformation(vector<shared_ptr<CBone>>::iterator itBegin, _matrixf mPivot = g_mUnit);
 
 private:
 	_char						m_szName[MAX_PATH]			= "";
 	_uint						m_iParentBoneIndex			= g_iMaxBones;
 
-	_float4x4					m_mTransformation;
-	_float4x4					m_mCombinedTransformation;
+	_float4x4					m_mTransformation			= g_mUnit;
+	_float4x4					m_mCombinedTransformation	= g_mUnit;
+	_float4x4					m_mBlendTransformation		= g_mUnit;
 
 public:
 #if ACTIVATE_TOOL

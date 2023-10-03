@@ -1,6 +1,7 @@
 #include "EnginePCH.h"
 #include "Channel.h"
 #include "Model.h"
+#include "Animation.h"
 #include "Bone.h"
 
 #if ACTIVATE_TOOL
@@ -48,6 +49,13 @@ HRESULT CChannel::Initialize_FromAssimp(const aiNodeAnim* _pAIChannel, shared_pt
 		m_vecKeyFrames.push_back(tKeyFrame);
 	}
 
+	m_mBase = XMMatrixAffineTransformation(
+		XMLoadFloat4(&m_vecKeyFrames[0].vScale),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f),
+		XMLoadFloat4(&m_vecKeyFrames[0].vRotation),
+		XMLoadFloat4(&m_vecKeyFrames[0].vTranslation)
+	);
+
 	return S_OK;
 }
 #endif
@@ -60,6 +68,13 @@ HRESULT CChannel::Initialize_FromBinary(std::ifstream& _inFile)
 	m_vecKeyFrames.resize(m_iNumKeyFrames);
 
 	_inFile.read(reinterpret_cast<_byte*>(m_vecKeyFrames.data()),	sizeof(KEYFRAME) * m_iNumKeyFrames);
+
+	m_mBase = XMMatrixAffineTransformation(
+		XMLoadFloat4(&m_vecKeyFrames[0].vScale),
+		XMVectorSet(0.f, 0.f, 0.f, 1.f),
+		XMLoadFloat4(&m_vecKeyFrames[0].vRotation),
+		XMLoadFloat4(&m_vecKeyFrames[0].vTranslation)
+	);
 
 	return S_OK;
 }
@@ -95,6 +110,29 @@ void CChannel::Update_Transformation(vector<shared_ptr<CBone>>::iterator _itBegi
 	}
 
 	_itBegin[m_iBoneIndex]->Set_Transformation(vScale, vRotation, vTranslation);
+}
+
+void CChannel::Blend_Transformation(vector<shared_ptr<CBone>>::iterator _itBegin, _uint _iKeyFrame, _float _fTrackPosition, shared_ptr<CAnimation> _pBase)
+{
+	_float	fRatio;
+	_vector	vScale, vRotation, vTranslation;
+
+	if (_fTrackPosition < m_vecKeyFrames.back().fTime)
+	{
+		fRatio			= Function::ProportionalRatio(m_vecKeyFrames[_iKeyFrame].fTime, m_vecKeyFrames[_iKeyFrame + 1].fTime, _fTrackPosition);
+
+		vScale			= XMVectorLerp(_float4(m_vecKeyFrames[_iKeyFrame].vScale), _float4(m_vecKeyFrames[_iKeyFrame + 1].vScale), fRatio);
+		vRotation		= XMQuaternionSlerp(_float4(m_vecKeyFrames[_iKeyFrame].vRotation), _float4(m_vecKeyFrames[_iKeyFrame + 1].vRotation), fRatio);
+		vTranslation	= XMVectorLerp(_float4(m_vecKeyFrames[_iKeyFrame].vTranslation), _float4(m_vecKeyFrames[_iKeyFrame + 1].vTranslation), fRatio);
+	}
+	else
+	{
+		vScale			= _float4(m_vecKeyFrames.back().vScale);
+		vRotation		= _float4(m_vecKeyFrames.back().vRotation);
+		vTranslation	= _float4(m_vecKeyFrames.back().vTranslation);
+	}
+
+	_itBegin[m_iBoneIndex]->Blend_Transformation(vScale, vRotation, vTranslation, _pBase->Get_Channel(m_iBoneIndex, true)->m_mBase);
 }
 
 #if ACTIVATE_TOOL

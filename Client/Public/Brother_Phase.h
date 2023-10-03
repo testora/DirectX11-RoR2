@@ -47,7 +47,7 @@ protected:
 	shared_ptr<class CGameObject>		m_pTarget;
 	shared_ptr<CTransform>				m_pTargetTransform;
 
-	const ENTITYDESC*					m_pEntityDesc;
+	const ENTITYDESC*					m_pEntityDesc		= nullptr;
 
 private:
 	weak_ptr<class CBrother_Behavior>	m_pBehavior;

@@ -64,6 +64,7 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 void CScene_Test::Late_Tick(_float _fTimeDelta)
 {
+#if ACTIVATE_TOOL
 	ImGui::Begin("MATERIAL");
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
@@ -80,6 +81,7 @@ void CScene_Test::Late_Tick(_float _fTimeDelta)
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
 	ImGui::End();
+#endif
 }
 
 HRESULT CScene_Test::Render()

@@ -16,13 +16,26 @@ public:
 	HRESULT						Initialize_FromBinary(std::ifstream&);
 
 public:
+	_uint						Get_BoneIndex() const							{ return m_iBoneIndex; }
+#if ACTIVATE_TOOL
+	_uint						Get_NumKeyFrames() const						{ return m_iNumKeyFrames; }
+
+	KEYFRAME					Get_KeyFrame(_uint iIndex)						{ return m_vecKeyFrames[iIndex]; }
+
+	void						Set_KeyFrame(_uint iIndex, KEYFRAME tKeyFrame)	{ m_vecKeyFrames[iIndex] = tKeyFrame; }
+#endif
+
+public:
 	void						Update_Transformation(vector<shared_ptr<class CBone>>::iterator itBegin, _uint& iCurrentKeyFrame, _float fTrackPosition);
+	void						Blend_Transformation(vector<shared_ptr<class CBone>>::iterator itBegin, _uint iKeyFrame, _float fTrackPosition, shared_ptr<class CAnimation> pBase);
 
 private:
 	_uint						m_iBoneIndex		= g_iMaxBones;
 
 	_uint						m_iNumKeyFrames		= 0;
 	vector<KEYFRAME>			m_vecKeyFrames;
+
+	_float4x4					m_mBase				= g_mUnit;
 
 public:
 #if ACTIVATE_TOOL
