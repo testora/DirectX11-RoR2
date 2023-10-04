@@ -32,6 +32,7 @@ private:
 	void									Handle_Aim();
 	void									Handle_State();
 	void									Handle_Skill(_float fTimeDelta);
+	void									Handle_Backpack();
 
 private:
 	bitset<IDX(RG_STATE::MAX)>				m_bitState;

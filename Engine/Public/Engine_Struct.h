@@ -159,6 +159,9 @@ namespace Engine
 
 	typedef struct tagEntityDesc
 	{
+		_float		fMaxHP;
+		_float		fHP;
+
 		_float		fForwardSpeed;
 		_float		fLeftSpeed;
 		_float		fBackwardSpeed;

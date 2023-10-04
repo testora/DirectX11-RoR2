@@ -63,8 +63,9 @@ void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>>::itera
 	if (false == _bReverse)
 	{
 		m_fTrackPosition += m_fTicksPerSecond * _fTimeDelta;
+		m_fTrackPosition = min(m_fTrackPosition, m_fDuration);
 
-		if (_bLoop && m_fTrackPosition > m_fDuration)
+		if (_bLoop && m_fTrackPosition >= m_fDuration)
 		{
 			m_fTrackPosition = 0.f;
 		}
@@ -72,8 +73,9 @@ void CAnimation::Tick(_float _fTimeDelta, vector<shared_ptr<class CBone>>::itera
 	else
 	{
 		m_fTrackPosition -= m_fTicksPerSecond * _fTimeDelta;
+		m_fTrackPosition = max(m_fTrackPosition, 0.f);
 
-		if (_bLoop && m_fTrackPosition < 0.f)
+		if (_bLoop && m_fTrackPosition <= 0.f)
 		{
 			m_fTrackPosition = m_fDuration;
 		}

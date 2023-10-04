@@ -6,29 +6,23 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBehaviorTree abstract : public CBehavior
 {
-private:
+protected:
 	explicit CBehaviorTree();
 	explicit CBehaviorTree(const CBehaviorTree&);
 	virtual ~CBehaviorTree() DEFAULT;
 
 public:
-	HRESULT												Initialize();
+	virtual HRESULT										Initialize(shared_ptr<class CGameObject> pOwner, const ENTITYDESC*);
 	virtual void										Tick(_float fTimeDelta) override;
 
 public:
 	HRESULT												Set_RootNode(shared_ptr<class CNode> pNode);
-	
-	HRESULT												Add_BlackBoard(const wstring& wstrKey, shared_ptr<class ISystem>);
-	template<typename T>
-	shared_ptr<T>										Get_BlackBoard(const wstring& wstrKey);
-	shared_ptr<class ISystem>							Get_BlackBoard(const wstring& wstrKey);
 
-private:
+protected:
 	shared_ptr<class CNode>								m_pRootNode;
+	shared_ptr<class CBlackBoard>						m_pBlackBoard;
 
-	unordered_map<wstring, shared_ptr<class ISystem>>	m_umapBlackBoard;
+	const ENTITYDESC*									m_pEntityDesc	= nullptr;
 };
-
-#include "BehaviorTree.inl"
 
 END

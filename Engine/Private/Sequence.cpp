@@ -1,21 +1,16 @@
 #include "EnginePCH.h"
 #include "Sequence.h"
 
-HRESULT CSequence::Initialize()
+void CSequence::Activate()
 {
-	if (FAILED(__super::Initialize()))
-	{
-		MSG_RETURN(E_FAIL, "CSequence::Initialize", "Failed to __super::Initialize");
-	}
+	__super::Activate();
 
 	m_itCurrentChild = m_lstChildren.begin();
-
-	return S_OK;
 }
 
-STATUS CSequence::Tick(_float _fTimeDelta)
+STATUS CSequence::Invoke(_float _fTimeDelta)
 {
-	switch ((*m_itCurrentChild)->Update(_fTimeDelta))
+	switch ((*m_itCurrentChild)->Invoke(_fTimeDelta))
 	{
 	case STATUS::RUNNING:
 	{
@@ -45,17 +40,7 @@ STATUS CSequence::Tick(_float _fTimeDelta)
 	return m_eStatus;
 }
 
-HRESULT CSequence::Terminate()
+void CSequence::Terminate()
 {
-	if (FAILED(__super::Terminate()))
-	{
-		MSG_RETURN(E_FAIL, "CSequence::Terminate", "Failed to __super::Terminate");
-	}
-
-	return S_OK;
-}
-
-shared_ptr<CSequence> CSequence::Create()
-{
-	return make_private_shared(CSequence);
+	__super::Terminate();
 }

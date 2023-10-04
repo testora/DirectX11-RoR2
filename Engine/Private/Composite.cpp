@@ -1,24 +1,14 @@
 #include "EnginePCH.h"
 #include "Composite.h"
 
-HRESULT CComposite::Initialize()
+void CComposite::Activate()
 {
-	if (FAILED(__super::Initialize()))
-	{
-		MSG_RETURN(E_FAIL, "CComposite::Initialize", "Failed to __super::Initialize");
-	}
-
-	return S_OK;
+	__super::Activate();
 }
 
-HRESULT CComposite::Terminate()
+void CComposite::Terminate()
 {
-	if (FAILED(__super::Terminate()))
-	{
-		MSG_RETURN(E_FAIL, "CComposite::Terminate", "Failed to __super::Terminate");
-	}
-
-	return S_OK;
+	__super::Terminate();
 }
 
 void CComposite::Add_Child(shared_ptr<CNode> _pNode)

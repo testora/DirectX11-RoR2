@@ -1,36 +1,42 @@
 #include "EnginePCH.h"
 #include "Node.h"
 
-HRESULT CNode::Initialize()
+HRESULT CNode::Initialize(shared_ptr<CBlackBoard> pBlackBoard)
 {
-	m_eStatus = STATUS::RUNNING;
+	m_pBlackBoard = pBlackBoard;
 
 	return S_OK;
 }
 
-HRESULT CNode::Terminate()
+void CNode::Activate()
+{
+	m_eStatus = STATUS::RUNNING;
+}
+
+void CNode::Terminate()
 {
 	if (STATUS::RUNNING == m_eStatus)
 	{
 		m_eStatus = STATUS::MAX;
 	}
-
-	return S_OK;
 }
 
-STATUS CNode::Update(_float _fTimeDelta)
+void CNode::Begin_Invoke()
 {
 	if (STATUS::RUNNING != m_eStatus)
 	{
-		Initialize();
+		Activate();
 	}
+}
 
-	m_eStatus = Tick(_fTimeDelta);
+STATUS CNode::Return_Invoke()
+{
+	STATUS eReturn = m_eStatus;
 
 	if (STATUS::RUNNING != m_eStatus)
 	{
 		Terminate();
 	}
 
-	return m_eStatus;
+	return eReturn;
 }

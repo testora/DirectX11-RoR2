@@ -7,25 +7,17 @@ CParallel::CParallel(POLICY _eSuccess, POLICY _eFailure)
 {
 }
 
-HRESULT CParallel::Initialize()
+void CParallel::Activate()
 {
-	if (FAILED(__super::Initialize()))
-	{
-		MSG_RETURN(E_FAIL, "CParallel::Initialize", "Failed to __super::Initialize");
-	}
+	__super::Activate();
 
 	for (auto& pChild : m_lstChildren)
 	{
-		if (FAILED(pChild->Initialize()))
-		{
-			MSG_RETURN(E_FAIL, "CParallel::Initialize", "Failed to Initialize Child");
-		}
+		pChild->Activate();
 	}
-
-	return S_OK;
 }
 
-STATUS CParallel::Tick(_float _fTimeDelta)
+STATUS CParallel::Invoke(_float _fTimeDelta)
 {
 	size_t nSuccessCnt(0), nFailureCnt(0);
 
@@ -36,7 +28,7 @@ STATUS CParallel::Tick(_float _fTimeDelta)
 			continue;
 		}
 
-		switch (pChild->Update(_fTimeDelta))
+		switch (pChild->Invoke(_fTimeDelta))
 		{
 		case STATUS::RUNNING:
 		{
@@ -79,23 +71,15 @@ STATUS CParallel::Tick(_float _fTimeDelta)
 	return m_eStatus;
 }
 
-HRESULT CParallel::Terminate()
+void CParallel::Terminate()
 {
-	if (FAILED(__super::Terminate()))
-	{
-		MSG_RETURN(E_FAIL, "CParallel::Terminate", "Failed to __super::Terminate");
-	}
+	__super::Terminate();
 
 	for (auto& pChild : m_lstChildren)
 	{
 		if (pChild->Is_Running())
 		{
-			if (FAILED(pChild->Terminate()))
-			{
-				MSG_RETURN(E_FAIL, "CParallel::Terminate", "Failed to Terminate Child");
-			}
+			pChild->Terminate();
 		}
 	}
-
-	return S_OK;
 }

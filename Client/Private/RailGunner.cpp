@@ -80,7 +80,6 @@ HRESULT CRailGunner::Initialize(any)
 void CRailGunner::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
-	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::BACKPACK_CHARGED);
 
 	for (auto& system : m_umapSystem)
 	{
@@ -128,15 +127,6 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 #endif
 
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
-
-	if (CGameInstance::Get_Instance()->Key_Down('O'))
-	{
-		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::MINE_THROW);
-	}
-	if (CGameInstance::Get_Instance()->Key_Hold('P'))
-	{
-		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::SNIPER_TO_PISTOL);
-	}
 }
 
 HRESULT CRailGunner::Render()

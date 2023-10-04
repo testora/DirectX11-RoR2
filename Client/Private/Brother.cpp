@@ -1,7 +1,7 @@
 #include "ClientPCH.h"
 #include "Brother.h"
 #include "GameInstance.h"
-#include "Brother_Behavior.h"
+#include "Brother_BehaviorTree.h"
 
 CBrother::CBrother(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CMonster(_pDevice, _pContext)
@@ -50,7 +50,7 @@ HRESULT CBrother::Initialize(any)
 		MSG_RETURN(E_FAIL, "CBrother::Initialize", "Failed to __super::Initialize");
 	}
 
-	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_LOOP);
+	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
 
 	return S_OK;
 }
@@ -148,22 +148,31 @@ HRESULT CBrother::Ready_Components()
 	_uint iConstellationIndex	= pModel->Get_MeshIndex("mdlConstellationBrother");
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iConstellationIndex);
+
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iConstellationIndex);
 
@@ -193,7 +202,7 @@ HRESULT CBrother::Ready_Behaviors()
 		MSG_RETURN(E_FAIL, "CBrother::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
 	}
 
-//	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_Behavior::Create(shared_from_gameobject(), Function::Find_Player(), &m_tEntityDesc));
+	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_BehaviorTree::Create(shared_from_gameobject(), &m_tEntityDesc));
 
 	return S_OK;
 }

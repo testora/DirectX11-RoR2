@@ -166,7 +166,7 @@ void CRailGunner_PistolBullet::Manage_State(_float _fTimeDelta)
 	case STATE::TARGET:
 	{
 		m_pPhysics->Force(m_pTargetTransform->Get_State(TRANSFORM::POSITION) - m_pTransform->Get_State(TRANSFORM::POSITION), m_tEntityDesc.fForwardSpeed, _fTimeDelta);
-		if (_float3(m_pTransform->Get_State(TRANSFORM::POSITION) - m_pTargetTransform->Get_State(TRANSFORM::POSITION)).length() < 10.f)
+		if (Function::Distance(m_pTransform, m_pTargetTransform) < 10.f)
 		{
 			m_pTarget->Hit();
 			m_pPool->Push(shared_from_gameobject());

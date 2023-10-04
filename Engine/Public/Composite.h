@@ -11,9 +11,9 @@ protected:
 	virtual ~CComposite() DEFAULT;
 
 public:
-	virtual HRESULT					Initialize() override;
-	virtual STATUS					Tick(_float fTimeDelta) override	PURE;
-	virtual HRESULT					Terminate() override;
+	virtual void					Activate() override;
+	virtual STATUS					Invoke(_float fTimeDelta) override	PURE;
+	virtual void					Terminate() override;
 
 public:
 	void							Add_Child(shared_ptr<CNode> pNode);

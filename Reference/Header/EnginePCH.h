@@ -87,6 +87,9 @@ using std::bitset;
 using std::function;
 using std::tuple;
 using std::any;
+using std::optional;
+
+using std::nullopt;
 
 using std::make_tuple;
 using std::any_cast;

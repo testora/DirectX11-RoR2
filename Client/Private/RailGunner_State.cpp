@@ -73,6 +73,7 @@ HRESULT CRailGunner_State::Initialize(shared_ptr<CRailGunner> _pRailGunner)
 
 void CRailGunner_State::Tick(_float _fTimeDelta)
 {
+	Handle_Backpack();
 	Handle_Aim();
 	Handle_State();
 	Handle_Skill(_fTimeDelta);
@@ -199,6 +200,11 @@ void CRailGunner_State::Handle_Skill(_float _fTimeDelta)
 	{
 
 	}
+}
+
+void CRailGunner_State::Handle_Backpack()
+{
+	m_pAnimator->Play_Animation(ANIMATION::RAILGUNNER::BACKPACK_CHARGED);
 }
 
 shared_ptr<CRailGunner_State> CRailGunner_State::Create(shared_ptr<CRailGunner> _pRailGunner)

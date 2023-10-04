@@ -1,0 +1,15 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Item">
+  <TemplateData>
+    <DefaultName>Node</DefaultName>
+    <Name>Behavior Tree Sequence</Name>
+    <Description>Behavior Tree Node Template for Client Project</Description>
+    <ProjectType>VC</ProjectType>
+    <SortOrder>10</SortOrder>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <References />
+    <ProjectItem TargetFileName="$fileinputname$.h" ReplaceParameters="true">Form.h</ProjectItem>
+    <ProjectItem TargetFileName="$fileinputname$.cpp" ReplaceParameters="true">Form.cpp</ProjectItem>
+  </TemplateContent>
+</VSTemplate>

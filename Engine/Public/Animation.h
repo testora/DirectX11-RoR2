@@ -19,7 +19,7 @@ public:
 
 
 public:
-	_bool								Is_Finished() const					{ return !m_bReverse ? m_fTrackPosition > m_fDuration : m_fTrackPosition <= 0.f; }
+	_bool								Is_Finished() const					{ return !m_bReverse ? m_fTrackPosition >= m_fDuration : m_fTrackPosition <= 0.f; }
 	_bool								Is_ChannelExist(_uint iBoneIndex) const;
 
 #if ACTIVATE_TOOL

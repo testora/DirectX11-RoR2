@@ -202,23 +202,26 @@
     <Filter Include="04. Utility\07. Behavior\00. BehaviorTree">
       <UniqueIdentifier>{b342389c-8d96-4a86-bf31-380f466bb119}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node">
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node">
       <UniqueIdentifier>{844bff4f-af81-400d-859a-a5cba198113a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node\00. Decorator">
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\00. Decorator">
       <UniqueIdentifier>{2701ca44-ef7d-49fb-8135-32c48146d2b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite">
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite">
       <UniqueIdentifier>{d6cd1f5a-9424-48f3-9d02-fb4a56dc9d5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Parallel">
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\00. Parallel">
       <UniqueIdentifier>{e67d95f3-351f-4c5a-a049-9241e23a11c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Sequence">
-      <UniqueIdentifier>{e65344db-70e6-44dc-ba11-4bdcf7a850e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\02. Selector">
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\02. Selector">
       <UniqueIdentifier>{45d7e2e8-61e6-4e04-badc-cdffe0872350}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard">
+      <UniqueIdentifier>{4c225382-994c-4801-8dcc-819d759f49a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\01. Sequence">
+      <UniqueIdentifier>{e65344db-70e6-44dc-ba11-4bdcf7a850e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -385,22 +388,25 @@
       <Filter>04. Utility\07. Behavior\00. BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="Private\Parallel.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Parallel</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\00. Parallel</Filter>
     </ClCompile>
     <ClCompile Include="Private\Sequence.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Sequence</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\01. Sequence</Filter>
     </ClCompile>
     <ClCompile Include="Private\Selector.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\02. Selector</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\02. Selector</Filter>
     </ClCompile>
     <ClCompile Include="Private\Decorator.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\00. Decorator</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\00. Decorator</Filter>
     </ClCompile>
     <ClCompile Include="Private\Composite.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite</Filter>
     </ClCompile>
     <ClCompile Include="Private\Node.cpp">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BlackBoard.cpp">
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -594,22 +600,25 @@
       <Filter>04. Utility\07. Behavior\00. BehaviorTree</Filter>
     </ClInclude>
     <ClInclude Include="Public\Node.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="Public\Decorator.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\00. Decorator</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\00. Decorator</Filter>
     </ClInclude>
     <ClInclude Include="Public\Composite.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite</Filter>
     </ClInclude>
     <ClInclude Include="Public\Parallel.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Parallel</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\00. Parallel</Filter>
     </ClInclude>
     <ClInclude Include="Public\Sequence.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\00. Sequence</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\01. Sequence</Filter>
     </ClInclude>
     <ClInclude Include="Public\Selector.h">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. Node\01. Composite\02. Selector</Filter>
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\02. Selector</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BlackBoard.h">
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -631,8 +640,8 @@
     <None Include="Resources\Shader\ShaderDefine.hlsli">
       <Filter>05. Shader\00. Include</Filter>
     </None>
-    <None Include="Public\BehaviorTree.inl">
-      <Filter>04. Utility\07. Behavior\00. BehaviorTree</Filter>
+    <None Include="Public\BlackBoard.inl">
+      <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

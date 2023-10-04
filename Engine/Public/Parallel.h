@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CParallel : public CComposite
+class ENGINE_DLL CParallel abstract : public CComposite
 {
 public:
 	enum class POLICY	{ REQUIRE_ONE, REQUIRE_ALL, MAX };
@@ -14,9 +14,9 @@ private:
 	virtual ~CParallel() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize() override;
-	virtual STATUS						Tick(_float fTimeDelta) override;
-	virtual HRESULT						Terminate() override;
+	virtual void						Activate() override;
+	virtual STATUS						Invoke(_float fTimeDelta) override;
+	virtual void						Terminate() override;
 
 private:
 	const POLICY						m_eSuccessPolicy	= POLICY::MAX;

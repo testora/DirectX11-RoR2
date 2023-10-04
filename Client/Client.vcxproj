@@ -35,6 +35,21 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_IdleReady.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_SprintSmash.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_Enter.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_LeapBegin.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_LeapEnd.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase0.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase1.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase.h" />
+    <ClInclude Include="Public\BrotherNodeDecorator_Repeat.h" />
+    <ClInclude Include="Public\BrotherNodeDecorator_Range.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_SprintSmash.h" />
+    <ClInclude Include="Public\BrotherNode_Root.h" />
+    <ClInclude Include="Public\Brother_BehaviorTree.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Run.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Sprint.h" />
     <ClInclude Include="Public\Brother_Phase_1.h" />
     <ClInclude Include="Public\Brother_Phase_0.h" />
     <ClInclude Include="Public\Brother_Phase.h" />
@@ -150,6 +165,21 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_IdleReady.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_SprintSmash.cpp" />
+    <ClCompile Include="Private\BrotherNodeSequence_Enter.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_LeapBegin.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_LeapEnd.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase0.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase1.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase.cpp" />
+    <ClCompile Include="Private\BrotherNodeDecorator_Repeat.cpp" />
+    <ClCompile Include="Private\BrotherNodeDecorator_Range.cpp" />
+    <ClCompile Include="Private\BrotherNodeSequence_SprintSmash.cpp" />
+    <ClCompile Include="Private\BrotherNode_Root.cpp" />
+    <ClCompile Include="Private\Brother_BehaviorTree.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Run.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Sprint.cpp" />
     <ClCompile Include="Private\Brother_Phase_1.cpp" />
     <ClCompile Include="Private\Brother_Phase.cpp" />
     <ClCompile Include="Private\Brother_Phase_0.cpp" />

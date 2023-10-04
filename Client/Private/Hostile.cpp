@@ -71,7 +71,7 @@ _bool CHostile::Is_Target_InRange(_float _fRange) const
 
 void CHostile::Chase_Target(_float _fTimeDelta)
 {
-	m_pTransform->LookAt(m_pTargetTransform->Get_State(TRANSFORM::POSITION));
+	m_pTransform->LookAt(m_pTargetTransform);
 	if (_float3(m_pTargetTransform->Get_State(TRANSFORM::POSITION) - m_pTransform->Get_State(TRANSFORM::POSITION)).length() < 5.f)
 	{
 		return;

@@ -126,6 +126,11 @@ void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp, const _b
 	}
 }
 
+void CTransform::LookAt(shared_ptr<CTransform> _pTransform, const _bool _bFixUp, const _bool _bPipeLineUp)
+{
+	LookAt(_pTransform->Get_State(TRANSFORM::POSITION), _bFixUp, _bPipeLineUp);
+}
+
 void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bFixUp, const _bool _bPipeLineUp, const _float _fInterpolationDuration, const _float _fWeight)
 {
 	_float	fAcc(0.f);
@@ -142,6 +147,11 @@ void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bF
 			return fAcc < 1.f;
 		}
 	);
+}
+
+void CTransform::LookAt_Interpolation(shared_ptr<CTransform> _pTransform, const _bool _bFixUp, const _bool _bPipeLineUp, const _float _fInterpolationDuration, const _float _fWeight)
+{
+	LookAt_Interpolation(_pTransform->Get_State(TRANSFORM::POSITION), _bFixUp, _bPipeLineUp, _fInterpolationDuration, _fWeight);
 }
 
 void CTransform::LookTo(const _vectorf _vDirection, const _bool _bFixUp, const _bool _bPipeLineUp)

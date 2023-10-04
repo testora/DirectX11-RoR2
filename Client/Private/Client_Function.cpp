@@ -43,3 +43,8 @@ _float Function::Distance_Camera(_float3 _vPosition)
 {
 	return _float3(_vPosition - CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION)).length();
 }
+
+_float Function::Distance(shared_ptr<CTransform> _pTransformA, shared_ptr<CTransform> _pTransformB)
+{
+	return _float3(_pTransformA->Get_State(TRANSFORM::POSITION) - _pTransformB->Get_State(TRANSFORM::POSITION)).length();
+}

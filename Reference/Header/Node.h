@@ -11,18 +11,25 @@ protected:
 	virtual ~CNode() DEFAULT;
 
 public:
-	virtual HRESULT				Initialize();
-	virtual STATUS				Tick(_float fTimeDelta)		PURE;
-	virtual HRESULT				Terminate();
-
-	virtual STATUS				Update(_float fTimeDelta);
+	virtual HRESULT					Initialize(shared_ptr<class CBlackBoard>);
 
 public:
-	_bool						Is_Running() const		{ return m_eStatus == STATUS::RUNNING; }
-	_bool						Is_Terminated() const	{ return m_eStatus != STATUS::RUNNING; }
+	virtual void					Activate();
+	virtual STATUS					Invoke(_float fTimeDelta)		PURE;
+	virtual void					Terminate();
+
+public:
+	_bool							Is_Running() const		{ return m_eStatus == STATUS::RUNNING; }
+	_bool							Is_Terminated() const	{ return m_eStatus == STATUS::MAX; }
 
 protected:
-	STATUS						m_eStatus	= STATUS::MAX;
+	void							Begin_Invoke();
+	STATUS							Return_Invoke();
+
+protected:
+	STATUS							m_eStatus	= STATUS::MAX;
+
+	shared_ptr<class CBlackBoard>	m_pBlackBoard;
 };
 
 END

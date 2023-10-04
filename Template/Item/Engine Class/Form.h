@@ -12,7 +12,6 @@ private:
 
 public:
 	static shared_ptr<C$safeitemname$>	Create();
-	virtual shared_ptr<>	Clone() PURE;
 };
 
 END

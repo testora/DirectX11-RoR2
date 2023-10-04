@@ -127,7 +127,7 @@
 
 #define	BROTHER_CHASE_LIMIT_DISTANCE			10.f
 #define	BROTHER_SPRINT_SMASH_DISTANCE			50.f
-#define	BROTHER_SPRINT_SMASH_FORCE				200.f
+#define	BROTHER_SPRINT_SMASH_FORCE				250.f
 
 #define BROTHER_DASH_FORCE						100.f
 
@@ -153,7 +153,7 @@
 
 #pragma region MOON
 
-#define	ARENA_POINT		_float3(-1900.f, 1060.f, 710.f)
-#define	ARENA_CENTER	_float3(-2050.f, 1000.f, 590.f)
+#define	ARENA_POINT								_float3(-1900.f, 1060.f, 710.f)
+#define	ARENA_CENTER							_float3(-2050.f, 993.126465f, 590.f)
 
 #pragma endregion

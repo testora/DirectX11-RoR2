@@ -28,7 +28,9 @@ public:
 	void							Rotate(const _vectorf vAxis, const _float fDegree);
 	void							Rotate(const TRANSFORM, const _float fDegree);
 	void							LookAt(const _vectorf vPosition, const _bool bFixUp = true, const _bool bPipeLineUp = false);
+	void							LookAt(shared_ptr<CTransform>, const _bool bFixUp = true, const _bool bPipeLineUp = false);
 	void							LookAt_Interpolation(const _vectorf vPosition, const _bool bFixUp = true, const _bool bPipeLineUp = false, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);
+	void							LookAt_Interpolation(shared_ptr<CTransform>, const _bool bFixUp = true, const _bool bPipeLineUp = false, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);
 	void							LookTo(const _vectorf vDirection, const _bool bFixUp = true, const _bool bPipeLineUp = false);
 	void							LookTo_Interpolation(const _vectorf vDirection, const _bool bFixUp = true, const _bool bPipeLineUp = false, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);
 
