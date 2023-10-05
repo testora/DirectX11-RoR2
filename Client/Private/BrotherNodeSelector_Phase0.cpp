@@ -1,8 +1,7 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeSelector_Phase0.h"
-#include "BrotherNodeSequence_Enter.h"
 
 HRESULT CBrotherNodeSelector_Phase0::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -12,8 +11,13 @@ HRESULT CBrotherNodeSelector_Phase0::Initialize(shared_ptr<CBlackBoard> _pBlackB
 	}
 
 	m_pPhase = m_pBlackBoard->Get_Anything<BROTHER_PHASE*>(TEXT("Owner:Phase")).value_or(nullptr);
+	if (nullptr == m_pPhase)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeSelector_Phase0::Initialize", "Failed to Get: Owner:Phase");
+	}
 
-	Add_Child(CBrotherNodeSequence_Enter::Create(m_pBlackBoard));
+	Add_Child(CBrotherNodeDecorator_Delay::Create(m_pBlackBoard, 1.f,
+		CBrotherNodeSequence_Enter::Create(m_pBlackBoard)));
 
 	return S_OK;
 }
@@ -25,7 +29,7 @@ void CBrotherNodeSelector_Phase0::Activate()
 
 STATUS CBrotherNodeSelector_Phase0::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
 	if (BROTHER_PHASE::PHASE0 == *m_pPhase)
 	{
@@ -42,6 +46,8 @@ STATUS CBrotherNodeSelector_Phase0::Invoke(_float _fTimeDelta)
 void CBrotherNodeSelector_Phase0::Terminate()
 {
 	__super::Terminate();
+
+	*m_pBlackBoard->Get_Anything<BROTHER_PHASE*>(TEXT("Owner:Phase")).value_or(nullptr) = BROTHER_PHASE::PHASE1;
 }
 
 shared_ptr<CBrotherNodeSelector_Phase0> CBrotherNodeSelector_Phase0::Create(shared_ptr<CBlackBoard> _pBlackBoard)

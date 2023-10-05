@@ -1,9 +1,7 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeSelector_Phase.h"
-#include "BrotherNodeSelector_Phase0.h"
-#include "BrotherNodeSelector_Phase1.h"
 
 HRESULT CBrotherNodeSelector_Phase::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -27,7 +25,7 @@ void CBrotherNodeSelector_Phase::Activate()
 
 STATUS CBrotherNodeSelector_Phase::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
 	m_eStatus =__super::Invoke(_fTimeDelta);
 

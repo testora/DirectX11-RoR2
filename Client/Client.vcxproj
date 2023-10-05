@@ -35,6 +35,19 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_DashSprintSmash.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Secondary.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_DashSmash.h" />
+    <ClInclude Include="Public\BrotherNodeParallel_PrimaryShard.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Shard.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Primary.h" />
+    <ClInclude Include="Public\BrotherNodeDecorator_Skill.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_PrimaryMelee.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_Special.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_DashSide.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Smash.h" />
+    <ClInclude Include="Public\BrotherNodeDecorator_Delay.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Dash.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_IdleReady.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_SprintSmash.h" />
     <ClInclude Include="Public\BrotherNodeSequence_Enter.h" />
@@ -45,7 +58,6 @@
     <ClInclude Include="Public\BrotherNodeSelector_Phase.h" />
     <ClInclude Include="Public\BrotherNodeDecorator_Repeat.h" />
     <ClInclude Include="Public\BrotherNodeDecorator_Range.h" />
-    <ClInclude Include="Public\BrotherNodeSequence_SprintSmash.h" />
     <ClInclude Include="Public\BrotherNode_Root.h" />
     <ClInclude Include="Public\Brother_BehaviorTree.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_Run.h" />
@@ -165,6 +177,19 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\BrotherNodeSequence_DashSprintSmash.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Secondary.cpp" />
+    <ClCompile Include="Private\BrotherNodeSequence_DashSmash.cpp" />
+    <ClCompile Include="Private\BrotherNodeParallel_PrimaryShard.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Shard.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Primary.cpp" />
+    <ClCompile Include="Private\BrotherNodeDecorator_Skill.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_PrimaryMelee.cpp" />
+    <ClCompile Include="Private\BrotherNodeSequence_Special.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_DashSide.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Smash.cpp" />
+    <ClCompile Include="Private\BrotherNodeDecorator_Delay.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Dash.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_IdleReady.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_SprintSmash.cpp" />
     <ClCompile Include="Private\BrotherNodeSequence_Enter.cpp" />
@@ -175,7 +200,6 @@
     <ClCompile Include="Private\BrotherNodeSelector_Phase.cpp" />
     <ClCompile Include="Private\BrotherNodeDecorator_Repeat.cpp" />
     <ClCompile Include="Private\BrotherNodeDecorator_Range.cpp" />
-    <ClCompile Include="Private\BrotherNodeSequence_SprintSmash.cpp" />
     <ClCompile Include="Private\BrotherNode_Root.cpp" />
     <ClCompile Include="Private\Brother_BehaviorTree.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_Run.cpp" />

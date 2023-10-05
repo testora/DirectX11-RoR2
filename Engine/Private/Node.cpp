@@ -10,23 +10,24 @@ HRESULT CNode::Initialize(shared_ptr<CBlackBoard> pBlackBoard)
 
 void CNode::Activate()
 {
-	m_eStatus = STATUS::RUNNING;
+	m_eStatus	= STATUS::RUNNING;
+
+	m_fTimeAcc	= 0.f;
 }
 
 void CNode::Terminate()
 {
-	if (STATUS::RUNNING == m_eStatus)
-	{
-		m_eStatus = STATUS::MAX;
-	}
+	m_eStatus = STATUS::MAX;
 }
 
-void CNode::Begin_Invoke()
+void CNode::Begin_Invoke(_float _fTimeDelta)
 {
 	if (STATUS::RUNNING != m_eStatus)
 	{
 		Activate();
 	}
+
+	m_fTimeAcc += _fTimeDelta;
 }
 
 STATUS CNode::Return_Invoke()

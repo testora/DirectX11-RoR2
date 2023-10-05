@@ -105,6 +105,31 @@ namespace Function
 		return XMVector4NearEqual(XMVectorZero(), _fVector4, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
 	}
 
+	_uint Random(initializer_list<_float> _il)
+	{
+		_uint	iSize	= 0;
+		_float	fAcc	= 0.f;
+		_float	fTotal	= 0.f;
+		_float	fRandom	= static_cast<_float>(rand()) / RAND_MAX;
+
+		for (_float fPercentage : _il)
+		{
+			fTotal += fPercentage;
+		}
+
+		for (_float fPercentage : _il)
+		{
+			fAcc += fPercentage / fTotal;
+			if (fRandom < fAcc)
+			{
+				return iSize;
+			}
+			++iSize;
+		}
+
+		return static_cast<_uint>(rand() % iSize);
+	}
+
 	_float RandomFloat(_float _fMin, _float _fMax)
 	{
 		static std::random_device	device;

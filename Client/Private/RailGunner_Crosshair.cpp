@@ -13,7 +13,7 @@
 #define MAIN_NIB_STEP				_float3(120.f, 35.f, 1.f)
 #define MAIN_FLAVOR_SCALE			_float3(16.f, 32.f, 1.f)
 #define MAIN_FLAVOR_POSITION		_float4(210.f, 90.f, 0.f, 1.f)
-#define MAIN_FLAVOR_ROTATESPEED		1000.f
+#define MAIN_FLAVOR_ROTATESPEED		15.f
 
 #define SCOPE_CROSSHAIR_SCALE		_float3(128.f, 128.f, 1.f)
 #define SCOPE_INBOUND_SCALE			_float3(_float3(750.f, 424.f, 1.f) + _float3(7.f, 7.f, 0.f))

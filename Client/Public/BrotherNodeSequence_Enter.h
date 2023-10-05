@@ -21,10 +21,6 @@ public:
 	virtual STATUS									Invoke(_float fTimeDelta) override;
 	virtual void									Terminate() override;
 
-private:
-	_bool											m_bIsArrived	= false;
-	_float											m_fTimeAcc		= 0.f;
-
 public:
 	static shared_ptr<CBrotherNodeSequence_Enter>	Create(shared_ptr<class CBlackBoard>);
 };

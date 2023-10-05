@@ -1,9 +1,8 @@
 #include "ClientPCH.h"
-#include "$safeitemname$.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "$safeitemname$.h"
 
-C$safeitemname$::CBrotherNodeDecorator_Repeat(shared_ptr<CNode> _pNode)
+C$safeitemname$::C$safeitemname$(shared_ptr<CNode> _pNode)
 	: CDecorator(_pNode)
 {
 }
@@ -25,7 +24,11 @@ void C$safeitemname$::Activate()
 
 STATUS C$safeitemname$::Invoke(_float _fTimeDelta)
 {
-	return m_pNode->Tick(_fTimeDelta);
+	Begin_Invoke(_fTimeDelta);
+
+	m_eStatus = m_pNode->Invoke(_fTimeDelta);
+
+	return Return_Invoke();
 }
 
 void C$safeitemname$::Terminate()
@@ -35,7 +38,7 @@ void C$safeitemname$::Terminate()
 
 shared_ptr<C$safeitemname$> C$safeitemname$::Create(shared_ptr<CBlackBoard> _pBlackBoard, shared_ptr<CNode> _pNode)
 {
-	shared_ptr<C$safeitemname$> pInstance = make_private_shared(C$safeitemname$, _pNode, _fpEscape);
+	shared_ptr<C$safeitemname$> pInstance = make_private_shared(C$safeitemname$, _pNode);
 
 	if (FAILED(pInstance->Initialize(_pBlackBoard)))
 	{

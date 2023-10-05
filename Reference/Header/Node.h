@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine_Define.h"
+#include "BlackBoard.h"
 
 BEGIN(Engine)
 
@@ -23,13 +24,15 @@ public:
 	_bool							Is_Terminated() const	{ return m_eStatus == STATUS::MAX; }
 
 protected:
-	void							Begin_Invoke();
+	void							Begin_Invoke(_float fTimeDelta);
 	STATUS							Return_Invoke();
 
 protected:
 	STATUS							m_eStatus	= STATUS::MAX;
 
 	shared_ptr<class CBlackBoard>	m_pBlackBoard;
+
+	_float							m_fTimeAcc	= 0.f;
 };
 
 END

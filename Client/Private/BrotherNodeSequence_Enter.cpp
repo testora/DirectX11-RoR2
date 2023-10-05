@@ -1,9 +1,7 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeSequence_Enter.h"
-#include "BrotherNodeLeaf_LeapEnd.h"
-#include "BrotherNodeLeaf_IdleReady.h"
 
 HRESULT CBrotherNodeSequence_Enter::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -21,33 +19,13 @@ HRESULT CBrotherNodeSequence_Enter::Initialize(shared_ptr<CBlackBoard> _pBlackBo
 void CBrotherNodeSequence_Enter::Activate()
 {
 	__super::Activate();
-
-	m_fTimeAcc = 0.f;
 }
 
 STATUS CBrotherNodeSequence_Enter::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
-	if (!m_bIsArrived)
-	{
-		m_eStatus = __super::Invoke(_fTimeDelta);
-
-		if (STATUS::SUCCESS == m_eStatus)
-		{
-			m_eStatus = STATUS::RUNNING;
-			m_bIsArrived = true;
-		}
-	}
-	else
-	{
-		m_fTimeAcc += _fTimeDelta;
-		
-		if (2.f < m_fTimeAcc)
-		{
-			m_eStatus = STATUS::SUCCESS;
-		}
-	}
+	m_eStatus = __super::Invoke(_fTimeDelta);
 
 	return Return_Invoke();
 }
@@ -55,8 +33,6 @@ STATUS CBrotherNodeSequence_Enter::Invoke(_float _fTimeDelta)
 void CBrotherNodeSequence_Enter::Terminate()
 {
 	__super::Terminate();
-
-	*m_pBlackBoard->Get_Anything<BROTHER_PHASE*>(TEXT("Owner:Phase")).value_or(nullptr) = BROTHER_PHASE::PHASE1;
 }
 
 shared_ptr<CBrotherNodeSequence_Enter> CBrotherNodeSequence_Enter::Create(shared_ptr<CBlackBoard> _pBlackBoard)

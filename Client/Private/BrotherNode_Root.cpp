@@ -1,8 +1,7 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNode_Root.h"
-#include "BrotherNodeSelector_Phase.h"
 
 HRESULT CBrotherNode_Root::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -11,7 +10,22 @@ HRESULT CBrotherNode_Root::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 		MSG_RETURN(E_FAIL, "CBrotherNode_Root::Initialize", "Failed to __super::Initialize");
 	}
 
+	if (FAILED(Ready_Skills()))
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNode_Root::Initialize", "Failed to Ready_Skills");
+	}
+
 	m_pPhaseSelector = CBrotherNodeSelector_Phase::Create(m_pBlackBoard);
+	if (nullptr == m_pPhaseSelector)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNode_Root::Initialize", "Failed to CBrotherNodeSelector_Phase::Create");
+	}
+
+	m_pPhase = m_pBlackBoard->Get_Anything<BROTHER_PHASE*>(TEXT("Owner:Phase")).value_or(nullptr);
+	if (nullptr == m_pPhase)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNode_Root::Initialize", "Failed to Get: Owner:Phase");
+	}
 
 	return S_OK;
 }
@@ -19,16 +33,85 @@ HRESULT CBrotherNode_Root::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 void CBrotherNode_Root::Activate()
 {
 	__super::Activate();
+
+	m_pBlackBoard->Get_System<CTransform>(TEXT("Owner:Transform"))->LookAt(m_pBlackBoard->Get_System<CTransform>(TEXT("Target:Transform")));
 }
 
 STATUS CBrotherNode_Root::Invoke(_float _fTimeDelta)
 {
-	return m_pPhaseSelector->Invoke(_fTimeDelta);
+	Begin_Invoke(_fTimeDelta);
+
+	if (BROTHER_PHASE::PHASE0 != *m_pPhase)
+	{
+		for (auto& iter : m_mapSkills)
+		{
+			if (iter.second.iStock < iter.second.iMaxStock)
+			{
+				iter.second.fCurrentCoolTime += _fTimeDelta;
+				if (iter.second.fCurrentCoolTime >= iter.second.fCoolTime)
+				{
+					iter.second.fCurrentCoolTime = 0.f;
+					++iter.second.iStock;
+				}
+			}
+		}
+	}
+
+	m_eStatus = m_pPhaseSelector->Invoke(_fTimeDelta);
+
+	return Return_Invoke();
 }
 
 void CBrotherNode_Root::Terminate()
 {
 	__super::Terminate();
+}
+
+HRESULT CBrotherNode_Root::Ready_Skills()
+{
+	SKILLDESC tSkill{};
+
+	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 4.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime	= -4.f;
+	tSkill.fCoefficient		= 1200.f;
+	m_mapSkills.emplace(TEXT("PRIMARY:MELEE"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:MELEE"), &m_mapSkills[TEXT("PRIMARY:MELEE")]);
+
+	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 6.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 60.f;
+	m_mapSkills.emplace(TEXT("PRIMARY:SHARD"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:SHARD"), &m_mapSkills[TEXT("PRIMARY:SHARD")]);
+
+	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 5;
+	tSkill.iStock			= 1;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 200.f;
+	m_mapSkills.emplace(TEXT("SECONDARY"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SECONDARY"), &m_mapSkills[TEXT("SECONDARY")]);
+
+	tSkill.iMaxStock		= 2;
+	tSkill.fCoolTime		= 3.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 0.f;
+	m_mapSkills.emplace(TEXT("UTILITY"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:UTILITY"), &m_mapSkills[TEXT("UTILITY")]);
+
+	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 30.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 400.f;
+	m_mapSkills.emplace(TEXT("SPECIAL"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SPECIAL"), &m_mapSkills[TEXT("SPECIAL")]);
+
+	return S_OK;
 }
 
 shared_ptr<CBrotherNode_Root> CBrotherNode_Root::Create(shared_ptr<CBlackBoard> _pBlackBoard)

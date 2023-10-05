@@ -25,8 +25,8 @@ public:
 
 	void							Translate(const _vectorf vTranslation);
 	void							Rotate(const _vectorf vQuaternion);
-	void							Rotate(const _vectorf vAxis, const _float fDegree);
-	void							Rotate(const TRANSFORM, const _float fDegree);
+	void							Rotate(const _vectorf vAxis, const _float fRadian);
+	void							Rotate(const TRANSFORM, const _float fRadian);
 	void							LookAt(const _vectorf vPosition, const _bool bFixUp = true, const _bool bPipeLineUp = false);
 	void							LookAt(shared_ptr<CTransform>, const _bool bFixUp = true, const _bool bPipeLineUp = false);
 	void							LookAt_Interpolation(const _vectorf vPosition, const _bool bFixUp = true, const _bool bPipeLineUp = false, const _float fInterpolationDuration = g_fDefaultInterpolationDuration * 2.f, const _float fWeight = 1.f);

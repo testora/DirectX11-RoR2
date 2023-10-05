@@ -7,6 +7,7 @@ BEGIN(Client)
 class CBrotherNodeDecorator_Repeat final : public CDecorator
 {
 private:
+	explicit CBrotherNodeDecorator_Repeat(shared_ptr<CNode>, _float fDuration);
 	explicit CBrotherNodeDecorator_Repeat(shared_ptr<CNode>, function<_bool()> fpEscape);
 	virtual ~CBrotherNodeDecorator_Repeat() DEFAULT;
 
@@ -19,10 +20,12 @@ public:
 	virtual void									Terminate() override;
 
 private:
-	function<_bool()>								m_fpEscape;
+	_float											m_fDuration	= 0.f;
+	function<_bool()>								m_fpEscape	= nullptr;
 
 public:
-	static shared_ptr<CBrotherNodeDecorator_Repeat>	Create(shared_ptr<class CBlackBoard>, shared_ptr<CNode>, function<_bool()> fpEscape);
+	static shared_ptr<CBrotherNodeDecorator_Repeat>	Create(shared_ptr<class CBlackBoard>, _float fDuration, shared_ptr<CNode>);
+	static shared_ptr<CBrotherNodeDecorator_Repeat>	Create(shared_ptr<class CBlackBoard>, function<_bool()> fpEscape, shared_ptr<CNode>);
 };
 
 END

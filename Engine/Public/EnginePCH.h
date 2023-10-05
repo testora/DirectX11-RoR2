@@ -68,6 +68,7 @@ using std::make_pair;
 #include <any>
 #include <variant>
 #include <optional>
+#include <initializer_list>
 
 using std::string;
 using std::wstring;
@@ -93,6 +94,7 @@ using std::nullopt;
 
 using std::make_tuple;
 using std::any_cast;
+using std::initializer_list;
 
 #if ACTIVATE_TOOL
 #pragma warning(push)

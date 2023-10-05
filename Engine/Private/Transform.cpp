@@ -46,7 +46,11 @@ void CTransform::Set_State(const TRANSFORM _eState, const _vectorf _vState)
 
 	if (Function::InRange(_eState, TRANSFORM::RIGHT, TRANSFORM::LOOK, "[]"))
 	{
-		if (XMVector3Equal(XMVector3Cross(XMVector3Normalize(mWorld.r[IDX(_eState)]), XMVector3Normalize(_vState)), XMVectorZero()))
+		if (XMVector3Equal(XMVector3Normalize(mWorld.r[IDX(_eState)]), XMVector3Normalize(_vState)))
+		{
+			return;
+		}
+		else if (XMVector3Equal(XMVector3Cross(XMVector3Normalize(mWorld.r[IDX(_eState)]), XMVector3Normalize(_vState)), XMVectorZero()))
 		{
 			switch (_eState)
 			{
@@ -105,16 +109,16 @@ void CTransform::Rotate(const _vectorf _vQuaternion)
 	Set_State(TRANSFORM::POSITION, mWorld.r[IDX(TRANSFORM::POSITION)]);
 }
 
-void CTransform::Rotate(const _vectorf _vAxis, const _float _fDegree)
+void CTransform::Rotate(const _vectorf _vAxis, const _float _fRadian)
 {
 	_matrix mWorld(m_mWorld);
-	m_mWorld *= XMMatrixRotationQuaternion(XMQuaternionRotationAxis(_vAxis, XMConvertToRadians(_fDegree)));
+	m_mWorld *= XMMatrixRotationQuaternion(XMQuaternionRotationAxis(_vAxis, _fRadian));
 	Set_State(TRANSFORM::POSITION, mWorld.r[IDX(TRANSFORM::POSITION)]);
 }
 
-void CTransform::Rotate(const TRANSFORM _eState, const _float _fDegree)
+void CTransform::Rotate(const TRANSFORM _eState, const _float _fRadian)
 {
-	Rotate(Get_State(_eState), _fDegree);
+	Rotate(Get_State(_eState), _fRadian);
 }
 
 void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp, const _bool _bPipeLineUp)

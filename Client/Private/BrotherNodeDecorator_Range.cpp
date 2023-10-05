@@ -1,12 +1,20 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeDecorator_Range.h"
 
 CBrotherNodeDecorator_Range::CBrotherNodeDecorator_Range(shared_ptr<CNode> _pNode, _float _fDistance, _bool _bInRange)
 	: CDecorator	(_pNode)
-	, m_fDistance	(_fDistance)
 	, m_bInRange	(_bInRange)
+	, m_fDistanceMin(_bInRange?0.f:_fDistance)
+	, m_fDistanceMax(_bInRange?_fDistance:0.f)
+{
+}
+
+CBrotherNodeDecorator_Range::CBrotherNodeDecorator_Range(shared_ptr<CNode> _pNode, _float _fDistanceMin, _float _fDistanceMax)
+	: CDecorator(_pNode)
+	, m_fDistanceMin(_fDistanceMin)
+	, m_fDistanceMax(_fDistanceMax)
 {
 }
 
@@ -30,28 +38,49 @@ void CBrotherNodeDecorator_Range::Activate()
 
 STATUS CBrotherNodeDecorator_Range::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
-	if (true == m_bInRange)
+	if (m_pNode->Is_Running())
 	{
-		if (Function::Distance(m_pTransform, m_pTargetTransform) <= m_fDistance)
-		{
-			m_eStatus = m_pNode->Invoke(_fTimeDelta);
-		}
-		else
-		{
-			m_eStatus = STATUS::SUCCESS;
-		}
+		m_eStatus = m_pNode->Invoke(_fTimeDelta);
 	}
 	else
 	{
-		if (Function::Distance(m_pTransform, m_pTargetTransform) > m_fDistance)
+		if (m_fDistanceMin && m_fDistanceMax)
 		{
-			m_eStatus = m_pNode->Invoke(_fTimeDelta);
+			if (Function::InRange(Function::Distance(m_pTransform, m_pTargetTransform), m_fDistanceMin, m_fDistanceMax))
+			{
+				m_eStatus = m_pNode->Invoke(_fTimeDelta);
+			}
+			else
+			{
+				m_eStatus = STATUS::FAILURE;
+			}
 		}
 		else
 		{
-			m_eStatus = STATUS::SUCCESS;
+			if (true == m_bInRange)
+			{
+				if (Function::Distance(m_pTransform, m_pTargetTransform) <= m_fDistanceMax)
+				{
+					m_eStatus = m_pNode->Invoke(_fTimeDelta);
+				}
+				else
+				{
+					m_eStatus = STATUS::FAILURE;
+				}
+			}
+			else
+			{
+				if (Function::Distance(m_pTransform, m_pTargetTransform) > m_fDistanceMin)
+				{
+					m_eStatus = m_pNode->Invoke(_fTimeDelta);
+				}
+				else
+				{
+					m_eStatus = STATUS::FAILURE;
+				}
+			}
 		}
 	}
 
@@ -60,10 +89,24 @@ STATUS CBrotherNodeDecorator_Range::Invoke(_float _fTimeDelta)
 
 void CBrotherNodeDecorator_Range::Terminate()
 {
+	m_pNode->Terminate();
+
 	__super::Terminate();
 }
 
-shared_ptr<CBrotherNodeDecorator_Range> CBrotherNodeDecorator_Range::Create(shared_ptr<CBlackBoard> _pBlackBoard, shared_ptr<CNode> _pNode, _float _fDistance, _bool _bInRange)
+shared_ptr<CBrotherNodeDecorator_Range> CBrotherNodeDecorator_Range::Create(shared_ptr<CBlackBoard> _pBlackBoard, _float _fDistanceMin, _float _fDistanceMax, shared_ptr<CNode> _pNode)
+{
+	shared_ptr<CBrotherNodeDecorator_Range> pInstance = make_private_shared(CBrotherNodeDecorator_Range, _pNode, _fDistanceMin, _fDistanceMax);
+
+	if (FAILED(pInstance->Initialize(_pBlackBoard)))
+	{
+		MSG_RETURN(nullptr, "CBrotherNodeDecorator_Range::Create", "Failed to Initialize");
+	}
+
+	return pInstance;
+}
+
+shared_ptr<CBrotherNodeDecorator_Range> CBrotherNodeDecorator_Range::Create(shared_ptr<CBlackBoard> _pBlackBoard, _float _fDistance, _bool _bInRange, shared_ptr<CNode> _pNode)
 {
 	shared_ptr<CBrotherNodeDecorator_Range> pInstance = make_private_shared(CBrotherNodeDecorator_Range, _pNode, _fDistance, _bInRange);
 

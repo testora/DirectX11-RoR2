@@ -1,6 +1,6 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeLeaf_LeapEnd.h"
 
 HRESULT CBrotherNodeLeaf_LeapEnd::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
@@ -10,8 +10,17 @@ HRESULT CBrotherNodeLeaf_LeapEnd::Initialize(shared_ptr<CBlackBoard> _pBlackBoar
 		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_LeapEnd::Initialize", "Failed to __super::Initialize");
 	}
 
-	m_pTransform	= m_pBlackBoard->Get_System<CTransform>(TEXT("Owner:Transform"));
-	m_pAnimator		= m_pBlackBoard->Get_System<CAnimator>(TEXT("Owner:Animator"));
+	m_pTransform = m_pBlackBoard->Get_System<CTransform>(TEXT("Owner:Transform"));
+	if (nullptr == m_pTransform)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_LeapEnd::Initialize", "Failed to Get: Owner:Transform");
+	}
+
+	m_pAnimator = m_pBlackBoard->Get_System<CAnimator>(TEXT("Owner:Animator"));
+	if (nullptr == m_pAnimator)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_LeapEnd::Initialize", "Failed to Get: Owner:Animator");
+	}
 
 	return S_OK;
 }
@@ -26,7 +35,7 @@ void CBrotherNodeLeaf_LeapEnd::Activate()
 
 STATUS CBrotherNodeLeaf_LeapEnd::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
 	if (m_pAnimator->Is_Playing(ANIMATION::BROTHER::LEAP_END))
 	{

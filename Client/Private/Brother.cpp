@@ -80,8 +80,8 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("DASH_BACKWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_BACKWARD);
 	if (ImGui::Button("DASH_LEFT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_LEFT);
 	if (ImGui::Button("DASH_RIGHT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_RIGHT);
-	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD);
-	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD);
+	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f);
+	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD, 1.f, true, 0.1f, false);
 	if (ImGui::Button("ULT_ENTER"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_ENTER);
 	if (ImGui::Button("ULT_CHANNEL"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_CHANNEL);
 	if (ImGui::Button("ULT_EXIT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_EXIT);
@@ -177,20 +177,6 @@ HRESULT CBrother::Ready_Components()
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iConstellationIndex);
 
 	pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
-
-//	AIM_YAW
-//	AIM_PITCH
-//	LUNARSHARD_FIRE_FORWARD
-//	FLINCH1
-//	FLINCH2
-//	FLINCH3
-//	HURT_LUNARSHARD_EXIT_LEFT
-//	HURT_LUNARSHARD_EXIT_RIGHT
-//	HURT_LUNARSHARD_FIRE_FORWARD
-//	HURT_LUNARSHARD_FIRE_LEFT
-//	HURT_LUNARSHARD_FIRE_RIGHT
-//	HURT_LUNARSHARD_EXIT_FORWARD
-//	HURT_LUNARSHARD_ENTER_FORWARD
 	
 	return S_OK;
 }

@@ -112,8 +112,8 @@ After 3 seconds he slams down in the center of the arena, creating a ring-shaped
 The shock wave effectively ends when it reaches the thin line of rocks between the platform where he is first seen.
 쇼크웨이브는 그가 처음 볼 수 있는 플랫폼 사이의 얇은 바위 줄에 도달하면 효과적으로 끝난다.
 
-Each wave deals 400% with a proc coefficient of 1.0 and inflicts Status Cripple(아머20, 이속50%).
-각 파동은 1.0의 프록 계수로 400%의 피해를 주고 상태 저하(아머20, 이속50%)를 유발한다.
+Each wave deals 400% with a proc coefficient of 1.0 and inflicts Status Cripple(Armor by 20, Speed by 50%).
+각 파동은 1.0의 프록 계수로 400%의 피해를 주고 상태 저하(아머 20, 이동속도 50%)를 유발한다.
  
 This skill has a cooldown of 30 seconds.
 이 스킬의 재사용 대기시간은 30초이다.

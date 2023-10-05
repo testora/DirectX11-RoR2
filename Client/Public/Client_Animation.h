@@ -54,7 +54,9 @@ namespace ANIMATION
 		SELECT_LOOK1					= 22,
 		SELECT_LOOK2					= 32,
 	//	TEST
-		TEST							= 2					// IconicTestPose
+		TEST							= 2,				// IconicTestPose
+
+		MAX								= 38
 	};
 #pragma endregion
 #pragma region MONSTER
@@ -132,6 +134,7 @@ namespace ANIMATION
 		HURT_TO_DEATH					= 12,
 		DEATH_LOOP						= 16,
 #pragma endregion
+		MAX								= 49
 	};
 
 	enum class GOLEM
@@ -166,7 +169,9 @@ namespace ANIMATION
 		DEATH							= 2,
 		SPAWN							= 20,
 	//	TEST
-		TPOSE							= 21
+		TPOSE							= 21,
+
+		MAX								= 23
 	};
 #pragma endregion
 }

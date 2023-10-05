@@ -2,13 +2,16 @@
 #include "Client_Define.h"
 #include "Sequence.h"
 
+BEGIN(Engine)
+END
+
 BEGIN(Client)
 
-class CBrotherNodeSequence_SprintSmash final : public CSequence
+class CBrotherNodeSequence_DashSmash final : public CSequence
 {
 private:
-	explicit CBrotherNodeSequence_SprintSmash() DEFAULT;
-	virtual ~CBrotherNodeSequence_SprintSmash() DEFAULT;
+	explicit CBrotherNodeSequence_DashSmash() DEFAULT;
+	virtual ~CBrotherNodeSequence_DashSmash() DEFAULT;
 
 public:
 	virtual HRESULT										Initialize(shared_ptr<class CBlackBoard>) override;
@@ -19,7 +22,7 @@ public:
 	virtual void										Terminate() override;
 
 public:
-	static shared_ptr<CBrotherNodeSequence_SprintSmash>	Create(shared_ptr<class CBlackBoard>);
+	static shared_ptr<CBrotherNodeSequence_DashSmash>	Create(shared_ptr<class CBlackBoard>);
 };
 
 END

@@ -19,10 +19,69 @@ public:
 	virtual void							Terminate() override;
 
 private:
+	HRESULT									Ready_Skills();
+
+private:
+	const BROTHER_PHASE*					m_pPhase			= nullptr;
 	shared_ptr<CNode>						m_pPhaseSelector;
+
+	map<wstring, SKILLDESC>					m_mapSkills;
 
 public:
 	static shared_ptr<CBrotherNode_Root>	Create(shared_ptr<class CBlackBoard>);
 };
 
 END
+
+/*
+NOTE: 
+ROOT
+CHILD	[DECORATOR-REPEAT]
+		[SELECTOR] PHASE
+		?=PHASE1
+		CHILD	[SELECTOR] PHASE1
+				CHILD	[DECORATOR-SKILL]
+						[SEQUENCE] SPECIAL
+						CHILD	[LEAF] LEAP_BEGIN
+						CHILD	[LEAF] LEAP_END
+				//		CHILD	[LEAF] SHOCK_WAVE
+
+				CHILD	[SELECTOR] PRIMARY
+						CHILD	[DECORATOR-SKILL]
+								[DECORATOR-RANGE-OUT-70]
+								[PARALLEL] PRIMARY_SHARD
+								CHILD	[LEAF] SPRINT
+								CHILD	[LEAF] SHARD
+						CHILD	[DECORATOR-SKILL]
+								[DECORATOR-RANGE-IN-35]
+								[SELECTOR] PRIMARY_MELLE
+								CHILD	[DECORATOR-SKILL]
+										[SEQUENCE] DASHSMASH
+										CHILD	[LEAF] DASH 1-0-1-1
+										CHILD	[LEAF] SMASH
+								CHILD	[LEAF] SMASH
+
+				CHILD	[DECORATOR-SKILL]
+						[DECORATOR-RANGE-IN-40]
+						[SELECTOR] SECONDARY
+						CHILD	[DECORATOR-SKILL]
+								[SEQUENCE] DASH_SPRINTSMASH
+								CHILD	[LEAF] DASH_SIDE
+										[LEAF] SPRINTSMASH
+						CHILD	[LEAF] SPRINTSMASH
+
+				CHILD	[DECORATOR-SKILL]
+						[DECORATOR-RANGE-40-50]
+						[LEAF] DASH	1-0-1-1
+
+				CHILD	[DECORATOR-RANGE-OUT-50-20]
+						[DECORATOR-REPEAT-1]
+						[LEAF] SPRINT
+
+				CHILD	[DECORATOR-RANGE-OUT-20]
+						[DECORATOR-REPEAT-1]
+						[LEAF] RUN
+
+				CHILD	[LEAF] DASH 0-1-1-1
+
+*/

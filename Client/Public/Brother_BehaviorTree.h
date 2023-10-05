@@ -2,6 +2,46 @@
 #include "Client_Define.h"
 #include "BehaviorTree.h"
 
+#include "BrotherNode_Root.h"
+#pragma region LEAF
+#include "BrotherNodeLeaf_IdleReady.h"
+#include "BrotherNodeLeaf_LeapBegin.h"
+#include "BrotherNodeLeaf_LeapEnd.h"
+#include "BrotherNodeLeaf_Dash.h"
+#include "BrotherNodeLeaf_DashSide.h"
+#include "BrotherNodeLeaf_Run.h"
+#include "BrotherNodeLeaf_Sprint.h"
+#include "BrotherNodeLeaf_Smash.h"
+#include "BrotherNodeLeaf_SprintSmash.h"
+#include "BrotherNodeLeaf_Shard.h"
+#pragma endregion
+#pragma region DECORATOR
+#include "BrotherNodeDecorator_Repeat.h"
+#include "BrotherNodeDecorator_Delay.h"
+#include "BrotherNodeDecorator_Range.h"
+#include "BrotherNodeDecorator_Skill.h"
+#pragma endregion
+#pragma region COMPOSITE
+#pragma region PARALLEL
+#include "BrotherNodeParallel_PrimaryShard.h"
+#pragma endregion
+#pragma region SEQUENCE
+#include "BrotherNodeSequence_Special.h"
+#include "BrotherNodeSequence_DashSmash.h"
+#include "BrotherNodeSequence_DashSprintSmash.h"
+#include "BrotherNodeSequence_Enter.h"
+#pragma endregion
+#pragma region SELECTOR
+#include "BrotherNodeSelector_Phase.h"
+#include "BrotherNodeSelector_Phase0.h"
+#include "BrotherNodeSelector_Phase1.h"
+#include "BrotherNodeSelector_PrimaryMelee.h"
+#include "BrotherNodeSelector_Primary.h"
+#include "BrotherNodeSelector_Secondary.h"
+#pragma endregion
+#pragma endregion
+
+
 BEGIN(Engine)
 class CTransform;
 class CPhysics;
@@ -25,21 +65,3 @@ public:
 };
 
 END
-
-/*
-NOTE: 
-[DECOTATOR-REPEAT]
-ROOT
-	[DECORATOR-REPEAT]
-	[SELECTOR] PHASE
-		?=PHASE0
-		[SEQUENCE] LEAP_END, IDLE_READY
-		?=PHASE1
-		[SELECTOR] PHASE1
-			?=FIRST ENTER
-			[DECORATOR-RANGE]
-			[SEQUENCE] SPRINT, SMASH
-			?=IDLE
-			[DECORATOR-REPEAT]
-			IDLE
-*/

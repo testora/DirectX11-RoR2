@@ -12,6 +12,7 @@ class CBrotherNodeDecorator_Range final : public CDecorator
 {
 private:
 	explicit CBrotherNodeDecorator_Range(shared_ptr<CNode>, _float fDistance, _bool bInRange);
+	explicit CBrotherNodeDecorator_Range(shared_ptr<CNode>, _float fDistanceMin, _float fDistanceMax);
 	virtual ~CBrotherNodeDecorator_Range() DEFAULT;
 
 public:
@@ -26,11 +27,13 @@ private:
 	shared_ptr<CTransform>							m_pTransform;
 	shared_ptr<CTransform>							m_pTargetTransform;
 
-	_bool											m_bInRange	= true;
-	_float											m_fDistance	= 0.f;
+	_bool											m_bInRange		= false;
+	_float											m_fDistanceMin	= 0.f;
+	_float											m_fDistanceMax	= 0.f;
 
 public:
-	static shared_ptr<CBrotherNodeDecorator_Range>	Create(shared_ptr<class CBlackBoard>, shared_ptr<CNode>, _float fDistance, _bool bInRange = true);
+	static shared_ptr<CBrotherNodeDecorator_Range>	Create(shared_ptr<class CBlackBoard>, _float fDistance, _bool bInRange, shared_ptr<CNode>);
+	static shared_ptr<CBrotherNodeDecorator_Range>	Create(shared_ptr<class CBlackBoard>, _float fDistanceMin, _float fDistanceMax, shared_ptr<CNode>);
 };
 
 END

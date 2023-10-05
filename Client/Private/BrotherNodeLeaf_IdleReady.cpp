@@ -1,6 +1,6 @@
 #include "ClientPCH.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "Brother_BehaviorTree.h"
 #include "BrotherNodeLeaf_IdleReady.h"
 
 HRESULT CBrotherNodeLeaf_IdleReady::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
@@ -11,6 +11,10 @@ HRESULT CBrotherNodeLeaf_IdleReady::Initialize(shared_ptr<CBlackBoard> _pBlackBo
 	}
 
 	m_pAnimator = m_pBlackBoard->Get_System<CAnimator>(TEXT("Owner:Animator"));
+	if (nullptr == m_pAnimator)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_IdleReady::Initialize", "Failed to Get: Owner:Animator");
+	}
 
 	return S_OK;
 }
@@ -24,7 +28,7 @@ void CBrotherNodeLeaf_IdleReady::Activate()
 
 STATUS CBrotherNodeLeaf_IdleReady::Invoke(_float _fTimeDelta)
 {
-	Begin_Invoke();
+	Begin_Invoke(_fTimeDelta);
 
 	if (m_pAnimator->Is_Playing(ANIMATION::BROTHER::IDLE_READY))
 	{

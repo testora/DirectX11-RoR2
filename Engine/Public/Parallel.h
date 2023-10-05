@@ -9,7 +9,7 @@ class ENGINE_DLL CParallel abstract : public CComposite
 public:
 	enum class POLICY	{ REQUIRE_ONE, REQUIRE_ALL, MAX };
 
-private:
+protected:
 	explicit CParallel(POLICY eSuccess, POLICY eFailure);
 	virtual ~CParallel() DEFAULT;
 

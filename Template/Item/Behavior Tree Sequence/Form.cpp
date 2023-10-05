@@ -1,7 +1,6 @@
 #include "ClientPCH.h"
-#include "$safeitemname$.h"
-#include "BlackBoard.h"
 #include "GameInstance.h"
+#include "$safeitemname$.h"
 
 HRESULT C$safeitemname$::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -20,7 +19,11 @@ void C$safeitemname$::Activate()
 
 STATUS C$safeitemname$::Invoke(_float _fTimeDelta)
 {
-	return __super::Tick(_fTimeDelta);
+	Begin_Invoke(_fTimeDelta);
+
+	m_eStatus = __super::Invoke(_fTimeDelta);
+
+	return Return_Invoke();
 }
 
 void C$safeitemname$::Terminate()

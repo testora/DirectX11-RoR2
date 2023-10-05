@@ -161,6 +161,7 @@ namespace Engine
 	{
 		_float		fMaxHP;
 		_float		fHP;
+		_float		fAtk;
 
 		_float		fForwardSpeed;
 		_float		fLeftSpeed;
@@ -172,6 +173,17 @@ namespace Engine
 		XMFLOAT3	vMaxSpeed;
 		XMFLOAT3	vResist;
 	} ENTITYDESC;
+
+	typedef struct tagSkillDesc
+	{
+		_uint		iStock;
+		_float		fCurrentCoolTime;
+		_float		fCoefficient;
+
+		_uint		iMaxStock;
+		_float		fCoolTime;
+
+	} SKILLDESC;
 
 #pragma endregion
 #pragma region Etc
