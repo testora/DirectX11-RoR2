@@ -19,6 +19,11 @@ void CParallel::Activate()
 
 STATUS CParallel::Invoke(_float _fTimeDelta)
 {
+	if (m_lstChildren.empty())
+	{
+		return STATUS::FAILURE;
+	}
+
 	size_t nSuccessCnt(0), nFailureCnt(0);
 
 	for (auto& pChild : m_lstChildren)

@@ -105,9 +105,9 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("HURT_LUNARSHARD_FIRE_RIGHT"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_RIGHT);
 	if (ImGui::Button("HURT_LUNARSHARD_EXIT_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_FORWARD);
 	if (ImGui::Button("HURT_LUNARSHARD_ENTER_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_ENTER_FORWARD);
-	if (ImGui::Button("HURT_STRAGGER_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRAGGER_ENTER);
-	if (ImGui::Button("HURT_STRAGGER_EXIT"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRAGGER_EXIT);
-	if (ImGui::Button("HURT_STRAGGER_LOOP"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRAGGER_LOOP);
+	if (ImGui::Button("HURT_STAGGER_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_ENTER);
+	if (ImGui::Button("HURT_STRGGER_EXIT"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRGGER_EXIT);
+	if (ImGui::Button("HURT_STAGGER_LOOP"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_LOOP);
 	if (ImGui::Button("HURT_TO_DEATH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_TO_DEATH);
 	if (ImGui::Button("DEATH_LOOP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DEATH_LOOP);
 	ImGui::End();
@@ -118,7 +118,10 @@ void CBrother::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	Add_RenderObject(RENDER_GROUP::NONBLEND);
+	if (m_bRender)
+	{
+		Add_RenderObject(RENDER_GROUP::NONBLEND);
+	}
 }
 
 HRESULT CBrother::Render()
@@ -167,14 +170,14 @@ HRESULT CBrother::Ready_Components()
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_ENTER),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_EXIT),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),	iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRAGGER_LOOP),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),	iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),	iConstellationIndex);
 
 	pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
 	

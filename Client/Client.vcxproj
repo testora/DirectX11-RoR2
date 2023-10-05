@@ -35,6 +35,16 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_Ult.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Ult.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_LunarSpecial.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_LunarSmash.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_LunarPrimary.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_LunarPrimaryMelee.h" />
+    <ClInclude Include="Public\BrotherNodeSequence_LunarDashSmash.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase2.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase3.h" />
+    <ClInclude Include="Public\BrotherNodeSelector_Phase4.h" />
     <ClInclude Include="Public\BrotherNodeSequence_DashSprintSmash.h" />
     <ClInclude Include="Public\BrotherNodeSelector_Secondary.h" />
     <ClInclude Include="Public\BrotherNodeSequence_DashSmash.h" />
@@ -53,7 +63,6 @@
     <ClInclude Include="Public\BrotherNodeSequence_Enter.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_LeapBegin.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_LeapEnd.h" />
-    <ClInclude Include="Public\BrotherNodeSelector_Phase0.h" />
     <ClInclude Include="Public\BrotherNodeSelector_Phase1.h" />
     <ClInclude Include="Public\BrotherNodeSelector_Phase.h" />
     <ClInclude Include="Public\BrotherNodeDecorator_Repeat.h" />
@@ -177,6 +186,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\BrotherNodeSequence_Ult.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Ult.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_LunarSpecial.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_LunarSmash.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_LunarPrimary.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_LunarPrimaryMelee.cpp" />
+    <ClCompile Include="Private\BrotherNodeSequence_LunarDashSmash.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase2.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase3.cpp" />
+    <ClCompile Include="Private\BrotherNodeSelector_Phase4.cpp" />
     <ClCompile Include="Private\BrotherNodeSequence_DashSprintSmash.cpp" />
     <ClCompile Include="Private\BrotherNodeSelector_Secondary.cpp" />
     <ClCompile Include="Private\BrotherNodeSequence_DashSmash.cpp" />
@@ -195,7 +214,6 @@
     <ClCompile Include="Private\BrotherNodeSequence_Enter.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_LeapBegin.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_LeapEnd.cpp" />
-    <ClCompile Include="Private\BrotherNodeSelector_Phase0.cpp" />
     <ClCompile Include="Private\BrotherNodeSelector_Phase1.cpp" />
     <ClCompile Include="Private\BrotherNodeSelector_Phase.cpp" />
     <ClCompile Include="Private\BrotherNodeDecorator_Repeat.cpp" />

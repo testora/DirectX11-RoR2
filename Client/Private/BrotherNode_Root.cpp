@@ -80,6 +80,14 @@ HRESULT CBrotherNode_Root::Ready_Skills()
 	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:MELEE"), &m_mapSkills[TEXT("PRIMARY:MELEE")]);
 
 	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 4.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime	= -4.f;
+	tSkill.fCoefficient		= 1200.f;
+	m_mapSkills.emplace(TEXT("PRIMARY:MELEE:LUNAR"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:MELEE:LUNAR"), &m_mapSkills[TEXT("PRIMARY:MELEE:LUNAR")]);
+
+	tSkill.iMaxStock		= 1;
 	tSkill.fCoolTime		= 6.f;
 	tSkill.iStock			= 0;
 	tSkill.fCurrentCoolTime = 0.f;
@@ -108,8 +116,16 @@ HRESULT CBrotherNode_Root::Ready_Skills()
 	tSkill.iStock			= 0;
 	tSkill.fCurrentCoolTime = 0.f;
 	tSkill.fCoefficient		= 400.f;
-	m_mapSkills.emplace(TEXT("SPECIAL"), tSkill);
-	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SPECIAL"), &m_mapSkills[TEXT("SPECIAL")]);
+	m_mapSkills.emplace(TEXT("SPECIAL:SHOCKWAVE"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SPECIAL:SHOCKWAVE"), &m_mapSkills[TEXT("SPECIAL:SHOCKWAVE")]);
+
+	tSkill.iMaxStock		= 0;
+	tSkill.fCoolTime		= 4.f;
+	tSkill.iStock			= 0;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 400.f;
+	m_mapSkills.emplace(TEXT("SPECIAL:ULT"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SPECIAL:ULT"), &m_mapSkills[TEXT("SPECIAL:ULT")]);
 
 	return S_OK;
 }

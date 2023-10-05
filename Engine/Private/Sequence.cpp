@@ -10,6 +10,11 @@ void CSequence::Activate()
 
 STATUS CSequence::Invoke(_float _fTimeDelta)
 {
+	if (m_lstChildren.end() == m_itCurrentChild)
+	{
+		return STATUS::FAILURE;
+	}
+
 	switch ((*m_itCurrentChild)->Invoke(_fTimeDelta))
 	{
 	case STATUS::RUNNING:

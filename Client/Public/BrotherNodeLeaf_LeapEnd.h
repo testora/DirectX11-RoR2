@@ -16,16 +16,18 @@ private:
 	virtual ~CBrotherNodeLeaf_LeapEnd() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize(shared_ptr<class CBlackBoard>) override;
+	virtual HRESULT								Initialize(shared_ptr<class CBlackBoard>) override;
 
 public:
-	virtual void						Activate() override;
-	virtual STATUS						Invoke(_float fTimeDelta) override;
-	virtual void						Terminate() override;
+	virtual void								Activate() override;
+	virtual STATUS								Invoke(_float fTimeDelta) override;
+	virtual void								Terminate() override;
 
 private:
-	shared_ptr<CTransform>				m_pTransform;
-	shared_ptr<CAnimator>				m_pAnimator;
+	shared_ptr<CTransform>						m_pTransform;
+	shared_ptr<CAnimator>						m_pAnimator;
+
+	shared_ptr<class CBrother>					m_pBrother;
 
 public:
 	static shared_ptr<CBrotherNodeLeaf_LeapEnd>	Create(shared_ptr<class CBlackBoard>);

@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Brother_BehaviorTree.h"
 #include "BrotherNodeLeaf_LeapEnd.h"
+#include "Brother.h"
 
 HRESULT CBrotherNodeLeaf_LeapEnd::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 {
@@ -22,12 +23,20 @@ HRESULT CBrotherNodeLeaf_LeapEnd::Initialize(shared_ptr<CBlackBoard> _pBlackBoar
 		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_LeapEnd::Initialize", "Failed to Get: Owner:Animator");
 	}
 
+	m_pBrother = m_pBlackBoard->Get_Anything<shared_ptr<CBrother>>(TEXT("Owner")).value_or(nullptr);
+	if (nullptr == m_pAnimator)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeLeaf_LeapEnd::Initialize", "Failed to Get: Owner");
+	}
+
 	return S_OK;
 }
 
 void CBrotherNodeLeaf_LeapEnd::Activate()
 {
 	__super::Activate();
+
+	m_pBrother->Set_Render();
 
 	m_pTransform->Set_State(TRANSFORM::POSITION, ARENA_CENTER);
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::LEAP_END, 1.f, false, g_fDefaultInterpolationDuration, false);

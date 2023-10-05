@@ -16,6 +16,12 @@ HRESULT CBrotherNodeSequence_Special::Initialize(shared_ptr<CBlackBoard> _pBlack
 		MSG_RETURN(E_FAIL, "CBrotherNodeSequence_Special::Initialize", "Failed to Get: Owner:Animator");
 	}
 
+	m_pSkillDesc = m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:SPECIAL:ULT")).value_or(nullptr);
+	if (nullptr == m_pSkillDesc)
+	{
+		MSG_RETURN(E_FAIL, "CBrotherNodeSequence_Special::Initialize", "Failed to Get: Owner:Animator");
+	}
+
 	Add_Child(
 		CBrotherNodeDecorator_Delay::Create(m_pBlackBoard, 3.f,
 			CBrotherNodeLeaf_LeapBegin::Create(m_pBlackBoard)));
@@ -43,6 +49,8 @@ void CBrotherNodeSequence_Special::Terminate()
 	__super::Terminate();
 
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SPRINT_FORWARD);
+
+	m_pSkillDesc->iMaxStock = 1;
 }
 
 shared_ptr<CBrotherNodeSequence_Special> CBrotherNodeSequence_Special::Create(shared_ptr<CBlackBoard> _pBlackBoard)

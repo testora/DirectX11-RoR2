@@ -12,8 +12,10 @@ HRESULT CBrotherNodeSelector_Phase::Initialize(shared_ptr<CBlackBoard> _pBlackBo
 
 	m_pBlackBoard->Add_Anything(TEXT("Owner:Phase"), &m_ePhase);
 
-	Add_Child(CBrotherNodeSelector_Phase0::Create(m_pBlackBoard));
 	Add_Child(CBrotherNodeSelector_Phase1::Create(m_pBlackBoard));
+	Add_Child(CBrotherNodeSelector_Phase2::Create(m_pBlackBoard));
+	Add_Child(CBrotherNodeSelector_Phase3::Create(m_pBlackBoard));
+	Add_Child(CBrotherNodeSelector_Phase4::Create(m_pBlackBoard));
 
     return S_OK;
 }

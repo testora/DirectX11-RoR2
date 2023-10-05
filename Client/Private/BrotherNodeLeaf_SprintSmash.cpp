@@ -39,7 +39,6 @@ void CBrotherNodeLeaf_SprintSmash::Activate()
 {
 	__super::Activate();
 
-	m_pPhysics->Flattern(true, false, true);
 	m_pTransform->LookAt(m_pTargetTransform);
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SPRINT_SMASH, 1.5f, false, g_fDefaultInterpolationDuration, false);
 	m_pPhysics->Force(TRANSFORM::LOOK, BROTHER_SPRINT_SMASH_FORCE);

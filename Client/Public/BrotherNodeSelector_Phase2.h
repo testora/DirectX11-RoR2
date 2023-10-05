@@ -1,17 +1,17 @@
 #pragma once
 #include "Client_Define.h"
-#include "Sequence.h"
+#include "Selector.h"
 
 BEGIN(Engine)
 END
 
 BEGIN(Client)
 
-class CBrotherNodeSequence_Enter final : public CSequence
+class CBrotherNodeSelector_Phase2 final : public CSelector
 {
 private:
-	explicit CBrotherNodeSequence_Enter() DEFAULT;
-	virtual ~CBrotherNodeSequence_Enter() DEFAULT;
+	explicit CBrotherNodeSelector_Phase2() DEFAULT;
+	virtual ~CBrotherNodeSelector_Phase2() DEFAULT;
 
 public:
 	virtual HRESULT									Initialize(shared_ptr<class CBlackBoard>) override;
@@ -22,10 +22,10 @@ public:
 	virtual void									Terminate() override;
 
 private:
-	_bool											m_bIsInital	= true;
+	BROTHER_PHASE*									m_pPhase	= nullptr;
 
 public:
-	static shared_ptr<CBrotherNodeSequence_Enter>	Create(shared_ptr<class CBlackBoard>);
+	static shared_ptr<CBrotherNodeSelector_Phase2>	Create(shared_ptr<class CBlackBoard>);
 };
 
 END

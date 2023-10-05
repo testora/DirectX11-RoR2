@@ -12,11 +12,11 @@ HRESULT CBrotherNodeSelector_Primary::Initialize(shared_ptr<CBlackBoard> _pBlack
 
 	Add_Child(
 		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:PRIMARY:SHARD")).value_or(nullptr),
-			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 140.f, false,
+			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 80.f, false,
 				CBrotherNodeParallel_PrimaryShard::Create(m_pBlackBoard))));
 	Add_Child(
 		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:PRIMARY:MELEE")).value_or(nullptr),
-			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 70.f, true,
+			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 40.f, true,
 				CBrotherNodeSelector_PrimaryMelee::Create(m_pBlackBoard))));
 
 	return S_OK;

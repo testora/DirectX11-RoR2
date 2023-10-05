@@ -25,6 +25,8 @@ public:
 private:
 	shared_ptr<CAnimator>							m_pAnimator;
 
+	SKILLDESC*										m_pSkillDesc	= nullptr;
+
 public:
 	static shared_ptr<CBrotherNodeSequence_Special>	Create(shared_ptr<class CBlackBoard>);
 };

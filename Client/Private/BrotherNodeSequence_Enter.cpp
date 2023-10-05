@@ -25,7 +25,7 @@ STATUS CBrotherNodeSequence_Enter::Invoke(_float _fTimeDelta)
 {
 	Begin_Invoke(_fTimeDelta);
 
-	m_eStatus = __super::Invoke(_fTimeDelta);
+	m_eStatus = m_bIsInital ? __super::Invoke(_fTimeDelta) : STATUS::FAILURE;
 
 	return Return_Invoke();
 }
@@ -33,6 +33,8 @@ STATUS CBrotherNodeSequence_Enter::Invoke(_float _fTimeDelta)
 void CBrotherNodeSequence_Enter::Terminate()
 {
 	__super::Terminate();
+
+	m_bIsInital = false;
 }
 
 shared_ptr<CBrotherNodeSequence_Enter> CBrotherNodeSequence_Enter::Create(shared_ptr<CBlackBoard> _pBlackBoard)

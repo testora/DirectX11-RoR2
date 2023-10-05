@@ -23,10 +23,16 @@ private:
 	virtual HRESULT						Ready_Behaviors() override;
 
 public:
+	void								Set_Render(_bool bEnable = true)	{ m_bRender = bEnable; }
+
+public:
 	virtual void						Wander() override;
 	
 	virtual void						Hit() override;
 	virtual void						Hit_WeakPoint() override;
+
+private:
+	_bool								m_bRender	= true;
 
 public:
 	static shared_ptr<CBrother>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

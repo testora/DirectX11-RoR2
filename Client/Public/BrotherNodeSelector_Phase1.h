@@ -19,7 +19,7 @@ public:
 	virtual void									Terminate() override;
 
 private:
-	const BROTHER_PHASE*							m_pPhase	= nullptr;
+	BROTHER_PHASE*									m_pPhase	= nullptr;
 
 public:
 	static shared_ptr<CBrotherNodeSelector_Phase1>	Create(shared_ptr<class CBlackBoard>);
