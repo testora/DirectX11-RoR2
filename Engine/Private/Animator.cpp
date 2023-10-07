@@ -1,5 +1,6 @@
 #include "EnginePCH.h"
 #include "Animator.h"
+#include "Animation.h"
 #include "Model.h"
 #include "GameObject.h"
 
@@ -53,6 +54,11 @@ _bool CAnimator::Is_Playing(_uint _iAnimationIndex) const
 _bool CAnimator::Is_Finished(_uint _iAnimationIndex) const
 {
 	return m_pTargetModel->Is_AnimationFinished(_iAnimationIndex);
+}
+
+_float CAnimator::Get_Duration(_uint iAnimationIndex) const
+{
+	return m_pTargetModel->Get_Animation(iAnimationIndex)->Get_Duration();
 }
 
 void CAnimator::Set_DefaultAnimation(_uint _iAnimationIndex)

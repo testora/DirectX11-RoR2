@@ -19,8 +19,9 @@ public:
 
 
 public:
-	_bool								Is_Finished() const					{ return !m_bReverse ? m_fTrackPosition >= m_fDuration : m_fTrackPosition <= 0.f; }
 	_bool								Is_ChannelExist(_uint iBoneIndex) const;
+	_bool								Is_Finished() const					{ return !m_bReverse ? m_fTrackPosition >= m_fDuration : m_fTrackPosition <= 0.f; }
+	_float								Get_Duration() const				{ return m_fDuration; }
 
 #if ACTIVATE_TOOL
 	_uint								Get_NumChannels() const				{ return static_cast<_uint>(m_vecChannels.size()); }

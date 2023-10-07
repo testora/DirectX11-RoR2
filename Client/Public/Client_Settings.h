@@ -63,15 +63,15 @@
 
 #define PLAYER_CAMERA_OFFSET					_float4(0.f, 3.f, -6.f, 1.f)
 
-#define PLAYER_SPEED_FORWARD					150.f;
-#define PLAYER_SPEED_BACKWARD					90.f;
-#define PLAYER_SPEED_LEFT						90.f;
-#define PLAYER_SPEED_RIGHT						90.f;
-#define PLAYER_SPRINT_POWER						1.5f;
-#define PLAYER_JUMP_POWER						60.f;
+#define PLAYER_SPEED_FORWARD					150.f
+#define PLAYER_SPEED_BACKWARD					90.f
+#define PLAYER_SPEED_LEFT						90.f
+#define PLAYER_SPEED_RIGHT						90.f
+#define PLAYER_SPRINT_POWER						1.5f
+#define PLAYER_JUMP_POWER						60.f
 
-#define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
-#define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f);
+#define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f)
+#define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f)
 
 #define RAILGUNNER_COOLTIME_PISTOL				0.2f
 #define	RAILGUNNER_RELOAD_COOL					1.f
@@ -88,13 +88,13 @@
 
 #pragma region RailGunner - PistolBullet
 
-#define PISTOLBULLET_SPEED_FORWARD				200.f;
+#define PISTOLBULLET_SPEED_FORWARD				200.f
 
-#define PISTOLBULLET_SPEED_TERMINAL				_float3(1000.f, 1000.f, 1000.f);
-#define PISTOLBULLET_SPEED_RESIST				_float3(0.9f, 0.9f, 0.9f);
+#define PISTOLBULLET_SPEED_TERMINAL				_float3(1000.f, 1000.f, 1000.f)
+#define PISTOLBULLET_SPEED_RESIST				_float3(0.9f, 0.9f, 0.9f)
 
-#define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
-#define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f);
+#define PLAYER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f)
+#define PLAYER_SPEED_RESIST						_float3(0.001f, 0.2f, 0.001f)
 
 
 #define PISTOLBULLET_LIFESPAN					2.f
@@ -110,15 +110,18 @@
 
 #pragma region INGAME - Brother
 
-#define BROTHER_SPEED_FORWARD					120.f;
-#define BROTHER_SPEED_BACKWARD					60.f;
-#define BROTHER_SPEED_LEFT						75.f;
-#define BROTHER_SPEED_RIGHT						75.f;
-#define BROTHER_SPRINT_POWER					1.5f;
-#define BROTHER_JUMP_POWER						60.f;
+#define BROTHER_SPEED_FORWARD					120.f
+#define BROTHER_SPEED_BACKWARD					60.f
+#define BROTHER_SPEED_LEFT						75.f
+#define BROTHER_SPEED_RIGHT						75.f
+#define BROTHER_SPRINT_POWER					1.5f
+#define BROTHER_HURT_FORCE_POWER				0.2f
+#define BROTHER_HURT_POWER						0.75f
+#define BROTHER_HURT_INTERPOLATE				0.25f
+#define BROTHER_JUMP_POWER						60.f
 
-#define BROTHER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
-#define BROTHER_SPEED_RESIST					_float3(0.02f, 0.2f, 0.02f);
+#define BROTHER_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f)
+#define BROTHER_SPEED_RESIST					_float3(0.02f, 0.2f, 0.02f)
 
 #define BROTHER_MOVEMENT_TIME_MIN				1.5f
 #define BROTHER_MOVEMENT_TIME_MAX				3.f
@@ -134,15 +137,15 @@
 #pragma endregion
 #pragma region INGAME - Golem
 
-#define GOLEM_SPEED_FORWARD						90.f;
-#define GOLEM_SPEED_BACKWARD					60.f;
-#define GOLEM_SPEED_LEFT						75.f;
-#define GOLEM_SPEED_RIGHT						75.f;
-#define GOLEM_SPRINT_POWER						2.f;
-#define GOLEM_JUMP_POWER						60.f;
+#define GOLEM_SPEED_FORWARD						90.f
+#define GOLEM_SPEED_BACKWARD					60.f
+#define GOLEM_SPEED_LEFT						75.f
+#define GOLEM_SPEED_RIGHT						75.f
+#define GOLEM_SPRINT_POWER						2.f
+#define GOLEM_JUMP_POWER						60.f
 
-#define GOLEM_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f);
-#define GOLEM_SPEED_RESIST						_float3(0.000001f, 0.2f, 0.000001f);
+#define GOLEM_SPEED_TERMINAL					_float3(200.f, 200.f, 200.f)
+#define GOLEM_SPEED_RESIST						_float3(0.000001f, 0.2f, 0.000001f)
 
 #define GOLEM_MOVEMENT_TIME_MIN					1.5f
 #define GOLEM_MOVEMENT_TIME_MAX					3.f

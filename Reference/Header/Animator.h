@@ -21,6 +21,8 @@ public:
 	_bool							Is_Playing(T eAnimation) const;
 	template<typename T>
 	_bool							Is_Finished(T eAnimation) const;
+	template<typename T>
+	_float							Get_Duration(T eAnimation) const;
 
 public:
 	template<typename T>
@@ -35,6 +37,7 @@ public:
 private:
 	_bool							Is_Playing(_uint iAnimationIndex) const;
 	_bool							Is_Finished(_uint iAnimationIndex) const;
+	_float							Get_Duration(_uint iAnimationIndex) const;
 
 	void							Set_DefaultAnimation(_uint iAnimationIndex);
 	void							Set_Animation(_uint iAnimationIndex, _float fPlaySpeed, _bool bReverse, _float fInterpolationDuration, _bool bLoop);

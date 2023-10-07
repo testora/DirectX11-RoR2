@@ -16,6 +16,29 @@ HRESULT CBrotherNodeSelector_Phase4::Initialize(shared_ptr<CBlackBoard> _pBlackB
 		MSG_RETURN(E_FAIL, "CBrotherNodeSelector_Phase4::Initialize", "Failed to Get: Owner:Phase");
 	}
 
+	Add_Child(
+		CBrotherNodeDecorator_Delay::Create(m_pBlackBoard, 1.f,
+			CBrotherNodeLeaf_SpellChannel::Create(m_pBlackBoard)));
+
+	Add_Child(CBrotherNodeParallel_HurtPrimaryShard::Create(m_pBlackBoard));
+
+	Add_Child(
+		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:SECONDARY:FISTSLAM")).value_or(nullptr),
+			CBrotherNodeLeaf_FistSlam::Create(m_pBlackBoard)));
+
+	Add_Child(
+		CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 20.f, false,
+			CBrotherNodeDecorator_Repeat::Create(m_pBlackBoard, 4.f,
+				CBrotherNodeLeaf_HurtWalk::Create(m_pBlackBoard))));
+
+	Add_Child(
+		CBrotherNodeDecorator_Delay::Create(m_pBlackBoard, 1.f, 
+			CBrotherNodeLeaf_Stagger::Create(m_pBlackBoard)));
+
+	Add_Child(
+		CBrotherNodeDecorator_Repeat::Create(m_pBlackBoard, 2.5f,
+			CBrotherNodeLeaf_HurtIdle::Create(m_pBlackBoard)));
+
 	return S_OK;
 }
 

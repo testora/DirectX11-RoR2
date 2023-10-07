@@ -48,3 +48,20 @@ _float Function::Distance(shared_ptr<CTransform> _pTransformA, shared_ptr<CTrans
 {
 	return _float3(_pTransformA->Get_State(TRANSFORM::POSITION) - _pTransformB->Get_State(TRANSFORM::POSITION)).length();
 }
+
+_float Function::RelativeAngle(shared_ptr<CTransform> _pOwner, shared_ptr<CTransform> _pOpponent)
+{
+	_float3 vOwner		= _pOwner->Get_State(TRANSFORM::POSITION);
+	_float3 vOpponent	= _pOpponent->Get_State(TRANSFORM::POSITION);
+
+	_float3 vLook		= _pOwner->Get_State(TRANSFORM::LOOK).normalize();
+	_float3 vRelative	= _float3(vOpponent.x - vOwner.x, 0.f, vOpponent.z - vOwner.z).normalize();
+
+	_float3	vCross		= XMVector3Cross(vLook, vRelative);
+	_float	fDot		= XMVectorGetX(XMVector3Dot(vLook, vRelative));
+	_float	fAngle		= acosf(Function::Clamp(-1.f, 1.f, fDot));
+
+	if (vCross.y < 0.f)	fAngle = -fAngle;
+
+	return fAngle;
+}

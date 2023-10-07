@@ -14,11 +14,10 @@ HRESULT CBrotherNodeSelector_LunarPrimary::Initialize(shared_ptr<CBlackBoard> _p
 		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:PRIMARY:SHARD")).value_or(nullptr),
 			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 80.f, false,
 				CBrotherNodeParallel_PrimaryShard::Create(m_pBlackBoard))));
-
 	Add_Child(
 		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:PRIMARY:MELEE:LUNAR")).value_or(nullptr),
 			CBrotherNodeDecorator_Range::Create(m_pBlackBoard, 40.f, true,
-				CBrotherNodeSelector_PrimaryMelee::Create(m_pBlackBoard))));
+				CBrotherNodeSelector_LunarPrimaryMelee::Create(m_pBlackBoard))));
 
 	return S_OK;
 }

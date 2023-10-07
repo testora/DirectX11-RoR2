@@ -26,13 +26,23 @@ HRESULT CBrotherNodeDecorator_Skill::Initialize(shared_ptr<CBlackBoard> _pBlackB
 void CBrotherNodeDecorator_Skill::Activate()
 {
 	__super::Activate();
+
+	if (m_pSkillDesc->iStock)
+	{
+		m_bAvailable = true;
+		--m_pSkillDesc->iStock;
+	}
+	else
+	{
+		m_bAvailable = false;
+	}
 }
 
 STATUS CBrotherNodeDecorator_Skill::Invoke(_float _fTimeDelta)
 {
  	Begin_Invoke(_fTimeDelta);
 
-	if (m_pSkillDesc->iStock)
+	if (m_bAvailable)
 	{
 		m_eStatus = m_pNode->Invoke(_fTimeDelta);
 	}
@@ -47,8 +57,6 @@ STATUS CBrotherNodeDecorator_Skill::Invoke(_float _fTimeDelta)
 void CBrotherNodeDecorator_Skill::Terminate()
 {
 	__super::Terminate();
-
-	if (m_pSkillDesc->iStock) --m_pSkillDesc->iStock;
 }
 
 shared_ptr<CBrotherNodeDecorator_Skill> CBrotherNodeDecorator_Skill::Create(shared_ptr<CBlackBoard> _pBlackBoard, SKILLDESC* _pSkillDesc, shared_ptr<CNode> _pNode)

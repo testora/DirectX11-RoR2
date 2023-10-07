@@ -24,12 +24,13 @@ STATUS CParallel::Invoke(_float _fTimeDelta)
 		return STATUS::FAILURE;
 	}
 
-	size_t nSuccessCnt(0), nFailureCnt(0);
+	size_t nSuccessCnt(0), nFailureCnt(0), nTerminatedCnt(0);
 
 	for (auto& pChild : m_lstChildren)
 	{
 		if (pChild->Is_Terminated())
 		{
+			++nTerminatedCnt;
 			continue;
 		}
 
@@ -70,6 +71,10 @@ STATUS CParallel::Invoke(_float _fTimeDelta)
 		if (m_eFailurePolicy == POLICY::REQUIRE_ALL && nFailureCnt == m_lstChildren.size())
 		{
 			m_eStatus = STATUS::FAILURE;
+		}
+		if (nTerminatedCnt == m_lstChildren.size())
+		{
+			m_eStatus = STATUS::SUCCESS;
 		}
 	}
 

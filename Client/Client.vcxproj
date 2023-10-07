@@ -35,8 +35,13 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Public\BrotherNodeSequence_Ult.h" />
-    <ClInclude Include="Public\BrotherNodeLeaf_Ult.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_FistSlam.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_Stagger.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_SpellChannel.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtIdle.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtShard.h" />
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtWalk.h" />
+    <ClInclude Include="Public\BrotherNodeParallel_HurtPrimaryShard.h" />
     <ClInclude Include="Public\BrotherNodeSelector_LunarSpecial.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_LunarSmash.h" />
     <ClInclude Include="Public\BrotherNodeSelector_LunarPrimary.h" />
@@ -186,8 +191,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Private\BrotherNodeSequence_Ult.cpp" />
-    <ClCompile Include="Private\BrotherNodeLeaf_Ult.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_FistSlam.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_Stagger.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_SpellChannel.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtIdle.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtShard.cpp" />
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtWalk.cpp" />
+    <ClCompile Include="Private\BrotherNodeParallel_HurtPrimaryShard.cpp" />
     <ClCompile Include="Private\BrotherNodeSelector_LunarSpecial.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_LunarSmash.cpp" />
     <ClCompile Include="Private\BrotherNodeSelector_LunarPrimary.cpp" />

@@ -12,6 +12,12 @@ inline _bool CAnimator::Is_Finished(T _eAnimation) const
 }
 
 template<typename T>
+inline _float CAnimator::Get_Duration(T eAnimation) const
+{
+	return Get_Duration(IDX(eAnimation));
+}
+
+template<typename T>
 inline void CAnimator::Set_Default(T _eAnimation)
 {
 	Set_DefaultAnimation(IDX(_eAnimation));

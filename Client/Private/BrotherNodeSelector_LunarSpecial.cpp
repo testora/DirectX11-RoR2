@@ -14,10 +14,6 @@ HRESULT CBrotherNodeSelector_LunarSpecial::Initialize(shared_ptr<CBlackBoard> _p
 		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:SPECIAL:SHOCKWAVE")).value_or(nullptr),
 			CBrotherNodeSequence_Special::Create(m_pBlackBoard)));
 
-	Add_Child(
-		CBrotherNodeDecorator_Skill::Create(m_pBlackBoard, m_pBlackBoard->Get_Anything<SKILLDESC*>(TEXT("Owner:Skill:SPECIAL:ULT")).value_or(nullptr),
-			CBrotherNodeSequence_Ult::Create(m_pBlackBoard)));
-
 	return S_OK;
 }
 

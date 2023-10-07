@@ -2,8 +2,8 @@
 #include "GameInstance.h"
 #include "$safeitemname$.h"
 
-C$safeitemname$::C$safeitemname$(POLICY _eSuccess, POLICY _eFailure)
-	: CParallel(_eSuccess, _eFailure)
+C$safeitemname$::C$safeitemname$()
+	: CParallel(POLICY::MAX, POLICY::MAX)
 {
 }
 
@@ -36,9 +36,9 @@ void C$safeitemname$::Terminate()
 	__super::Terminate();
 }
 
-shared_ptr<C$safeitemname$> C$safeitemname$::Create(shared_ptr<CBlackBoard> _pBlackBoard, POLICY _eSuccess, POLICY _eFailure)
+shared_ptr<C$safeitemname$> C$safeitemname$::Create(shared_ptr<CBlackBoard> _pBlackBoard)
 {
-	shared_ptr<C$safeitemname$> pInstance = make_private_shared(C$safeitemname$, _eSuccess, _eFailure);
+	shared_ptr<C$safeitemname$> pInstance = make_private_shared(C$safeitemname$);
 
 	if (FAILED(pInstance->Initialize(_pBlackBoard)))
 	{

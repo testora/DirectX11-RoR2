@@ -17,7 +17,6 @@ HRESULT CBrotherNodeSelector_Phase3::Initialize(shared_ptr<CBlackBoard> _pBlackB
 	}
 
 	Add_Child(CBrotherNodeSequence_Enter::Create(m_pBlackBoard));
-	Add_Child(CBrotherNodeLeaf_LeapBegin::Create(m_pBlackBoard, m_pPhase));
 
 	Add_Child(CBrotherNodeSelector_LunarSpecial::Create(m_pBlackBoard));
 
@@ -45,7 +44,7 @@ HRESULT CBrotherNodeSelector_Phase3::Initialize(shared_ptr<CBlackBoard> _pBlackB
 	Add_Child(CBrotherNodeLeaf_Dash::Create(m_pBlackBoard, 0.f, 1.f, 1.f, 1.f));
 
 	Add_Child(
-		CBrotherNodeDecorator_Repeat::Create(m_pBlackBoard, nullptr,
+		CBrotherNodeDecorator_Repeat::Create(m_pBlackBoard, 1.f,
 			CBrotherNodeLeaf_Run::Create(m_pBlackBoard)));
 
 	return S_OK;
@@ -60,16 +59,15 @@ STATUS CBrotherNodeSelector_Phase3::Invoke(_float _fTimeDelta)
 {
 	if (CGameInstance::Get_Instance()->Key_Hold('4'))
 	{
-		*m_pPhase = BROTHER_PHASE::MAX;
+		*m_pPhase = BROTHER_PHASE::PHASE4;
+		m_eStatus = STATUS::FAILURE;
+		return Return_Invoke();
 	}
 
 	Begin_Invoke(_fTimeDelta);
 
 	m_eStatus = Function::InRange(*m_pPhase, BROTHER_PHASE::PHASE3, BROTHER_PHASE::MAX, "()") ?
 		STATUS::FAILURE : __super::Invoke(_fTimeDelta);
-
-	if (m_eStatus == STATUS::FAILURE)
-		int a = 1;
 
 	return Return_Invoke();
 }

@@ -33,8 +33,6 @@ HRESULT CBrotherNode_Root::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 void CBrotherNode_Root::Activate()
 {
 	__super::Activate();
-
-	m_pBlackBoard->Get_System<CTransform>(TEXT("Owner:Transform"))->LookAt(m_pBlackBoard->Get_System<CTransform>(TEXT("Target:Transform")));
 }
 
 STATUS CBrotherNode_Root::Invoke(_float _fTimeDelta)
@@ -96,12 +94,28 @@ HRESULT CBrotherNode_Root::Ready_Skills()
 	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:SHARD"), &m_mapSkills[TEXT("PRIMARY:SHARD")]);
 
 	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 6.f;
+	tSkill.iStock			= 1;
+	tSkill.fCurrentCoolTime = 0.f;
+	tSkill.fCoefficient		= 60.f;
+	m_mapSkills.emplace(TEXT("PRIMARY:SHARD:HURT"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:PRIMARY:SHARD:HURT"), &m_mapSkills[TEXT("PRIMARY:SHARD:HURT")]);
+
+	tSkill.iMaxStock		= 1;
 	tSkill.fCoolTime		= 5;
 	tSkill.iStock			= 1;
 	tSkill.fCurrentCoolTime = 0.f;
 	tSkill.fCoefficient		= 200.f;
 	m_mapSkills.emplace(TEXT("SECONDARY"), tSkill);
 	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SECONDARY"), &m_mapSkills[TEXT("SECONDARY")]);
+
+	tSkill.iMaxStock		= 1;
+	tSkill.fCoolTime		= 12;
+	tSkill.iStock			= 1;
+	tSkill.fCurrentCoolTime = -24.f;
+	tSkill.fCoefficient		= 200.f;
+	m_mapSkills.emplace(TEXT("SECONDARY:FISTSLAM"), tSkill);
+	m_pBlackBoard->Add_Anything(TEXT("Owner:Skill:SECONDARY:FISTSLAM"), &m_mapSkills[TEXT("SECONDARY:FISTSLAM")]);
 
 	tSkill.iMaxStock		= 2;
 	tSkill.fCoolTime		= 3.f;

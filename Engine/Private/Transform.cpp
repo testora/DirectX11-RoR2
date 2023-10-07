@@ -116,9 +116,37 @@ void CTransform::Rotate(const _vectorf _vAxis, const _float _fRadian)
 	Set_State(TRANSFORM::POSITION, mWorld.r[IDX(TRANSFORM::POSITION)]);
 }
 
+void CTransform::Rotate_Lerp(const _vectorf _vAxis, const _float _fRadian, const _float _fInterpolationDuration)
+{
+	_float	fAcc(0.f);
+	CEvent_Handler::Get_Instance()->Register_OnTickListener(shared_from_this(),
+		[=](_float _fTimeDelta) mutable->_bool
+		{
+			if (fAcc < 1.f)
+			{
+				_float fDelta = _fTimeDelta / _fInterpolationDuration;
+				fAcc += fDelta;
+				if (fAcc > 1.f)
+				{
+					fDelta -= fAcc - 1.f;
+				}
+
+				Rotate(_vAxis, _fRadian * fDelta);
+			}
+
+			return fAcc < 1.f;
+		}
+	);
+}
+
 void CTransform::Rotate(const TRANSFORM _eState, const _float _fRadian)
 {
 	Rotate(Get_State(_eState), _fRadian);
+}
+
+void CTransform::Rotate_Lerp(const TRANSFORM _eState, const _float _fRadian, const _float _fInterpolationDuration)
+{
+	Rotate_Lerp(Get_State(_eState), _fRadian, _fInterpolationDuration);
 }
 
 void CTransform::LookAt(const _vectorf _vPosition, const _bool _bFixUp, const _bool _bPipeLineUp)
@@ -145,7 +173,7 @@ void CTransform::LookAt_Interpolation(const _vectorf _vPosition, const _bool _bF
 			if (fAcc < 1.f)
 			{
 				fAcc += _fTimeDelta / _fInterpolationDuration;
-				LookAt(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp, _bPipeLineUp);
+				LookTo(Function::Lerp(Get_State(TRANSFORM::LOOK), vLook, Function::Clamp(0.f, 1.f, fAcc), _fWeight), _bFixUp, _bPipeLineUp);
 			}
 
 			return fAcc < 1.f;

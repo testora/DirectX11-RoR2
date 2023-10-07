@@ -59,6 +59,11 @@ void CBrother::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
+	if (CGameInstance::Get_Instance()->Key_Down('Y'))
+	{
+		m_pTransform->Rotate_Lerp(TRANSFORM::UP, XMConvertToRadians(90.f), 10.f);
+	}
+
 #if ACTIVATE_IMGUI
 	ImGui::Begin("Brother Animation");
 	if (ImGui::Button("IDLE_READY"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
@@ -81,7 +86,7 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("DASH_LEFT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_LEFT);
 	if (ImGui::Button("DASH_RIGHT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_RIGHT);
 	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f);
-	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD, 1.f, true, 0.1f, false);
+	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD);
 	if (ImGui::Button("ULT_ENTER"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_ENTER);
 	if (ImGui::Button("ULT_CHANNEL"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_CHANNEL);
 	if (ImGui::Button("ULT_EXIT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_EXIT);
@@ -106,8 +111,8 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("HURT_LUNARSHARD_EXIT_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_FORWARD);
 	if (ImGui::Button("HURT_LUNARSHARD_ENTER_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_ENTER_FORWARD);
 	if (ImGui::Button("HURT_STAGGER_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_ENTER);
-	if (ImGui::Button("HURT_STRGGER_EXIT"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRGGER_EXIT);
-	if (ImGui::Button("HURT_STAGGER_LOOP"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_LOOP);
+	if (ImGui::Button("HURT_STRGGER_EXIT"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRGGER_EXIT);
+	if (ImGui::Button("HURT_STAGGER_LOOP"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_LOOP);
 	if (ImGui::Button("HURT_TO_DEATH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_TO_DEATH);
 	if (ImGui::Button("DEATH_LOOP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DEATH_LOOP);
 	ImGui::End();
@@ -173,11 +178,11 @@ HRESULT CBrother::Ready_Components()
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iHammerIndex);
 	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),	iConstellationIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iHammerIndex);
+	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iConstellationIndex);
 
 	pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
 	

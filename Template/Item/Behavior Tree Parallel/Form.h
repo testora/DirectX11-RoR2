@@ -10,7 +10,7 @@ BEGIN(Client)
 class C$safeitemname$ final : public CParallel
 {
 private:
-	explicit C$safeitemname$(POLICY eSuccess, POLICY eFailure);
+	explicit C$safeitemname$();
 	virtual ~C$safeitemname$() DEFAULT;
 
 public:
@@ -22,7 +22,7 @@ public:
 	virtual void						Terminate() override;
 
 public:
-	static shared_ptr<C$safeitemname$>	Create(shared_ptr<class CBlackBoard>, POLICY eSuccess, POLICY eFailure);
+	static shared_ptr<C$safeitemname$>	Create(shared_ptr<class CBlackBoard>);
 };
 
 END

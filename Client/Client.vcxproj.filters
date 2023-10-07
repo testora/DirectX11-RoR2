@@ -307,9 +307,6 @@
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element">
       <UniqueIdentifier>{7b81cb79-70b8-415a-8895-98113e29f360}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\03. ShockWave">
-      <UniqueIdentifier>{f17d01fc-d001-4580-80be-64d6183196b1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\00. Skill">
       <UniqueIdentifier>{32e5117d-9d91-4af1-8793-447bda1c1f1a}</UniqueIdentifier>
     </Filter>
@@ -376,11 +373,29 @@
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\02. Selector\01. Skill\03. Special\00. Lunar">
       <UniqueIdentifier>{9f47823f-89e0-4380-9fee-935d716244d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. Ult">
-      <UniqueIdentifier>{5c8c60df-73b9-4484-afe3-0f9b92241b70}</UniqueIdentifier>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\00. Parallel\00. Skill\00. Element\01. PrimaryShard\00. Hurt">
+      <UniqueIdentifier>{306b76f7-e75c-49a5-a568-82e4ef1144bd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element\03. Ult">
-      <UniqueIdentifier>{c7e96e35-759e-4545-9931-e7bc50dfae29}</UniqueIdentifier>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\01. Move\03. Hurt">
+      <UniqueIdentifier>{8c959c10-b77f-4694-a2e9-dc1a00758a20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\02. Shard\00. Hurt">
+      <UniqueIdentifier>{128377b4-87ed-4ed9-bf25-19e828a772b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\00. Idle\00. Hurt">
+      <UniqueIdentifier>{afe246fb-fb3e-4b3c-bba2-e1a0bc2c0ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\02. SpellChannel">
+      <UniqueIdentifier>{8be51865-4982-4107-989c-868a35f19cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\03. ShockWave">
+      <UniqueIdentifier>{f17d01fc-d001-4580-80be-64d6183196b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\03. Stagger">
+      <UniqueIdentifier>{b8dc22bc-529a-4f76-b9f8-83ac566ba117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam">
+      <UniqueIdentifier>{6ec07002-bac8-448b-aed1-3e6f83ce00e8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -669,14 +684,29 @@
     <ClInclude Include="Public\BrotherNodeSequence_LunarDashSmash.h">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element\01. DashSmash\00. Lunar</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BrotherNodeLeaf_Ult.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. Ult</Filter>
-    </ClInclude>
     <ClInclude Include="Public\BrotherNodeSelector_LunarSpecial.h">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\02. Selector\01. Skill\03. Special\00. Lunar</Filter>
     </ClInclude>
-    <ClInclude Include="Public\BrotherNodeSequence_Ult.h">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element\03. Ult</Filter>
+    <ClInclude Include="Public\BrotherNodeParallel_HurtPrimaryShard.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\00. Parallel\00. Skill\00. Element\01. PrimaryShard\00. Hurt</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtWalk.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\01. Move\03. Hurt</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtShard.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\02. Shard\00. Hurt</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_HurtIdle.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\00. Idle\00. Hurt</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_SpellChannel.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\02. SpellChannel</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_Stagger.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\03. Stagger</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_FistSlam.h">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -914,14 +944,29 @@
     <ClCompile Include="Private\BrotherNodeSequence_LunarDashSmash.cpp">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element\01. DashSmash\00. Lunar</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BrotherNodeLeaf_Ult.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. Ult</Filter>
-    </ClCompile>
     <ClCompile Include="Private\BrotherNodeSelector_LunarSpecial.cpp">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\02. Selector\01. Skill\03. Special\00. Lunar</Filter>
     </ClCompile>
-    <ClCompile Include="Private\BrotherNodeSequence_Ult.cpp">
-      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\01. Sequence\01. Element\03. Ult</Filter>
+    <ClCompile Include="Private\BrotherNodeParallel_HurtPrimaryShard.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\03. Composite\00. Parallel\00. Skill\00. Element\01. PrimaryShard\00. Hurt</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtWalk.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\01. Move\03. Hurt</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtShard.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\02. Shard\00. Hurt</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_HurtIdle.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\00. Idle\00. Hurt</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_SpellChannel.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\02. SpellChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_Stagger.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\03. Stagger</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_FistSlam.cpp">
+      <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,9 +3,9 @@
 #include "Brother_BehaviorTree.h"
 #include "BrotherNodeDecorator_Repeat.h"
 
-CBrotherNodeDecorator_Repeat::CBrotherNodeDecorator_Repeat(shared_ptr<CNode> _pNode, _float fDuration)
-	: CDecorator(_pNode)
-	, m_fDuration(fDuration)
+CBrotherNodeDecorator_Repeat::CBrotherNodeDecorator_Repeat(shared_ptr<CNode> _pNode, _float _fDuration)
+	: CDecorator	(_pNode)
+	, m_fDuration	(_fDuration)
 {
 }
 
@@ -36,7 +36,15 @@ STATUS CBrotherNodeDecorator_Repeat::Invoke(_float _fTimeDelta)
 	
 	if (m_fpEscape)
 	{
-		m_eStatus = m_fpEscape() ? STATUS::SUCCESS : m_pNode->Invoke(_fTimeDelta);
+		STATUS eStatus = m_pNode->Invoke(_fTimeDelta);
+		if (m_fpEscape())
+		{
+			return STATUS::RUNNING;
+		}
+		else
+		{
+			return eStatus;
+		}
 	}
 	else
 	{
