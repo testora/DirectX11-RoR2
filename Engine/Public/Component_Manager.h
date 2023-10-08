@@ -12,6 +12,8 @@
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Cell.h"
+#include "VIBufferInstance_Point.h"
+#include "VIBufferInstance_Rect.h"
 #pragma endregion
 #pragma region Behavior
 #include "Physics.h"

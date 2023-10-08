@@ -15,7 +15,7 @@ public:
 	void											Late_Tick(_float fTimeDelta);
 
 public:
-	shared_ptr<class CGameObject>					Pop(any aFetchArg);
+	shared_ptr<class CGameObject>					Pop(any aFetchArg = g_aNull);
 	HRESULT											Push(shared_ptr<class CGameObject>);
 
 	void											Iterate_Objects(function<_bool(shared_ptr<class CGameObject>)>);

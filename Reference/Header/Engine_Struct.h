@@ -70,6 +70,15 @@ namespace Engine
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOS;
 
+	typedef struct ENGINE_DLL tagVertexPositionSize
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT2		vSize;
+
+		const static _uint						iNumElement = 2;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXPOSSIZE;
+
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;
@@ -113,6 +122,31 @@ namespace Engine
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSNORTANTEXBONE, VTXMESHANIM;
 
+#pragma region Instance
+
+	typedef struct ENGINE_DLL tagVertexInstancePoint
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vTranslation;
+
+		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 4;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXINSTPOINT;
+
+	typedef struct ENGINE_DLL tagVertexInstanceRect
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vTranslation;
+
+		const static _uint						iNumElement = VTXPOSTEX::iNumElement + 4;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXINSTRECT;
+
+#pragma endregion
 #pragma endregion
 #pragma region Model
 	

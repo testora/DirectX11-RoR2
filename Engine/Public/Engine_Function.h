@@ -103,7 +103,7 @@ namespace Function
 	unique_ptr<T[], std::default_delete<T[]>> CreateDynamicArray(size_t arrSize, _bool zeroMemory = true)
 	{
 		T* rawDynamicArray = new T[arrSize];
-		if (zeroMemory) ZeroMemory(rawDynamicArray, sizeof(T) * arrSize);
+		if (zeroMemory) ZeroMemory(rawDynamicArray, arrSize * sizeof(T));
 		return move(unique_ptr<T[], std::default_delete<T[]>>(rawDynamicArray));
 	}
 

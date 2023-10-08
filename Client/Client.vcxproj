@@ -35,6 +35,8 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\Effect_Demo_Point.h" />
+    <ClInclude Include="Public\Effect_Demo_Rect.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_FistSlam.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_Stagger.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_SpellChannel.h" />
@@ -191,6 +193,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\Effect_Demo_Point.cpp" />
+    <ClCompile Include="Private\Effect_Demo_Rect.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_FistSlam.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_Stagger.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_SpellChannel.cpp" />
@@ -279,6 +283,8 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\InstPoint.hlsl" />
+    <FxCompile Include="..\Resources\Shader\InstRect.hlsl" />
     <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl" />
     <FxCompile Include="..\Resources\Shader\PosNorTanTexBone.hlsl" />
     <FxCompile Include="..\Resources\Shader\PosNorTex.hlsl" />

@@ -160,23 +160,11 @@
     <Filter Include="04. Utility\06. Component\08. VIBuffer">
       <UniqueIdentifier>{25c870db-77d4-47d1-b173-e9ea66afa736}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Mesh">
-      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\01. Rect">
-      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\02. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Utility\06. Component\06. Navigation">
       <UniqueIdentifier>{1649b8f9-05e0-42c9-8344-04dda091d3cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Utility\06. Component\06. Navigation\00. Cell">
       <UniqueIdentifier>{f5996b39-6b21-43c2-8c34-15296cb7bd7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\03. Cell">
-      <UniqueIdentifier>{73dd86b2-b9f5-4590-acb9-e34e70a7d575}</UniqueIdentifier>
     </Filter>
     <Filter Include="05. Shader">
       <UniqueIdentifier>{804dbf2a-17fe-4094-b4c2-61f09d2b341e}</UniqueIdentifier>
@@ -222,6 +210,30 @@
     </Filter>
     <Filter Include="04. Utility\07. Behavior\00. BehaviorTree\01. Node\01. Composite\01. Sequence">
       <UniqueIdentifier>{e65344db-70e6-44dc-ba11-4bdcf7a850e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\01. Mesh">
+      <UniqueIdentifier>{626f0ca6-81c3-4293-84c1-5d78be9322d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\02. Rect">
+      <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\03. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\04. Cell">
+      <UniqueIdentifier>{73dd86b2-b9f5-4590-acb9-e34e70a7d575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance">
+      <UniqueIdentifier>{8c69faaf-bc7a-4a43-9ac5-f692b52b1039}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\01. Rect">
+      <UniqueIdentifier>{6e8ccda3-4320-4cd6-85a3-ee51b27a6cec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point">
+      <UniqueIdentifier>{94d69e2e-053f-4c1a-b8e8-8ddd0b379ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\05. GameObject\02. Effect">
+      <UniqueIdentifier>{d23939cb-c086-48db-b987-25444bc1d08c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +289,7 @@
       <Filter>04. Utility\06. Component\04. Texture</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Rect.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\01. Rect</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\02. Rect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer.cpp">
       <Filter>04. Utility\06. Component\08. VIBuffer</Filter>
@@ -286,7 +298,7 @@
       <Filter>00. Header\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\02. Terrain</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\03. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Picker.cpp">
       <Filter>04. Utility\10. Picker</Filter>
@@ -301,7 +313,7 @@
       <Filter>04. Utility\06. Component\07. Model</Filter>
     </ClCompile>
     <ClCompile Include="Private\Mesh.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Mesh</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\01. Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Private\Bone.cpp">
       <Filter>04. Utility\06. Component\07. Model\00. Bone</Filter>
@@ -376,7 +388,7 @@
       <Filter>04. Utility\06. Component\06. Navigation\00. Cell</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Cell.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\03. Cell</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\04. Cell</Filter>
     </ClCompile>
     <ClCompile Include="Private\RenderTarget.cpp">
       <Filter>03. System\00. GraphicDevice\00. RenderTarget</Filter>
@@ -407,6 +419,18 @@
     </ClCompile>
     <ClCompile Include="Private\BlackBoard.cpp">
       <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\VIBufferInstance.cpp">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\VIBufferInstance_Rect.cpp">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\VIBufferInstance_Point.cpp">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Effect.cpp">
+      <Filter>04. Utility\05. GameObject\02. Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -483,13 +507,13 @@
       <Filter>04. Utility\06. Component\04. Texture</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Rect.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\01. Rect</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\02. Rect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer.h">
       <Filter>04. Utility\06. Component\08. VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Terrain.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\02. Terrain</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\03. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>04. Utility\00. RAII</Filter>
@@ -522,7 +546,7 @@
       <Filter>04. Utility\07. Behavior\02. Grounding</Filter>
     </ClInclude>
     <ClInclude Include="Public\Mesh.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Mesh</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\01. Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Public\Grid.h">
       <Filter>04. Utility\09. Grid</Filter>
@@ -588,7 +612,7 @@
       <Filter>04. Utility\06. Component\06. Navigation\00. Cell</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Cell.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\03. Cell</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\04. Cell</Filter>
     </ClInclude>
     <ClInclude Include="Public\RenderTarget.h">
       <Filter>03. System\00. GraphicDevice\00. RenderTarget</Filter>
@@ -619,6 +643,18 @@
     </ClInclude>
     <ClInclude Include="Public\BlackBoard.h">
       <Filter>04. Utility\07. Behavior\00. BehaviorTree\00. BlackBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VIBufferInstance.h">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VIBufferInstance_Rect.h">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VIBufferInstance_Point.h">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Effect.h">
+      <Filter>04. Utility\05. GameObject\02. Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

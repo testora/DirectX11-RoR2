@@ -13,6 +13,13 @@ END
 
 BEGIN(Client)
 
+enum class TOOL
+{
+	MODEL,
+	EFFECT,
+	MAX
+};
+
 class CScene_Tool final : public CScene
 {
 private:
@@ -27,7 +34,9 @@ public:
 
 private:
 	void								System_Model();
+	void								System_Effect();
 	void								Info_Model();
+	void								Info_Effect();
 
 	HRESULT								Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);
 	HRESULT								Export_BinaryModel(const wstring& wstrPath);
@@ -49,6 +58,8 @@ private:
 	shared_ptr<CRenderer>				m_pRenderer;
 	shared_ptr<CShader>					m_pShader_NonAnimMesh;
 	shared_ptr<CShader>					m_pShader_AnimMesh;
+
+	TOOL								m_eTool	= TOOL::MAX;
 
 public:
 	static shared_ptr<CScene_Tool>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

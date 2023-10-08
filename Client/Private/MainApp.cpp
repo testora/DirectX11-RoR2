@@ -224,6 +224,18 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM");
 	}
 
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT,
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstPoint.hlsl"), VTXINSTPOINT::tElements, VTXINSTPOINT::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT");
+	}
+
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT,
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstRect.hlsl"), VTXINSTRECT::tElements, VTXINSTRECT::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT");
+	}
+
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_RECT,
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 	{

@@ -8,18 +8,30 @@
 #include "Scene_Manager.h"
 
 CVIBuffer::CVIBuffer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const COMPONENT _eComponent)
-	: CComponent(_pDevice, _pContext, _eComponent)
-	, m_eTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED)
+	: CComponent	(_pDevice, _pContext, _eComponent)
+	, m_eTopology	(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED)
 	, m_eIndexFormat(DXGI_FORMAT_UNKNOWN)
+{
+}
+
+CVIBuffer::CVIBuffer(const CVIBuffer& _rhs)
+	: CComponent				(_rhs)
+	, m_pVB						(_rhs.m_pVB)
+	, m_pIB						(_rhs.m_pIB)
+	, m_iNumInstance			(_rhs.m_iNumInstance)
+	, m_iIndicesCountPerInstance(_rhs.m_iIndicesCountPerInstance)
+	, m_iNumVertices			(_rhs.m_iNumVertices)
+	, m_iNumIndices				(_rhs.m_iNumIndices)
+	, m_iVertexStride			(_rhs.m_iVertexStride)
+	, m_iIndexStride			(_rhs.m_iIndexStride)
+	, m_iNumVB					(_rhs.m_iNumVB)
+	, m_eTopology				(_rhs.m_eTopology)
+	, m_eIndexFormat			(_rhs.m_eIndexFormat)
 {
 }
 
 HRESULT CVIBuffer::Initialize(any)
 {
-	m_vecVB.emplace_back(m_pVB);
-	m_vecVertexStride.emplace_back(m_iVertexStride);
-	m_vecVertexOffset.emplace_back(0);
-
 #if WIP_FRUSTRUM_CULLING
 	_vector vMin = XMVectorSet(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX);
 	_vector vMax = XMVectorSet(-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX);
@@ -35,6 +47,20 @@ HRESULT CVIBuffer::Initialize(any)
 	BoundingBox::CreateFromPoints(m_tBoundingBox, vMin, vMax);
 #endif
 
+	m_vecVB.emplace_back(m_pVB);
+	m_vecVertexStride.emplace_back(m_iVertexStride);
+	m_vecVertexOffset.emplace_back(0);
+
+	if (0 == m_iNumInstance)
+	{
+		m_iNumInstance = 1;
+	}
+
+	if (0 == m_iIndicesCountPerInstance)
+	{
+		m_iIndicesCountPerInstance = m_iNumIndices;
+	}
+
 	return S_OK;
 }
 
@@ -43,7 +69,7 @@ HRESULT CVIBuffer::Render()
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
 	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::ConvertToRawPtrVector(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
 	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
-	m_pContext->DrawIndexed(m_iNumIndices, 0, 0);
+	m_pContext->DrawIndexedInstanced(m_iIndicesCountPerInstance, m_iNumInstance, 0, 0, 0);
 
 	return S_OK;
 }

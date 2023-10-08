@@ -28,8 +28,8 @@ public:
 #endif
 
 	const _char*						Get_Name() const					{ return m_szName; }
-#if ACTIVATE_TOOL
 	shared_ptr<class CChannel>			Get_Channel(_uint iChannelIndex, _bool bBoneIndex = false) const;
+#if ACTIVATE_TOOL
 
 	_uint								Get_ChannelIndex(_uint iBoneIndex) const;
 #endif

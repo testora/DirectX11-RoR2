@@ -46,8 +46,36 @@ HRESULT CScene_Tool::Initialize()
 
 void CScene_Tool::Tick(_float _fTimeDelta)
 {
-	System_Model();
-	Info_Model();
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::MenuItem("Edit Model"))
+		{
+			m_eTool = TOOL::MODEL;
+		}
+
+		if (ImGui::MenuItem("Effect"))
+		{
+			m_eTool = TOOL::EFFECT;
+		}
+
+		ImGui::EndMainMenuBar();
+	}
+
+	switch (m_eTool)
+	{
+	case Client::TOOL::MODEL:
+	{
+		System_Model();
+		Info_Model();
+	}
+	break;
+	case Client::TOOL::EFFECT:
+	{
+		System_Effect();
+		Info_Effect();
+	}
+	break;
+	}
 }
 
 void CScene_Tool::Late_Tick(_float _fTimeDelta)
@@ -64,8 +92,8 @@ static _int iSelectedKeyFrame(0);
 
 void CScene_Tool::System_Model()
 {
-	ImGui::SetNextWindowPos(ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(540.f, ImGui::GetIO().DisplaySize.y));
+	ImGui::SetNextWindowPos(ImVec2(0.f, ImGui::GetTextLineHeightWithSpacing()));
+	ImGui::SetNextWindowSize(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - ImGui::GetTextLineHeightWithSpacing()));
 
 	ImGui::Begin("System:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
@@ -307,10 +335,21 @@ void CScene_Tool::System_Model()
 	ImGui::End();
 }
 
+void CScene_Tool::System_Effect()
+{
+
+	ImGui::SetNextWindowPos(ImVec2(0.f, ImGui::GetTextLineHeightWithSpacing()));
+	ImGui::SetNextWindowSize(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - ImGui::GetTextLineHeightWithSpacing()));
+
+	ImGui::Begin("System:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+	ImGui::End();
+}
+
 void CScene_Tool::Info_Model()
 {
-	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 360.f, 0.f));
-	ImGui::SetNextWindowSize(ImVec2(360.f, ImGui::GetIO().DisplaySize.y));
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 360.f, ImGui::GetTextLineHeightWithSpacing()));
+	ImGui::SetNextWindowSize(ImVec2(360.f, ImGui::GetIO().DisplaySize.y - ImGui::GetTextLineHeightWithSpacing()));
 
 	ImGui::Begin("Information:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
@@ -847,6 +886,16 @@ void CScene_Tool::Info_Model()
 	}
 
 #pragma endregion
+	ImGui::End();
+}
+
+void CScene_Tool::Info_Effect()
+{
+	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 360.f, ImGui::GetTextLineHeightWithSpacing()));
+	ImGui::SetNextWindowSize(ImVec2(360.f, ImGui::GetIO().DisplaySize.y - ImGui::GetTextLineHeightWithSpacing()));
+
+	ImGui::Begin("Information:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
 	ImGui::End();
 }
 

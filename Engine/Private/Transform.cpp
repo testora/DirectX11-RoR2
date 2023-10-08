@@ -227,6 +227,11 @@ HRESULT CTransform::Bind_OnShader(shared_ptr<class CShader> _pShader)
 		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Matrix");
 	}
 
+	if (FAILED(_pShader->Bind_Vector(SHADER_CAMPOS, CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION))))
+	{
+		MSG_RETURN(E_FAIL, "CTransform::Bind_OnShader", "Failed to CShader::Bind_Vector");
+	}
+
 	return S_OK;
 }
 

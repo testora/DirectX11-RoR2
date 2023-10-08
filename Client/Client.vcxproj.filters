@@ -100,14 +100,8 @@
     <Filter Include="05. GameObject\02. UI">
       <UniqueIdentifier>{c7626695-8256-4e5d-83e3-262ea6ed6256}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\02. UI\01. InGame">
-      <UniqueIdentifier>{e0da5f27-2343-48af-8880-8162b57f0a9d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. GameObject\03. Camera">
       <UniqueIdentifier>{4a5b1052-39ab-4004-a3e3-43d321a97bd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="05. GameObject\03. Camera\00. MainCamera">
-      <UniqueIdentifier>{0967b197-a0a9-4bd8-b3e9-5ead662ed88b}</UniqueIdentifier>
     </Filter>
     <Filter Include="05. GameObject\04. Terrain">
       <UniqueIdentifier>{e68124d5-8f8d-4403-9c7a-cd676bc95e33}</UniqueIdentifier>
@@ -195,9 +189,6 @@
     </Filter>
     <Filter Include="06. Shader\01. Forward">
       <UniqueIdentifier>{cdcc84d8-04ba-42c8-b8cb-b3e44775125e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. Shader\02. Deferred">
-      <UniqueIdentifier>{cbd4c466-994d-44b5-b95a-799e1ecdc6a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\99. Unused">
       <UniqueIdentifier>{3bedfa0b-0e15-4145-90d3-cb3aef4538e7}</UniqueIdentifier>
@@ -397,6 +388,24 @@
     <Filter Include="05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam">
       <UniqueIdentifier>{6ec07002-bac8-448b-aed1-3e6f83ce00e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. Shader\01. Forward\00. Instance">
+      <UniqueIdentifier>{fccbf0e3-6711-4ea8-99a0-851c7a97e66d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\03. Camera\00. MainCamera">
+      <UniqueIdentifier>{0967b197-a0a9-4bd8-b3e9-5ead662ed88b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect">
+      <UniqueIdentifier>{fca6c961-5b1d-4a9a-b1ea-a67a50935ca8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Demo">
+      <UniqueIdentifier>{3120b4d8-5a98-4f75-acba-9ccf0db22cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Demo\00. Point">
+      <UniqueIdentifier>{b5cc5104-40a6-44fa-b3ea-2bccfb078093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Demo\01. Rect">
+      <UniqueIdentifier>{010207de-b814-4028-9c48-8633b91ed38b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -485,9 +494,6 @@
     </ClInclude>
     <ClInclude Include="Public\GolemPlains.h">
       <Filter>05. GameObject\04. Terrain\01. GolemPlains</Filter>
-    </ClInclude>
-    <ClInclude Include="Public\Scene_Tool.h">
-      <Filter>04. Scene\02. Tool</Filter>
     </ClInclude>
     <ClInclude Include="..\Reference\Header\ImGuiFileDialog\ImGuiFileDialog.h">
       <Filter>03. Tool\03. ImGuiFileDialog\01. Header</Filter>
@@ -708,6 +714,15 @@
     <ClInclude Include="Public\BrotherNodeLeaf_FistSlam.h">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Scene_Tool.h">
+      <Filter>04. Scene\02. Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Effect_Demo_Rect.h">
+      <Filter>05. GameObject\07. Effect\00. Demo\01. Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Effect_Demo_Point.h">
+      <Filter>05. GameObject\07. Effect\00. Demo\00. Point</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -763,9 +778,6 @@
     </ClCompile>
     <ClCompile Include="Private\GolemPlains.cpp">
       <Filter>05. GameObject\04. Terrain\01. GolemPlains</Filter>
-    </ClCompile>
-    <ClCompile Include="Private\Scene_Tool.cpp">
-      <Filter>04. Scene\02. Tool</Filter>
     </ClCompile>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
       <Filter>03. Tool\03. ImGuiFileDialog\02. Source</Filter>
@@ -968,6 +980,15 @@
     <ClCompile Include="Private\BrotherNodeLeaf_FistSlam.cpp">
       <Filter>05. GameObject\06. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\02. Attack\04. FistSlam</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Scene_Tool.cpp">
+      <Filter>04. Scene\02. Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Effect_Demo_Rect.cpp">
+      <Filter>05. GameObject\07. Effect\00. Demo\01. Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Effect_Demo_Point.cpp">
+      <Filter>05. GameObject\07. Effect\00. Demo\00. Point</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico">
@@ -994,6 +1015,12 @@
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\PosTex.hlsl">
       <Filter>06. Shader\01. Forward</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\InstRect.hlsl">
+      <Filter>06. Shader\01. Forward\00. Instance</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\InstPoint.hlsl">
+      <Filter>06. Shader\01. Forward\00. Instance</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

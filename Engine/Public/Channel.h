@@ -17,11 +17,9 @@ public:
 
 public:
 	_uint						Get_BoneIndex() const							{ return m_iBoneIndex; }
-#if ACTIVATE_TOOL
 	_uint						Get_NumKeyFrames() const						{ return m_iNumKeyFrames; }
-
 	KEYFRAME					Get_KeyFrame(_uint iIndex)						{ return m_vecKeyFrames[iIndex]; }
-
+#if ACTIVATE_TOOL
 	void						Set_KeyFrame(_uint iIndex, KEYFRAME tKeyFrame)	{ m_vecKeyFrames[iIndex] = tKeyFrame; }
 #endif
 

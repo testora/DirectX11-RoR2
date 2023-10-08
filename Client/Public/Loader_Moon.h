@@ -7,10 +7,21 @@
 #include "RailGunner.h"
 #include "RailGunner_PistolBullet.h"
 #include "Brother.h"
+#include "Effect_Demo_Point.h"
+#include "Effect_Demo_Rect.h"
+#include "VIBufferInstance_Point.h"
+#include "VIBufferInstance_Rect.h"
 
 HRESULT CLoader::Load_Moon()
 {
 #pragma region Prototype Texture
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO,
+		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/Background.png")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO");
+	}
+
 #pragma endregion
 #pragma region Prototype Model
 
@@ -39,6 +50,19 @@ HRESULT CLoader::Load_Moon()
 
 #pragma endregion
 #pragma region Prototype VIBuffer
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_POINT,
+		CVIBufferInstance_Point::Create(m_pDevice, m_pContext, 2))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT,
+		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 2))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
+	}
+
 #pragma endregion
 #pragma region Prototype GameObject
 
@@ -76,6 +100,18 @@ HRESULT CLoader::Load_Moon()
 		CBrother::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT,
+		CEffect_Demo_Point::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT,
+		CEffect_Demo_Rect::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
 	}
 
 #pragma endregion

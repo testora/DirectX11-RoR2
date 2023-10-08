@@ -8,6 +8,7 @@ class ENGINE_DLL CVIBuffer abstract : public CComponent
 {
 protected:
 	explicit CVIBuffer(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const COMPONENT);
+	explicit CVIBuffer(const CVIBuffer&);
 	virtual ~CVIBuffer() DEFAULT;
 
 public:
@@ -32,11 +33,14 @@ protected:
 	D3D11_PRIMITIVE_TOPOLOGY		m_eTopology;
 	DXGI_FORMAT						m_eIndexFormat;
 
-	_uint							m_iNumVB		= 0;
-	_uint 							m_iNumVertices	= 0;
-	_uint							m_iVertexStride	= 0;
-	_uint 							m_iNumIndices	= 0;
-	_uint							m_iIndexStride	= 0;
+	_uint							m_iNumVB					= 0;
+	_uint 							m_iNumVertices				= 0;
+	_uint							m_iVertexStride				= 0;
+	_uint 							m_iNumIndices				= 0;
+	_uint							m_iIndexStride				= 0;
+
+	_uint							m_iNumInstance				= 0;
+	_uint							m_iIndicesCountPerInstance	= 0;
 
 	vector<ComPtr<ID3D11Buffer>>	m_vecVB;
 	vector<_uint>					m_vecVertexStride;

@@ -136,7 +136,6 @@ void CAnimation::Blend(vector<shared_ptr<CAnimation>>::iterator _itAnimationBegi
 	}
 }
 
-#if ACTIVATE_TOOL
 shared_ptr<CChannel> CAnimation::Get_Channel(_uint _iChannelIndex, _bool _bBoneIndex) const
 {
 	if (false == _bBoneIndex)
@@ -157,6 +156,7 @@ shared_ptr<CChannel> CAnimation::Get_Channel(_uint _iChannelIndex, _bool _bBoneI
 	return nullptr;
 }
 
+#if ACTIVATE_TOOL
 _uint CAnimation::Get_ChannelIndex(_uint _iBoneIndex) const
 {
 	for (_uint i = 0; i < m_iNumChannels; ++i)

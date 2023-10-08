@@ -46,18 +46,17 @@ public:
 
 	shared_ptr<class CBone>										Get_Bone(const _char* szBoneName) const							{ return m_vecBones[Get_BoneIndex(szBoneName)]; }
 	shared_ptr<class CBone>										Get_Bone(_uint iIndex) const									{ return m_vecBones[iIndex]; }
-#if ACTIVATE_TOOL
 	shared_ptr<class CAnimation>								Get_Animation(_uint iIndex) const								{ return m_vecAnimations[iIndex]; }
+#if ACTIVATE_TOOL
 	shared_ptr<class CMesh>										Get_Mesh(const _char* szMeshName) const							{ return m_vecMeshes[Get_MeshIndex(szMeshName)]; }
 	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const									{ return m_vecMeshes[iIndex]; }
 	MATERIAL													Get_Material(_uint iIndex) const								{ return m_vecMaterials[iIndex]; }
 
 	_uint														Get_BoneAnimationIndex(_uint iBoneIndex) const					{ return m_vecBoneAnimationIndices[iBoneIndex]; }
 	
-	void														Set_DefaultAnimation(_uint iAnimationIndex);
-
 	void														Set_BoneAnimationIndex(_uint iBoneIndex, _uint iAnimationIndex)	{ m_vecBoneAnimationIndices[iBoneIndex] = iAnimationIndex; }
 #endif
+	void														Set_DefaultAnimation(_uint iAnimationIndex);
 
 	void														Set_BonePivot(_uint iBoneIndex, _matrixf mPivot)				{ m_vecBonePivot[iBoneIndex] = mPivot; };
 

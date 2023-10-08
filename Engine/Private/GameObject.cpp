@@ -86,6 +86,16 @@ void CGameObject::Late_Tick(_float _fTimeDelta)
 	}
 }
 
+HRESULT CGameObject::Fetch(any)
+{
+	return S_OK;
+}
+
+_bool CGameObject::Return()
+{
+	return false;
+}
+
 HRESULT CGameObject::Render(_uint _iPassIndex)
 {
 	if (shared_ptr<CShader> pShader = m_pWeakShader.lock())
@@ -95,6 +105,13 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 			if (FAILED(pTransform->Bind_OnShader(pShader)))
 			{
 				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CTransform::Bind_OnShader");
+			}
+		}
+		if (shared_ptr<CTexture> pTexture = m_pWeakTexture.lock())
+		{
+			if (FAILED(pTexture->Bind_ShaderResourceViews(pShader, aiTextureType_DIFFUSE, SHADER_TEXDIFFUSE)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CTexture::Bind_ShaderResourceView");
 			}
 		}
 		if (shared_ptr<CVIBuffer> pVIBuffer = m_pWeakVIBuffer.lock())
@@ -113,11 +130,6 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 		}
 	}
 
-	return S_OK;
-}
-
-HRESULT CGameObject::Fetch(any _arg)
-{
 	return S_OK;
 }
 
@@ -208,6 +220,8 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::MODEL:
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_TERRAIN:
+	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
@@ -225,6 +239,8 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_TERRAIN:
+	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_umapComponent.emplace(COMPONENT::VIBUFFER, m_umapComponent[_eComponent]);
 		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), true);
 		break;
@@ -242,12 +258,17 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::SHADER:
 		m_pWeakShader		= Get_Component<CShader>(_eComponent);
 		break;
+	case COMPONENT::TEXTURE:
+		m_pWeakTexture		= Get_Component<CTexture>(_eComponent);
+		break;
 	case COMPONENT::COLLIDER:
 		m_pWeakCollider		= Get_Component<CCollider>(_eComponent);
 		break;
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_TERRAIN:
+	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_pWeakVIBuffer		= Get_Component<CVIBuffer>(_eComponent);
 		break;
 	case COMPONENT::MODEL:

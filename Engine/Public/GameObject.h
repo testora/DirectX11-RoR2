@@ -16,9 +16,10 @@ public:
 	virtual HRESULT												Initialize(any = g_aNull);
 	virtual void												Tick(_float fTimeDelta);
 	virtual void												Late_Tick(_float fTimeDelta);
-	virtual HRESULT												Render()			PURE;
+	virtual HRESULT												Render()				PURE;
 
 	virtual HRESULT												Fetch(any = g_aNull);
+	virtual _bool												Return();
 
 public:
 	template <typename T>
@@ -59,9 +60,10 @@ private:
 	weak_ptr<class CRenderer>									m_pWeakRenderer;
 	weak_ptr<class CTransform>									m_pWeakTransform;
 	weak_ptr<class CShader>										m_pWeakShader;
-	weak_ptr<class CCollider>									m_pWeakCollider;
 	weak_ptr<class CModel>										m_pWeakModel;
 	weak_ptr<class CVIBuffer>									m_pWeakVIBuffer;
+	weak_ptr<class CTexture>									m_pWeakTexture;
+	weak_ptr<class CCollider>									m_pWeakCollider;
 
 protected:
 	ComPtr<ID3D11Device>										m_pDevice;

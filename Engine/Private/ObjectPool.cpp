@@ -37,6 +37,16 @@ void CObjectPool::Late_Tick(_float _fTimeDelta)
 	{
 		iter->Late_Tick(_fTimeDelta);
 	}
+	for (auto& iter : m_usetPop)
+	{
+		if (iter->Return())
+		{
+			if (FAILED(Push(iter)))
+			{
+				MSG_RETURN(, "CObjectPool::Late_Tick", "Failed to Push");
+			}
+		}
+	}
 
 	for (auto& iter : m_lstPush)
 	{

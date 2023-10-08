@@ -46,6 +46,11 @@ HRESULT CScene_Moon::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Monster");
 	}
 
+	if (FAILED(Ready_Effect()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Effect");
+	}
+
 	return S_OK;
 }
 
@@ -56,9 +61,19 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 		CGameInstance::Get_Instance()->Toggle_Cursor();
 	}
 
-	if (CGameInstance::Get_Instance()->Key_Down('K'))
+	if (CGameInstance::Get_Instance()->Key_Down('B'))
 	{
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_BROTHER)->Pop(ARENA_CENTER);
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('E'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('R'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
 	}
 }
 
@@ -168,6 +183,23 @@ HRESULT CScene_Moon::Ready_Monster()
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_BROTHER");
+	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Moon::Ready_Effect()
+{
+	shared_ptr<CObjectPool> pPoolPointFx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT, 2);
+	if (nullptr == pPoolPointFx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT");
+	}
+
+	shared_ptr<CObjectPool> pPoolRectFx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT, 2);
+	if (nullptr == pPoolRectFx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
 	}
 
 	return S_OK;

@@ -76,7 +76,6 @@ HRESULT CMonster::Fetch(any _vPosition3)
 		{
 			m_pTransform->Set_State(TRANSFORM::POSITION, any_cast<_float3>(_vPosition3));
 		}
-
 	}
 	
 	return S_OK;
