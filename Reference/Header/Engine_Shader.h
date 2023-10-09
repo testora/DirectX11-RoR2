@@ -62,6 +62,9 @@
 
 #define SHADER_TRIPLANER_SHARP					"g_fTPSharpness"
 
+#define SHADER_SIZE								"g_vSize"
+#define SHADER_THICKNESS						"g_fThickness"
+
 #define RENDERTARGET_MATERIAL_DIFFUSE			TEXT("RenderTarget:Material:Diffuse")
 #define RENDERTARGET_MATERIAL_AMBIENT			TEXT("RenderTarget:Material:Ambient")
 #define RENDERTARGET_MATERIAL_SPECULAR			TEXT("RenderTarget:Material:Specular")

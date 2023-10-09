@@ -72,37 +72,17 @@ HRESULT CEffect_Demo_Rect::Fetch(any _arg)
 
 _bool CEffect_Demo_Rect::Return()
 {
-	if (3.f < m_fTimeAcc)
-	{
-		return true;
-	}
-
 	return false;
 }
 
 void CEffect_Demo_Rect::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 {
-	_float4 vPosition = any_cast<_float4>(_arg);
-
-	VTXINSTRECT* pData = reinterpret_cast<VTXINSTRECT*>(_pData);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
-	{
-		pData[i].vTranslation = vPosition;
-	}
-
-	m_fTimeAcc = 0.f;
+	
 }
 
 void CEffect_Demo_Rect::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
 {
-	VTXINSTRECT* pData = reinterpret_cast<VTXINSTRECT*>(_pData);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
-	{
-		i ? pData[i].vTranslation.x += _fTimeDelta : pData[i].vTranslation.x -= _fTimeDelta;
-		pData[i].vTranslation.y += _fTimeDelta;
-	}
+	
 }
 
 shared_ptr<CEffect_Demo_Rect> CEffect_Demo_Rect::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

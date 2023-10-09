@@ -225,13 +225,19 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstPoint.hlsl"), VTXINSTPOINT::tElements, VTXINSTPOINT::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstPoint.hlsl"), VTXINSTTRANSCOLOR::tElements, VTXINSTTRANSCOLOR::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT");
 	}
 
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE,
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstLine.hlsl"), VTXINSTTRANSCOLOR::tElements, VTXINSTTRANSCOLOR::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE");
+	}
+
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstRect.hlsl"), VTXINSTRECT::tElements, VTXINSTRECT::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstRect.hlsl"), VTXINSTTRANS::tElements, VTXINSTTRANS::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT");
 	}

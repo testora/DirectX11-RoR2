@@ -221,6 +221,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_TERRAIN:
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_LINE:
 	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
@@ -240,6 +241,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_TERRAIN:
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_LINE:
 	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_umapComponent.emplace(COMPONENT::VIBUFFER, m_umapComponent[_eComponent]);
 		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), true);
@@ -268,6 +270,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_TERRAIN:
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_LINE:
 	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_pWeakVIBuffer		= Get_Component<CVIBuffer>(_eComponent);
 		break;

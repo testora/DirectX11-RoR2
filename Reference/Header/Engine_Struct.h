@@ -124,7 +124,7 @@ namespace Engine
 
 #pragma region Instance
 
-	typedef struct ENGINE_DLL tagVertexInstancePoint
+	typedef struct ENGINE_DLL tagVertexInstanceTransform
 	{
 		XMFLOAT4			vRight;
 		XMFLOAT4			vUp;
@@ -133,18 +133,20 @@ namespace Engine
 
 		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 4;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
-	} VTXINSTPOINT;
+	} VTXINSTTRANS;
 
-	typedef struct ENGINE_DLL tagVertexInstanceRect
+	typedef struct ENGINE_DLL tagVertexInstanceTransformColor
 	{
 		XMFLOAT4			vRight;
 		XMFLOAT4			vUp;
 		XMFLOAT4			vLook;
 		XMFLOAT4			vTranslation;
 
-		const static _uint						iNumElement = VTXPOSTEX::iNumElement + 4;
+		XMFLOAT4			vColor;
+
+		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 5;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
-	} VTXINSTRECT;
+	} VTXINSTTRANSCOLOR;
 
 #pragma endregion
 #pragma endregion

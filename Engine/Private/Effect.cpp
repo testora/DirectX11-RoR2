@@ -71,6 +71,7 @@ HRESULT CEffect::Add_Component(const COMPONENT _eComponent)
 	switch (_eComponent)
 	{
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
+	case COMPONENT::VIBUFFER_INSTANCE_LINE:
 	case COMPONENT::VIBUFFER_INSTANCE_RECT:
 		m_pVIBufferInstance	= Get_Component<CVIBufferInstance>(_eComponent);
 		break;

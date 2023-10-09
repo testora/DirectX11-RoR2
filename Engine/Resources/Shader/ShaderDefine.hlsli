@@ -57,6 +57,13 @@ RasterizerState RS_InverseCull
 	FrontCounterClockwise   = false;
 };
 
+RasterizerState RS_NoneCull
+{
+	FillMode                = solid;
+	CullMode                = none;
+	FrontCounterClockwise   = false;
+};
+
 // BlendState
 
 BlendState BS_Default

@@ -10,7 +10,10 @@
 #include "Effect_Demo_Point.h"
 #include "Effect_Demo_Rect.h"
 #include "VIBufferInstance_Point.h"
+#include "VIBufferInstance_Line.h"
 #include "VIBufferInstance_Rect.h"
+#include "VFX_TrailQuad.h"
+#include "VFX_TrailLine.h"
 
 HRESULT CLoader::Load_Moon()
 {
@@ -52,13 +55,19 @@ HRESULT CLoader::Load_Moon()
 #pragma region Prototype VIBuffer
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_POINT,
-		CVIBufferInstance_Point::Create(m_pDevice, m_pContext, 2))))
+		CVIBufferInstance_Point::Create(m_pDevice, m_pContext, 10))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
 	}
 
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE,
+		CVIBufferInstance_Line::Create(m_pDevice, m_pContext, 10))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE");
+	}
+
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT,
-		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 2))))
+		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 10))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
 	}
@@ -112,6 +121,12 @@ HRESULT CLoader::Load_Moon()
 		CEffect_Demo_Rect::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL,
+		CVFX_TrailLine::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL");
 	}
 
 #pragma endregion

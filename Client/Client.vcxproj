@@ -124,6 +124,8 @@
     <ClInclude Include="Public\RailGunner_Crosshair.h" />
     <ClInclude Include="Public\RailGunner_PistolBullet.h" />
     <ClInclude Include="Public\RailGunner_State.h" />
+    <ClInclude Include="Public\VFX_TrailQuad.h" />
+    <ClInclude Include="Public\VFX_TrailLine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -274,6 +276,8 @@
     <ClCompile Include="Private\RailGunner_Crosshair.cpp" />
     <ClCompile Include="Private\RailGunner_PistolBullet.cpp" />
     <ClCompile Include="Private\RailGunner_State.cpp" />
+    <ClCompile Include="Private\VFX_TrailQuad.cpp" />
+    <ClCompile Include="Private\VFX_TrailLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -283,6 +287,7 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\InstLine.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstPoint.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstRect.hlsl" />
     <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl" />

@@ -34,6 +34,9 @@ float		g_fMtrlShininess		= 32.f;
 
 float		g_fTPSharpness			= 2.f;
 
+float3		g_vSize					= float3(1.f, 1.f, 1.f);
+float		g_fThickness			= 1.f;
+
 float AvgGrayScale(float3 vRGB)
 {
 	return (vRGB.r + vRGB.g + vRGB.b) / 3.f;

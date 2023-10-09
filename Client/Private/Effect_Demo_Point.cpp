@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 
 CEffect_Demo_Point::CEffect_Demo_Point(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
-    : CEffect(_pDevice, _pContext)
+	: CEffect(_pDevice, _pContext)
 {
 }
 
@@ -14,7 +14,7 @@ CEffect_Demo_Point::CEffect_Demo_Point(const CEffect_Demo_Point& _rhs)
 
 HRESULT CEffect_Demo_Point::Initialize_Prototype()
 {
-    m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::TEXTURE)	| BIT(COMPONENT::VIBUFFER_INSTANCE_POINT);
+	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::TEXTURE)	| BIT(COMPONENT::VIBUFFER_INSTANCE_POINT);
 
 	m_umapComponentArg[COMPONENT::RENDERER]					= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
 	m_umapComponentArg[COMPONENT::SHADER]					= make_pair(PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT, g_aNull);
@@ -26,7 +26,7 @@ HRESULT CEffect_Demo_Point::Initialize_Prototype()
 
 HRESULT CEffect_Demo_Point::Initialize(any)
 {
-    if (FAILED(__super::Initialize()))
+	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CEffect_Demo_Point::Initialize", "Failed to __super::Initialize");
 	}
@@ -52,7 +52,7 @@ void CEffect_Demo_Point::Late_Tick(_float _fTimeDelta)
 
 HRESULT CEffect_Demo_Point::Render()
 {
-	if (FAILED(__super::Render(0)))
+	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CEffect_Demo_Point::Render", "Failed to __super::Render");
 	}
@@ -82,27 +82,27 @@ _bool CEffect_Demo_Point::Return()
 
 void CEffect_Demo_Point::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 {
-	_float4 vPosition = any_cast<_float4>(_arg);
-
-	VTXINSTPOINT* pData = reinterpret_cast<VTXINSTPOINT*>(_pData);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
-	{
-		pData[i].vTranslation = vPosition;
-	}
-
-	m_fTimeAcc = 0.f;
+//	_float4 vPosition = any_cast<_float4>(_arg);
+//
+//	VTXINSTTRANS* pData = reinterpret_cast<VTXINSTTRANS*>(_pData);
+//
+//	for (_uint i = 0; i < _iNumInstance; ++i)
+//	{
+//		pData[i].vTranslation = vPosition;
+//	}
+//
+//	m_fTimeAcc = 0.f;
 }
 
 void CEffect_Demo_Point::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
 {
-	VTXINSTPOINT* pData = reinterpret_cast<VTXINSTPOINT*>(_pData);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
-	{
-		i ? pData[i].vTranslation.x += _fTimeDelta : pData[i].vTranslation.x -= _fTimeDelta;
-		pData[i].vTranslation.y += _fTimeDelta;
-	}
+//	VTXINSTPOINT* pData = reinterpret_cast<VTXINSTPOINT*>(_pData);
+//
+//	for (_uint i = 0; i < _iNumInstance; ++i)
+//	{
+//		i ? pData[i].vTranslation.x += _fTimeDelta : pData[i].vTranslation.x -= _fTimeDelta;
+//		pData[i].vTranslation.y += _fTimeDelta;
+//	}
 }
 
 shared_ptr<CEffect_Demo_Point> CEffect_Demo_Point::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

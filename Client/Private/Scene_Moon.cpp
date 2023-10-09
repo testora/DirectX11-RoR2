@@ -75,10 +75,33 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 	{
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
 	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('T'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_TRAIL)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
+	}
 }
 
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
 {
+#if ACTIVATE_TOOL
+	ImGui::Begin("MATERIAL");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("NONBLEND");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("LIGHT");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+	ImGui::End();
+#endif
 }
 
 HRESULT CScene_Moon::Render()
@@ -190,16 +213,22 @@ HRESULT CScene_Moon::Ready_Monster()
 
 HRESULT CScene_Moon::Ready_Effect()
 {
-	shared_ptr<CObjectPool> pPoolPointFx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT, 2);
-	if (nullptr == pPoolPointFx)
+	shared_ptr<CObjectPool> pPoolPointVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT, 2);
+	if (nullptr == pPoolPointVfx)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT");
 	}
 
-	shared_ptr<CObjectPool> pPoolRectFx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT, 2);
-	if (nullptr == pPoolRectFx)
+	shared_ptr<CObjectPool> pPoolRectVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT, 2);
+	if (nullptr == pPoolRectVfx)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
+	}
+
+	shared_ptr<CObjectPool> pPoolTrailVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_TRAIL, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL, 2);
+	if (nullptr == pPoolTrailVfx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL");
 	}
 
 	return S_OK;

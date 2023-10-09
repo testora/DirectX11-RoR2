@@ -50,7 +50,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT Out;
 
 	Out.vColor = g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
-//	Out.vColor *= g_vMtrlDiffuse;
 	
 	return Out;
 }
