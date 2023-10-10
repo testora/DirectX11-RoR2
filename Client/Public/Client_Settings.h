@@ -16,8 +16,8 @@
 
 #pragma region INGAME - Camera
 
-#define MAINCAM_SENSITIVITY_YAW					0.5f
-#define MAINCAM_SENSITIVITY_PITCH				0.5f
+#define MAINCAM_SENSITIVITY_YAW					1.f
+#define MAINCAM_SENSITIVITY_PITCH				1.f
 
 #define MAINCAM_PITCH_MIN						-90.0f
 #define MAINCAM_PITCH_MAX						+90.0f

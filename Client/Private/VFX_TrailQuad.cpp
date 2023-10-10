@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "VFX_TrailQuad.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CVFX_TrailQuad::CVFX_TrailQuad(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CEffect(_pDevice, _pContext)
@@ -31,9 +32,7 @@ HRESULT CVFX_TrailQuad::Initialize(any)
 		MSG_RETURN(E_FAIL, "CVFX_TrailQuad::Initialize", "Failed to __super::Initialize");
 	}
 
-	shared_ptr<CTransform> pTransform = Function::Find_Player()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	m_deqDown.resize(11, pTransform->Get_State(TRANSFORM::POSITION));
-	m_deqUp.resize(11, pTransform->Get_State(TRANSFORM::POSITION) + pTransform->Get_State(TRANSFORM::UP));
+	m_deqQuad.resize(m_iMaxInstance + 2);
 
 	return S_OK;
 }
@@ -42,23 +41,22 @@ void CVFX_TrailQuad::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	shared_ptr<CTransform> pTransform = Function::Find_Player()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	m_fTimeAcc += _fTimeDelta;
+	if (m_fInterval < m_fTimeAcc)
+	{
+		m_iIndex += static_cast<_uint>(m_fTimeAcc / m_fInterval);
+		if (m_iIndex >= m_iMaxInstance)
+		{
+			m_iIndex = 0;
+		}
 
-	++m_iIndex;
-	if (m_iIndex >= 10)
-	{
-		m_iIndex = 0;
-	}
-
-	m_deqDown.push_front(pTransform->Get_State(TRANSFORM::POSITION));
-	m_deqUp.push_front(pTransform->Get_State(TRANSFORM::POSITION) + pTransform->Get_State(TRANSFORM::UP) * 0.1f);
-	if (m_deqDown.size() > 10)
-	{
-		m_deqDown.pop_back();
-	}
-	if (m_deqUp.size() > 10)
-	{
-		m_deqUp.pop_back();
+		m_deqQuad.push_front(make_pair(
+			((m_pairTargetPoint.first ? XMLoadFloat4x4(m_pairTargetPoint.first) : g_mUnit) * m_mTargetPivot * m_pTargetTransform->Get_Matrix()).r[3],
+			((m_pairTargetPoint.second ? XMLoadFloat4x4(m_pairTargetPoint.second) : g_mUnit) * m_mTargetPivot * m_pTargetTransform->Get_Matrix()).r[3]));
+		if (m_deqQuad.size() > m_iMaxInstance + 1)
+		{
+			m_deqQuad.pop_back();
+		}
 	}
 }
 
@@ -71,7 +69,7 @@ void CVFX_TrailQuad::Late_Tick(_float _fTimeDelta)
 
 HRESULT CVFX_TrailQuad::Render()
 {
-	Get_Component<CShader>(COMPONENT::SHADER)->Bind_Vector(SHADER_MTRLDIF, _float4(0.2f, 0.6f, 0.8f, 1.f));
+	Get_Component<CShader>(COMPONENT::SHADER)->Bind_Vector(SHADER_MTRLDIF, _float4(1.f, 0.6f, 0.8f, 1.f));
 
 	if (FAILED(__super::Render(3)))
 	{
@@ -81,12 +79,24 @@ HRESULT CVFX_TrailQuad::Render()
 	return S_OK;
 }
 
-HRESULT CVFX_TrailQuad::Fetch(any _arg)
+HRESULT CVFX_TrailQuad::Fetch(any _pair_pTarget_pair_szBones)
 {
-	if (FAILED(__super::Fetch(_arg)))
+	if (FAILED(__super::Fetch()))
 	{
 		MSG_RETURN(E_FAIL, "CVFX_TrailQuad::Fetch", "Failed to __super::Fetch");
 	}
+
+	m_mTargetPivot	= g_mUnit;
+	m_fInterval		= 0.01f;
+	m_iMaxInstance	= 100;
+
+	pair<shared_ptr<CGameObject>, pair<const _char*, const _char*>> pairArg;
+	pairArg = any_cast<pair<shared_ptr<CGameObject>, pair<const _char*, const _char*>>>(_pair_pTarget_pair_szBones);
+
+	m_pTargetTransform			= pairArg.first->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	m_pairTargetPoint.first		= pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(pairArg.second.first)->Get_CombinedTransformationPointer();
+	m_pairTargetPoint.second	= pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(pairArg.second.second)->Get_CombinedTransformationPointer();
+	m_mTargetPivot				= pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
 
 	return S_OK;
 }
@@ -103,18 +113,23 @@ void CVFX_TrailQuad::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 
 void CVFX_TrailQuad::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
 {
-	VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
-
-	pData[m_iIndex].vColor		= _color(1.f, 1.f, 1.f, 0.f);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
+	if (m_fInterval < m_fTimeAcc)
 	{
-		pData[i].vRight			= _float4(m_deqUp[i], 1.f);
-		pData[i].vUp			= _float4(m_deqUp[i + 1], 1.f);
-		pData[i].vLook			= _float4(m_deqDown[i + 1], 1.f);
-		pData[i].vTranslation	= _float4(m_deqDown[i], 1.f);
+		m_fTimeAcc = fmodf(m_fTimeAcc, m_fInterval);
 
-		pData[i].vColor.w		= 1.f - (i / static_cast<_float>(_iNumInstance));
+		VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
+
+		pData[m_iIndex].vColor = _color(1.f, 1.f, 1.f, 0.f);
+
+		for (_uint i = 0; i < m_iMaxInstance; ++i)
+		{
+			pData[i].vRight			= _float4(m_deqQuad[i].second);
+			pData[i].vUp			= _float4(m_deqQuad[i + 1].second);
+			pData[i].vLook			= _float4(m_deqQuad[i + 1].first);
+			pData[i].vTranslation	= _float4(m_deqQuad[i].first);
+
+			pData[i].vColor.w		= max(0.f, 1.f - (i / static_cast<_float>(m_iMaxInstance)));
+		}
 	}
 }
 

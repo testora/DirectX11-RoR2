@@ -21,12 +21,18 @@ public:
 	virtual HRESULT							Fetch(any = g_aNull) override;
 
 protected:
+	virtual HRESULT							Ready_Components() override;
+
 	virtual HRESULT							Render(_uint iPassIndex) override;
 
 	virtual void							Fetch_Instance(void*, _uint iNumInstance, any arg = g_aNull)	PURE;
 	virtual	void							Update_Instance(void*, _uint iNumInstance, _float fTimeDelta)	PURE;
 
 	virtual HRESULT							Add_Component(const COMPONENT) override;
+
+protected:
+	shared_ptr<class CTransform>			m_pTransform;
+	shared_ptr<class CShader>				m_pShader;
 
 private:
 	shared_ptr<class CVIBufferInstance>		m_pVIBufferInstance;

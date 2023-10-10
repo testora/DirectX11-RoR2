@@ -55,19 +55,19 @@ HRESULT CLoader::Load_Moon()
 #pragma region Prototype VIBuffer
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_POINT,
-		CVIBufferInstance_Point::Create(m_pDevice, m_pContext, 10))))
+		CVIBufferInstance_Point::Create(m_pDevice, m_pContext, 100))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE,
-		CVIBufferInstance_Line::Create(m_pDevice, m_pContext, 10))))
+		CVIBufferInstance_Line::Create(m_pDevice, m_pContext, 100))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT,
-		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 10))))
+		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 100))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
 	}
@@ -80,6 +80,9 @@ HRESULT CLoader::Load_Moon()
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET
 //	PROTOTYPE_GAMEOBJECT_BROTHER
+
+//	PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE
+//	PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN,
 		CCamera_Main::Create(m_pDevice, m_pContext))))
@@ -111,22 +114,16 @@ HRESULT CLoader::Load_Moon()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER");
 	}
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT,
-		CEffect_Demo_Point::Create(m_pDevice, m_pContext))))
-	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT");
-	}
-
-	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT,
-		CEffect_Demo_Rect::Create(m_pDevice, m_pContext))))
-	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
-	}
-
-	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL,
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE,
 		CVFX_TrailLine::Create(m_pDevice, m_pContext))))
 	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL");
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD,
+		CVFX_TrailQuad::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD");
 	}
 
 #pragma endregion

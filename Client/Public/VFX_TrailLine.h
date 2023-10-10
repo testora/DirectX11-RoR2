@@ -18,7 +18,7 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
-	virtual HRESULT						Fetch(any = g_aNull) override;
+	virtual HRESULT						Fetch(any pair_pTarget_szBone) override;
 	virtual _bool						Return() override;
 
 protected:
@@ -26,11 +26,18 @@ protected:
 	virtual	void						Update_Instance(void*, _uint iNumInstance, _float fTimeDelta) override;
 
 private:
-	_float								m_fTimeAcc = 0.f;
+	shared_ptr<CTransform>				m_pTargetTransform;
 
-	_uint								m_iIndex = 0;
+	const _float4x4*					m_pTargetPoint	= nullptr;
+	_float4x4							m_mTargetPivot;
 
-	deque<_float3>						m_deqLine;
+	_float								m_fTimeAcc		= 0.f;
+	_uint								m_iIndex		= 0;
+
+	deque<_float4>						m_deqLine;
+
+	_uint								m_iMaxInstance	= 100;
+	_float								m_fInterval		= 0.01f;
 
 public:
 	static shared_ptr<CVFX_TrailLine>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

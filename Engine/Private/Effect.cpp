@@ -1,6 +1,6 @@
 #include "EnginePCH.h"
 #include "Effect.h"
-#include "VIBufferInstance.h"
+#include "Component_Manager.h"
 
 CEffect::CEffect(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -47,6 +47,28 @@ void CEffect::Late_Tick(_float _fTimeDelta)
 HRESULT CEffect::Fetch(any _arg)
 {
 	m_pVIBufferInstance->Update([&](void* _pData, _uint _iNumInstance) { Fetch_Instance(_pData, _iNumInstance, _arg); });
+
+	return S_OK;
+}
+
+HRESULT CEffect::Ready_Components()
+{
+	if (FAILED(__super::Ready_Components()))
+	{
+		MSG_RETURN(E_FAIL, "CEffect::Ready_Components", "Failed to __super::Ready_Components");
+	}
+
+	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
+	if (nullptr == m_pTransform)
+	{
+		MSG_RETURN(E_FAIL, "CEffect::Ready_Components", "Nullptr Exception: m_pTransform");
+	}
+
+	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
+	if (nullptr == m_pShader)
+	{
+		MSG_RETURN(E_FAIL, "CEffect::Ready_Components", "Nullptr Exception: m_pShader");
+	}
 
 	return S_OK;
 }

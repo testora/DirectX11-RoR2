@@ -21,6 +21,11 @@ HRESULT CScene_Moon::Initialize()
 	CImGui_Manager::Get_Instance()->Enable();
 #endif
 
+	if (FAILED(Ready_Effect()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Effect");
+	}
+
 	if (FAILED(Ready_Light()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Light");
@@ -46,11 +51,6 @@ HRESULT CScene_Moon::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Monster");
 	}
 
-	if (FAILED(Ready_Effect()))
-	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Effect");
-	}
-
 	return S_OK;
 }
 
@@ -64,21 +64,6 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 	if (CGameInstance::Get_Instance()->Key_Down('B'))
 	{
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_BROTHER)->Pop(ARENA_CENTER);
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('E'))
-	{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('R'))
-	{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
-	}
-
-	if (CGameInstance::Get_Instance()->Key_Down('T'))
-	{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_TRAIL)->Pop(_float4(0.f, 0.f, 0.f, 1.f));
 	}
 }
 
@@ -213,22 +198,16 @@ HRESULT CScene_Moon::Ready_Monster()
 
 HRESULT CScene_Moon::Ready_Effect()
 {
-	shared_ptr<CObjectPool> pPoolPointVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_POINT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT, 2);
-	if (nullptr == pPoolPointVfx)
+	shared_ptr<CObjectPool> pPoolTrailLineVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_TRAIL_LINE, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE, 5);
+	if (nullptr == pPoolTrailLineVfx)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE");
 	}
 
-	shared_ptr<CObjectPool> pPoolRectVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_DEMO_RECT, PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT, 2);
-	if (nullptr == pPoolRectVfx)
+	shared_ptr<CObjectPool> pPoolTrailQuadVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_TRAIL_QUAD, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD, 5);
+	if (nullptr == pPoolTrailQuadVfx)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT");
-	}
-
-	shared_ptr<CObjectPool> pPoolTrailVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_EFFECT_TRAIL, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL, 2);
-	if (nullptr == pPoolTrailVfx)
-	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD");
 	}
 
 	return S_OK;

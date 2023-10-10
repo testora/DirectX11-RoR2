@@ -17,12 +17,12 @@ public:
 	virtual HRESULT					Render() override;
 
 private:
+	HRESULT							Ready_Effect();
 	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Terrain();
 	HRESULT							Ready_Player();
 	HRESULT							Ready_Monster();
-	HRESULT							Ready_Effect();
 
 public:
 	static shared_ptr<CScene_Moon>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

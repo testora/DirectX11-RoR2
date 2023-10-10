@@ -1,6 +1,7 @@
 #include "ClientPCH.h"
 #include "VFX_TrailLine.h"
 #include "GameInstance.h"
+#include "Bone.h"
 
 CVFX_TrailLine::CVFX_TrailLine(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CEffect(_pDevice, _pContext)
@@ -31,9 +32,8 @@ HRESULT CVFX_TrailLine::Initialize(any)
 		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Initialize", "Failed to __super::Initialize");
 	}
 
-	shared_ptr<CTransform> pTransform = Function::Find_Player()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	m_deqLine.resize(13, _float3(0.f, 0.5f, 0.f) + pTransform->Get_State(TRANSFORM::POSITION));
-
+	m_deqLine.resize(m_iMaxInstance + 3);
+	
 	return S_OK;
 }
 
@@ -41,18 +41,20 @@ void CVFX_TrailLine::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	shared_ptr<CTransform> pTransform = Function::Find_Player()->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-
-	++m_iIndex;
-	if (m_iIndex >= 10)
+	m_fTimeAcc += _fTimeDelta;
+	if (m_fInterval < m_fTimeAcc)
 	{
-		m_iIndex = 0;
-	}
+		m_iIndex += static_cast<_uint>(m_fTimeAcc / m_fInterval);
+		if (m_iIndex >= m_iMaxInstance)
+		{
+			m_iIndex = 0;
+		}
 
-	m_deqLine.push_front(_float3(0.f, 0.1f, 0.f) + pTransform->Get_State(TRANSFORM::POSITION));
-	if (m_deqLine.size() > 12)
-	{
-		m_deqLine.pop_back();
+		m_deqLine.push_front(((m_pTargetPoint ? XMLoadFloat4x4(m_pTargetPoint) : g_mUnit) * m_mTargetPivot * m_pTargetTransform->Get_Matrix()).r[3]);
+		if (m_deqLine.size() > m_iMaxInstance + 2)
+		{
+			m_deqLine.pop_back();
+		}
 	}
 }
 
@@ -65,8 +67,8 @@ void CVFX_TrailLine::Late_Tick(_float _fTimeDelta)
 
 HRESULT CVFX_TrailLine::Render()
 {
-	Get_Component<CShader>(COMPONENT::SHADER)->Bind_Vector(SHADER_MTRLDIF, _float4(0.2f, 0.6f, 0.8f, 1.f));
-	Get_Component<CShader>(COMPONENT::SHADER)->Bind_Float(SHADER_THICKNESS, 0.1f);
+	m_pShader->Bind_Vector(SHADER_MTRLDIF, _float4(0.2f, 0.6f, 0.8f, 1.f));
+	m_pShader->Bind_Float(SHADER_THICKNESS, 0.05f);
 
 	if (FAILED(__super::Render(1)))
 	{
@@ -76,12 +78,22 @@ HRESULT CVFX_TrailLine::Render()
 	return S_OK;
 }
 
-HRESULT CVFX_TrailLine::Fetch(any _arg)
+HRESULT CVFX_TrailLine::Fetch(any _pair_pTarget_szBone)
 {
-	if (FAILED(__super::Fetch(_arg)))
+	if (FAILED(__super::Fetch()))
 	{
 		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Fetch", "Failed to __super::Fetch");
 	}
+
+	m_mTargetPivot	= g_mUnit;
+	m_fInterval		= 0.01f;
+	m_iMaxInstance	= 100;
+
+	pair<shared_ptr<CGameObject>, const _char*> pairArg = any_cast<pair<shared_ptr<CGameObject>, const _char*>>(_pair_pTarget_szBone);
+
+	m_pTargetTransform = pairArg.first->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	m_pTargetPoint = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(pairArg.second)->Get_CombinedTransformationPointer();
+	m_mTargetPivot = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
 
 	return S_OK;
 }
@@ -98,18 +110,23 @@ void CVFX_TrailLine::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 
 void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
 {
-	VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
-
-	pData[m_iIndex].vColor		= _color(1.f, 1.f, 1.f, 0.f);
-
-	for (_uint i = 0; i < _iNumInstance; ++i)
+	if (m_fInterval < m_fTimeAcc)
 	{
-		pData[i].vRight			= _float4(m_deqLine[i + 0], 1.f);
-		pData[i].vUp			= _float4(m_deqLine[i + 1], 1.f);
-		pData[i].vLook			= _float4(m_deqLine[i + 2], 1.f);
-		pData[i].vTranslation	= _float4(m_deqLine[i + 3], 1.f);
+		m_fTimeAcc = fmodf(m_fTimeAcc, m_fInterval);
 
-		pData[i].vColor.w		= 1.f - (i / static_cast<_float>(_iNumInstance));
+		VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
+
+		pData[m_iIndex].vColor = _color(1.f, 1.f, 1.f, 0.f);
+
+		for (_uint i = 0; i < m_iMaxInstance; ++i)
+		{
+			pData[i].vRight			= _float4(m_deqLine[i + 0]);
+			pData[i].vUp			= _float4(m_deqLine[i + 1]);
+			pData[i].vLook			= _float4(m_deqLine[i + 2]);
+			pData[i].vTranslation	= _float4(m_deqLine[i + 3]);
+
+			pData[i].vColor.w		= max(0.f, 1.f - (i / static_cast<_float>(m_iMaxInstance)));
+		}
 	}
 }
 
@@ -125,11 +142,11 @@ shared_ptr<CVFX_TrailLine> CVFX_TrailLine::Create(ComPtr<ID3D11Device> _pDevice,
 	return pInstance;
 }
 
-shared_ptr<CGameObject> CVFX_TrailLine::Clone(any)
+shared_ptr<CGameObject> CVFX_TrailLine::Clone(any _pTarget)
 {
 	shared_ptr<CVFX_TrailLine> pInstance = make_private_shared_copy(CVFX_TrailLine, *this);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(_pTarget)))
 	{
 		MSG_RETURN(nullptr, "CVFX_TrailLine::Clone", "Failed to Initialize");
 	}

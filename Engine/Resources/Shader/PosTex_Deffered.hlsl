@@ -83,7 +83,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float4			vLook			= vPosition - g_vCamPosition;
 	float4			vHalfWay		= normalize(normalize(g_vLightDirection) + normalize(-vLook));
 	
-	Out.vSpecular	= pow(dot(vNormal, vHalfWay), g_fMtrlShininess);
+	Out.vSpecular	= pow(abs(dot(vNormal, vHalfWay)), g_fMtrlShininess);
 
 	return Out;
 }

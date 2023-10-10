@@ -262,7 +262,8 @@ PS_OUT PS_MAIN_NONEUV(PS_IN In)
 {
 	PS_OUT Out;
 
-    Out.vColor = g_vMtrlDiffuse * In.vColor;
+    Out.vColor		= g_vMtrlDiffuse;
+    Out.vColor.w	*= lerp(In.vColor.w, In.vColor.w - 0.01f, In.vTexCoord.x);
 	
 	return Out;
 }

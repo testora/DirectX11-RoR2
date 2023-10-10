@@ -82,7 +82,6 @@ namespace ANIMATION
 		RUN_TO_IDLE						= 27,
 	//	SPRINT
 		SPRINT_FORWARD					= 23,
-		SPRINT_SMASH					= 28,
 	//	DASH
 		DASH_FORWARD					= 35,
 		DASH_BACKWARD					= 34,
@@ -90,6 +89,7 @@ namespace ANIMATION
 		DASH_RIGHT						= 37,
 	//	SMASH
 		SMASH_FORWARD					= 26,
+		SPRINT_SMASH					= 28,
 	//	LUNARSHARD
 		LUNARSHARD_FIRE_FORWARD			= 39,	// BONE
 	//	ULT

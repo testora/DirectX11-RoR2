@@ -99,19 +99,19 @@ HRESULT CCamera::Ready_Components()
 	m_pRenderer = dynamic_pointer_cast<CRenderer>(m_umapComponent[COMPONENT::RENDERER]);
 	if (nullptr == m_pRenderer)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pRenderer");
+		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pRenderer");
 	}
 
 	m_pTransform = dynamic_pointer_cast<CTransform>(m_umapComponent[COMPONENT::TRANSFORM]);
 	if (nullptr == m_pTransform)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pTransform");
+		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pTransform");
 	}
 
 	m_pShader = dynamic_pointer_cast<CShader>(m_umapComponent[COMPONENT::SHADER]);
 	if (nullptr == m_pShader)
 	{
-		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Nullptr Exception: m_pShader");
+		MSG_RETURN(E_FAIL, "CCamera::Ready_Components", "Nullptr Exception: m_pShader");
 	}
 
 	return S_OK;

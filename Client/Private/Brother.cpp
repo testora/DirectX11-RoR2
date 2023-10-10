@@ -52,6 +52,11 @@ HRESULT CBrother::Initialize(any)
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
 
+	CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_LINE)->Pop(
+		make_pair(shared_from_gameobject(), "2HWeaponHandPlacement.l"));
+	CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_QUAD)->Pop(
+		make_pair(shared_from_gameobject(), make_pair("2HWeaponBendy.6", "2HWeaponBendy.7")));
+
 	return S_OK;
 }
 

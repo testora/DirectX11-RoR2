@@ -14,7 +14,8 @@
 #define PROTOTYPE_GAMEOBJECT_GOLEM							TEXT("Prototype:GameObject:Golem")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT				TEXT("Prototype:GameObject:Effect:Demo:Point")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT				TEXT("Prototype:GameObject:Effect:Demo:Rect")
-#define PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL					TEXT("Prototype:GameObject:Effect:Trail")
+#define PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE				TEXT("Prototype:GameObject:Effect:Trail:Line")
+#define PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD				TEXT("Prototype:GameObject:Effect:Trail:Quad")
 
 #pragma	endregion
 #pragma region Component
@@ -75,7 +76,8 @@
 
 #define POOL_EFFECT_DEMO_POINT								TEXT("Pool:Effect:Demo:Point")
 #define POOL_EFFECT_DEMO_RECT								TEXT("Pool:Effect:Demo:Rect")
-#define POOL_EFFECT_TRAIL									TEXT("Pool:Effect:Trail")
+#define POOL_EFFECT_TRAIL_LINE								TEXT("Pool:Effect:Trail:Line")
+#define POOL_EFFECT_TRAIL_QUAD								TEXT("Pool:Effect:Trail:Quad")
 
 #pragma endregion
 #pragma region Grid Layer
