@@ -28,7 +28,7 @@ protected:
 	virtual void							Fetch_Instance(void*, _uint iNumInstance, any arg = g_aNull)	PURE;
 	virtual	void							Update_Instance(void*, _uint iNumInstance, _float fTimeDelta)	PURE;
 
-	virtual HRESULT							Add_Component(const COMPONENT) override;
+	virtual HRESULT							Add_Component(const COMPONENT, shared_ptr<class CComponent>) override;
 
 protected:
 	shared_ptr<class CTransform>			m_pTransform;

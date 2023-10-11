@@ -1,5 +1,7 @@
 #pragma once
 
+#define SHADER_TIME								"g_fTime"
+
 #define SHADER_FLAG								"g_iShaderFlag"
 #define SHADER_FLAG_TEXDIFFUSE					0b0000'0000'0000'0001
 #define SHADER_FLAG_TEXNORMAL					0b0000'0000'0000'0010
@@ -39,6 +41,8 @@
 #define SHADER_TEXTARGET_DEPTH					"g_texDepthTarget"
 #define SHADER_TEXTARGET_SHADE					"g_texShadeTarget"
 #define SHADER_TEXTARGET_SPECULAR				"g_texSpecularTarget"
+#define SHADER_TEXTARGET_PREPROCESS				"g_texPreProcessTarget"
+#define SHADER_TEXTARGET_MASK					"g_texMaskTarget"
 
 #define SHADER_LIGHTCNT							"g_iLightCount"
 #define SHADER_LIGHTTYPE						"g_iLightType"
@@ -64,6 +68,7 @@
 
 #define SHADER_SIZE								"g_vSize"
 #define SHADER_THICKNESS						"g_fThickness"
+#define SHADER_MAXINSTANCE						"g_iMaxInstance"
 
 #define RENDERTARGET_MATERIAL_DIFFUSE			TEXT("RenderTarget:Material:Diffuse")
 #define RENDERTARGET_MATERIAL_AMBIENT			TEXT("RenderTarget:Material:Ambient")
@@ -76,5 +81,9 @@
 #define RENDERTARGET_SHADE						TEXT("RenderTarget:Shade")
 #define RENDERTARGET_SPECULAR					TEXT("RenderTarget:Specular")
 
+#define RENDERTARGET_PREPROCESS					TEXT("RenderTarget:PreProcess")
+#define RENDERTARGET_MASK						TEXT("RenderTarget:Mask")
+
 #define MULTIRENDERTARGET_NONBLEND				TEXT("MultiRenderTarget:NonBlend")
 #define MULTIRENDERTARGET_LIGHT					TEXT("MultiRenderTarget:Light")
+#define MULTIRENDERTARGET_POSTPROCESS			TEXT("MultiRenderTarget:PostProcess")

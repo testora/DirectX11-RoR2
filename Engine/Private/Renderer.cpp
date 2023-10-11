@@ -1,7 +1,10 @@
 #include "EnginePCH.h"
 #include "Renderer.h"
+#include "GameInstance.h"
 #include "RenderTarget_Manager.h"
 #include "Light_Manager.h"
+#include "Component_Manager.h"
+#include "Scene_Manager.h"
 #include "PipeLine.h"
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
@@ -64,6 +67,15 @@ HRESULT CRenderer::Initialize(any)
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_SPECULAR");
 	}
+	
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_PREPROCESS, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MASK, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
+	}
 
 #pragma endregion
 #pragma region Multi Render Targets
@@ -102,6 +114,15 @@ HRESULT CRenderer::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_LIGHT");
 	}
 
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_POSTPROCESS, RENDERTARGET_PREPROCESS)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_POSTPROCESS");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_POSTPROCESS, RENDERTARGET_MASK)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_POSTPROCESS");
+	}
+
 #pragma endregion
 
 	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosTex_Deffered.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement);
@@ -109,6 +130,8 @@ HRESULT CRenderer::Initialize(any)
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Compile Shader");
 	}
+
+	CComponent_Manager::Get_Instance()->Add_Prototype(CScene_Manager::Get_Instance()->Static_Scene(), PROTOTYPE_COMPONENT_SHADER_DEFERRED, m_pShader);
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer)
@@ -135,6 +158,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	HRESULT hr = S_OK;
 
+	m_pShader->Bind_Float(SHADER_TIME, CGameInstance::Get_Instance()->Get_ActivatedTime());
+
 	if (FAILED(Ready_Camera()))
 	{
 		hr = E_FAIL;
@@ -156,10 +181,11 @@ HRESULT CRenderer::Draw_RenderGroup()
 		hr = E_FAIL;
 		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Draw_Light");
 	}
-	if (FAILED(Draw_Deferred()))
+
+	if (FAILED(Draw_PreProcess()))
 	{
 		hr = E_FAIL;
-		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Draw_Deferred");
+		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Draw_PreProcess");
 	}
 
 	if (FAILED(Render_NonLight()))
@@ -172,6 +198,13 @@ HRESULT CRenderer::Draw_RenderGroup()
 		hr = E_FAIL;
 		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Blend");
 	}
+
+	if (FAILED(Draw_PostProcess()))
+	{
+		hr = E_FAIL;
+		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Draw_PostProcess");
+	}
+
 	if (FAILED(Render_UI()))
 	{
 		hr = E_FAIL;
@@ -300,53 +333,58 @@ HRESULT CRenderer::Draw_Light()
 	return S_OK;
 }
 
-HRESULT CRenderer::Draw_Deferred()
+HRESULT CRenderer::Draw_PreProcess()
 {
+	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_POSTPROCESS)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_POSTPROCESS");
+	}
+
 	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATWORLD, m_mWorld)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_Matrix: SHADER_MATWORLD");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATWORLD");
 	}
 	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEW, m_mView)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_Matrix: SHADER_MATVIEW");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATVIEW");
 	}
 	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATPROJ, m_mProjection)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_Matrix: SHADER_MATPROJ");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATPROJ");
 	}
 
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MATERIAL_DIFFUSE, m_pShader, SHADER_TEXTARGET_MTRL_DIFFUSE)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_DIFFUSE");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_DIFFUSE");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MATERIAL_AMBIENT, m_pShader, SHADER_TEXTARGET_MTRL_AMBIENT)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_AMBIENT");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_AMBIENT");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MATERIAL_SPECULAR, m_pShader, SHADER_TEXTARGET_MTRL_SPECULAR)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_SPECULAR");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_SPECULAR");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MATERIAL_EMISSIVE, m_pShader, SHADER_TEXTARGET_MTRL_EMISSIVE)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_EMISSIVE");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_EMISSIVE");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_SHADE, m_pShader, SHADER_TEXTARGET_SHADE)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_SHADE");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_SHADE");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_SPECULAR, m_pShader, SHADER_TEXTARGET_SPECULAR)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Bind_RenderTarget: RENDERTARGET_SPECULAR");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_SPECULAR");
 	}
 
 	if (FAILED(m_pShader->BeginPass(2)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to BeginPass");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to BeginPass");
 	}
 	if (FAILED(m_pVIBuffer->Render()))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Deferred", "Failed to Render");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Render");
 	}
 
 	return S_OK;
@@ -399,7 +437,35 @@ HRESULT CRenderer::Render_Blend()
 	}
 	m_lstRenderGroup[IDX(RENDER_GROUP::BLEND)].clear();
 
+	if (FAILED(m_pRenderTarget_Manager->End_MultiRenderTarget()))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Render_Blend", "Failed to End_MultiRenderTarget");
+	}
+
 	return hr;
+}
+
+HRESULT CRenderer::Draw_PostProcess()
+{
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_PREPROCESS, m_pShader, SHADER_TEXTARGET_PREPROCESS)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_DIFFUSE");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MASK, m_pShader, SHADER_TEXTARGET_MASK)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_AMBIENT");
+	}
+
+	if (FAILED(m_pShader->BeginPass(3)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to BeginPass");
+	}
+	if (FAILED(m_pVIBuffer->Render()))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to Render");
+	}
+
+	return S_OK;
 }
 
 HRESULT CRenderer::Render_UI()

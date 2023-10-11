@@ -45,11 +45,18 @@ struct PS_OUT
 	float4 vColor		: SV_TARGET0;
 };
 
-PS_OUT PS_MAIN(PS_IN In)
+struct PS_OUT_POSTPROCESS
 {
-	PS_OUT Out;
+	float4 vPreProcess	: SV_TARGET0;
+	float4 vMask		: SV_TARGET1;
+};
 
-	Out.vColor = g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+PS_OUT_POSTPROCESS PS_MAIN(PS_IN In)
+{
+    PS_OUT_POSTPROCESS Out;
+
+    Out.vPreProcess	= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+	Out.vMask		= float4(0.f, 0.f, 0.f, 0.f);
 	
 	return Out;
 }

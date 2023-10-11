@@ -35,8 +35,8 @@ protected:
 	virtual HRESULT												Ready_Components();
 	virtual HRESULT												Ready_Behaviors();
 
-	virtual HRESULT												Add_Component(const COMPONENT);
-	virtual HRESULT												Add_Behavior(const BEHAVIOR);
+	virtual HRESULT												Add_Component(const COMPONENT, shared_ptr<class CComponent> = nullptr);
+	virtual HRESULT												Add_Behavior(const BEHAVIOR, shared_ptr<class CBehavior> = nullptr);
 	virtual HRESULT												Delete_Component(const COMPONENT);
 	virtual HRESULT												Delete_Behavior(const BEHAVIOR);
 

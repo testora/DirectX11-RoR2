@@ -53,6 +53,7 @@ enum aiTextureType {
 #include "Engine_Shader.h"
 #include "Engine_Struct.h"
 #include "Engine_Typedef.h"
+#include "Engine_Variable.h"
 
 using namespace Engine;
 

@@ -19,6 +19,9 @@ public:
 	virtual HRESULT						Render() override;
 
 private:
+	virtual HRESULT						Fetch(any vPosition3 = g_aNull) override;
+	virtual _bool						Return() override;
+
 	virtual HRESULT						Ready_Components() override;
 	virtual HRESULT						Ready_Behaviors() override;
 
@@ -33,6 +36,9 @@ public:
 
 private:
 	_bool								m_bRender	= true;
+
+	shared_ptr<class CVFX_TrailLine>	m_pVFX_EyeTrail;
+	shared_ptr<class CVFX_TrailQuad>	m_pVFX_HammerTrail;
 
 public:
 	static shared_ptr<CBrother>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

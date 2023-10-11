@@ -15,11 +15,10 @@ CVFX_TrailLine::CVFX_TrailLine(const CVFX_TrailLine& _rhs)
 
 HRESULT CVFX_TrailLine::Initialize_Prototype()
 {
-	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::TEXTURE)	| BIT(COMPONENT::VIBUFFER_INSTANCE_LINE);
+	m_bitComponent	|= BIT(COMPONENT::RENDERER)	| BIT(COMPONENT::TRANSFORM)	| BIT(COMPONENT::SHADER)	| BIT(COMPONENT::VIBUFFER_INSTANCE_LINE);
 
 	m_umapComponentArg[COMPONENT::RENDERER]					= make_pair(PROTOTYPE_COMPONENT_RENDERER_MAIN, g_aNull);
 	m_umapComponentArg[COMPONENT::SHADER]					= make_pair(PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE, g_aNull);
-	m_umapComponentArg[COMPONENT::TEXTURE]					= make_pair(PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO, g_aNull);
 	m_umapComponentArg[COMPONENT::VIBUFFER_INSTANCE_LINE]	= make_pair(PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE, g_aNull);
 
 	return S_OK;
@@ -67,8 +66,8 @@ void CVFX_TrailLine::Late_Tick(_float _fTimeDelta)
 
 HRESULT CVFX_TrailLine::Render()
 {
-	m_pShader->Bind_Vector(SHADER_MTRLDIF, _float4(0.2f, 0.6f, 0.8f, 1.f));
-	m_pShader->Bind_Float(SHADER_THICKNESS, 0.05f);
+	m_pShader->Bind_Vector(SHADER_MTRLDIF, m_vColor);
+	m_pShader->Bind_Float(SHADER_THICKNESS, m_fThickness);
 
 	if (FAILED(__super::Render(1)))
 	{
@@ -85,7 +84,10 @@ HRESULT CVFX_TrailLine::Fetch(any _pair_pTarget_szBone)
 		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Fetch", "Failed to __super::Fetch");
 	}
 
+	Delete_Component(COMPONENT::TEXTURE);
 	m_mTargetPivot	= g_mUnit;
+	m_vColor		= _color(1.f, 1.f, 1.f, 1.f);
+	m_fThickness	= 0.05f;
 	m_fInterval		= 0.01f;
 	m_iMaxInstance	= 100;
 
@@ -105,7 +107,7 @@ _bool CVFX_TrailLine::Return()
 
 void CVFX_TrailLine::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 {
-	VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
+	VTXINSTTRANSCOLORARG* pData = reinterpret_cast<VTXINSTTRANSCOLORARG*>(_pData);
 }
 
 void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
@@ -114,7 +116,7 @@ void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _
 	{
 		m_fTimeAcc = fmodf(m_fTimeAcc, m_fInterval);
 
-		VTXINSTTRANSCOLOR* pData = reinterpret_cast<VTXINSTTRANSCOLOR*>(_pData);
+		VTXINSTTRANSCOLORARG* pData = reinterpret_cast<VTXINSTTRANSCOLORARG*>(_pData);
 
 		pData[m_iIndex].vColor = _color(1.f, 1.f, 1.f, 0.f);
 
@@ -128,6 +130,37 @@ void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _
 			pData[i].vColor.w		= max(0.f, 1.f - (i / static_cast<_float>(m_iMaxInstance)));
 		}
 	}
+}
+
+HRESULT CVFX_TrailLine::Set_Texture(shared_ptr<CTexture> _pTexture)
+{
+	if (nullptr == _pTexture)
+	{
+		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Set_Texture", "Nullptr Exception");
+	}
+
+	if (FAILED(Add_Component(COMPONENT::TEXTURE, _pTexture)))
+	{
+		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Set_Texture", "Failed to Add_Component");
+	}
+
+	return S_OK;
+}
+
+HRESULT CVFX_TrailLine::Set_Texture(const wstring& _wstrTexture)
+{
+	shared_ptr<CComponent> pTexture = CGameInstance::Get_Instance()->Clone_Component(CGameInstance::Get_Instance()->Current_Scene(), _wstrTexture);
+	if (nullptr == pTexture)
+	{
+		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Set_Texture", "Nullptr Exception");
+	}
+
+	if (FAILED(Add_Component(COMPONENT::TEXTURE, pTexture)))
+	{
+		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Set_Texture", "Failed to Add_Component");
+	}
+
+	return S_OK;
 }
 
 shared_ptr<CVFX_TrailLine> CVFX_TrailLine::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

@@ -25,6 +25,14 @@ protected:
 	virtual	void						Fetch_Instance(void*, _uint iNumInstance, any = g_aNull) override;
 	virtual	void						Update_Instance(void*, _uint iNumInstance, _float fTimeDelta) override;
 
+public:
+	HRESULT								Set_Texture(shared_ptr<CTexture> pTexture);
+	HRESULT								Set_Texture(const wstring& wstrTexture);
+	void								Set_MaxInstance(_uint iMaxInstance)			{ m_iMaxInstance = iMaxInstance; }
+	void								Set_Interval(_float fInterval)				{ m_fInterval = fInterval; }
+	void								Set_Color(_color vColor)					{ m_vColor = vColor; }
+	void								Set_Thickness(_float fThickness)			{ m_fThickness = fThickness; }
+
 private:
 	shared_ptr<CTransform>				m_pTargetTransform;
 
@@ -38,6 +46,8 @@ private:
 
 	_uint								m_iMaxInstance	= 100;
 	_float								m_fInterval		= 0.01f;
+	_color								m_vColor		= _color(1.f, 1.f, 1.f, 1.f);
+	_float								m_fThickness	= 0.05f;
 
 public:
 	static shared_ptr<CVFX_TrailLine>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

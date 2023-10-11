@@ -21,6 +21,8 @@ public:
 
 	LRESULT										WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
+	_float										Get_ActivatedTime() const;
+
 #pragma endregion
 #pragma region Graphic Device
 
@@ -133,6 +135,9 @@ private:
 	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
 	shared_ptr<class CLight_Manager>			m_pLight_Manager;
 	shared_ptr<class CPicker>					m_pPicker;
+
+private:
+	_float										m_fTimeAcc	= 0.f;
 
 public:
 	static void									Release_Engine();

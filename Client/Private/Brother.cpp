@@ -2,6 +2,8 @@
 #include "Brother.h"
 #include "GameInstance.h"
 #include "Brother_BehaviorTree.h"
+#include "VFX_TrailLine.h"
+#include "VFX_TrailQuad.h"
 
 CBrother::CBrother(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CMonster(_pDevice, _pContext)
@@ -52,11 +54,6 @@ HRESULT CBrother::Initialize(any)
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
 
-	CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_LINE)->Pop(
-		make_pair(shared_from_gameobject(), "2HWeaponHandPlacement.l"));
-	CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_QUAD)->Pop(
-		make_pair(shared_from_gameobject(), make_pair("2HWeaponBendy.6", "2HWeaponBendy.7")));
-
 	return S_OK;
 }
 
@@ -70,56 +67,58 @@ void CBrother::Tick(_float _fTimeDelta)
 	}
 
 #if ACTIVATE_IMGUI
+	static _float fAnimationSpeed = 1.f;
 	ImGui::Begin("Brother Animation");
-	if (ImGui::Button("IDLE_READY"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
-	if (ImGui::Button("SPELL_CHANNEL_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER);
-	if (ImGui::Button("SPELL_CHANNEL_LOOP"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP);
-	if (ImGui::Button("SPELL_CHANNEL_TO_IDLE"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE);
-	if (ImGui::Button("JUMP_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::JUMP_FORWARD);
-	if (ImGui::Button("AIR_LOOP_UP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_UP);
-	if (ImGui::Button("AIR_LOOP_DOWN"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN);
-	if (ImGui::Button("AIR_LOOP_DOWN_FORWARD"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN_FORWARD);
-	if (ImGui::Button("AIR_LOOP_DOWN_BACKWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN_BACKWARD);
-	if (ImGui::Button("AIM_YAW"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIM_YAW);
-	if (ImGui::Button("AIM_PITCH"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIM_PITCH);
-	if (ImGui::Button("RUN_FORWARD_READY"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::RUN_FORWARD_READY);
-	if (ImGui::Button("RUN_TO_IDLE"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::RUN_TO_IDLE);
-	if (ImGui::Button("SPRINT_FORWARD"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPRINT_FORWARD);
-	if (ImGui::Button("SPRINT_SMASH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPRINT_SMASH);
-	if (ImGui::Button("DASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_FORWARD);
-	if (ImGui::Button("DASH_BACKWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_BACKWARD);
-	if (ImGui::Button("DASH_LEFT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_LEFT);
-	if (ImGui::Button("DASH_RIGHT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_RIGHT);
-	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f);
-	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD);
-	if (ImGui::Button("ULT_ENTER"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_ENTER);
-	if (ImGui::Button("ULT_CHANNEL"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_CHANNEL);
-	if (ImGui::Button("ULT_EXIT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_EXIT);
-	if (ImGui::Button("FLINCH1"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH1);
-	if (ImGui::Button("FLINCH2"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH2);
-	if (ImGui::Button("FLINCH3"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH3);
-	if (ImGui::Button("THRONE"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::THRONE);
-	if (ImGui::Button("THRONE_TO_IDLE"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::THRONE_TO_IDLE);
-	if (ImGui::Button("LEAP_BEGIN"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LEAP_BEGIN);
-	if (ImGui::Button("LEAP_END"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LEAP_END);
-	if (ImGui::Button("LIGHTIMPACT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LIGHTIMPACT);
-	if (ImGui::Button("TPOSE"))							Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::TPOSE);
-	if (ImGui::Button("HURT_IDLE_LOOP"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_LOOP);
-	if (ImGui::Button("HURT_IDLE_SINGLE"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_SINGLE);
-	if (ImGui::Button("HURT_FISTSLAM"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_FISTSLAM);
-	if (ImGui::Button("HURT_WALK_FORWARD"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_WALK_FORWARD);
-	if (ImGui::Button("HURT_LUNARSHARD_EXIT_LEFT"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_LEFT);
-	if (ImGui::Button("HURT_LUNARSHARD_EXIT_RIGHT"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_RIGHT);
-	if (ImGui::Button("HURT_LUNARSHARD_FIRE_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_FORWARD);
-	if (ImGui::Button("HURT_LUNARSHARD_FIRE_LEFT"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_LEFT);
-	if (ImGui::Button("HURT_LUNARSHARD_FIRE_RIGHT"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_RIGHT);
-	if (ImGui::Button("HURT_LUNARSHARD_EXIT_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_FORWARD);
-	if (ImGui::Button("HURT_LUNARSHARD_ENTER_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_ENTER_FORWARD);
-	if (ImGui::Button("HURT_STAGGER_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_ENTER);
-	if (ImGui::Button("HURT_STRGGER_EXIT"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRGGER_EXIT);
-	if (ImGui::Button("HURT_STAGGER_LOOP"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_LOOP);
-	if (ImGui::Button("HURT_TO_DEATH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_TO_DEATH);
-	if (ImGui::Button("DEATH_LOOP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DEATH_LOOP);
+	ImGui::DragFloat("Animation Speed", &fAnimationSpeed, 0.01f, 0.f, 2.f);
+	if (ImGui::Button("IDLE_READY"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY, fAnimationSpeed);
+	if (ImGui::Button("SPELL_CHANNEL_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER, fAnimationSpeed);
+	if (ImGui::Button("SPELL_CHANNEL_LOOP"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP, fAnimationSpeed);
+	if (ImGui::Button("SPELL_CHANNEL_TO_IDLE"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE, fAnimationSpeed);
+	if (ImGui::Button("JUMP_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::JUMP_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("AIR_LOOP_UP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_UP, fAnimationSpeed);
+	if (ImGui::Button("AIR_LOOP_DOWN"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN, fAnimationSpeed);
+	if (ImGui::Button("AIR_LOOP_DOWN_FORWARD"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("AIR_LOOP_DOWN_BACKWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIR_LOOP_DOWN_BACKWARD, fAnimationSpeed);
+	if (ImGui::Button("AIM_YAW"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIM_YAW, fAnimationSpeed);
+	if (ImGui::Button("AIM_PITCH"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::AIM_PITCH, fAnimationSpeed);
+	if (ImGui::Button("RUN_FORWARD_READY"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::RUN_FORWARD_READY, fAnimationSpeed);
+	if (ImGui::Button("RUN_TO_IDLE"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::RUN_TO_IDLE, fAnimationSpeed);
+	if (ImGui::Button("SPRINT_FORWARD"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPRINT_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("SPRINT_SMASH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SPRINT_SMASH, fAnimationSpeed);
+	if (ImGui::Button("DASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("DASH_BACKWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_BACKWARD, fAnimationSpeed);
+	if (ImGui::Button("DASH_LEFT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_LEFT, fAnimationSpeed);
+	if (ImGui::Button("DASH_RIGHT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_RIGHT, fAnimationSpeed);
+	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("ULT_ENTER"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_ENTER, fAnimationSpeed);
+	if (ImGui::Button("ULT_CHANNEL"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_CHANNEL, fAnimationSpeed);
+	if (ImGui::Button("ULT_EXIT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_EXIT, fAnimationSpeed);
+	if (ImGui::Button("FLINCH1"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH1, fAnimationSpeed);
+	if (ImGui::Button("FLINCH2"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH2, fAnimationSpeed);
+	if (ImGui::Button("FLINCH3"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::FLINCH3, fAnimationSpeed);
+	if (ImGui::Button("THRONE"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::THRONE, fAnimationSpeed);
+	if (ImGui::Button("THRONE_TO_IDLE"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::THRONE_TO_IDLE, fAnimationSpeed);
+	if (ImGui::Button("LEAP_BEGIN"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LEAP_BEGIN, fAnimationSpeed);
+	if (ImGui::Button("LEAP_END"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LEAP_END, fAnimationSpeed);
+	if (ImGui::Button("LIGHTIMPACT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LIGHTIMPACT, fAnimationSpeed);
+	if (ImGui::Button("TPOSE"))							Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::TPOSE, fAnimationSpeed);
+	if (ImGui::Button("HURT_IDLE_LOOP"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_LOOP, fAnimationSpeed);
+	if (ImGui::Button("HURT_IDLE_SINGLE"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_SINGLE, fAnimationSpeed);
+	if (ImGui::Button("HURT_FISTSLAM"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_FISTSLAM, fAnimationSpeed);
+	if (ImGui::Button("HURT_WALK_FORWARD"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_WALK_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_EXIT_LEFT"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_LEFT, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_EXIT_RIGHT"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_RIGHT, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_FIRE_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_FIRE_LEFT"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_LEFT, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_FIRE_RIGHT"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_FIRE_RIGHT, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_EXIT_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_EXIT_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("HURT_LUNARSHARD_ENTER_FORWARD"))	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_LUNARSHARD_ENTER_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("HURT_STAGGER_ENTER"))			Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_ENTER, fAnimationSpeed);
+	if (ImGui::Button("HURT_STRGGER_EXIT"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STRGGER_EXIT, fAnimationSpeed);
+	if (ImGui::Button("HURT_STAGGER_LOOP"))				Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_STAGGER_LOOP, fAnimationSpeed);
+	if (ImGui::Button("HURT_TO_DEATH"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::HURT_TO_DEATH, fAnimationSpeed);
+	if (ImGui::Button("DEATH_LOOP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DEATH_LOOP, fAnimationSpeed);
 	ImGui::End();
 #endif
 }
@@ -142,6 +141,36 @@ HRESULT CBrother::Render()
 	}
 
 	return S_OK;
+}
+
+HRESULT CBrother::Fetch(any _vPosition3)
+{
+	if (FAILED(__super::Fetch(_vPosition3)))
+	{
+		MSG_RETURN(E_FAIL, "CBrother::Fetch", "Failed to __super::Fetch");
+	}
+
+	m_pVFX_EyeTrail = dynamic_pointer_cast<CVFX_TrailLine>(
+		CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_LINE)->Pop(
+		make_pair(shared_from_gameobject(), "2HWeaponHandPlacement.l")));
+
+	m_pVFX_EyeTrail->Set_Color(_color(0.2f, 0.6f, 0.8f, 1.f));
+	m_pVFX_EyeTrail->Set_Thickness(0.05f);
+
+	m_pVFX_HammerTrail = dynamic_pointer_cast<CVFX_TrailQuad>(
+		CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_QUAD)->Pop(
+		make_pair(shared_from_gameobject(), make_pair("2HWeaponBendy.5", "2HWeaponBendy.7"))));
+
+	m_pVFX_HammerTrail->Set_Interval(0.001f);
+	m_pVFX_HammerTrail->Set_RelativeLength(2.f, 4.f);
+	m_pVFX_HammerTrail->Set_Texture(PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL);
+
+	return S_OK;
+}
+
+_bool CBrother::Return()
+{
+	return false;
 }
 
 HRESULT CBrother::Ready_Components()
@@ -201,7 +230,7 @@ HRESULT CBrother::Ready_Behaviors()
 		MSG_RETURN(E_FAIL, "CBrother::Ready_Behaviors", "Failed to __super::Ready_Behaviors");
 	}
 
-	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_BehaviorTree::Create(shared_from_gameobject(), &m_tEntityDesc));
+//	m_umapBehavior.emplace(BEHAVIOR::CUSTOM, CBrother_BehaviorTree::Create(shared_from_gameobject(), &m_tEntityDesc));
 
 	return S_OK;
 }

@@ -14,7 +14,7 @@ CVIBufferInstance_Point::CVIBufferInstance_Point(const CVIBufferInstance_Point& 
 HRESULT CVIBufferInstance_Point::Initialize_Prototype(_uint _iNumInstance)
 {
 	m_iNumInstance				= _iNumInstance;
-	m_iInstanceStride			= sizeof(VTXINSTTRANSCOLOR);
+	m_iInstanceStride			= sizeof(VTXINSTTRANSCOLORARG);
 	m_iIndicesCountPerInstance	= 1;
 
     m_iNumVB					= 2;
@@ -90,7 +90,7 @@ HRESULT CVIBufferInstance_Point::Initialize(any)
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pInstanceVertices = Function::CreateDynamicArray<VTXINSTTRANSCOLOR>(m_iNumInstance);
+	auto pInstanceVertices = Function::CreateDynamicArray<VTXINSTTRANSCOLORARG>(m_iNumInstance);
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		memcpy(&pInstanceVertices[i], &g_mUnit, sizeof(g_mUnit));

@@ -199,20 +199,21 @@ HRESULT CGameObject::Ready_Behaviors()
 	return S_OK;
 }
 
-HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
+HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComponent> _pComponent)
 {
 #pragma region Add
 	switch (_eComponent)
 	{
 	case COMPONENT::TRANSFORM:
-		m_umapComponent.emplace(_eComponent, CTransform::Create(m_pDevice, m_pContext));
+		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent : CTransform::Create(m_pDevice, m_pContext));
 		break;
 
 	case COMPONENT::RENDERER:
 	case COMPONENT::SHADER:
 	case COMPONENT::COLLIDER:
 	case COMPONENT::VIBUFFER_RECT:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
+		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
+			CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
@@ -223,7 +224,8 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
 	case COMPONENT::VIBUFFER_INSTANCE_LINE:
 	case COMPONENT::VIBUFFER_INSTANCE_RECT:
-		m_umapComponent.emplace(_eComponent, CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
+		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
+			CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
 		break;
 
@@ -285,20 +287,20 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent)
 	return S_OK;
 }
 
-HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior)
+HRESULT CGameObject::Add_Behavior(const BEHAVIOR _eBehavior, shared_ptr<CBehavior> _pBehavior)
 {
 	switch (_eBehavior)
 	{
 	case BEHAVIOR::PHYSICS:
-		m_umapBehavior.emplace(_eBehavior, CPhysics::Create(shared_from_gameobject(), &m_tEntityDesc));
+		m_umapBehavior.emplace(_eBehavior, _pBehavior ? _pBehavior : CPhysics::Create(shared_from_gameobject(), &m_tEntityDesc));
 		break;
 
 	case BEHAVIOR::GROUNDING:
-		m_umapBehavior.emplace(_eBehavior, CGrounding::Create(shared_from_gameobject(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
+		m_umapBehavior.emplace(_eBehavior, _pBehavior ? _pBehavior : CGrounding::Create(shared_from_gameobject(), any_cast<wstring>(m_umapBehaviorArg[_eBehavior].second)));
 		break;
 
 	case BEHAVIOR::ANIMATOR:
-		m_umapBehavior.emplace(_eBehavior, CAnimator::Create(shared_from_gameobject()));
+		m_umapBehavior.emplace(_eBehavior, _pBehavior ? _pBehavior : CAnimator::Create(shared_from_gameobject()));
 		break;
 
 	case BEHAVIOR::CONTROL:

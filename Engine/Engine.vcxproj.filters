@@ -665,6 +665,9 @@
     <ClInclude Include="Public\VIBufferInstance_Line.h">
       <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Line</Filter>
     </ClInclude>
+    <ClInclude Include="Public\Engine_Variable.h">
+      <Filter>00. Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\Engine_Typedef.inl">

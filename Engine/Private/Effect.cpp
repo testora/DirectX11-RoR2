@@ -83,9 +83,9 @@ HRESULT CEffect::Render(_uint _iPassIndex)
 	return S_OK;
 }
 
-HRESULT CEffect::Add_Component(const COMPONENT _eComponent)
+HRESULT CEffect::Add_Component(const COMPONENT _eComponent, shared_ptr<CComponent> _pComponent)
 {
-	if (FAILED(__super::Add_Component(_eComponent)))
+	if (FAILED(__super::Add_Component(_eComponent, _pComponent)))
 	{
 		MSG_RETURN(E_FAIL, "CEffect::Add_Component", "Failed to CGameObject::Add_Component");
 	}

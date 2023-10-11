@@ -109,6 +109,8 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 		MSG_RETURN(, "CGameInstance::Tick_Engine", "Null Exception");
 	}
 
+	m_fTimeAcc += _fTimeDelta;
+
 	m_pMouse_Manager->Tick();
 	m_pKey_Manager->Tick();
 
@@ -133,6 +135,11 @@ LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam,
 	}
 
 	return 1;
+}
+
+_float CGameInstance::Get_ActivatedTime() const
+{
+	return m_fTimeAcc;
 }
 
 #pragma endregion

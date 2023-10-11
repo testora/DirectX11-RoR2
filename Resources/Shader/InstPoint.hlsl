@@ -10,6 +10,7 @@ struct VS_IN
 	float4 vLook		: TEXCOORD3;
 	float4 vTranslation	: TEXCOORD4;
 	float4 vColor		: TEXCOORD5;
+	float4 vArgument	: TEXCOORD6;
 };
 
 struct VS_OUT
@@ -29,6 +30,7 @@ struct VS_OUT_QUAD
 	float4 vWorldPos2	: TEXCOORD3;
 	float4 vWorldPos3	: TEXCOORD4;
 	float4 vColor		: TEXCOORD5;
+	float4 vArgument	: TEXCOORD6;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -95,6 +97,7 @@ VS_OUT_QUAD VS_MAIN_QUAD(VS_IN In)
 	Out.vWorldPos2		= In.vLook;
 	Out.vWorldPos3		= In.vTranslation;
 	Out.vColor			= In.vColor;
+	Out.vArgument		= In.vArgument;
 
 	return Out;
 }
@@ -116,6 +119,7 @@ struct GS_IN_QUAD
 	float4 vWorldPos2	: TEXCOORD3;
 	float4 vWorldPos3	: TEXCOORD4;
 	float4 vColor		: TEXCOORD5;
+	float4 vArgument	: TEXCOORD6;
 };
 
 struct GS_OUT
@@ -237,6 +241,44 @@ void GS_MAIN_QUAD(point GS_IN_QUAD In[1], inout TriangleStream<GS_OUT> Triangles
 	Triangles.RestartStrip();
 }
 
+[maxvertexcount(6)]
+void GS_MAIN_QUAD_SINGLETEXTURE(point GS_IN_QUAD In[1], inout TriangleStream<GS_OUT> Triangles)
+{
+	GS_OUT Out[4];
+
+	matrix matVP		= mul(g_mView, g_mProj);
+
+	Out[0].vPosition	= float4(In[0].vWorldPos0);
+	Out[0].vPosition	= mul(Out[0].vPosition, matVP);
+	Out[0].vTexCoord	= float2(In[0].vArgument.x, 1.f);
+	Out[0].vColor		= In[0].vColor;
+
+	Out[1].vPosition	= float4(In[0].vWorldPos1);
+	Out[1].vPosition	= mul(Out[1].vPosition, matVP);
+	Out[1].vTexCoord	= float2(In[0].vArgument.x + (1.f / g_iMaxInstance), 1.f);
+	Out[1].vColor		= In[0].vColor;
+
+	Out[2].vPosition	= float4(In[0].vWorldPos2);
+	Out[2].vPosition	= mul(Out[2].vPosition, matVP);
+	Out[2].vTexCoord	= float2(In[0].vArgument.x + (1.f / g_iMaxInstance), 0.f);
+	Out[2].vColor		= In[0].vColor;
+
+	Out[3].vPosition	= float4(In[0].vWorldPos3);
+	Out[3].vPosition	= mul(Out[3].vPosition, matVP);
+	Out[3].vTexCoord	= float2(In[0].vArgument.x, 0.f);
+	Out[3].vColor		= In[0].vColor;
+
+	Triangles.Append(Out[0]);
+	Triangles.Append(Out[1]);
+	Triangles.Append(Out[2]);
+	Triangles.RestartStrip();
+
+	Triangles.Append(Out[0]);
+	Triangles.Append(Out[2]);
+	Triangles.Append(Out[3]);
+	Triangles.RestartStrip();
+}
+
 struct PS_IN
 {
 	float4 vPosition	: SV_POSITION;
@@ -249,21 +291,32 @@ struct PS_OUT
 	float4 vColor		: SV_TARGET0;
 };
 
-PS_OUT PS_MAIN(PS_IN In)
+struct PS_OUT_POSTPROCESS
 {
-	PS_OUT Out;
+	float4 vPreProcess	: SV_TARGET0;
+	float4 vMask		: SV_TARGET1;
+};
 
-	Out.vColor = g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+PS_OUT_POSTPROCESS PS_MAIN(PS_IN In)
+{
+    PS_OUT_POSTPROCESS Out;
+
+    Out.vPreProcess		= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+    Out.vPreProcess.w	*= lerp(In.vColor.w, In.vColor.w - (1.f / g_iMaxInstance), In.vTexCoord.x);
+	Out.vPreProcess		*= g_vMtrlDiffuse;
+	Out.vMask			= float4(0.1f, 0.f, 1.f, 0.05f);
 	
 	return Out;
 }
 
-PS_OUT PS_MAIN_NONEUV(PS_IN In)
+PS_OUT_POSTPROCESS PS_MAIN_NONEUV(PS_IN In)
 {
-	PS_OUT Out;
+    PS_OUT_POSTPROCESS Out;
 
-    Out.vColor		= g_vMtrlDiffuse;
-    Out.vColor.w	*= lerp(In.vColor.w, In.vColor.w - 0.01f, In.vTexCoord.x);
+    Out.vPreProcess		= g_vMtrlDiffuse;
+    Out.vPreProcess.w	*= lerp(In.vColor.w, In.vColor.w - (1.f / g_iMaxInstance), In.vTexCoord.x);
+	Out.vPreProcess		*= g_vMtrlDiffuse;
+    Out.vMask			= float4(0.1f, 0.f, 1.f, 0.05f);
 	
 	return Out;
 }
@@ -316,6 +369,19 @@ technique11 DefaultTechnique
 		HullShader		= NULL;
 		DomainShader	= NULL;
 		PixelShader		= compile ps_5_0 PS_MAIN_NONEUV();
+
+        SetRasterizerState(RS_NoneCull);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+	}
+
+	pass Trail_SingleTexture
+	{
+		VertexShader	= compile vs_5_0 VS_MAIN_QUAD();
+		GeometryShader	= compile gs_5_0 GS_MAIN_QUAD_SINGLETEXTURE();
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN();
 
         SetRasterizerState(RS_NoneCull);
 		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);

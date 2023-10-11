@@ -25,10 +25,14 @@ private:
 	HRESULT									Render_NonBlend();
 
 	HRESULT									Draw_Light();
-	HRESULT									Draw_Deferred();
+
+	HRESULT									Draw_PreProcess();
 
 	HRESULT									Render_NonLight();
 	HRESULT									Render_Blend();
+
+	HRESULT									Draw_PostProcess();
+
 	HRESULT									Render_UI();
 
 private:

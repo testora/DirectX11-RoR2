@@ -10,6 +10,7 @@ struct VS_IN
 	float4 vLook		: TEXCOORD3;
 	float4 vTranslation	: TEXCOORD4;
 	float4 vColor		: TEXCOORD5;
+	float4 vArgument	: TEXCOORD6;
 };
 
 struct VS_OUT
@@ -29,6 +30,7 @@ struct VS_OUT_LINE
     float4 vEnd			: TEXCOORD3;
     float4 vNext		: TEXCOORD4;
     float4 vColor		: TEXCOORD5;
+	float4 vArgument	: TEXCOORD6;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -62,6 +64,7 @@ VS_OUT_LINE VS_MAIN_LINE(VS_IN In)
 	Out.vEnd			= In.vLook;
 	Out.vNext			= In.vTranslation;
 	Out.vColor			= In.vColor;
+	Out.vArgument		= In.vArgument;
 
 	return Out;
 }
@@ -84,6 +87,7 @@ struct GS_IN_LINE
     float4 vEnd			: TEXCOORD3;
     float4 vNext		: TEXCOORD4;
     float4 vColor		: TEXCOORD5;
+    float4 vArgument	: TEXCOORD6;
 };
 
 struct GS_OUT
@@ -186,21 +190,30 @@ struct PS_OUT
 	float4 vColor		: SV_TARGET0;
 };
 
-PS_OUT PS_MAIN(PS_IN In)
+struct PS_OUT_POSTPROCESS
 {
-	PS_OUT Out;
+	float4 vPreProcess	: SV_TARGET0;
+	float4 vMask		: SV_TARGET1;
+};
 
-	Out.vColor = g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+PS_OUT_POSTPROCESS PS_MAIN(PS_IN In)
+{
+    PS_OUT_POSTPROCESS Out;
+
+    Out.vPreProcess		= g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+    Out.vPreProcess.w	*= lerp(In.vColor.w, In.vColor.w - (1.f / g_iMaxInstance), In.vTexCoord.x);
+    Out.vMask			= float4(0.f, 0.f, 0.f, 0.f);
 	
 	return Out;
 }
 
-PS_OUT PS_MAIN_LINE(PS_IN In)
+PS_OUT_POSTPROCESS PS_MAIN_LINE(PS_IN In)
 {
-	PS_OUT Out;
+    PS_OUT_POSTPROCESS Out;
 
-    Out.vColor		= g_vMtrlDiffuse;
-    Out.vColor.w	*= lerp(In.vColor.w, In.vColor.w - 0.01f, In.vTexCoord.x);
+    Out.vPreProcess		= g_vMtrlDiffuse;
+    Out.vPreProcess.w	*= lerp(In.vColor.w, In.vColor.w - (1.f / g_iMaxInstance), In.vTexCoord.x);
+    Out.vMask			= float4(0.f, 0.f, 0.f, 0.f);
 	
 	return Out;
 }

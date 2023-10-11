@@ -86,6 +86,10 @@ void CScene_Moon::Late_Tick(_float _fTimeDelta)
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
 	ImGui::End();
+
+	ImGui::Begin("MASK");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+	ImGui::End();
 #endif
 }
 

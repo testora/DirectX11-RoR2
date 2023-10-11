@@ -19,10 +19,19 @@ HRESULT CLoader::Load_Moon()
 {
 #pragma region Prototype Texture
 
+//	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
+//	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
+
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO,
 		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/Background.png")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL,
+		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Effect/Brother/texBootWaveRingGradient.png")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL");
 	}
 
 #pragma endregion

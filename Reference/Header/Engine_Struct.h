@@ -148,6 +148,20 @@ namespace Engine
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXINSTTRANSCOLOR;
 
+	typedef struct ENGINE_DLL tagVertexInstanceTransformColorArgument
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vTranslation;
+
+		XMFLOAT4			vColor;
+		XMFLOAT4			vArgument;
+
+		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 6;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXINSTTRANSCOLORARG;
+
 #pragma endregion
 #pragma endregion
 #pragma region Model

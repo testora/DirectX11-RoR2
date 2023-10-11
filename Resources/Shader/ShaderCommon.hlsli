@@ -36,6 +36,7 @@ float		g_fTPSharpness			= 2.f;
 
 float3		g_vSize					= float3(1.f, 1.f, 1.f);
 float		g_fThickness			= 1.f;
+int			g_iMaxInstance			= 100;
 
 float AvgGrayScale(float3 vRGB)
 {

@@ -8,6 +8,10 @@ Texture2D	g_texNormalTarget;
 Texture2D	g_texDepthTarget;
 Texture2D	g_texShadeTarget;
 Texture2D	g_texSpecularTarget;
+Texture2D	g_texPreProcessTarget;
+Texture2D	g_texMaskTarget;
+
+float		g_fTime	= 0.f;
 
 struct VS_IN
 {
@@ -51,6 +55,12 @@ struct PS_OUT_LIGHT
 {
 	float4	vShade		: SV_TARGET0;
 	float4	vSpecular	: SV_TARGET1;
+};
+
+struct PS_OUT_POSTPROCESS
+{
+	float4	vPreProcess	: SV_TARGET0;
+	float4	vMask		: SV_TARGET1;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -126,9 +136,9 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_MAIN_BLEND(PS_IN In)
+PS_OUT_POSTPROCESS PS_MAIN_PREPROCESS(PS_IN In)
 {
-	PS_OUT	Out;
+    PS_OUT_POSTPROCESS Out;
 	
 	float4	vMtrlDiffuse	= g_texMtrlDiffuseTarget.Sample(LinearSampler, In.vTexCoord);
 	if (vMtrlDiffuse.a == 0.f)
@@ -142,12 +152,38 @@ PS_OUT PS_MAIN_BLEND(PS_IN In)
 	float4	vShade			= g_texShadeTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vSpecular		= g_texSpecularTarget.Sample(LinearSampler, In.vTexCoord);
 	
-	Out.vColor	= vMtrlDiffuse	* g_vLightDiffuse	* vShade
-				+ vMtrlAmbient	* g_vLightAmbient
-				+ vMtrlSpecular	* g_vLightSpecular	* vSpecular
-				+ vMtrlEmissive;
+	Out.vPreProcess			= vMtrlDiffuse	* g_vLightDiffuse	* vShade
+							+ vMtrlAmbient	* g_vLightAmbient
+							+ vMtrlSpecular	* g_vLightSpecular	* vSpecular
+							+ vMtrlEmissive;
+	
+	Out.vMask				= float4(0.f, 0.f, 0.f, 0.f);
 	
 	return Out;
+}
+
+PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
+{
+	PS_OUT Out;
+	
+	float4	vMask	= g_texMaskTarget.Sample(LinearSampler, In.vTexCoord);
+	
+	if (0.f < vMask.a && vMask.a < 0.1f)
+    {
+        float	fWaveLengthX	= vMask.x * 100.f;
+        float	fWaveLengthY	= vMask.y * 100.f;
+        float	fFrequency		= vMask.z * 100.f;
+		
+        float2	vDistortion		= float2(sin(In.vTexCoord.x + g_fTime * fFrequency * 0.01f) * fWaveLengthX, cos(In.vTexCoord.y + g_fTime * fFrequency * 0.01f) * fWaveLengthY);
+		
+        Out.vColor = g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord + vDistortion);
+    }
+	else
+    {
+		Out.vColor	= g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord);
+    }
+	
+    return Out;
 }
 
 technique11 DefaultTechnique
@@ -178,13 +214,26 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_IgnoreDepth, 0);
 	}
 
-	pass Blend
+	pass PreProcess
 	{
 		VertexShader	= compile vs_5_0 VS_MAIN();
 		GeometryShader	= NULL;
 		HullShader		= NULL;
 		DomainShader	= NULL;
-		PixelShader		= compile ps_5_0 PS_MAIN_BLEND();
+		PixelShader		= compile ps_5_0 PS_MAIN_PREPROCESS();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_IgnoreDepth, 0);
+	}
+
+	pass PostProcess
+	{
+		VertexShader	= compile vs_5_0 VS_MAIN();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN_POSTPROCESS();
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
