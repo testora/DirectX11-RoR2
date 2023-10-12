@@ -7,7 +7,6 @@ namespace Function
 	inline XMMATRIX						Lerp(FXMMATRIX mStart, CXMMATRIX mEnd, _float fRatio, _float fWeight = 1.f, _bool bScale = true, _bool bRotation = true, _bool bTranslation = true);
 	inline XMVECTOR						Slerp(FXMVECTOR vQuaternion, _float fRatio, _float fWeight = 1.f);
 
-	inline _float						Clamp(_float fMin, _float fMax, _float fValue);
 	inline _float						ProportionalRatio(_float fMin, _float fMax, _float fValue);
 
 	inline _bool						NearZero(_float fValue);
@@ -84,6 +83,13 @@ namespace Function
 		{
 			throw std::invalid_argument("Function::InRange: Invalid Range Option");
 		}
+	}
+
+	template<typename T>
+	typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+	Clamp(T low, T high, T value)
+	{
+		return min(max(value, low), high);
 	}
 
 	template<typename T>

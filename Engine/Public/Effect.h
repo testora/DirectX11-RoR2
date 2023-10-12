@@ -31,9 +31,9 @@ protected:
 	virtual HRESULT							Add_Component(const COMPONENT, shared_ptr<class CComponent>) override;
 
 public:
-	_uint									Get_ActivateInstances() const				{ return m_iActivateInstances; }
-	void									Set_ActivateInstances(_uint iNumInstance)	{ m_iActivateInstances = iNumInstance; }
-	void									Set_Material(MATERIALDESC tMtrlDesc)		{ m_tMaterialDesc = tMtrlDesc; }
+	virtual _uint							Get_ActivateInstances() const				{ return m_iActivateInstances; }
+	virtual void							Set_ActivateInstances(_uint iNumInstance)	{ m_iActivateInstances = iNumInstance; }
+	virtual void							Set_Material(MATERIALDESC tMtrlDesc)		{ m_tMaterialDesc = tMtrlDesc; }
 
 protected:
 	shared_ptr<class CTransform>			m_pTransform;

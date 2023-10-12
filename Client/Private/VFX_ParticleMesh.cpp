@@ -52,6 +52,11 @@ HRESULT CVFX_ParticleMesh::Initialize(any _wstrPath)
 void CVFX_ParticleMesh::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+
+	if (!m_bTimeLock)
+	{
+		m_fTimeAcc += _fTimeDelta;
+	}
 }
 
 void CVFX_ParticleMesh::Late_Tick(_float _fTimeDelta)
@@ -93,11 +98,25 @@ HRESULT CVFX_ParticleMesh::Fetch(any _arg)
 		MSG_RETURN(E_FAIL, "CVFX_ParticleMesh::Fetch", "Failed to __super::Fetch");
 	}
 
+	m_fTimeAcc = 0.f;
+
 	return S_OK;
 }
 
 _bool CVFX_ParticleMesh::Return()
 {
+	switch (m_eType)
+	{
+	case TYPE::BOUNCE:
+	{
+		if (m_fTotalBounceTime < m_fTimeAcc)
+		{
+			return true;
+		}
+	}
+	break;
+	}
+
 	return false;
 }
 
@@ -107,13 +126,44 @@ void CVFX_ParticleMesh::Fetch_Instance(void* _pData, _uint _iNumInstance, any _a
 
 	for (_uint i = 0; i < m_iActivateInstances; ++i)
 	{
-		memcpy(&pData[i], &g_mUnit, sizeof g_mUnit);
+		memcpy(&pData[i], &m_vecBounceDesc[i].mInitialTransformation, sizeof(_float4x4));
 	}
 }
 
 void CVFX_ParticleMesh::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
 {
 	VTXPOSNORTANTEXINSTTRANSCOLORARG* pData = reinterpret_cast<VTXPOSNORTANTEXINSTTRANSCOLORARG*>(_pData);
+
+	switch (m_eType)
+	{
+	case TYPE::BOUNCE:
+	{
+		for (_uint i = 0; i < m_iActivateInstances; ++i)
+		{
+			if (m_fTimeAcc < m_vecBounceDesc[i].fBeginDuration)
+			{
+				_float4x4 m = Function::Lerp(m_vecBounceDesc[i].mInitialTransformation, m_vecBounceDesc[i].mPeakTransformation,
+					m_fTimeAcc / m_vecBounceDesc[i].fBeginDuration, m_vecBounceDesc[i].fBeginWeight);
+				memcpy(&pData[i], &m, sizeof(_float4x4));
+			}
+			else if(m_fTimeAcc < m_vecBounceDesc[i].fBeginDuration + m_vecBounceDesc[i].fPeakDuration)
+			{
+				memcpy(&pData[i], &m_vecBounceDesc[i].mPeakTransformation, sizeof(_float4x4));
+			}
+			else if (m_fTimeAcc < m_vecBounceDesc[i].fBeginDuration + m_vecBounceDesc[i].fPeakDuration + m_vecBounceDesc[i].fEndDuration)
+			{
+				_float4x4 m = Function::Lerp(m_vecBounceDesc[i].mPeakTransformation, m_vecBounceDesc[i].mFinalTransformation,
+					m_fTimeAcc / (m_vecBounceDesc[i].fBeginDuration + m_vecBounceDesc[i].fPeakDuration + m_vecBounceDesc[i].fEndDuration), m_vecBounceDesc[i].fEndWeight);
+				memcpy(&pData[i], &m, sizeof(_float4x4));
+			}
+			else
+			{
+				memcpy(&pData[i], &m_vecBounceDesc[i].mFinalTransformation, sizeof(_float4x4));
+			}
+		}
+	}
+	break;
+	}
 }
 
 #if ACTIVATE_TOOL
@@ -165,6 +215,20 @@ HRESULT CVFX_ParticleMesh::Set_TexturePath(aiTextureType _eType, const wstring& 
 }
 #endif
 
+void CVFX_ParticleMesh::Set_ActivateInstances(_uint _iNumInstance)
+{
+	__super::Set_ActivateInstances(_iNumInstance);
+
+	switch (m_eType)
+	{
+	case TYPE::BOUNCE:
+	{
+		m_vecBounceDesc.resize(_iNumInstance);
+	}
+	break;
+	}
+}
+
 HRESULT CVFX_ParticleMesh::Add_Component(const COMPONENT _eComponent, shared_ptr<CComponent> _pComponent)
 {
 	if (FAILED(__super::Add_Component(_eComponent, _pComponent)))
@@ -172,7 +236,34 @@ HRESULT CVFX_ParticleMesh::Add_Component(const COMPONENT _eComponent, shared_ptr
 		MSG_RETURN(E_FAIL, "CFVX_ParticleMesh::Add_Component", "Failed to __super::Add_Component");
 	}
 
+	m_vecBounceDesc.resize(m_iActivateInstances);
+
+	Update();
+
 	return S_OK;
+}
+
+void CVFX_ParticleMesh::Update()
+{
+	switch (m_eType)
+	{
+	case TYPE::BOUNCE:
+	{
+		for (auto& desc : m_vecBounceDesc)
+		{
+			_float fTotalTime = desc.fBeginDuration + desc.fPeakDuration + desc.fEndDuration;
+			if (m_fTotalBounceTime < fTotalTime)
+			{
+				m_fTotalBounceTime = fTotalTime;
+			}
+		}
+	}
+	break;
+	}
+}
+
+void CVFX_ParticleMesh::Update(_float fTrack)
+{
 }
 
 shared_ptr<CVFX_ParticleMesh> CVFX_ParticleMesh::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -208,25 +299,32 @@ HRESULT CVFX_ParticleMesh::Read(const wstring& _wstrPath)
 		MSG_RETURN(E_FAIL, "CVFX_ParticleMesh::Read", "Failed to Open File");
 	}
 
-#pragma region Path
+#pragma region Import
+
+	inFile.read(reinterpret_cast<_byte*>(&m_eType),					sizeof(TYPE));
 
 	size_t nPathLength(0);
 	_wchar wszBuffer[MAX_PATH];
 
-	inFile.read(reinterpret_cast<_byte*>(&nPathLength), sizeof(size_t));
+	inFile.read(reinterpret_cast<_byte*>(&nPathLength),				sizeof(size_t));
 	if(nPathLength)
 	{
 		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
-		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nPathLength);
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer),			sizeof(_wchar) * nPathLength);
 		m_wstrTexDiffusePath = wszBuffer;
 	}
-	inFile.read(reinterpret_cast<_byte*>(&nPathLength), sizeof(size_t));
+	inFile.read(reinterpret_cast<_byte*>(&nPathLength),				sizeof(size_t));
 	if(nPathLength)
 	{
 		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
-		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nPathLength);
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer),			sizeof(_wchar) * nPathLength);
 		m_wstrTexNormalPath = wszBuffer;
 	}
+
+	size_t nBounceDescSize(0);
+	inFile.read(reinterpret_cast<_byte*>(&nBounceDescSize),			sizeof(size_t));
+	m_vecBounceDesc.resize(nBounceDescSize);
+	inFile.read(reinterpret_cast<_byte*>(m_vecBounceDesc.data()),	sizeof(BOUNCEDESC) * nBounceDescSize);
 
 #pragma endregion
 
@@ -251,7 +349,9 @@ HRESULT CVFX_ParticleMesh::Export(const wstring& _wstrPath)
 		MSG_RETURN(E_FAIL, "CVFX_ParticleMesh::Export", "Failed to Open File");
 	}
 
-#pragma region Path
+#pragma region Export
+
+	outFile.write(reinterpret_cast<const _byte*>(&m_eType),							sizeof(TYPE));
 
 	size_t nPathLength(0);
 	
@@ -266,8 +366,12 @@ HRESULT CVFX_ParticleMesh::Export(const wstring& _wstrPath)
 	outFile.write(reinterpret_cast<const _byte*>(&nPathLength),						sizeof(size_t));
 	if (nPathLength)
 	{
-		outFile.write(reinterpret_cast<const _byte*>(m_wstrTexNormalPath.c_str()), sizeof(_wchar) * nPathLength);
+		outFile.write(reinterpret_cast<const _byte*>(m_wstrTexNormalPath.c_str()),	sizeof(_wchar) * nPathLength);
 	}
+
+	size_t nBounceDescSize = m_vecBounceDesc.size();
+	outFile.write(reinterpret_cast<const _byte*>(&nBounceDescSize),					sizeof(size_t));
+	outFile.write(reinterpret_cast<const _byte*>(m_vecBounceDesc.data()),			sizeof(BOUNCEDESC) * nBounceDescSize);
 
 #pragma endregion
 

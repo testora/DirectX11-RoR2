@@ -72,13 +72,6 @@ namespace Function
 		return XMQuaternionSlerp(XMQuaternionIdentity(), XMQuaternionNormalize(vQuaternion), fRatio);
 	}
 
-	_float Clamp(_float _fMin, _float _fMax, _float _fValue)
-	{
-		if (_fValue < _fMin) return _fMin;
-		if (_fValue > _fMax) return _fMax;
-		return _fValue;
-	}
-
 	_float ProportionalRatio(_float _fMin, _float _fMax, _float _fValue)
 	{
 		if (_fMin == _fMax) return 0.f;

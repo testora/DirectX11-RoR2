@@ -47,6 +47,7 @@ protected:
 
 protected:
 	ENTITYDESC													m_tEntityDesc{};
+	MATERIALDESC												m_tMaterialDesc{};
 
 	unordered_map<COMPONENT, shared_ptr<class CComponent>>		m_umapComponent;
 	unordered_map<COMPONENT, pair<wstring, any>>				m_umapComponentArg;

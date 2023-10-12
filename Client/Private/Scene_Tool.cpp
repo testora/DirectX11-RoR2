@@ -13,6 +13,7 @@
 #include "Mesh.h"
 #include "VFX_ParticleMesh.h"
 #include "VIBufferInstance_Mesh.h"
+#include "GlobalGizmo.h"
 
 #if ACTIVATE_TOOL
 
@@ -33,6 +34,8 @@ HRESULT CScene_Tool::Initialize()
 	{
 		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Clone_Component: RENDERER");
 	}
+
+	m_pGlobalGizmo			= dynamic_pointer_cast<CGlobalGizmo>(CGlobalGizmo::Create(m_pDevice, m_pContext)->Clone());
 
 	m_pShader_NonAnimMesh	= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESH));
 	m_pShader_AnimMesh		= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM));
@@ -81,6 +84,7 @@ HRESULT CScene_Tool::Initialize()
 }
 
 static _bool bTriplanerPass = true;
+static _bool bTickParticle = false;
 
 void CScene_Tool::Tick(_float _fTimeDelta)
 {
@@ -134,8 +138,19 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 	break;
 	case Client::TOOL::EFFECT:
 	{
+		m_pGlobalGizmo->Tick(_fTimeDelta);
+
 		System_Effect();
 		Info_Effect();
+		Control_Effect();
+
+		if (m_pairSelectedParticleMesh.second)
+		{
+			if (bTickParticle)
+			{
+				m_pairSelectedParticleMesh.second->Tick(_fTimeDelta);
+			}
+		}
 	}
 	break;
 	}
@@ -173,7 +188,13 @@ void CScene_Tool::Late_Tick(_float _fTimeDelta)
 	break;
 	case Client::TOOL::EFFECT:
 	{
+		m_pGlobalGizmo->Late_Tick(_fTimeDelta);
+
 		m_pRenderer->Add_RenderObject(RENDER_GROUP::NONBLEND, shared_from_this());
+		if (m_pairSelectedParticleMesh.second)
+		{
+			m_pairSelectedParticleMesh.second->Late_Tick(_fTimeDelta);
+		}
 	}
 	break;
 	}
@@ -384,7 +405,7 @@ void CScene_Tool::System_Model()
 
 	ImGui::Separator();
 
-	static _uint iTab = 0;
+	static _uint iTab = 1;
 	if (bShowPivotSettings)
 	{
 		if (ImGui::BeginTabBar("Tab:Pivot"))
@@ -1457,6 +1478,8 @@ void CScene_Tool::Info_Model()
 	ImGui::End();
 }
 
+static _int iSelectedParticleInstance(0);
+
 void CScene_Tool::Info_Effect()
 {
 	ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 360.f, ImGui::GetTextLineHeightWithSpacing()));
@@ -1505,50 +1528,245 @@ void CScene_Tool::Info_Effect()
 				ImGui::EndListBox();
 			}
 		}
+
+		if (eTexture == aiTextureType_DIFFUSE || eTexture == aiTextureType_NORMALS)
+		{
+			ImVec2 imgSize;
+
+			D3D11_TEXTURE2D_DESC tTexture2dDesc{};
+			shared_ptr<CTexture> pTexture = m_pairSelectedParticleMesh.second->Get_Texture(eTexture);
+			if (pTexture)
+			{
+				pTexture->Get_Texture2D()->GetDesc(&tTexture2dDesc);
+
+				_float fWidth = static_cast<_float>(tTexture2dDesc.Width);
+				_float fHeight = static_cast<_float>(tTexture2dDesc.Height);
+				_float fAspect = fWidth / fHeight;
+
+				if (fAspect > 1.f)
+				{
+					imgSize.x = 300.f;
+					imgSize.y = 300.f / fAspect;
+				}
+				else
+				{
+					imgSize.x = 300.f * fAspect;
+					imgSize.y = 300.f;
+				}
+
+				ImGui::Image(pTexture->Get_ShaderResourceView().Get(), imgSize);
+				if (ImGui::BeginItemTooltip())
+				{
+					ImGui::Text("%.0fx%.0f", fWidth, fHeight);
+					ImGui::EndTooltip();
+				}
+			}
+		}
+
+#pragma endregion
+#pragma region Properties
+
+		static CVFX_ParticleMesh::TYPE eParticleType(CVFX_ParticleMesh::TYPE::BOUNCE);
+		static _int iTypeRadioOption(0);
+		static _int iActiveInstance(m_pairSelectedParticleMesh.second->Get_ActivateInstances());
+
+		if (ImGui::CollapsingHeader("Properties##ParticleMeshProperties"))
+		{
+			if (ImGui::Button("Apply##Area0"))
+			{
+				m_pairSelectedParticleMesh.second->Set_Type(eParticleType);
+				m_pairSelectedParticleMesh.second->Set_ActivateInstances(iActiveInstance);
+				m_pairSelectedParticleMesh.second->Update();
+			}
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Bounce", &iTypeRadioOption, 0))
+			{
+				iTypeRadioOption = 0;
+				eParticleType = CVFX_ParticleMesh::TYPE::BOUNCE;
+			}
+
+			ImGui::InputInt("Active Instance", &iActiveInstance);
+			iActiveInstance = Function::Clamp(0, static_cast<_int>(m_pairSelectedParticleMesh.second->Get_Component<CVIBuffer>(COMPONENT::VIBUFFER)->Get_NumInstances()), iActiveInstance);
+
+			if (ImGui::BeginListBox("Instance Bounce", ImVec2(-FLT_MIN, 0.f)))
+			{
+				for (_uint i = 0; i < m_pairSelectedParticleMesh.second->Get_ActivateInstances(); ++i)
+				{
+					ImGui::PushID(iSelectedParticleInstance);
+					if (ImGui::Selectable((string("Instance ") + std::to_string(i)).c_str(), iSelectedParticleInstance == i))
+					{
+						iSelectedParticleInstance = i;
+					}
+					ImGui::PopID();
+				}
+				ImGui::EndListBox();
+			}
+
+			ImGui::Separator();
+
+			static _float3		vScale(0.f, 0.f, 0.f);
+			static _float3		vRotation(0.f, 0.f, 0.f);
+			static _float3		vTranslation(0.f, 0.f, 0.f);
+			static _float4x4	mTransformation = g_mUnit;
+
+			const _char*		szItems[] = { "Initial", "Peak", "Final" };
+			static _int			iItem = 0;
+
+			ImGui::Combo("Option", &iItem, szItems, IM_ARRAYSIZE(szItems));
+
+			CVFX_ParticleMesh::BOUNCEDESC tBounceDesc;
+			if (m_pairSelectedParticleMesh.second->Get_ActivateInstances())
+			{
+				tBounceDesc = m_pairSelectedParticleMesh.second->Get_BounceDesc(iSelectedParticleInstance);
+			}
+
+			switch (iItem)
+			{
+			case 0:
+				mTransformation = tBounceDesc.mInitialTransformation;
+				break;
+			case 1:
+				mTransformation = tBounceDesc.mPeakTransformation;
+				break;
+			case 2:
+				mTransformation = tBounceDesc.mFinalTransformation;
+				break;
+			}
+			_vector vScl, vQuat, vTrans;
+			if (XMMatrixDecompose(&vScl, &vQuat, &vTrans, mTransformation))
+			{
+				vScale			= vScl;
+				vRotation		= Function::QuaternionToEuler(vQuat, false);
+				vTranslation	= vTrans;
+			}
+			else
+			{
+				ImGui::Text("Failed to XMMatrixDecompose");
+			}
+
+			static _uint iTab = 1;
+			if (ImGui::BeginTabBar("Transformation"))
+			{
+				if (ImGui::BeginTabItem("Value"))
+				{
+					if (ImGui::Button("Reset"))
+					{
+						vScale			= _float3(1.f, 1.f, 1.f);
+						vRotation		= _float3(0.f, 0.f, 0.f);
+						vTranslation	= _float3(0.f, 0.f, 0.f);
+					}
+
+					if (iTab == 2)
+					{
+						iTab = 1;
+						_vector vScl, vQuat, vTrans;
+						if (XMMatrixDecompose(&vScl, &vQuat, &vTrans, mTransformation))
+						{
+							vScale			= vScl;
+							vRotation		= Function::QuaternionToEuler(vQuat, false);
+							vTranslation	= vTrans;
+						}
+						else
+						{
+							ImGui::Text("Failed to XMMatrixDecompose");
+						}
+					}
+					ImGui::DragFloat3("Scale",				reinterpret_cast<_float*>(&vScale));
+					ImGui::DragFloat3("Rotation(Degree)",	reinterpret_cast<_float*>(&vRotation));
+					ImGui::DragFloat3("Translation",		reinterpret_cast<_float*>(&vTranslation));
+					ImGui::EndTabItem();
+
+					mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
+						_float3(XMConvertToRadians(vRotation.x), XMConvertToRadians(vRotation.y), XMConvertToRadians(vRotation.z))), vTranslation);
+				}
+
+				if (ImGui::BeginTabItem("Matrix"))
+				{
+					if (ImGui::Button("Reset"))
+					{
+						vScale			= _float3(1.f, 1.f, 1.f);
+						vRotation		= _float3(0.f, 0.f, 0.f);
+						vTranslation	= _float3(0.f, 0.f, 0.f);
+						mTransformation	= g_mUnit;
+					}
+
+					if (iTab == 1)
+					{
+						iTab = 2;
+						mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
+							_float3(XMConvertToRadians(vRotation.x), XMConvertToRadians(vRotation.y), XMConvertToRadians(vRotation.z))), vTranslation);
+					}
+					ImGui::DragFloat4("Right",		reinterpret_cast<_float*>(&mTransformation._11));
+					ImGui::DragFloat4("Up",			reinterpret_cast<_float*>(&mTransformation._21));
+					ImGui::DragFloat4("Look",		reinterpret_cast<_float*>(&mTransformation._31));
+					ImGui::DragFloat4("Position",	reinterpret_cast<_float*>(&mTransformation._41));
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
+			}
+
+			if (1 == iTab)
+			{
+				mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
+					_float3(XMConvertToRadians(vRotation.x), XMConvertToRadians(vRotation.y), XMConvertToRadians(vRotation.z))), vTranslation);
+			}
+			switch (iItem)
+			{
+			case 0:
+				tBounceDesc.mInitialTransformation = mTransformation;
+				break;
+			case 1:
+				tBounceDesc.mPeakTransformation = mTransformation;
+				break;
+			case 2:
+				tBounceDesc.mFinalTransformation = mTransformation;
+				break;
+			}
+
+			ImGui::InputFloat("Begin Duration",	&tBounceDesc.fBeginDuration);
+			ImGui::InputFloat("Peak Duration",	&tBounceDesc.fPeakDuration);
+			ImGui::InputFloat("End Duration",	&tBounceDesc.fEndDuration);
+			ImGui::InputFloat("Begin Weight",	&tBounceDesc.fBeginWeight);
+			ImGui::InputFloat("End Weight",		&tBounceDesc.fEndWeight);
+
+			m_pairSelectedParticleMesh.second->Set_BounceDesc(iSelectedParticleInstance, tBounceDesc);
+
+			if (ImGui::Button("Apply All Transformation"))
+			{
+				for (_uint i = 0; i < m_pairSelectedParticleMesh.second->Get_ActivateInstances(); ++i)
+				{
+					CVFX_ParticleMesh::BOUNCEDESC tDesc = m_pairSelectedParticleMesh.second->Get_BounceDesc(i);
+					tDesc.mInitialTransformation	= tBounceDesc.mInitialTransformation;
+					tDesc.mPeakTransformation		= tBounceDesc.mPeakTransformation;
+					tDesc.mFinalTransformation		= tBounceDesc.mFinalTransformation;
+					m_pairSelectedParticleMesh.second->Set_BounceDesc(i, tDesc);
+				}
+				m_pairSelectedParticleMesh.second->Update();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Apply All Option"))
+			{
+				for (_uint i = 0; i < m_pairSelectedParticleMesh.second->Get_ActivateInstances(); ++i)
+				{
+					CVFX_ParticleMesh::BOUNCEDESC tDesc = m_pairSelectedParticleMesh.second->Get_BounceDesc(i);
+					tDesc.fBeginDuration	= tBounceDesc.fBeginDuration;
+					tDesc.fPeakDuration		= tBounceDesc.fPeakDuration;
+					tDesc.fEndDuration		= tBounceDesc.fEndDuration;
+					tDesc.fBeginWeight		= tBounceDesc.fBeginWeight;
+					tDesc.fEndWeight		= tBounceDesc.fEndWeight;
+					m_pairSelectedParticleMesh.second->Set_BounceDesc(i, tDesc);
+				}
+				m_pairSelectedParticleMesh.second->Update();
+			}
+
+			ImGui::Separator();
+		}
+#pragma endregion
 	}
 	else
 	{
 		eTexture = AI_TEXTURE_TYPE_MAX;
 	}
-
-#pragma endregion
-#pragma region Properties
-
-	if (eTexture == aiTextureType_DIFFUSE || eTexture == aiTextureType_NORMALS)
-	{
-		ImVec2 imgSize;
-
-		D3D11_TEXTURE2D_DESC tTexture2dDesc{};
-		shared_ptr<CTexture> pTexture = m_pairSelectedParticleMesh.second->Get_Texture(eTexture);
-		if (pTexture)
-		{
-			pTexture->Get_Texture2D()->GetDesc(&tTexture2dDesc);
-
-			_float fWidth	= static_cast<_float>(tTexture2dDesc.Width);
-			_float fHeight	= static_cast<_float>(tTexture2dDesc.Height);
-			_float fAspect	= fWidth / fHeight;
-
-			if (fAspect > 1.f)
-			{
-				imgSize.x = 300.f;
-				imgSize.y = 300.f / fAspect;
-			}
-			else
-			{
-				imgSize.x = 300.f * fAspect;
-				imgSize.y = 300.f;
-			}
-
-			ImGui::Image(pTexture->Get_ShaderResourceView().Get(), imgSize);
-			if (ImGui::BeginItemTooltip())
-			{
-				ImGui::Text("%.0fx%.0f", fWidth, fHeight);
-				ImGui::EndTooltip();
-			}
-		}
-	}
-
-#pragma endregion
 #pragma region Dialog
 
 	if (ImGuiFileDialog::Instance()->Display(DIALOG_SET_TEXTURE))
@@ -1564,6 +1782,68 @@ void CScene_Tool::Info_Effect()
 	}
 
 #pragma endregion
+
+	ImGui::End();
+}
+
+void CScene_Tool::Control_Effect()
+{
+	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 180.f));
+	ImGui::SetNextWindowSize(ImVec2(1020.f, 180.f));
+
+	ImGui::Begin("Control:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+	ImGui::Checkbox("Tick", &bTickParticle);
+
+	if (m_pairSelectedParticleMesh.second)
+	{
+		if (ImGui::Button("Fetch"))
+		{
+			m_pairSelectedParticleMesh.second->Fetch();
+		}
+
+		static _float fTrack = 0.5f;
+		CVFX_ParticleMesh::BOUNCEDESC tDesc = m_pairSelectedParticleMesh.second->Get_BounceDesc(iSelectedParticleInstance);
+		vector<_float> vecTags;
+
+		ImGui::Text("Track Position");
+		if (ImGui::SliderFloat("##TrackPositionSlider", &fTrack, 0.f, m_pairSelectedParticleMesh.second->Get_TotalBounceTime()))
+		{
+		}
+		ImVec2 vWidgetPos = ImGui::GetItemRectMin();
+		ImVec2 vWidgetSize = ImGui::GetItemRectSize();
+		vecTags.emplace_back(tDesc.fBeginDuration);
+		vecTags.emplace_back(tDesc.fBeginDuration + tDesc.fPeakDuration);
+		vecTags.emplace_back(tDesc.fBeginDuration + tDesc.fPeakDuration + tDesc.fEndDuration);
+
+		for (_float fTag : vecTags)
+		{
+			_float fNormalizedTag = fTag / m_pairSelectedParticleMesh.second->Get_TotalBounceTime();
+			_float fTagX = vWidgetPos.x + vWidgetSize.x * fNormalizedTag;
+
+			ImGui::GetWindowDrawList()->AddLine(
+				ImVec2(fTagX, vWidgetPos.y),
+				ImVec2(fTagX, vWidgetPos.y + vWidgetSize.y),
+				IM_COL32(255, 255, 255, 255), 1.2f);
+
+			_char szLabel[32];
+			snprintf(szLabel, sizeof(szLabel), "%.2f", fTag);
+			ImGui::GetWindowDrawList()->AddText(
+				ImVec2(fTagX + 2, vWidgetPos.y + vWidgetSize.y + 2.f),  // y ÁÂÇ¥ º¯°æ
+				IM_COL32(255, 255, 255, 255),
+				szLabel);
+		}
+		ImGui::SameLine();
+		static _bool bTimeLock = false;
+		if (ImGui::Checkbox("Lock", &bTimeLock))
+		{
+			m_pairSelectedParticleMesh.second->Set_TimeLock(bTimeLock);
+		}
+		if (bTimeLock)
+		{
+			m_pairSelectedParticleMesh.second->Set_Time(fTrack);
+		}
+	}
 
 	ImGui::End();
 }
@@ -1608,6 +1888,7 @@ HRESULT CScene_Tool::Load_BinaryMeshInstanceList(const wstring& _wstrFilePath, c
 			MSG_CONTINUE("CScene_Tool::Load_BinaryMeshInstanceList", "Failed to CVIBufferInstance_Mesh::Create");
 		}
 		m_mapExportMeshInstance.emplace(strKey, VIINST{ strPath, iMaxInstance, pInstance });
+
 	}
 
 #pragma endregion

@@ -56,6 +56,16 @@ PS_OUT_POSTPROCESS PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT_POSTPROCESS PS_MAIN_POINT(PS_IN In)
+{
+    PS_OUT_POSTPROCESS Out;
+
+    Out.vPreProcess	= g_texDiffuse[0].Sample(PointSampler, In.vTexCoord);
+	Out.vMask		= float4(0.f, 0.f, 0.f, 0.f);
+	
+	return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass Default
@@ -68,6 +78,19 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+	}
+
+	pass Gizmo
+	{
+		VertexShader	= compile vs_5_0 VS_MAIN();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN_POINT();
+
+		SetRasterizerState(RS_NoneCull);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
 }

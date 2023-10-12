@@ -430,6 +430,9 @@
     <Filter Include="05. GameObject\07. Effect\00. Instance\02. Particle\03. Rect">
       <UniqueIdentifier>{b8b26227-74a7-4734-b8bf-c57cf564f32a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Scene\02. Tool\00. Gizmo">
+      <UniqueIdentifier>{dc2f36d3-dd20-4ba1-bb1d-d7ab1fe69835}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -759,6 +762,9 @@
     <ClInclude Include="Public\Loader_Tool.h">
       <Filter>04. Scene\02. Tool</Filter>
     </ClInclude>
+    <ClInclude Include="Public\GlobalGizmo.h">
+      <Filter>04. Scene\02. Tool\00. Gizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -1033,6 +1039,9 @@
     </ClCompile>
     <ClCompile Include="Private\VFX_ParticleMesh.cpp">
       <Filter>05. GameObject\07. Effect\00. Instance\02. Particle\00. Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\GlobalGizmo.cpp">
+      <Filter>04. Scene\02. Tool\00. Gizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

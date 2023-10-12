@@ -35,6 +35,7 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\GlobalGizmo.h" />
     <ClInclude Include="Public\Loader_Tool.h" />
     <ClInclude Include="Public\Effect_Demo_Point.h" />
     <ClInclude Include="Public\Effect_Demo_Rect.h" />
@@ -197,6 +198,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\GlobalGizmo.cpp" />
     <ClCompile Include="Private\Effect_Demo_Point.cpp" />
     <ClCompile Include="Private\Effect_Demo_Rect.cpp" />
     <ClCompile Include="Private\BrotherNodeLeaf_FistSlam.cpp" />

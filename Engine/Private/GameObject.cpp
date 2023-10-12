@@ -100,6 +100,27 @@ HRESULT CGameObject::Render(_uint _iPassIndex)
 {
 	if (shared_ptr<CShader> pShader = m_pWeakShader.lock())
 	{
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLAMB, m_tMaterialDesc.vAmbient)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLSPC, m_tMaterialDesc.vSpecular)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Vector(SHADER_MTRLEMS, m_tMaterialDesc.vEmissive)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+		}
+		if (FAILED(pShader->Bind_Float(SHADER_MTRLSHN, m_tMaterialDesc.fShininess)))
+		{
+			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+		}
+
 		if (shared_ptr<CTransform> pTransform = m_pWeakTransform.lock())
 		{
 			if (FAILED(pTransform->Bind_OnShader(pShader)))

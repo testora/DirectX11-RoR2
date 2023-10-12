@@ -8,10 +8,12 @@ BEGIN(Engine)
 class CRenderer;
 class CTransform;
 class CShader;
+class CTexture;
 class CModel;
 class CAnimation;
 class CMesh;
 class CVIBufferInstance_Mesh;
+class CVIBufferInstance_Rect;
 END
 
 BEGIN(Client)
@@ -55,6 +57,7 @@ private:
 	void												System_Effect();
 	void												Info_Model();
 	void												Info_Effect();
+	void												Control_Effect();
 
 	HRESULT												Load_BinaryMeshInstanceList(const wstring& wstrFilePath, const wstring& wstrFileName);
 	HRESULT												Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);
@@ -71,6 +74,7 @@ private:
 	shared_ptr<class CCamera_Main>						m_pCamera;
 
 	shared_ptr<CTransform>								m_pTransform;
+	shared_ptr<class CGlobalGizmo>						m_pGlobalGizmo;
 
 	map<string, shared_ptr<CModel>>						m_mapAnimModels;
 	map<string, shared_ptr<CModel>>						m_mapNonAnimModels;
