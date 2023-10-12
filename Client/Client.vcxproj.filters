@@ -412,11 +412,23 @@
     <Filter Include="05. GameObject\07. Effect\00. Instance\01. Trail">
       <UniqueIdentifier>{303314ed-0b67-4979-b58b-326dfef10f79}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\07. Effect\00. Instance\01. Trail\00. Line">
+    <Filter Include="05. GameObject\07. Effect\00. Instance\02. Particle">
+      <UniqueIdentifier>{7999b3db-a449-49ea-b62a-068edbfb2302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Instance\01. Trail\01. Line">
       <UniqueIdentifier>{bb21f518-3278-42b5-80ea-60a75e04bc57}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameObject\07. Effect\00. Instance\01. Trail\01. Quad">
+    <Filter Include="05. GameObject\07. Effect\00. Instance\01. Trail\02. Quad">
       <UniqueIdentifier>{5b8d20f1-49ae-4f07-a17c-e3647cb8bd7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Instance\02. Particle\00. Mesh">
+      <UniqueIdentifier>{a4153c3c-1240-4aa0-8fb8-a0097fead7d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Instance\02. Particle\02. Quad">
+      <UniqueIdentifier>{7bde3513-c644-45a7-aca5-76800e0e6639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\07. Effect\00. Instance\02. Particle\03. Rect">
+      <UniqueIdentifier>{b8b26227-74a7-4734-b8bf-c57cf564f32a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -736,10 +748,16 @@
       <Filter>05. GameObject\07. Effect\00. Instance\00. Demo\00. Point</Filter>
     </ClInclude>
     <ClInclude Include="Public\VFX_TrailQuad.h">
-      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\01. Quad</Filter>
+      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\02. Quad</Filter>
     </ClInclude>
     <ClInclude Include="Public\VFX_TrailLine.h">
-      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\00. Line</Filter>
+      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\01. Line</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VFX_ParticleMesh.h">
+      <Filter>05. GameObject\07. Effect\00. Instance\02. Particle\00. Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Loader_Tool.h">
+      <Filter>04. Scene\02. Tool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1008,10 +1026,13 @@
       <Filter>05. GameObject\07. Effect\00. Instance\00. Demo\00. Point</Filter>
     </ClCompile>
     <ClCompile Include="Private\VFX_TrailQuad.cpp">
-      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\01. Quad</Filter>
+      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\02. Quad</Filter>
     </ClCompile>
     <ClCompile Include="Private\VFX_TrailLine.cpp">
-      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\00. Line</Filter>
+      <Filter>05. GameObject\07. Effect\00. Instance\01. Trail\01. Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\VFX_ParticleMesh.cpp">
+      <Filter>05. GameObject\07. Effect\00. Instance\02. Particle\00. Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1047,6 +1068,9 @@
       <Filter>06. Shader\01. Forward\00. Instance</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\InstLine.hlsl">
+      <Filter>06. Shader\01. Forward\00. Instance</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\InstMesh.hlsl">
       <Filter>06. Shader\01. Forward\00. Instance</Filter>
     </FxCompile>
   </ItemGroup>

@@ -35,6 +35,7 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\Loader_Tool.h" />
     <ClInclude Include="Public\Effect_Demo_Point.h" />
     <ClInclude Include="Public\Effect_Demo_Rect.h" />
     <ClInclude Include="Public\BrotherNodeLeaf_FistSlam.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="Public\RailGunner_State.h" />
     <ClInclude Include="Public\VFX_TrailQuad.h" />
     <ClInclude Include="Public\VFX_TrailLine.h" />
+    <ClInclude Include="Public\VFX_ParticleMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -278,6 +280,7 @@
     <ClCompile Include="Private\RailGunner_State.cpp" />
     <ClCompile Include="Private\VFX_TrailQuad.cpp" />
     <ClCompile Include="Private\VFX_TrailLine.cpp" />
+    <ClCompile Include="Private\VFX_ParticleMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -288,6 +291,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Resources\Shader\InstLine.hlsl" />
+    <FxCompile Include="..\Resources\Shader\InstMesh.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstPoint.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstRect.hlsl" />
     <FxCompile Include="..\Resources\Shader\PosNorTanTex.hlsl" />

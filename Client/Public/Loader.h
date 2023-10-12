@@ -19,6 +19,7 @@ public:
 
 private:
 	HRESULT						Load_Menu();
+	HRESULT						Load_Tool();
 	HRESULT						Load_Test();
 	HRESULT						Load_Moon();
 

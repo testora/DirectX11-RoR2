@@ -226,17 +226,20 @@
     <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance">
       <UniqueIdentifier>{8c69faaf-bc7a-4a43-9ac5-f692b52b1039}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point">
-      <UniqueIdentifier>{94d69e2e-053f-4c1a-b8e8-8ddd0b379ab1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Utility\05. GameObject\02. Effect">
       <UniqueIdentifier>{d23939cb-c086-48db-b987-25444bc1d08c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\02. Rect">
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\01. Point">
+      <UniqueIdentifier>{94d69e2e-053f-4c1a-b8e8-8ddd0b379ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\02. Line">
+      <UniqueIdentifier>{ea11e573-4c4b-4c82-ac80-89c84e43b5a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\03. Rect">
       <UniqueIdentifier>{6e8ccda3-4320-4cd6-85a3-ee51b27a6cec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\01. Line">
-      <UniqueIdentifier>{ea11e573-4c4b-4c82-ac80-89c84e43b5a4}</UniqueIdentifier>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh">
+      <UniqueIdentifier>{c7db8c43-7773-4642-8974-792dce2f2ecb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -430,13 +433,16 @@
       <Filter>04. Utility\05. GameObject\02. Effect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBufferInstance_Rect.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\02. Rect</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\03. Rect</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBufferInstance_Point.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Point</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBufferInstance_Line.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Line</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\02. Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\VIBufferInstance_Mesh.cpp">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -657,16 +663,19 @@
       <Filter>04. Utility\05. GameObject\02. Effect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBufferInstance_Rect.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\02. Rect</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\03. Rect</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBufferInstance_Point.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Point</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Point</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBufferInstance_Line.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\01. Line</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\02. Line</Filter>
     </ClInclude>
     <ClInclude Include="Public\Engine_Variable.h">
       <Filter>00. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VIBufferInstance_Mesh.h">
+      <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

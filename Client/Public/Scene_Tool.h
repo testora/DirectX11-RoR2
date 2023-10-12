@@ -6,12 +6,17 @@
 
 BEGIN(Engine)
 class CRenderer;
+class CTransform;
 class CShader;
 class CModel;
 class CAnimation;
+class CMesh;
+class CVIBufferInstance_Mesh;
 END
 
 BEGIN(Client)
+
+class CVFX_ParticleMesh;
 
 enum class TOOL
 {
@@ -19,6 +24,19 @@ enum class TOOL
 	EFFECT,
 	MAX
 };
+enum class FX_AREA
+{
+	INSTANCE_MESH,
+	PARTICLE_MESH,
+	MAX
+};
+
+typedef struct tagVIBufferInstance
+{
+	string								strPath;
+	_int								iMaxInstance	= 0;
+	shared_ptr<CVIBufferInstance_Mesh>	pVIBuffer;
+} VIINST;
 
 class CScene_Tool final : public CScene
 {
@@ -27,42 +45,59 @@ private:
 	virtual ~CScene_Tool() DEFAULT;
 
 public:
-	virtual HRESULT						Initialize() override;
-	virtual void						Tick(_float fTimeDelta) override;
-	virtual void						Late_Tick(_float fTimeDelta) override;
-	virtual HRESULT						Render() override;
+	virtual HRESULT										Initialize() override;
+	virtual void										Tick(_float fTimeDelta) override;
+	virtual void										Late_Tick(_float fTimeDelta) override;
+	virtual HRESULT										Render() override;
 
 private:
-	void								System_Model();
-	void								System_Effect();
-	void								Info_Model();
-	void								Info_Effect();
+	void												System_Model();
+	void												System_Effect();
+	void												Info_Model();
+	void												Info_Effect();
 
-	HRESULT								Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);
-	HRESULT								Export_BinaryModel(const wstring& wstrPath);
+	HRESULT												Load_BinaryMeshInstanceList(const wstring& wstrFilePath, const wstring& wstrFileName);
+	HRESULT												Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);
+	HRESULT												Load_ParticleMesh(const wstring& wstrFilePath, const wstring& wstrFileName);
+
+	HRESULT												Export_BinaryMeshInstanceList(const wstring& wstrPath);
+	HRESULT												Export_BinaryModel(const wstring& wstrPath);
+	HRESULT												Export_BinaryParticleMesh(const wstring& wstrPath);
 
 private:
-	ImGuiFileDialog						m_imEmbed_Open;
-	ImGuiFileDialog						m_imEmbed_Export;
+	ImGuiFileDialog										m_imEmbed_Open;
+	ImGuiFileDialog										m_imEmbed_Export;
 
-	wstring								m_wstrModelPath;
+	shared_ptr<class CCamera_Main>						m_pCamera;
 
-	map<string, shared_ptr<CModel>>		m_mapAnimModels;
-	map<string, shared_ptr<CModel>>		m_mapNonAnimModels;
+	shared_ptr<CTransform>								m_pTransform;
 
-	shared_ptr<CAnimation>				m_pSelectedAnimation;
+	map<string, shared_ptr<CModel>>						m_mapAnimModels;
+	map<string, shared_ptr<CModel>>						m_mapNonAnimModels;
 
-	pair<string, shared_ptr<CModel>>	m_pairSelectedModel;
-	MATERIAL							m_tSelectedMaterial;
+	map<string, VIINST>									m_mapExportMeshInstance;
+	string												m_strSelectedExportMeshInstance;
 
-	shared_ptr<CRenderer>				m_pRenderer;
-	shared_ptr<CShader>					m_pShader_NonAnimMesh;
-	shared_ptr<CShader>					m_pShader_AnimMesh;
+	map<string, shared_ptr<CVFX_ParticleMesh>>			m_mapParticleMesh;
 
-	TOOL								m_eTool	= TOOL::MAX;
+	wstring												m_wstrModelPath;
+	wstring												m_wstrMeshPath;
+
+	pair<string, shared_ptr<CModel>>					m_pairSelectedModel;
+	pair<string, shared_ptr<CMesh>>						m_pairSelectedMesh;
+	pair<string, shared_ptr<CVFX_ParticleMesh>>			m_pairSelectedParticleMesh;
+	shared_ptr<CAnimation>								m_pSelectedAnimation;
+	MATERIAL											m_tSelectedMaterial;
+
+	shared_ptr<CRenderer>								m_pRenderer;
+	shared_ptr<CShader>									m_pShader_NonAnimMesh;
+	shared_ptr<CShader>									m_pShader_AnimMesh;
+	shared_ptr<CShader>									m_pShader_InstMesh;
+
+	TOOL												m_eTool	= TOOL::MAX;
 
 public:
-	static shared_ptr<CScene_Tool>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
+	static shared_ptr<CScene_Tool>						Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 };
 
 END

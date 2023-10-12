@@ -5,6 +5,7 @@
 #include "Pipeline.h"
 #include "Animation.h"
 #include "Channel.h"
+#include "Camera_Main.h"
 
 HRESULT CRailGunner_State::Initialize(shared_ptr<CRailGunner> _pRailGunner)
 {
@@ -77,6 +78,8 @@ void CRailGunner_State::Tick(_float _fTimeDelta)
 	Handle_Aim();
 	Handle_State();
 	Handle_Skill(_fTimeDelta);
+
+	m_bitPrevState = m_bitState;
 }
 
 void CRailGunner_State::Late_Tick(_float _fTimeDelta)
@@ -167,6 +170,19 @@ void CRailGunner_State::Handle_State()
 		{
 			pRailGunner->Set_State(RG_STATE::SPRINT, false);
 			pRailGunner->Visualize_Crosshair(RG_CROSSHAIR::SCOPE);
+		}
+	}
+#pragma endregion
+#pragma region FOV
+	if (m_bitPrevState.test(IDX(RG_STATE::SPRINT)) != m_bitState.test(IDX(RG_STATE::SPRINT)))
+	{
+		if (m_bitState.test(IDX(RG_STATE::SPRINT)))
+		{
+			CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Adjust_FOV(XMConvertToRadians(65.f), 0.5f, 0.5f);
+		}
+		else
+		{
+			CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Release_FOV(0.25f, 0.5f);
 		}
 	}
 #pragma endregion

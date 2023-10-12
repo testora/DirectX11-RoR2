@@ -84,7 +84,7 @@ void CEffect_Demo_Point::Fetch_Instance(void* _pData, _uint _iNumInstance, any _
 {
 //	_float4 vPosition = any_cast<_float4>(_arg);
 //
-//	VTXINSTTRANS* pData = reinterpret_cast<VTXINSTTRANS*>(_pData);
+//	VTXPOSSIZEINSTTRANS* pData = reinterpret_cast<VTXPOSSIZEINSTTRANS*>(_pData);
 //
 //	for (_uint i = 0; i < _iNumInstance; ++i)
 //	{

@@ -9,6 +9,10 @@
 #include "Channel.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include "Camera_Main.h"
+#include "Mesh.h"
+#include "VFX_ParticleMesh.h"
+#include "VIBufferInstance_Mesh.h"
 
 #if ACTIVATE_TOOL
 
@@ -16,7 +20,7 @@ CScene_Tool::CScene_Tool(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 	: CScene(_pDevice, _pContext, SCENE::TOOL)
 {
 }
-
+static shared_ptr<CMesh> pMesh;
 HRESULT CScene_Tool::Initialize()
 {
 	if (FAILED(__super::Initialize()))
@@ -32,17 +36,51 @@ HRESULT CScene_Tool::Initialize()
 
 	m_pShader_NonAnimMesh	= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESH));
 	m_pShader_AnimMesh		= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXMESHANIM));
+	m_pShader_InstMesh		= dynamic_pointer_cast<CShader>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH));
 
 	if (nullptr == m_pShader_NonAnimMesh
-	||	nullptr == m_pShader_AnimMesh)
+	||	nullptr == m_pShader_AnimMesh
+	||	nullptr == m_pShader_InstMesh)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Clone_Component: SHADER");
 	}
 
 	CImGui_Manager::Get_Instance()->Enable();
 
+	shared_ptr<CObjectLayer> pCamLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TOOL, LAYER_CAMERA);
+	if (nullptr == pCamLayer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Add_Layer: LAYER_CAMERA");
+	}
+	
+	if (FAILED(pCamLayer->Add(m_pCamera = dynamic_pointer_cast<CCamera_Main>(CCamera_Main::Create(m_pDevice, m_pContext)->Clone()))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Add: CCamer_Main");
+	}
+
+	m_pCamera->Set_Debug();
+	m_pCamera->Set_DebugSensitivity(_float2(0.1f, 0.1f));
+
+	CGameInstance::Get_Instance()->Fix_Cursor(false);
+
+	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
+
+	LIGHTDESC				tLightDesc{};
+	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
+	tLightDesc.vDirection	= _float3(1.f, -1.f, 0.f);
+	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
+	tLightDesc.vSpecular	= _color(0.1f, 0.1f, 0.1f, 1.f);
+	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 0.5f);
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Initialize", "Failed to Add_Light");
+	}
+
 	return S_OK;
 }
+
+static _bool bTriplanerPass = true;
 
 void CScene_Tool::Tick(_float _fTimeDelta)
 {
@@ -58,6 +96,26 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 			m_eTool = TOOL::EFFECT;
 		}
 
+		if (ImGui::MenuItem("Hide"))
+		{
+			m_eTool = TOOL::MAX;
+		}
+
+		if (ImGui::BeginMenu("Triplaner"))
+		{
+			if (ImGui::MenuItem("TriPlaner Shader"))
+			{
+				bTriplanerPass = true;
+			}
+
+			if (ImGui::MenuItem("Regular Shader"))
+			{
+				bTriplanerPass = false;
+			}
+
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 	}
 
@@ -67,6 +125,11 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 	{
 		System_Model();
 		Info_Model();
+
+		if (m_pairSelectedModel.second)
+		{
+			m_pairSelectedModel.second->Tick_Animation(_fTimeDelta);
+		}
 	}
 	break;
 	case Client::TOOL::EFFECT:
@@ -80,11 +143,156 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 
 void CScene_Tool::Late_Tick(_float _fTimeDelta)
 {
-	m_pRenderer->Add_RenderObject(RENDER_GROUP::PRIORITY, shared_from_this());
+	ImGui::Begin("MATERIAL");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("NONBLEND");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("LIGHT");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	ImGui::Begin("MASK");
+	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+	ImGui::End();
+
+	switch (m_eTool)
+	{
+	case Client::TOOL::MODEL:
+	{
+		m_pRenderer->Add_RenderObject(RENDER_GROUP::NONBLEND, shared_from_this());
+	}
+	break;
+	case Client::TOOL::EFFECT:
+	{
+		m_pRenderer->Add_RenderObject(RENDER_GROUP::NONBLEND, shared_from_this());
+	}
+	break;
+	}
+}
+
+static MODEL	eType(MODEL::NONANIM);
+static FX_AREA	eArea(FX_AREA::MAX);
+static _bool	bRenderMesh(false);
+
+HRESULT Bind_EmptyMaterialDesc(shared_ptr<CShader> _pShader)
+{
+	MATERIALDESC tMtrlDesc;
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, tMtrlDesc.vDiffuse)))
+	{
+		MSG_RETURN(E_FAIL, "Bind_EmptyMaterialDesc", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLAMB, tMtrlDesc.vAmbient)))
+	{
+		MSG_RETURN(E_FAIL, "Bind_EmptyMaterialDesc", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLSPC, tMtrlDesc.vSpecular)))
+	{
+		MSG_RETURN(E_FAIL, "Bind_EmptyMaterialDesc", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLEMS, tMtrlDesc.vEmissive)))
+	{
+		MSG_RETURN(E_FAIL, "Bind_EmptyMaterialDesc", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Float(SHADER_MTRLSHN, tMtrlDesc.fShininess)))
+	{
+		MSG_RETURN(E_FAIL, "Bind_EmptyMaterialDesc", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+	}
+
+	return S_OK;
 }
 
 HRESULT CScene_Tool::Render()
 {
+	switch (m_eTool)
+	{
+	case Client::TOOL::MODEL:
+	{
+		if (m_pairSelectedModel.second)
+		{
+			switch (eType)
+			{
+			case MODEL::ANIM:
+				if (FAILED(Bind_EmptyMaterialDesc(m_pShader_AnimMesh)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to Bind_EmptyMaterialDesc");
+				}
+				if (FAILED(m_pTransform->Bind_OnShader(m_pShader_AnimMesh)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CTransform::Bind_OnShader");
+				}
+				if (bRenderMesh)
+				{
+					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
+				}
+				else
+				{
+					m_pairSelectedModel.second->Render(m_pShader_AnimMesh, 0);
+				}
+				break;
+			case MODEL::NONANIM:
+				if (FAILED(Bind_EmptyMaterialDesc(m_pShader_NonAnimMesh)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to Bind_EmptyMaterialDesc");
+				}
+				if(FAILED(m_pTransform->Bind_OnShader(m_pShader_NonAnimMesh)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CTransform::Bind_OnShader");
+				}
+				if (bRenderMesh)
+				{
+					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
+				}
+				else
+				{
+					m_pairSelectedModel.second->Render(m_pShader_NonAnimMesh, bTriplanerPass ? 1 : 0);
+				}
+				break;
+			}
+		}
+	}
+	break;
+	case Client::TOOL::EFFECT:
+	{
+		switch (eArea)
+		{
+		case Client::FX_AREA::INSTANCE_MESH:
+		{
+			if (FAILED(Bind_EmptyMaterialDesc(m_pShader_InstMesh)))
+			{
+				MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to Bind_EmptyMaterialDesc");
+			}
+			if (!m_strSelectedExportMeshInstance.empty())
+			{
+				if (FAILED(m_pTransform->Bind_OnShader(m_pShader_InstMesh)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CTransform::Bind_OnShader");
+				}
+				if (FAILED(m_mapExportMeshInstance[m_strSelectedExportMeshInstance].pVIBuffer->Render(m_pShader_InstMesh, 0)))
+				{
+					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CMesh::Render");
+				}
+			}
+		}
+		break;
+		case Client::FX_AREA::PARTICLE_MESH:
+		{
+
+		}
+		break;
+		}
+	}
+	break;
+	}
+
 	return S_OK;
 }
 
@@ -98,8 +306,6 @@ void CScene_Tool::System_Model()
 	ImGui::Begin("System:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
 #pragma region Open Model
-
-	static MODEL eType(MODEL::NONANIM);
 	
 	if (ImGui::Button("Load"))
 	{
@@ -111,7 +317,7 @@ void CScene_Tool::System_Model()
 			}
 
 			const _char* szFilters = "Models (*.fbx, *.mdl){.fbx,.mdl},FBX (*.fbx){.fbx},Binary (*.mdl){.mdl},All files{.*}";
-			m_imEmbed_Open.OpenDialog(DIALOG_OPEN_FBX, "Open Model", szFilters, "Bin/Resources/", 1, nullptr,
+			m_imEmbed_Open.OpenDialog(DIALOG_MODEL_LOAD, "Open Model", szFilters, "Bin/Resources/", 1, nullptr,
 				ImGuiFileDialogFlags_HideColumnType			|
 				ImGuiFileDialogFlags_NoDialog				|
 				ImGuiFileDialogFlags_DisableBookmarkMode	|
@@ -133,7 +339,7 @@ void CScene_Tool::System_Model()
 			}
 
 			const _char* szFilters = "Binary (*.mdl){.mdl},Models (*.fbx, *.mdl){.fbx,.mdl},All files{.*}";
-			m_imEmbed_Export.OpenDialog(DIALOG_EXPORT_MODEL, "Export Model", szFilters, "Bin/Resources/", "",
+			m_imEmbed_Export.OpenDialog(DIALOG_MODEL_EXPORT, "Export Model", szFilters, "Bin/Resources/", "",
 				[](const char*, void*, bool*)
 				{
 					ImGui::Text("");
@@ -243,7 +449,7 @@ void CScene_Tool::System_Model()
 		ImGui::Separator();
 	}
 
-	if (m_imEmbed_Open.Display(DIALOG_OPEN_FBX, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	if (m_imEmbed_Open.Display(DIALOG_MODEL_LOAD, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
 	{
 		if (m_imEmbed_Open.IsOk())
 		{
@@ -254,7 +460,7 @@ void CScene_Tool::System_Model()
 		}
 	}
 
-	if (m_imEmbed_Export.Display(DIALOG_EXPORT_MODEL, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	if (m_imEmbed_Export.Display(DIALOG_MODEL_EXPORT, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
 	{
 		if (m_imEmbed_Export.IsOk())
 		{
@@ -295,6 +501,8 @@ void CScene_Tool::System_Model()
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
 				m_pairSelectedModel = pair;
+
+				bRenderMesh = false;
 			}
 
 			if (m_pairSelectedModel == pair)
@@ -320,6 +528,8 @@ void CScene_Tool::System_Model()
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
 				m_pairSelectedModel = pair;
+
+				bRenderMesh = false;
 			}
 
 			if (m_pairSelectedModel == pair)
@@ -337,11 +547,337 @@ void CScene_Tool::System_Model()
 
 void CScene_Tool::System_Effect()
 {
-
 	ImGui::SetNextWindowPos(ImVec2(0.f, ImGui::GetTextLineHeightWithSpacing()));
 	ImGui::SetNextWindowSize(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - ImGui::GetTextLineHeightWithSpacing()));
 
 	ImGui::Begin("System:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+#pragma region FileDialog
+
+	if (ImGui::Button("Load"))
+	{
+		if (!m_imEmbed_Open.IsOpened())
+		{
+			if (m_imEmbed_Export.IsOpened())
+			{
+				m_imEmbed_Export.Close();
+			}
+
+			const _char* szFilters = "Instance (*.lst){.lst},Effects (*.vfx,*.fbx){.msh},Binary (*.vfx){.vfx},FBX (*.fbx){.fbx},All files{.*}";
+			m_imEmbed_Open.OpenDialog(DIALOG_EFFECT_LOAD, "Open Effect", szFilters, "Bin/Resources/", 1, nullptr,
+				ImGuiFileDialogFlags_HideColumnType			|
+				ImGuiFileDialogFlags_NoDialog				|
+				ImGuiFileDialogFlags_DisableBookmarkMode	|
+				ImGuiFileDialogFlags_ReadOnlyFileNameField);
+		}
+		else
+		{
+			m_imEmbed_Open.Close();
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Export"))
+	{
+		if (!m_imEmbed_Export.IsOpened())
+		{
+			if (m_imEmbed_Open.IsOpened())
+			{
+				m_imEmbed_Open.Close();
+			}
+
+			const _char* szFilters = "Instance (*.lst){.lst},Effects (*.vfx,*.fbx){.msh},Binary (*.vfx){.vfx},FBX (*.fbx){.fbx},All files{.*}";
+			m_imEmbed_Export.OpenDialog(DIALOG_EFFECT_EXPORT, "Export Effect", szFilters, "Bin/Resources/", "",
+				[](const char*, void*, bool*)
+				{
+					ImGui::Text("");
+				},
+				60, 1, nullptr,
+				ImGuiFileDialogFlags_HideColumnType			|
+				ImGuiFileDialogFlags_NoDialog				|
+				ImGuiFileDialogFlags_DisableBookmarkMode	|
+				ImGuiFileDialogFlags_ConfirmOverwrite);
+		}
+		else
+		{
+			m_imEmbed_Export.Close();
+		}
+	}
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(120.f);
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() - ImGui::GetStyle().ItemInnerSpacing.x - 120.f);
+
+	static const _char* szEffectType = "ParticleMesh";
+	if (ImGui::BeginCombo("Options", szEffectType))
+	{
+		const _char* items[] = { "ParticleMesh", "Effect" };
+		for (_uint i = 0; i < IM_ARRAYSIZE(items); i++)
+		{
+			_bool isSelected = (szEffectType == items[i]);
+
+			if (ImGui::Selectable(items[i], isSelected))
+			{
+				szEffectType = items[i];
+			}
+
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	if (m_imEmbed_Open.Display(DIALOG_EFFECT_LOAD, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	{
+		if (m_imEmbed_Open.IsOk())
+		{
+			string strExt;
+			Function::SplitPath(m_imEmbed_Open.GetCurrentFileName(), nullptr, nullptr, nullptr, &strExt);
+
+			if (".lst" == strExt)
+			{
+				if (FAILED(Load_BinaryMeshInstanceList(Function::ToWString(m_imEmbed_Open.GetCurrentPath()), Function::ToWString(m_imEmbed_Open.GetCurrentFileName()))))
+				{
+					MSG_BOX("CScene_Tool::System_Effect", "Failed to Load_BinaryMeshInstanceList");
+				}
+			}
+			else if(".msh" == strExt)
+			{
+				if (FAILED(Load_ParticleMesh(Function::ToWString(m_imEmbed_Open.GetCurrentPath()), Function::ToWString(m_imEmbed_Open.GetCurrentFileName()))))
+				{
+					MSG_BOX("CScene_Tool::System_Effect", "Failed to Load_ParticleMesh");
+				}
+			}
+		}
+	}
+
+	if (m_imEmbed_Export.Display(DIALOG_EFFECT_EXPORT, ImGuiWindowFlags_NoCollapse, ImVec2(0.f, 0.f), ImVec2(0.f, 240.f)))
+	{
+		if (m_imEmbed_Export.IsOk())
+		{
+			switch (eArea)
+			{
+			case Client::FX_AREA::INSTANCE_MESH:
+				if (FAILED(Export_BinaryMeshInstanceList(Function::ToWString(m_imEmbed_Export.GetFilePathName()))))
+				{
+					MSG_BOX("CScene_Tool::System_Effect", "Failed to Export_BinaryMeshInstanceList");
+				}
+				break;
+			case Client::FX_AREA::PARTICLE_MESH:
+				if (FAILED(Export_BinaryParticleMesh(Function::ToWString(m_imEmbed_Export.GetFilePathName()))))
+				{
+					MSG_BOX("CScene_Tool::System_Effect", "Failed to Export_BinaryParticleMesh");
+				}
+				break;
+			}
+		}
+	}
+
+	if (m_imEmbed_Open.IsOpened() || m_imEmbed_Export.IsOpened())
+	{
+		ImGui::Separator();
+	}
+
+#pragma endregion
+#pragma region ListBox
+#pragma region VIBufferInstance
+
+	ImGui::SeparatorText("VIBufferInstance Mesh List");
+
+	_float fWindowWidth0 = ImGui::GetWindowWidth();
+	_float fButtonWidth0 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+	_float fButtonSpace0 = ImGui::GetStyle().ItemSpacing.x;
+	
+	static _char szVIBufferInstanceKey[MAX_PATH];
+	static _char szVIBufferInstancePath[MAX_PATH];
+	static _int iMaxInstance(0);
+
+	ImGui::Text("VIBufferInstance Mesh: ");
+	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 * 2.f - fButtonWidth0 * 2.f + ImGui::GetStyle().ItemInnerSpacing.y);
+	if (ImGui::Button("+##CreateVIBufferInstance", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		ZeroMemory(szVIBufferInstanceKey, sizeof(_char) * MAX_PATH);
+		ZeroMemory(szVIBufferInstancePath, sizeof(_char) * MAX_PATH);
+		strcpy_s(szVIBufferInstanceKey, "Prototype:Component:VIBuffer:Instance:");
+		strcpy_s(szVIBufferInstancePath, "Bin/Resources");
+		iMaxInstance = 0;
+
+		ImGui::OpenPopup("Push VIBufferInstance");
+	}
+	ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+	if (ImGui::Button("-##EraseFromVIBufferInstance", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		m_mapExportMeshInstance.erase(m_strSelectedExportMeshInstance);
+		m_strSelectedExportMeshInstance.clear();
+	}
+	if (ImGui::BeginListBox("VIBufferInstance Mesh", ImVec2(-FLT_MIN, 0.f)))
+	{
+		for (auto pair : m_mapExportMeshInstance)
+		{
+			if (ImGui::Selectable(pair.first.c_str(), m_strSelectedExportMeshInstance == pair.first, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				eArea = FX_AREA::INSTANCE_MESH;
+
+				m_strSelectedExportMeshInstance = pair.first;
+			}
+
+			if (m_strSelectedExportMeshInstance == pair.first)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndListBox();
+	}
+
+#pragma endregion
+
+	ImGui::SeparatorText("Effect List");
+
+	static _bool bOpenNameModal = false;
+	static _char szEffectName[MAX_PATH];
+
+	ImGui::Text("ParticleMesh: ");
+	ImGui::SameLine(fWindowWidth0 - fButtonSpace0 * 2.f - fButtonWidth0 * 2.f + ImGui::GetStyle().ItemInnerSpacing.y);
+	if (ImGui::Button("+##CreateParticleMesh", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		ImGui::OpenPopup("Create ParticleMesh");
+	}
+	ImGui::SameLine(0.f, ImGui::GetStyle().ItemInnerSpacing.y);
+	if (ImGui::Button("-##EraseFromParticleMesh", ImVec2(fButtonWidth0, fButtonWidth0)))
+	{
+		m_mapParticleMesh.erase(m_pairSelectedParticleMesh.first);
+		m_pairSelectedParticleMesh.first.clear();
+		m_pairSelectedParticleMesh.second = nullptr;
+	}
+	if (ImGui::BeginListBox("ParticleMesh", ImVec2(-FLT_MIN, 0.f)))
+	{
+		for (auto pair : m_mapParticleMesh)
+		{
+			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedParticleMesh == pair, ImGuiSelectableFlags_AllowDoubleClick))
+			{
+				eArea = FX_AREA::PARTICLE_MESH;
+
+				m_pairSelectedParticleMesh = pair;
+				strcpy_s(szEffectName, pair.first.c_str());
+
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					bOpenNameModal = true;
+				}
+			}
+
+			if (m_pairSelectedParticleMesh == pair)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndListBox();
+	}
+
+	if (bOpenNameModal)
+	{
+		ImGui::OpenPopup("Change Effect Name");
+		bOpenNameModal = false;
+	}
+
+#pragma region PopUp
+	if (ImGui::BeginPopupModal("Push VIBufferInstance", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Key:");
+		ImGui::InputText("##PushKey", szVIBufferInstanceKey, IM_ARRAYSIZE(szVIBufferInstanceKey));
+		ImGui::Text("Path:");
+		ImGui::InputText(".msh##PushPath", szVIBufferInstancePath, IM_ARRAYSIZE(szVIBufferInstancePath));
+		ImGui::Text("Instance Number:");
+		ImGui::InputInt("##PushMaxInstance", &iMaxInstance);
+		ImGui::Separator();
+
+		if (ImGui::Button("OK", ImVec2(120.f, 0)))
+		{
+			shared_ptr<CVIBufferInstance_Mesh> pInstance = dynamic_pointer_cast<CVIBufferInstance_Mesh>(
+				CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, Function::ToWString(szVIBufferInstancePath + string(".msh")), iMaxInstance)->Clone());
+			if (nullptr == pInstance)
+			{
+				MSG_BOX("CScene_Tool::System_Effect", "Failed to Create: CVIBufferInstance_Mesh");
+			}
+			else
+			{
+				m_mapExportMeshInstance.emplace(szVIBufferInstanceKey, VIINST{ szVIBufferInstancePath + string(".msh"), iMaxInstance, pInstance });
+
+				CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TOOL, Function::ToWString(szVIBufferInstanceKey), pInstance);
+			}
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120.f, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	static _char szParticleMeshName[MAX_PATH] = "Name";
+	if (ImGui::BeginPopupModal("Create ParticleMesh", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Effect Name:");
+		ImGui::InputText("Name", szParticleMeshName, IM_ARRAYSIZE(szParticleMeshName));
+		ImGui::Separator();
+
+		if (ImGui::Button("OK", ImVec2(120.f, 0)))
+		{
+			shared_ptr<CVFX_ParticleMesh> pInstance = dynamic_pointer_cast<CVFX_ParticleMesh>(
+				CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TOOL, PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH));
+
+			if (!m_strSelectedExportMeshInstance.empty())
+			{
+				if (FAILED(pInstance->Add_Component(COMPONENT::VIBUFFER_INSTANCE_MESH, m_mapExportMeshInstance[m_strSelectedExportMeshInstance].pVIBuffer)))
+				{
+					MSG_BOX("CScene_Tool::System_Effect", "Failed to Add_Component: VIBufferInstance_Mesh");
+				}
+			}
+
+			m_mapParticleMesh.emplace(szParticleMeshName, pInstance);
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120.f, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::BeginPopupModal("Change Effect Name", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		ImGui::Text("Change Effect Name:");
+		ImGui::InputText("Name", szEffectName, IM_ARRAYSIZE(szEffectName));
+		ImGui::Separator();
+
+		if (ImGui::Button("OK", ImVec2(120.f, 0)))
+		{
+			m_mapParticleMesh.erase(m_pairSelectedParticleMesh.first);
+			m_pairSelectedParticleMesh.first = szEffectName;
+			m_mapParticleMesh.emplace(m_pairSelectedParticleMesh);
+
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(120.f, 0)))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+#pragma endregion
+#pragma endregion
 
 	ImGui::End();
 }
@@ -417,6 +953,11 @@ void CScene_Tool::Info_Model()
 						iCurrentChannelIdx		= 0;
 						iSelectedKeyFrame		= 0;
 						m_pSelectedAnimation	= m_pairSelectedModel.second->Get_Animation(i);
+
+						if (m_pairSelectedModel.second)
+						{
+							m_pairSelectedModel.second->Set_Animation(i);
+						}
 					}
 					++iItemIdx;
 					++iAnimationIdx;
@@ -436,11 +977,17 @@ void CScene_Tool::Info_Model()
 		{
 			if (ImGui::BeginListBox("Mesh: ", ImVec2(-FLT_MIN, 0.f)))
 			{
+				static _uint iMeshIndex(0);
+
 				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumMeshes(); ++i)
 				{
-					if (ImGui::Selectable(m_pairSelectedModel.second->Get_Mesh(i)->Get_Name(), iSelectedItem == iItemIdx))
+					if (ImGui::Selectable(string(std::to_string(i) + m_pairSelectedModel.second->Get_Mesh(i)->Get_Name()).c_str(), iSelectedItem == iItemIdx))
 					{
 						iSelectedItem = iItemIdx;
+
+						bRenderMesh = true;
+						m_pairSelectedMesh.first = string(std::to_string(i) + m_pairSelectedModel.second->Get_Mesh(i)->Get_Name());
+						m_pairSelectedMesh.second = m_pairSelectedModel.second->Get_Mesh(i);
 					}
 					++iItemIdx;
 				}
@@ -718,6 +1265,15 @@ void CScene_Tool::Info_Model()
 		{
 			ImGui::NewLine();
 			ImGui::SeparatorText("Meshes");
+
+			if (m_pairSelectedMesh.second)
+			{
+				if (ImGui::Button("Export"))
+				{
+					const _char* szFilters = "Meshes (*.msh,*.fbx){.msh},Binary (*.msh){.msh},FBX (*.fbx){.fbx},All files{.*}";
+					ImGuiFileDialog::Instance()->OpenDialog(DIALOG_EXPORT_MESH, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				}
+			}
 		}
 #pragma endregion
 #pragma region Materials
@@ -879,7 +1435,19 @@ void CScene_Tool::Info_Model()
 		{
 			if (FAILED(m_tSelectedMaterial.pTexture[IDX(eTexType)]->Push_ShaderResourceView(Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
 			{
-				MSG_BOX("Scene_Tool::Info_Model", "Failed to Push ShaderResourceView");
+				MSG_BOX("Scene_Tool::Info_Model", "Failed to DIALOG_OPEN_TEXTURE");
+			}
+		}
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+	if (ImGuiFileDialog::Instance()->Display(DIALOG_EXPORT_MESH))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			if (FAILED(m_pairSelectedMesh.second->Export(Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
+			{
+				MSG_BOX("Scene_Tool::Info_Model", "Failed to DIALOG_EXPORT_MESH");
 			}
 		}
 		ImGuiFileDialog::Instance()->Close();
@@ -896,7 +1464,164 @@ void CScene_Tool::Info_Effect()
 
 	ImGui::Begin("Information:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
+#pragma region Texture
+
+	static aiTextureType eTexture = AI_TEXTURE_TYPE_MAX;
+
+	static _bool bTexDiffuseSelected	= eTexture == aiTextureType_DIFFUSE;
+	static _bool bTexNormalSelected		= eTexture == aiTextureType_NORMALS;
+
+	if (m_pairSelectedParticleMesh.second)
+	{
+		if (ImGui::CollapsingHeader("Texture##ParticleMeshTexture"))
+		{
+			if (ImGui::BeginListBox("Texture##ParticleMeshTextureListBox", ImVec2(-FLT_MIN, 0.f)))
+			{
+				if (ImGui::Selectable("Diffuse", &bTexDiffuseSelected, ImGuiSelectableFlags_AllowDoubleClick))
+				{
+					bTexNormalSelected = false;
+
+					eTexture = aiTextureType_DIFFUSE;
+
+					if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					{
+						const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
+						ImGuiFileDialog::Instance()->OpenDialog(DIALOG_SET_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+					}
+				}
+				if (ImGui::Selectable("Normal", &bTexNormalSelected, ImGuiSelectableFlags_AllowDoubleClick))
+				{
+					bTexDiffuseSelected = false;
+
+					eTexture = aiTextureType_NORMALS;
+
+					if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+					{
+						const _char* szFilters = "All files{.*},WIC files(*.png *.jpg *.jpeg){.png,.jpg,.jpeg},DDS files(*.dds){.dds}";
+						ImGuiFileDialog::Instance()->OpenDialog(DIALOG_SET_TEXTURE, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+					}
+				}
+
+				ImGui::EndListBox();
+			}
+		}
+	}
+	else
+	{
+		eTexture = AI_TEXTURE_TYPE_MAX;
+	}
+
+#pragma endregion
+#pragma region Properties
+
+	if (eTexture == aiTextureType_DIFFUSE || eTexture == aiTextureType_NORMALS)
+	{
+		ImVec2 imgSize;
+
+		D3D11_TEXTURE2D_DESC tTexture2dDesc{};
+		shared_ptr<CTexture> pTexture = m_pairSelectedParticleMesh.second->Get_Texture(eTexture);
+		if (pTexture)
+		{
+			pTexture->Get_Texture2D()->GetDesc(&tTexture2dDesc);
+
+			_float fWidth	= static_cast<_float>(tTexture2dDesc.Width);
+			_float fHeight	= static_cast<_float>(tTexture2dDesc.Height);
+			_float fAspect	= fWidth / fHeight;
+
+			if (fAspect > 1.f)
+			{
+				imgSize.x = 300.f;
+				imgSize.y = 300.f / fAspect;
+			}
+			else
+			{
+				imgSize.x = 300.f * fAspect;
+				imgSize.y = 300.f;
+			}
+
+			ImGui::Image(pTexture->Get_ShaderResourceView().Get(), imgSize);
+			if (ImGui::BeginItemTooltip())
+			{
+				ImGui::Text("%.0fx%.0f", fWidth, fHeight);
+				ImGui::EndTooltip();
+			}
+		}
+	}
+
+#pragma endregion
+#pragma region Dialog
+
+	if (ImGuiFileDialog::Instance()->Display(DIALOG_SET_TEXTURE))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			if (FAILED(m_pairSelectedParticleMesh.second->Set_TexturePath(eTexture, Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
+			{
+				MSG_BOX("Scene_Tool::Info_Effect", "Failed to DIALOG_SET_TEXTURE");
+			}
+		}
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+#pragma endregion
+
 	ImGui::End();
+}
+
+HRESULT CScene_Tool::Load_BinaryMeshInstanceList(const wstring& _wstrFilePath, const wstring& _wstrFileName)
+{
+	std::ifstream inFile(_wstrFilePath + wstring(TEXT("\\")) + _wstrFileName, std::ios::binary);
+
+	if (!inFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Load_BinaryMeshInstanceList", "Failed to Open File");
+	}
+
+#pragma region Path
+
+	_int	iMaxInstance(0);
+	size_t	nSize(0), nLength(0);
+	_wchar	wszBuffer[MAX_PATH];
+
+	inFile.read(reinterpret_cast<_byte*>(&nSize), sizeof(size_t));
+	for (size_t i = 0; i < nSize; ++i)
+	{
+		//	KEY
+		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
+		inFile.read(reinterpret_cast<_byte*>(&nLength), sizeof(size_t));
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nLength);
+		wstring	wstrKey = wszBuffer;
+		string	strKey = Function::ToString(wstrKey);
+		//	PATH
+		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
+		inFile.read(reinterpret_cast<_byte*>(&nLength), sizeof(size_t));
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nLength);
+		wstring wstrPath = wszBuffer;
+		string	strPath = Function::ToString(wstrPath);
+		//	MAX INSTANCE
+		inFile.read(reinterpret_cast<_byte*>(&iMaxInstance), sizeof(_int));
+
+		shared_ptr<CVIBufferInstance_Mesh> pInstance = dynamic_pointer_cast<CVIBufferInstance_Mesh>(
+			CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, wstrPath, iMaxInstance)->Clone());
+		if (nullptr == pInstance)
+		{
+			MSG_CONTINUE("CScene_Tool::Load_BinaryMeshInstanceList", "Failed to CVIBufferInstance_Mesh::Create");
+		}
+		m_mapExportMeshInstance.emplace(strKey, VIINST{ strPath, iMaxInstance, pInstance });
+	}
+
+#pragma endregion
+
+	if (inFile.fail() || inFile.eof())
+	{
+		inFile.clear();
+		inFile.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Load_BinaryMeshInstanceList", "Failed to Read File");
+	}
+
+	inFile.close();
+
+	return S_OK;
 }
 
 HRESULT CScene_Tool::Load_Model(const wstring& _wstrFilePath, const wstring& _wstrFileName, const MODEL _eType, _matrixf _mPivot)
@@ -933,6 +1658,65 @@ HRESULT CScene_Tool::Load_Model(const wstring& _wstrFilePath, const wstring& _ws
 	return S_OK;
 }
 
+HRESULT CScene_Tool::Load_ParticleMesh(const wstring& _wstrFilePath, const wstring& _wstrFileName)
+{
+	shared_ptr<CVFX_ParticleMesh> pVFX = dynamic_pointer_cast<CVFX_ParticleMesh>(
+		CVFX_ParticleMesh::Create(m_pDevice, m_pContext)->Clone(_wstrFilePath + wstring(TEXT("\\")) + _wstrFileName));
+
+	if (nullptr == pVFX)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Load_Model", "Failed to Create");
+	}
+
+	m_mapParticleMesh.emplace(Function::ToString(_wstrFileName), pVFX);
+
+	m_wstrMeshPath = _wstrFilePath;
+	
+	return S_OK;
+}
+
+HRESULT CScene_Tool::Export_BinaryMeshInstanceList(const wstring& _wstrPath)
+{
+	std::ofstream outFile(_wstrPath, std::ios::binary);
+	if (!outFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryMeshInstanceList", "Failed to Open File");
+	}
+
+#pragma region Export
+
+	size_t nLength = m_mapExportMeshInstance.size();
+	outFile.write(reinterpret_cast<const _byte*>(&nLength),							sizeof(size_t));
+	for (auto& pair : m_mapExportMeshInstance)
+	{
+		//	KEY
+		wstring	wstrKey	= Function::ToWString(pair.first);
+		nLength = wstrKey.length();
+		outFile.write(reinterpret_cast<const _byte*>(&nLength),						sizeof(size_t));
+		outFile.write(reinterpret_cast<const _byte*>(wstrKey.c_str()),				sizeof(_wchar) * nLength);
+		//	PATH
+		wstring	wstrPath = Function::ToWString(pair.second.strPath);
+		nLength = wstrPath.length();
+		outFile.write(reinterpret_cast<const _byte*>(&nLength),						sizeof(size_t));
+		outFile.write(reinterpret_cast<const _byte*>(wstrPath.c_str()),				sizeof(_wchar) * nLength);
+		//	MAX INSTANCE
+		outFile.write(reinterpret_cast<const _byte*>(&pair.second.iMaxInstance),	sizeof(_int));
+	}
+
+#pragma endregion
+
+	if (outFile.fail())
+	{
+		outFile.clear();
+		outFile.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryMeshInstanceList", "Failed to Write File");
+	}
+
+	outFile.close();
+
+	return S_OK;
+}
+
 HRESULT CScene_Tool::Export_BinaryModel(const wstring& _wstrPath)
 {
 	shared_ptr<CModel> pOut = m_pairSelectedModel.second;
@@ -944,6 +1728,22 @@ HRESULT CScene_Tool::Export_BinaryModel(const wstring& _wstrPath)
 	if (FAILED(pOut->Export(_wstrPath)))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryModel", "Failed to Export");
+	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Tool::Export_BinaryParticleMesh(const wstring& _wstrPath)
+{
+	shared_ptr<CVFX_ParticleMesh> pOut = m_pairSelectedParticleMesh.second;
+	if (nullptr == pOut)
+	{
+		return S_FALSE;
+	}
+
+	if (FAILED(pOut->Export(_wstrPath)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryParticleMesh", "Failed to Export");
 	}
 
 	return S_OK;

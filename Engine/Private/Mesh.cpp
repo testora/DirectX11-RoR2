@@ -465,6 +465,27 @@ shared_ptr<CMesh> CMesh::Read(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11Device
 	return pInstance;
 }
 
+shared_ptr<CMesh> CMesh::Read(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const wstring& _wstrPath)
+{
+	std::ifstream inFile(_wstrPath, std::ios::binary);
+
+	if (!inFile.is_open())
+	{
+		MSG_RETURN(nullptr, "CMesh::Read", "Failed to Open File");
+	}
+	
+	shared_ptr<CMesh> pInstance = make_private_shared(CMesh, _pDevice, _pContext);
+
+	if (FAILED(pInstance->Initialize_FromBinary(MODEL::NONANIM, inFile)))
+	{
+		MSG_RETURN(nullptr, "CMesh::Read", "Failed to Initialize_FromBinary");
+	}
+
+	inFile.close();
+
+	return pInstance;
+}
+
 shared_ptr<CComponent> CMesh::Clone(any)
 {
 	return shared_from_componenet();
@@ -494,5 +515,26 @@ void CMesh::Export(std::ofstream& _outFile, MODEL _eType)
 		_outFile.write(reinterpret_cast<const _byte*>(m_pVertices_NonAnim.get()),	sizeof(VTXMESH)		* m_iNumVertices);
 		break;
 	}
+}
+HRESULT CMesh::Export(const wstring& _wstrPath)
+{
+	std::ofstream outFile(_wstrPath, std::ios::binary);
+	if (!outFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CMesh::Export", "Failed to Open File");
+	}
+
+	Export(outFile, MODEL::NONANIM);
+
+	if (outFile.fail())
+	{
+		outFile.clear();
+		outFile.close();
+		MSG_RETURN(E_FAIL, "CMesh::Export", "Failed to Write File: Materials");
+	}
+
+	outFile.close();
+
+	return S_OK;
 }
 #endif

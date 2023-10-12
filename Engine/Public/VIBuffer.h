@@ -18,6 +18,9 @@ public:
 	HRESULT							Render(shared_ptr<class CShader>, shared_ptr<class CTransform>, _uint iPassIndex, _bool bResetFlag = true);
 
 public:
+	_uint							Get_NumInstances() const	{ return m_iNumInstances; }
+
+public:
 	_bool							Intersect(_In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 	_bool							Intersect(_Out_ _float3&, _In_opt_ const _float4x4 _mWorld = g_mUnit) const;
 
@@ -39,7 +42,7 @@ protected:
 	_uint 							m_iNumIndices				= 0;
 	_uint							m_iIndexStride				= 0;
 
-	_uint							m_iNumInstance				= 0;
+	_uint							m_iNumInstances				= 0;
 	_uint							m_iIndicesCountPerInstance	= 0;
 
 	vector<ComPtr<ID3D11Buffer>>	m_vecVB;

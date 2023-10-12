@@ -152,7 +152,7 @@ HRESULT CBrother::Fetch(any _vPosition3)
 
 	m_pVFX_EyeTrail = dynamic_pointer_cast<CVFX_TrailLine>(
 		CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_LINE)->Pop(
-		make_pair(shared_from_gameobject(), "2HWeaponHandPlacement.l")));
+		make_pair(shared_from_gameobject(), "eyeball")));
 
 	m_pVFX_EyeTrail->Set_Color(_color(0.2f, 0.6f, 0.8f, 1.f));
 	m_pVFX_EyeTrail->Set_Thickness(0.05f);

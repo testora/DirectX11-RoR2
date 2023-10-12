@@ -16,6 +16,7 @@
 #define PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT						TEXT("Prototype:GameObject:Effect:Demo:Rect")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE						TEXT("Prototype:GameObject:Effect:Trail:Line")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD						TEXT("Prototype:GameObject:Effect:Trail:Quad")
+#define PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH					TEXT("Prototype:GameObject:Effect:Particle:Mesh")
 
 #pragma	endregion
 #pragma region Component
@@ -31,6 +32,7 @@
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT					TEXT("Prototype:Component:Shader:Instance:Point")
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE					TEXT("Prototype:Component:Shader:Instance:Line")
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT					TEXT("Prototype:Component:Shader:Instance:Rect")
+#define PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH					TEXT("Prototype:Component:Shader:Instance:Mesh")
 
 #define PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND						TEXT("Prototype:Component:Texture:Background")
 #define PROTOTYPE_COMPONENT_TEXTURE_TERRAIN							TEXT("Prototype:Component:Texture:Terrain")
@@ -46,6 +48,7 @@
 #define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_POINT					TEXT("Prototype:Component:VIBuffer:Instance:Point")
 #define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE					TEXT("Prototype:Component:VIBuffer:Instance:Line")
 #define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT					TEXT("Prototype:Component:VIBuffer:Instance:Rect")
+#define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_PILLAR				TEXT("Prototype:Component:VIBuffer:Instance:Pillar")
 
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER						TEXT("Prototype:Component:Model:RailGunner")
 #define PROTOTYPE_COMPONENT_MODEL_BROTHER							TEXT("Prototype:Component:Model:Brother")

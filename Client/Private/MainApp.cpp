@@ -225,21 +225,27 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstPoint.hlsl"), VTXINSTTRANSCOLORARG::tElements, VTXINSTTRANSCOLORARG::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstPoint.hlsl"), VTXPOSSIZEINSTTRANSCOLORARG::tElements, VTXPOSSIZEINSTTRANSCOLORARG::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_POINT");
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstLine.hlsl"), VTXINSTTRANSCOLORARG::tElements, VTXINSTTRANSCOLORARG::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstLine.hlsl"), VTXPOSSIZEINSTTRANSCOLORARG::tElements, VTXPOSSIZEINSTTRANSCOLORARG::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_LINE");
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT,
-		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstRect.hlsl"), VTXINSTTRANS::tElements, VTXINSTTRANS::iNumElement))))
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstRect.hlsl"), VTXPOSSIZEINSTTRANS::tElements, VTXPOSSIZEINSTTRANS::iNumElement))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT");
+	}
+
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH,
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/InstMesh.hlsl"), VTXPOSNORTANTEXINSTTRANSCOLORARG::tElements, VTXPOSNORTANTEXINSTTRANSCOLORARG::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH");
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_RECT,

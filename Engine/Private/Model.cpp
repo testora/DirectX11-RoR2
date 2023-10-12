@@ -111,14 +111,17 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 			}
 		}
 
+		if (MODEL::ANIM == m_eType)
+		{
+			if (FAILED(Bind_BoneMatrices(i, _pShader, SHADER_BONE)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_BoneMatrices");
+			}
+		}
+
 		if (FAILED(Bind_ShaderResourceViews(i, _pShader)))
 		{
 			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_ShaderResourceViews");
-		}
-
-		if (FAILED(Bind_BoneMatrices(i, _pShader, SHADER_BONE)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_BoneMatrices");
 		}
 
 		if (FAILED(Render(i, _pShader, _iPassIndex)))

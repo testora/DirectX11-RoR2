@@ -18,7 +18,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& _rhs)
 	: CComponent				(_rhs)
 	, m_pVB						(_rhs.m_pVB)
 	, m_pIB						(_rhs.m_pIB)
-	, m_iNumInstance			(_rhs.m_iNumInstance)
+	, m_iNumInstances			(_rhs.m_iNumInstances)
 	, m_iIndicesCountPerInstance(_rhs.m_iIndicesCountPerInstance)
 	, m_iNumVertices			(_rhs.m_iNumVertices)
 	, m_iNumIndices				(_rhs.m_iNumIndices)
@@ -51,9 +51,9 @@ HRESULT CVIBuffer::Initialize(any)
 	m_vecVertexStride.emplace_back(m_iVertexStride);
 	m_vecVertexOffset.emplace_back(0);
 
-	if (0 == m_iNumInstance)
+	if (0 == m_iNumInstances)
 	{
-		m_iNumInstance = 1;
+		m_iNumInstances = 1;
 	}
 
 	if (0 == m_iIndicesCountPerInstance)
@@ -69,7 +69,7 @@ HRESULT CVIBuffer::Render()
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
 	m_pContext->IASetVertexBuffers(0, m_iNumVB, Function::ConvertToRawPtrVector(m_vecVB).data(), m_vecVertexStride.data(), m_vecVertexOffset.data());
 	m_pContext->IASetIndexBuffer(m_pIB.Get(), m_eIndexFormat, 0);
-	m_pContext->DrawIndexedInstanced(m_iIndicesCountPerInstance, m_iNumInstance, 0, 0, 0);
+	m_pContext->DrawIndexedInstanced(m_iIndicesCountPerInstance, m_iNumInstances, 0, 0, 0);
 
 	return S_OK;
 }

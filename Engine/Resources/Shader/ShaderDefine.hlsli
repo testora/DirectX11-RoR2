@@ -64,6 +64,13 @@ RasterizerState RS_NoneCull
 	FrontCounterClockwise   = false;
 };
 
+RasterizerState RS_WireFrame
+{
+    FillMode				= wireframe;
+    CullMode				= back;
+    FrontCounterClockwise	= false;
+};
+
 // BlendState
 
 BlendState BS_Default

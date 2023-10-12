@@ -13,13 +13,13 @@ CVIBufferInstance_Rect::CVIBufferInstance_Rect(const CVIBufferInstance_Rect& _rh
 
 HRESULT CVIBufferInstance_Rect::Initialize_Prototype(_uint _iNumInstance)
 {
-	m_iNumInstance				= _iNumInstance;
-	m_iInstanceStride			= sizeof(VTXINSTTRANS);
+	m_iNumInstances				= _iNumInstance;
+	m_iInstanceStride			= sizeof(VTXPOSSIZEINSTTRANS);
 	m_iIndicesCountPerInstance	= 6;
 
     m_iNumVB					= 2;
 	m_iNumVertices				= 4;
-	m_iNumIndices				= m_iNumInstance * m_iIndicesCountPerInstance;
+	m_iNumIndices				= m_iNumInstances * m_iIndicesCountPerInstance;
 	m_iVertexStride				= sizeof(VTXPOSTEX);
 	m_iIndexStride				= sizeof(_uint);
 	m_eIndexFormat				= DXGI_FORMAT_R32_UINT;
@@ -31,7 +31,7 @@ HRESULT CVIBufferInstance_Rect::Initialize_Prototype(_uint _iNumInstance)
 #pragma region VERTEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumVertices * m_iVertexStride;
+	m_tBufferDesc.ByteWidth				= m_iVertexStride * m_iNumVertices;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
@@ -61,11 +61,10 @@ HRESULT CVIBufferInstance_Rect::Initialize_Prototype(_uint _iNumInstance)
 	}
 
 #pragma endregion
-
 #pragma region INDEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumIndices * m_iIndexStride;
+	m_tBufferDesc.ByteWidth				= m_iIndexStride * m_iNumIndices;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_INDEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
@@ -75,7 +74,7 @@ HRESULT CVIBufferInstance_Rect::Initialize_Prototype(_uint _iNumInstance)
 	auto pIndices = Function::CreateDynamicArray<_uint>(m_iNumIndices);
 
 	_uint iIndex = 0;
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	for (_uint i = 0; i < m_iNumInstances; ++i)
 	{
 		pIndices[iIndex++]	= 0;
 		pIndices[iIndex++]	= 1;
@@ -104,15 +103,15 @@ HRESULT CVIBufferInstance_Rect::Initialize(any)
 #pragma region INSTANCE_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumInstance * m_iInstanceStride;
+	m_tBufferDesc.ByteWidth				= m_iInstanceStride * m_iNumInstances;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DYNAMIC;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= D3D11_CPU_ACCESS_WRITE;
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pInstanceVertices = Function::CreateDynamicArray<VTXINSTTRANS>(m_iNumInstance);
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	auto pInstanceVertices = Function::CreateDynamicArray<VTXPOSSIZEINSTTRANS>(m_iNumInstances);
+	for (_uint i = 0; i < m_iNumInstances; ++i)
 	{
 		memcpy(&pInstanceVertices[i], &g_mUnit, sizeof(g_mUnit));
 	}

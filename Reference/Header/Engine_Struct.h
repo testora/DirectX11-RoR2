@@ -124,7 +124,7 @@ namespace Engine
 
 #pragma region Instance
 
-	typedef struct ENGINE_DLL tagVertexInstanceTransform
+	typedef struct ENGINE_DLL tagVertexPositionSizeInstanceTransform
 	{
 		XMFLOAT4			vRight;
 		XMFLOAT4			vUp;
@@ -133,9 +133,9 @@ namespace Engine
 
 		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 4;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
-	} VTXINSTTRANS;
+	} VTXPOSSIZEINSTTRANS;
 
-	typedef struct ENGINE_DLL tagVertexInstanceTransformColor
+	typedef struct ENGINE_DLL tagVertexPositionSizeInstanceTransformColor
 	{
 		XMFLOAT4			vRight;
 		XMFLOAT4			vUp;
@@ -146,9 +146,9 @@ namespace Engine
 
 		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 5;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
-	} VTXINSTTRANSCOLOR;
+	} VTXPOSSIZEINSTTRANSCOLOR;
 
-	typedef struct ENGINE_DLL tagVertexInstanceTransformColorArgument
+	typedef struct ENGINE_DLL tagVertexPositionSizeInstanceTransformColorArgument
 	{
 		XMFLOAT4			vRight;
 		XMFLOAT4			vUp;
@@ -160,7 +160,21 @@ namespace Engine
 
 		const static _uint						iNumElement = VTXPOSSIZE::iNumElement + 6;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
-	} VTXINSTTRANSCOLORARG;
+	} VTXPOSSIZEINSTTRANSCOLORARG;
+
+	typedef struct ENGINE_DLL tagVertexPositionNormalTangentTexcoordInstanceTransformColorArgument
+	{
+		XMFLOAT4			vRight;
+		XMFLOAT4			vUp;
+		XMFLOAT4			vLook;
+		XMFLOAT4			vTranslation;
+
+		XMFLOAT4			vColor;
+		XMFLOAT4			vArgument;
+
+		const static _uint						iNumElement = VTXMESH::iNumElement + 6;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXPOSNORTANTEXINSTTRANSCOLORARG;
 
 #pragma endregion
 #pragma endregion

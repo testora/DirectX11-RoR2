@@ -56,10 +56,12 @@ public:
 	static shared_ptr<CMesh>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, const aiMesh*, shared_ptr<class CModel>);
 #endif
 	static shared_ptr<CMesh>		Read(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, MODEL, std::ifstream&);
+	static shared_ptr<CMesh>		Read(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const wstring& wstrPath);
 	virtual shared_ptr<CComponent>	Clone(any = g_aNull) override;
 
 #if ACTIVATE_TOOL
 	void							Export(std::ofstream&, MODEL);
+	HRESULT							Export(const wstring& wstrPath);
 #endif
 };
 

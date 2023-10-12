@@ -252,14 +252,14 @@ void CCamera_Main::Handle_MouseInput(_float _fTimeDelta)
 
 	if (ptCursorMove.x)
 	{
-		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.y * ptCursorMove.x * _fTimeDelta);
+		m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.x * ptCursorMove.x * _fTimeDelta);
 	}
 
 	if (ptCursorMove.y)
 	{
 		_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
 		_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
-		_float	fChgPitch	= m_vSensitivty.x * ptCursorMove.y * _fTimeDelta;
+		_float	fChgPitch	= m_vSensitivty.y * ptCursorMove.y * _fTimeDelta;
 		_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 		_float	fFinal		= fNewPitch - fCurPitch;
 
@@ -276,30 +276,30 @@ void CCamera_Main::Handle_MouseInput_Debug(_float _fTimeDelta)
 
 		if (ptCursorMove.x)
 		{
-			m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.y * ptCursorMove.x * _fTimeDelta);
+			m_pTransform->Rotate(_float3(0.f, 1.f, 0.f), m_vSensitivty.x * ptCursorMove.x * _fTimeDelta);
 		}
 
 		if (ptCursorMove.y)
 		{
 			_float3	vLook		= m_pTransform->Get_State(TRANSFORM::LOOK);
 			_float	fCurPitch	= atan2f(-vLook.y, sqrtf(powf(vLook.x, 2) + powf(vLook.z, 2)));
-			_float	fChgPitch	= m_vSensitivty.x * ptCursorMove.y * _fTimeDelta;
+			_float	fChgPitch	= m_vSensitivty.y * ptCursorMove.y * _fTimeDelta;
 			_float	fNewPitch	= Function::Clamp(XMConvertToRadians(MAINCAM_PITCH_MIN), XMConvertToRadians(MAINCAM_PITCH_MAX), fCurPitch + fChgPitch);
 			_float	fFinal		= fNewPitch - fCurPitch;
 
 			m_pTransform->Rotate(TRANSFORM::RIGHT, fFinal);
 		}
+
+		if (_short sVerticalScroll = CGameInstance::Get_Instance()->Get_CursorScroll().y)
+		{
+			m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::LOOK) * sVerticalScroll * 0.01f);
+		}
 	}
 	if (CGameInstance::Get_Instance()->Key_Hold(VK_MBUTTON))
 	{
 		POINT ptMove = CGameInstance::Get_Instance()->Get_CursorMove();
-		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::RIGHT)	* static_cast<_float>(-ptMove.x));
-		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::UP)		* static_cast<_float>(-ptMove.y));
-	}
-
-	if (_short sVerticalScroll = CGameInstance::Get_Instance()->Get_CursorScroll().y)
-	{
-		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::LOOK) * sVerticalScroll * 0.1f);
+		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::RIGHT)	* m_vDebugSensitivity.x * static_cast<_float>(-ptMove.x));
+		m_pTransform->Translate(m_pTransform->Get_State(TRANSFORM::UP)		* m_vDebugSensitivity.y * static_cast<_float>(-ptMove.y));
 	}
 }
 #endif

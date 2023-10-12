@@ -13,13 +13,13 @@ CVIBufferInstance_Point::CVIBufferInstance_Point(const CVIBufferInstance_Point& 
 
 HRESULT CVIBufferInstance_Point::Initialize_Prototype(_uint _iNumInstance)
 {
-	m_iNumInstance				= _iNumInstance;
-	m_iInstanceStride			= sizeof(VTXINSTTRANSCOLORARG);
+	m_iNumInstances				= _iNumInstance;
+	m_iInstanceStride			= sizeof(VTXPOSSIZEINSTTRANSCOLORARG);
 	m_iIndicesCountPerInstance	= 1;
 
     m_iNumVB					= 2;
 	m_iNumVertices				= 1;
-	m_iNumIndices				= m_iNumInstance * m_iIndicesCountPerInstance;
+	m_iNumIndices				= m_iNumInstances * m_iIndicesCountPerInstance;
 	m_iVertexStride				= sizeof(VTXPOSSIZE);
 	m_iIndexStride				= sizeof(_uint);
 	m_eIndexFormat				= DXGI_FORMAT_R32_UINT;
@@ -31,7 +31,7 @@ HRESULT CVIBufferInstance_Point::Initialize_Prototype(_uint _iNumInstance)
 #pragma region VERTEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumVertices * m_iVertexStride;
+	m_tBufferDesc.ByteWidth				= m_iVertexStride * m_iNumVertices;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
@@ -52,11 +52,10 @@ HRESULT CVIBufferInstance_Point::Initialize_Prototype(_uint _iNumInstance)
 	}
 
 #pragma endregion
-
 #pragma region INDEX_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumIndices * m_iIndexStride;
+	m_tBufferDesc.ByteWidth				= m_iIndexStride * m_iNumIndices;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DEFAULT;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_INDEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= 0;
@@ -83,15 +82,15 @@ HRESULT CVIBufferInstance_Point::Initialize(any)
 #pragma region INSTANCE_BUFFER
 
 	ZeroMemory(&m_tBufferDesc, sizeof m_tBufferDesc);
-	m_tBufferDesc.ByteWidth				= m_iNumInstance * m_iInstanceStride;
+	m_tBufferDesc.ByteWidth				= m_iInstanceStride * m_iNumInstances;
 	m_tBufferDesc.Usage					= D3D11_USAGE_DYNAMIC;
 	m_tBufferDesc.BindFlags				= D3D11_BIND_VERTEX_BUFFER;
 	m_tBufferDesc.CPUAccessFlags		= D3D11_CPU_ACCESS_WRITE;
 	m_tBufferDesc.MiscFlags				= 0;
 	m_tBufferDesc.StructureByteStride	= 0;
 
-	auto pInstanceVertices = Function::CreateDynamicArray<VTXINSTTRANSCOLORARG>(m_iNumInstance);
-	for (_uint i = 0; i < m_iNumInstance; ++i)
+	auto pInstanceVertices = Function::CreateDynamicArray<VTXPOSSIZEINSTTRANSCOLORARG>(m_iNumInstances);
+	for (_uint i = 0; i < m_iNumInstances; ++i)
 	{
 		memcpy(&pInstanceVertices[i], &g_mUnit, sizeof(g_mUnit));
 	}

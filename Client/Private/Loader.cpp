@@ -4,6 +4,7 @@
 
 #pragma region Scene Loader Header
 #include "Loader_Menu.h"
+#include "Loader_Tool.h"
 #include "Loader_Test.h"
 #include "Loader_Moon.h"
 #pragma endregion
@@ -43,6 +44,10 @@ HRESULT CLoader::Loading()
 	{
 	case SCENE::MENU:
 		hr = Load_Menu();
+		break;
+
+	case SCENE::TOOL:
+		hr = Load_Tool();
 		break;
 
 	case SCENE::TEST:

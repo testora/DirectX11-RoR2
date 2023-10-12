@@ -27,6 +27,12 @@ public:
 	virtual HRESULT					Render() override;
 
 public:
+#ifdef _DEBUG
+	void							Set_Debug(_bool bDebug = true)				{ m_bDebug = bDebug; }
+	void							Set_DebugSensitivity(_float2 vSensitivity)	{ m_vDebugSensitivity = vSensitivity; }
+#endif
+
+public:
 	HRESULT							Attach(shared_ptr<CTransform>, _float4 vOffset = _float4());
 
 	void							Rebound_Pistol();
@@ -54,7 +60,8 @@ private:
 	_float3							m_vShakeAxis;
 
 #ifdef _DEBUG
-	_bool							m_bDebug	= false;
+	_bool							m_bDebug				= false;
+	_float2							m_vDebugSensitivity		= _float2(1.f, 1.f);
 #endif
 
 public:

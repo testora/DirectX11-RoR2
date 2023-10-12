@@ -33,9 +33,9 @@ void CVIBufferInstance::Update(function<void(void* _pData, _uint _iNumInstance)>
 
 	m_pContext->Map(m_pInstanceVB.Get(), 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &tSubResource);
 
-	for (_uint i = 0; i < m_iNumInstance; i++)
+	for (_uint i = 0; i < m_iNumInstances; i++)
 	{
-		_fpListener(tSubResource.pData, m_iNumInstance);
+		_fpListener(tSubResource.pData, m_iNumInstances);
 	}
 
 	m_pContext->Unmap(m_pInstanceVB.Get(), 0);

@@ -36,6 +36,7 @@ private:
 
 private:
 	bitset<IDX(RG_STATE::MAX)>				m_bitState;
+	bitset<IDX(RG_STATE::MAX)>				m_bitPrevState;
 	array<_float, IDX(RG_STATE::MAX)>		m_arrStateTime{};
 
 	weak_ptr<class CRailGunner>				m_pRailGunner;

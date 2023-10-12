@@ -124,7 +124,7 @@ _bool CVFX_TrailQuad::Return()
 
 void CVFX_TrailQuad::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 {
-	VTXINSTTRANSCOLORARG* pData = reinterpret_cast<VTXINSTTRANSCOLORARG*>(_pData);
+	VTXPOSSIZEINSTTRANSCOLORARG* pData = reinterpret_cast<VTXPOSSIZEINSTTRANSCOLORARG*>(_pData);
 }
 
 void CVFX_TrailQuad::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
@@ -133,7 +133,7 @@ void CVFX_TrailQuad::Update_Instance(void* _pData, _uint _iNumInstance, _float _
 	{
 		m_fTimeAcc = fmodf(m_fTimeAcc, m_fInterval);
 
-		VTXINSTTRANSCOLORARG* pData = reinterpret_cast<VTXINSTTRANSCOLORARG*>(_pData);
+		VTXPOSSIZEINSTTRANSCOLORARG* pData = reinterpret_cast<VTXPOSSIZEINSTTRANSCOLORARG*>(_pData);
 
 		pData[m_iIndex].vColor = _color(1.f, 1.f, 1.f, 0.f);
 

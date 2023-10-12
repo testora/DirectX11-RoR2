@@ -40,11 +40,6 @@ struct PS_IN
 	float2 vTexCoord	: TEXCOORD0;
 };
 
-struct PS_OUT
-{
-	float4 vColor		: SV_TARGET0;
-};
-
 struct PS_OUT_POSTPROCESS
 {
 	float4 vPreProcess	: SV_TARGET0;

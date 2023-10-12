@@ -158,4 +158,17 @@ technique11 DefaultTechnique
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
+
+	pass WIREFRAME
+	{
+		VertexShader	= compile vs_5_0 VS_MAIN();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN();
+
+		SetRasterizerState(RS_WireFrame);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+	}
 }
