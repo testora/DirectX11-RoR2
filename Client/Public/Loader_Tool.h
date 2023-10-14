@@ -15,7 +15,7 @@ HRESULT CLoader::Load_Tool()
 #pragma region Prototype VIBuffer
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TOOL, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT,
-		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 100))))
+		CVIBufferInstance_Rect::Create(m_pDevice, m_pContext, 10000))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Tool", "Failed to Add_Object_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_RECT");
 	}

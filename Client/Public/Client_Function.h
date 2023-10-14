@@ -15,5 +15,7 @@ namespace Function
 	_float					RelativeAngle(shared_ptr<CTransform> pOwner, shared_ptr<CTransform> pOpponent);
 	_float2					Clip_To_Screen(_float3 vClipSpace, _bool bCenterSpace = false);
 
+	_float3					Rotate_By_Transform(shared_ptr<CTransform>, _float3);
+
 	shared_ptr<CGameObject>	Find_Player();
 }

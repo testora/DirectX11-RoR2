@@ -30,7 +30,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	VS_OUT	Out;
 
 	float4x4	mTransformation	= float4x4(In.vRight, In.vUp, In.vLook, In.vTranslation);
-    float4		vPosition		= mul(float4(In.vPosition, 1.f), mTransformation);
+    float4		vPosition		= float4(In.vPosition, 1.f);
 
 	float4x4	mIW				= mul(mTransformation, g_mWorld);
 	float4x4	mIWV			= mul(mIW, g_mView);

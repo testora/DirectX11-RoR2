@@ -31,6 +31,18 @@ _float2 Function::Clip_To_Screen(_float3 _vClipSpace, _bool _bCenterSpace)
 	}
 }
 
+_float3 Function::Rotate_By_Transform(shared_ptr<CTransform> _pTransform, _float3 _vTranslation)
+{
+	_vector vScale, vQuaternion, vTranslation;
+	
+	if (XMMatrixDecompose(&vScale, &vQuaternion, &vTranslation, _pTransform->Get_Matrix()))
+	{
+		return XMVector3Rotate(XMLoadFloat3(&_vTranslation), vQuaternion);
+	}
+
+	return _vTranslation;
+}
+
 _bool Function::Is_Cursor_In(_float2 _vPosition, _float2 _vSize)
 {
 	POINT	ptCursor = CGameInstance::Get_Instance()->Get_CursorPos();

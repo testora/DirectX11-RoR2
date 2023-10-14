@@ -448,7 +448,7 @@ _uint CModel::Get_BoneIndex(const _char* _szBoneName) const
 }
 
 _uint CModel::Get_MeshIndex(const _char* _szMeshName) const
-{
+{  
 	for (_uint i = 0; i < m_vecMeshes.size(); ++i)
 	{
 		if (!strcmp(m_vecMeshes[i]->Get_Name(), _szMeshName))
@@ -459,6 +459,21 @@ _uint CModel::Get_MeshIndex(const _char* _szMeshName) const
 
 	return static_cast<_uint>(m_vecMeshes.size());
 }
+
+#if ACTIVATE_TOOL
+const _uint CModel::Get_AnimationIndex(shared_ptr<CAnimation> _pAnimation) const
+{
+	for (_uint i = 0; i < m_iNumAnimations; ++i)
+	{
+		if (m_vecAnimations[i] == _pAnimation)
+		{
+			return i;
+		}
+	}
+
+	return m_iNumAnimations;
+}
+#endif
 
 void CModel::Set_DefaultAnimation(_uint _iAnimationIndex)
 {

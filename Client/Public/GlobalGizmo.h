@@ -23,6 +23,9 @@ public:
 	virtual HRESULT						Render() override;
 
 public:
+	void								Initialize_Gizmo(_int2 vGridSize);
+
+public:
 	static shared_ptr<CGlobalGizmo>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>		Clone(any = g_aNull) override;
 };

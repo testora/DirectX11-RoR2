@@ -31,6 +31,8 @@ private:
 
 	shared_ptr<CTransform>							m_pTargetTransform;
 
+	_bool											m_bEffectAvailable	= false;
+
 public:
 	static shared_ptr<CBrotherNodeLeaf_LunarSmash>	Create(shared_ptr<class CBlackBoard>);
 };

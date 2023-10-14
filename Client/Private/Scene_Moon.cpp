@@ -215,13 +215,12 @@ HRESULT CScene_Moon::Ready_Effect()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD");
 	}
 
-//	{
-//		shared_ptr<CVFX_ParticleMesh> pInstance = dynamic_pointer_cast<CVFX_ParticleMesh>(CVFX_ParticleMesh::Create(m_pDevice, m_pContext)->Clone());
-//		pInstance->Add_Component(COMPONENT::VIBUFFER_INSTANCE_MESH, CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Effect/Brother/Mesh/pillar.msh"), 10)->Clone());
-//		pInstance->Set_TexturePath(aiTextureType_DIFFUSE, TEXT("Bin/Resources/Effect/Brother/Mesh/texBlendMoonDiffuse.png"));
-//		pInstance->Set_TexturePath(aiTextureType_NORMALS, TEXT("Bin/Resources/Effect/Brother/Mesh/texNormalConcrete.png"));
-//		pLayer->Add(pInstance);
-//	}
+	shared_ptr<CObjectPool> pPoolParticleMeshVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON,
+		POOL_EFFECT_PARTICLE_MESH_PILLAR, PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH, 5, wstring(TEXT("Bin/Resources/Effect/Brother/Mesh/Pillar.vfx")));
+	if (nullptr == pPoolParticleMeshVfx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH");
+	}
 
 	return S_OK;
 }

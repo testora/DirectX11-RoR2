@@ -82,6 +82,7 @@
 #define POOL_EFFECT_DEMO_RECT										TEXT("Pool:Effect:Demo:Rect")
 #define POOL_EFFECT_TRAIL_LINE										TEXT("Pool:Effect:Trail:Line")
 #define POOL_EFFECT_TRAIL_QUAD										TEXT("Pool:Effect:Trail:Quad")
+#define POOL_EFFECT_PARTICLE_MESH_PILLAR							TEXT("Pool:Effect:Particle:Mesh:Pillar")
 
 #pragma endregion
 #pragma region Grid Layer

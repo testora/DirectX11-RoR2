@@ -38,7 +38,7 @@ public:
 	virtual void										Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT										Render() override;
 
-	virtual HRESULT										Fetch(any = g_aNull) override;
+	virtual HRESULT										Fetch(any vPosition3 = g_aNull) override;
 	virtual _bool										Return() override;
 
 protected:
@@ -57,14 +57,14 @@ public:
 	void												Set_BounceDesc(_uint iIndex, const BOUNCEDESC& tBounceDesc)	{ m_vecBounceDesc[iIndex] = tBounceDesc; }
 	void												Set_TimeLock(_bool bTimeLock = true)						{ m_bTimeLock = bTimeLock; }
 	void												Set_Time(_float fTime)										{ m_fTimeAcc = fTime; }
+	void												Set_VIBufferInstanceMeshTag(const wstring& wstrTag)			{ m_wstrVIInstMeshTag = wstrTag; }
 
 	virtual void										Set_ActivateInstances(_uint iNumInstance) override;
 
-	virtual HRESULT										Add_Component(const COMPONENT, shared_ptr<class CComponent>) override;
-
 	void												Update();
-	void												Update(_float fTrack);
 #endif
+
+	virtual HRESULT										Add_Component(const COMPONENT, shared_ptr<class CComponent>) override;
 
 private:
 	_float												m_fTimeAcc			= 0.f;
@@ -72,12 +72,13 @@ private:
 	shared_ptr<CTexture>								m_pTexDiffuse;
 	shared_ptr<CTexture>								m_pTexNormal;
 
-	_float												m_fTotalBounceTime	= 0.f;
 	_bool												m_bTimeLock			= false;
+	_float												m_fTotalBounceTime	= 0.f;
 
 private:
 	TYPE												m_eType				= TYPE::BOUNCE;
 
+	wstring												m_wstrVIInstMeshTag;
 	wstring												m_wstrTexDiffusePath;
 	wstring												m_wstrTexNormalPath;
 

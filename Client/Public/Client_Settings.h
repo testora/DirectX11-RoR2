@@ -134,6 +134,9 @@
 
 #define BROTHER_DASH_FORCE						100.f
 
+#define BROTHER_EFFECT_DELAY_PILLAR				1.63f
+#define BROTHER_EFFECT_OFFSET_PILLAR			_float3(0.f, 0.f, 8.f)
+
 #pragma endregion
 #pragma region INGAME - Golem
 

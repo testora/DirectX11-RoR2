@@ -57,7 +57,9 @@ private:
 	void												System_Effect();
 	void												Info_Model();
 	void												Info_Effect();
+	void												Control_Model();
 	void												Control_Effect();
+	void												SubControl_Effect();
 
 	HRESULT												Load_BinaryMeshInstanceList(const wstring& wstrFilePath, const wstring& wstrFileName);
 	HRESULT												Load_Model(const wstring& wstrFilePath, const wstring& wstrFileName, const MODEL, _matrixf mPivot);

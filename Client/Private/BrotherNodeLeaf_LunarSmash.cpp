@@ -39,6 +39,8 @@ void CBrotherNodeLeaf_LunarSmash::Activate()
 {
 	__super::Activate();
 
+	m_bEffectAvailable = true;
+
 	m_pTransform->LookAt(m_pTargetTransform);
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f, false, g_fDefaultInterpolationDuration, false);
 }
@@ -55,6 +57,17 @@ STATUS CBrotherNodeLeaf_LunarSmash::Invoke(_float _fTimeDelta)
 		}
 		else
 		{
+			if (m_bEffectAvailable)
+			{
+				if (BROTHER_EFFECT_DELAY_PILLAR * 0.5f < m_fTimeAcc)
+				{
+					CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_EFFECT_PARTICLE_MESH_PILLAR)
+						->Pop(m_pTransform->Get_State(TRANSFORM::POSITION) + Function::Rotate_By_Transform(m_pTransform, BROTHER_EFFECT_OFFSET_PILLAR));
+
+					m_bEffectAvailable = false;
+				}
+			}
+
 			m_eStatus = STATUS::RUNNING;
 		}
 	}

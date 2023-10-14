@@ -52,7 +52,8 @@ public:
 	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const									{ return m_vecMeshes[iIndex]; }
 	MATERIAL													Get_Material(_uint iIndex) const								{ return m_vecMaterials[iIndex]; }
 
-	_uint														Get_BoneAnimationIndex(_uint iBoneIndex) const					{ return m_vecBoneAnimationIndices[iBoneIndex]; }
+	const _uint													Get_AnimationIndex(shared_ptr<class CAnimation>) const;
+	const _uint													Get_BoneAnimationIndex(_uint iBoneIndex) const					{ return m_vecBoneAnimationIndices[iBoneIndex]; }
 	
 	void														Set_BoneAnimationIndex(_uint iBoneIndex, _uint iAnimationIndex)	{ m_vecBoneAnimationIndices[iBoneIndex] = iAnimationIndex; }
 #endif

@@ -21,7 +21,9 @@ CScene_Tool::CScene_Tool(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 	: CScene(_pDevice, _pContext, SCENE::TOOL)
 {
 }
+
 static shared_ptr<CMesh> pMesh;
+
 HRESULT CScene_Tool::Initialize()
 {
 	if (FAILED(__super::Initialize()))
@@ -85,9 +87,16 @@ HRESULT CScene_Tool::Initialize()
 
 static _bool bTriplanerPass = true;
 static _bool bTickParticle = false;
+static _bool bGlobalGizmo = false;
+static _int2 vGismoSize(10, 10);
 
 void CScene_Tool::Tick(_float _fTimeDelta)
 {
+	if (bGlobalGizmo)
+	{
+		m_pGlobalGizmo->Tick(_fTimeDelta);
+	}
+
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::MenuItem("Edit Model"))
@@ -129,6 +138,7 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 	{
 		System_Model();
 		Info_Model();
+		Control_Model();
 
 		if (m_pairSelectedModel.second)
 		{
@@ -138,11 +148,10 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 	break;
 	case Client::TOOL::EFFECT:
 	{
-		m_pGlobalGizmo->Tick(_fTimeDelta);
-
 		System_Effect();
 		Info_Effect();
 		Control_Effect();
+		SubControl_Effect();
 
 		if (m_pairSelectedParticleMesh.second)
 		{
@@ -179,6 +188,11 @@ void CScene_Tool::Late_Tick(_float _fTimeDelta)
 	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
 	ImGui::End();
 
+	if (bGlobalGizmo)
+	{
+		m_pGlobalGizmo->Late_Tick(_fTimeDelta);
+	}
+
 	switch (m_eTool)
 	{
 	case Client::TOOL::MODEL:
@@ -188,8 +202,6 @@ void CScene_Tool::Late_Tick(_float _fTimeDelta)
 	break;
 	case Client::TOOL::EFFECT:
 	{
-		m_pGlobalGizmo->Late_Tick(_fTimeDelta);
-
 		m_pRenderer->Add_RenderObject(RENDER_GROUP::NONBLEND, shared_from_this());
 		if (m_pairSelectedParticleMesh.second)
 		{
@@ -522,7 +534,7 @@ void CScene_Tool::System_Model()
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
 				m_pairSelectedModel = pair;
-
+				m_pSelectedAnimation = nullptr;
 				bRenderMesh = false;
 			}
 
@@ -549,7 +561,7 @@ void CScene_Tool::System_Model()
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
 				m_pairSelectedModel = pair;
-
+				m_pSelectedAnimation = nullptr;
 				bRenderMesh = false;
 			}
 
@@ -584,7 +596,7 @@ void CScene_Tool::System_Effect()
 				m_imEmbed_Export.Close();
 			}
 
-			const _char* szFilters = "Instance (*.lst){.lst},Effects (*.vfx,*.fbx){.msh},Binary (*.vfx){.vfx},FBX (*.fbx){.fbx},All files{.*}";
+			const _char* szFilters = "Binary (*.dat, *.vfx,){.dat,.vfx},Instance (*.dat){.dat},Effects (*.vfx){.vfx},All files{.*}";
 			m_imEmbed_Open.OpenDialog(DIALOG_EFFECT_LOAD, "Open Effect", szFilters, "Bin/Resources/", 1, nullptr,
 				ImGuiFileDialogFlags_HideColumnType			|
 				ImGuiFileDialogFlags_NoDialog				|
@@ -606,7 +618,7 @@ void CScene_Tool::System_Effect()
 				m_imEmbed_Open.Close();
 			}
 
-			const _char* szFilters = "Instance (*.lst){.lst},Effects (*.vfx,*.fbx){.msh},Binary (*.vfx){.vfx},FBX (*.fbx){.fbx},All files{.*}";
+			const _char* szFilters = "Binary (*.dat, *.vfx,){.dat,.vfx},Instance (*.dat){.dat},Effects (*.vfx){.vfx},All files{.*}";
 			m_imEmbed_Export.OpenDialog(DIALOG_EFFECT_EXPORT, "Export Effect", szFilters, "Bin/Resources/", "",
 				[](const char*, void*, bool*)
 				{
@@ -656,14 +668,14 @@ void CScene_Tool::System_Effect()
 			string strExt;
 			Function::SplitPath(m_imEmbed_Open.GetCurrentFileName(), nullptr, nullptr, nullptr, &strExt);
 
-			if (".lst" == strExt)
+			if (".dat" == strExt)
 			{
 				if (FAILED(Load_BinaryMeshInstanceList(Function::ToWString(m_imEmbed_Open.GetCurrentPath()), Function::ToWString(m_imEmbed_Open.GetCurrentFileName()))))
 				{
 					MSG_BOX("CScene_Tool::System_Effect", "Failed to Load_BinaryMeshInstanceList");
 				}
 			}
-			else if(".msh" == strExt)
+			else if(".vfx" == strExt)
 			{
 				if (FAILED(Load_ParticleMesh(Function::ToWString(m_imEmbed_Open.GetCurrentPath()), Function::ToWString(m_imEmbed_Open.GetCurrentFileName()))))
 				{
@@ -858,6 +870,7 @@ void CScene_Tool::System_Effect()
 				{
 					MSG_BOX("CScene_Tool::System_Effect", "Failed to Add_Component: VIBufferInstance_Mesh");
 				}
+				pInstance->Set_VIBufferInstanceMeshTag(Function::ToWString(m_strSelectedExportMeshInstance));
 			}
 
 			m_mapParticleMesh.emplace(szParticleMeshName, pInstance);
@@ -1478,7 +1491,8 @@ void CScene_Tool::Info_Model()
 	ImGui::End();
 }
 
-static _int iSelectedParticleInstance(0);
+static _int			iSelectedParticleInstance(0);
+static _float4x4	mCopy;
 
 void CScene_Tool::Info_Effect()
 {
@@ -1614,6 +1628,27 @@ void CScene_Tool::Info_Effect()
 
 			ImGui::Combo("Option", &iItem, szItems, IM_ARRAYSIZE(szItems));
 
+			if (ImGui::IsItemHovered())
+			{
+				if (_float fWheelDeltaV = ImGui::GetIO().MouseWheel)
+				{
+					if (0 > fWheelDeltaV)
+					{
+						if (iItem < 2)
+						{
+							++iItem;
+						}
+					}
+					else
+					{
+						if (iItem > 0)
+						{
+							--iItem;
+						}
+					}
+				}
+			}
+
 			CVFX_ParticleMesh::BOUNCEDESC tBounceDesc;
 			if (m_pairSelectedParticleMesh.second->Get_ActivateInstances())
 			{
@@ -1671,9 +1706,9 @@ void CScene_Tool::Info_Effect()
 							ImGui::Text("Failed to XMMatrixDecompose");
 						}
 					}
-					ImGui::DragFloat3("Scale",				reinterpret_cast<_float*>(&vScale));
-					ImGui::DragFloat3("Rotation(Degree)",	reinterpret_cast<_float*>(&vRotation));
-					ImGui::DragFloat3("Translation",		reinterpret_cast<_float*>(&vTranslation));
+					ImGui::DragFloat3("Scale",				reinterpret_cast<_float*>(&vScale), 0.1f);
+					ImGui::DragFloat3("Rotation(Degree)",	reinterpret_cast<_float*>(&vRotation), 1.f, -89.f, 89.f);
+					ImGui::DragFloat3("Translation",		reinterpret_cast<_float*>(&vTranslation), 0.1f);
 					ImGui::EndTabItem();
 
 					mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
@@ -1696,20 +1731,53 @@ void CScene_Tool::Info_Effect()
 						mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
 							_float3(XMConvertToRadians(vRotation.x), XMConvertToRadians(vRotation.y), XMConvertToRadians(vRotation.z))), vTranslation);
 					}
-					ImGui::DragFloat4("Right",		reinterpret_cast<_float*>(&mTransformation._11));
-					ImGui::DragFloat4("Up",			reinterpret_cast<_float*>(&mTransformation._21));
-					ImGui::DragFloat4("Look",		reinterpret_cast<_float*>(&mTransformation._31));
-					ImGui::DragFloat4("Position",	reinterpret_cast<_float*>(&mTransformation._41));
+					ImGui::DragFloat4("Right",		reinterpret_cast<_float*>(&mTransformation._11), 0.1f);
+					ImGui::DragFloat4("Up",			reinterpret_cast<_float*>(&mTransformation._21), 0.1f);
+					ImGui::DragFloat4("Look",		reinterpret_cast<_float*>(&mTransformation._31), 0.1f);
+					ImGui::DragFloat4("Position",	reinterpret_cast<_float*>(&mTransformation._41), 0.1f);
 					ImGui::EndTabItem();
 				}
 				ImGui::EndTabBar();
 			}
+			
+			ImGui::InputFloat("Begin Duration",	&tBounceDesc.fBeginDuration);
+			ImGui::InputFloat("Peak Duration",	&tBounceDesc.fPeakDuration);
+			ImGui::InputFloat("End Duration",	&tBounceDesc.fEndDuration);
+			ImGui::InputFloat("Begin Weight",	&tBounceDesc.fBeginWeight);
+			ImGui::InputFloat("End Weight",		&tBounceDesc.fEndWeight);
+
+			static _float fRight(0.f);
+			static _float fUp(0.f);
+			static _float fLook(0.f);
+
+			ImGui::DragFloat("Right",	&fRight,	0.1f);
+			ImGui::DragFloat("Up",		&fUp,		0.1f);
+			ImGui::DragFloat("Look",	&fLook,		0.1f);
 
 			if (1 == iTab)
 			{
 				mTransformation = XMMatrixAffineTransformation(vScale, XMVectorZero(), XMQuaternionRotationRollPitchYawFromVector(
 					_float3(XMConvertToRadians(vRotation.x), XMConvertToRadians(vRotation.y), XMConvertToRadians(vRotation.z))), vTranslation);
 			}
+
+			*reinterpret_cast<_float4*>(&mTransformation._41) += mTransformation.row(0) * fRight;
+			*reinterpret_cast<_float4*>(&mTransformation._41) += mTransformation.row(1) * fUp;
+			*reinterpret_cast<_float4*>(&mTransformation._41) += mTransformation.row(2) * fLook;
+
+			fRight	= 0.f;
+			fUp		= 0.f;
+			fLook	= 0.f;
+
+			if (ImGui::Button("Copy"))
+			{
+				mCopy = mTransformation;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Paste"))
+			{
+				mTransformation = mCopy;
+			}
+
 			switch (iItem)
 			{
 			case 0:
@@ -1722,12 +1790,6 @@ void CScene_Tool::Info_Effect()
 				tBounceDesc.mFinalTransformation = mTransformation;
 				break;
 			}
-
-			ImGui::InputFloat("Begin Duration",	&tBounceDesc.fBeginDuration);
-			ImGui::InputFloat("Peak Duration",	&tBounceDesc.fPeakDuration);
-			ImGui::InputFloat("End Duration",	&tBounceDesc.fEndDuration);
-			ImGui::InputFloat("Begin Weight",	&tBounceDesc.fBeginWeight);
-			ImGui::InputFloat("End Weight",		&tBounceDesc.fEndWeight);
 
 			m_pairSelectedParticleMesh.second->Set_BounceDesc(iSelectedParticleInstance, tBounceDesc);
 
@@ -1759,6 +1821,8 @@ void CScene_Tool::Info_Effect()
 				m_pairSelectedParticleMesh.second->Update();
 			}
 
+			m_pairSelectedParticleMesh.second->Update();
+
 			ImGui::Separator();
 		}
 #pragma endregion
@@ -1786,12 +1850,62 @@ void CScene_Tool::Info_Effect()
 	ImGui::End();
 }
 
-void CScene_Tool::Control_Effect()
+void CScene_Tool::Control_Model()
 {
 	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 180.f));
 	ImGui::SetNextWindowSize(ImVec2(1020.f, 180.f));
 
+	ImGui::Begin("Control:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+	static _bool bAnimationFix = false;
+	static _float fTrack = 0.f;
+
+	ImGui::Checkbox("Global Gizmo##ModelControl", &bGlobalGizmo);
+	if (bGlobalGizmo)
+	{
+		if (ImGui::Button("Apply##ModelControlGizmo"))
+		{
+			m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
+		}
+		ImGui::SameLine();
+		ImGui::PushItemWidth(100);
+		ImGui::InputInt2("Gismo Size##ModelControl", reinterpret_cast<int*>(&vGismoSize));
+		ImGui::PopItemWidth();
+	}
+
+	ImGui::Checkbox("Fix Mode", &bAnimationFix);
+
+	if (m_pSelectedAnimation)
+	{
+		if (bAnimationFix)
+		{
+			ImGui::SliderFloat("##AnimationTrackPositionSlider", &fTrack, 0.f, m_pSelectedAnimation->Get_Duration());
+			m_pairSelectedModel.second->Fix_Animation(m_pairSelectedModel.second->Get_AnimationIndex(m_pSelectedAnimation), fTrack / m_pSelectedAnimation->Get_Duration());
+		}
+	}
+
+	ImGui::End();
+}
+
+void CScene_Tool::Control_Effect()
+{
+	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 180.f));
+	ImGui::SetNextWindowSize(ImVec2(660.f, 180.f));
+
 	ImGui::Begin("Control:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+	ImGui::Checkbox("Global Gizmo##EffectControl", &bGlobalGizmo);
+	if (bGlobalGizmo)
+	{
+		if (ImGui::Button("Apply##EffectControlGizmo"))
+		{
+			m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
+		}
+		ImGui::SameLine();
+		ImGui::PushItemWidth(100);
+		ImGui::InputInt2("Gismo Size##EffectControl", reinterpret_cast<int*>(&vGismoSize));
+		ImGui::PopItemWidth();
+	}
 
 	ImGui::Checkbox("Tick", &bTickParticle);
 
@@ -1802,12 +1916,12 @@ void CScene_Tool::Control_Effect()
 			m_pairSelectedParticleMesh.second->Fetch();
 		}
 
-		static _float fTrack = 0.5f;
+		static _float fTrack = 0.f;
 		CVFX_ParticleMesh::BOUNCEDESC tDesc = m_pairSelectedParticleMesh.second->Get_BounceDesc(iSelectedParticleInstance);
 		vector<_float> vecTags;
 
 		ImGui::Text("Track Position");
-		if (ImGui::SliderFloat("##TrackPositionSlider", &fTrack, 0.f, m_pairSelectedParticleMesh.second->Get_TotalBounceTime()))
+		if (ImGui::SliderFloat("##EffectTrackPositionSlider", &fTrack, 0.f, m_pairSelectedParticleMesh.second->Get_TotalBounceTime()))
 		{
 		}
 		ImVec2 vWidgetPos = ImGui::GetItemRectMin();
@@ -1848,6 +1962,26 @@ void CScene_Tool::Control_Effect()
 	ImGui::End();
 }
 
+void CScene_Tool::SubControl_Effect()
+{
+	ImGui::SetNextWindowPos(ImVec2(1200.f, ImGui::GetIO().DisplaySize.y - 180.f));
+	ImGui::SetNextWindowSize(ImVec2(360.f, 180.f));
+
+	ImGui::Begin("SubControl:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+	if (ImGui::TreeNode("Clipboard"))
+	{
+		ImGui::InputFloat4("Right##Clipboard",			reinterpret_cast<_float*>(&mCopy._11), "%.3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputFloat4("Up##Clipboard",				reinterpret_cast<_float*>(&mCopy._21), "%.3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputFloat4("Look##Clipboard",			reinterpret_cast<_float*>(&mCopy._31), "%.3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::InputFloat4("Transformation##Clipboard",	reinterpret_cast<_float*>(&mCopy._41), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+}
+
 HRESULT CScene_Tool::Load_BinaryMeshInstanceList(const wstring& _wstrFilePath, const wstring& _wstrFileName)
 {
 	std::ifstream inFile(_wstrFilePath + wstring(TEXT("\\")) + _wstrFileName, std::ios::binary);
@@ -1881,14 +2015,21 @@ HRESULT CScene_Tool::Load_BinaryMeshInstanceList(const wstring& _wstrFilePath, c
 		//	MAX INSTANCE
 		inFile.read(reinterpret_cast<_byte*>(&iMaxInstance), sizeof(_int));
 
-		shared_ptr<CVIBufferInstance_Mesh> pInstance = dynamic_pointer_cast<CVIBufferInstance_Mesh>(
-			CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, wstrPath, iMaxInstance)->Clone());
-		if (nullptr == pInstance)
+		shared_ptr<CVIBufferInstance_Mesh> pPrototype = CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, wstrPath, iMaxInstance);
+		if (nullptr == pPrototype)
 		{
 			MSG_CONTINUE("CScene_Tool::Load_BinaryMeshInstanceList", "Failed to CVIBufferInstance_Mesh::Create");
 		}
+		if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TOOL, wstrKey, pPrototype)))
+		{
+			MSG_CONTINUE("CScene_Tool::Load_BinaryMeshInstanceList", "Failed to Add_Component_Prototype");
+		}
+		shared_ptr<CVIBufferInstance_Mesh> pInstance = dynamic_pointer_cast<CVIBufferInstance_Mesh>(pPrototype->Clone());
+		if (nullptr == pInstance)
+		{
+			MSG_CONTINUE("CScene_Tool::Load_BinaryMeshInstanceList", "Failed to CVIBufferInstance_Mesh::Clone");
+		}
 		m_mapExportMeshInstance.emplace(strKey, VIINST{ strPath, iMaxInstance, pInstance });
-
 	}
 
 #pragma endregion

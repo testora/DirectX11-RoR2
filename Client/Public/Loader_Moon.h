@@ -18,6 +18,54 @@
 
 HRESULT CLoader::Load_Moon()
 {
+#pragma region Data
+
+	std::ifstream inFile(TEXT("Bin/Resources/Data/Prototype/VIInstance.dat"), std::ios::binary);
+
+	if (!inFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Open File");
+	}
+
+	_int	iMaxInstance(0);
+	size_t	nSize(0), nLength(0);
+	_wchar	wszBuffer[MAX_PATH];
+
+	inFile.read(reinterpret_cast<_byte*>(&nSize), sizeof(size_t));
+	for (size_t i = 0; i < nSize; ++i)
+	{
+	//	KEY
+		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
+		inFile.read(reinterpret_cast<_byte*>(&nLength), sizeof(size_t));
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nLength);
+		wstring	wstrKey = wszBuffer;
+		string	strKey = Function::ToString(wstrKey);
+	//	PATH
+		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
+		inFile.read(reinterpret_cast<_byte*>(&nLength), sizeof(size_t));
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer), sizeof(_wchar) * nLength);
+		wstring wstrPath = wszBuffer;
+		string	strPath = Function::ToString(wstrPath);
+	//	MAX INSTANCE
+		inFile.read(reinterpret_cast<_byte*>(&iMaxInstance), sizeof(_int));
+
+		if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, wstrKey,
+			CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, wstrPath, iMaxInstance))))
+		{
+			MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to CVIBufferInstance_Mesh::Create");
+		}
+	}
+
+	if (inFile.fail() || inFile.eof())
+	{
+		inFile.clear();
+		inFile.close();
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Read File");
+	}
+
+	inFile.close();
+
+#pragma endregion
 #pragma region Prototype Texture
 
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
@@ -83,12 +131,6 @@ HRESULT CLoader::Load_Moon()
 	}
 
 #pragma region Mesh Instance
-
-	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_PILLAR,
-		CVIBufferInstance_Mesh::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Effect/Brother/Mesh/pillar.msh"), 10))))
-	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_PILLAR");
-	}
 
 #pragma endregion
 #pragma endregion

@@ -36,6 +36,11 @@ HRESULT CVFX_ParticleMesh::Initialize(any _wstrPath)
 			MSG_RETURN(E_FAIL, "CVFX_ParticleMesh::Initialize", "Failed to Read");
 		}
 
+		if (!m_wstrVIInstMeshTag.empty())
+		{
+			Add_Component(COMPONENT::VIBUFFER_INSTANCE_MESH, CGameInstance::Get_Instance()->Clone_Component(
+				CGameInstance::Get_Instance()->Current_Scene(), m_wstrVIInstMeshTag));
+		}
 		if (!m_wstrTexDiffusePath.empty())
 		{
 			m_pTexDiffuse = CTexture::Create(m_pDevice, m_pContext, m_wstrTexDiffusePath);
@@ -45,6 +50,8 @@ HRESULT CVFX_ParticleMesh::Initialize(any _wstrPath)
 			m_pTexNormal = CTexture::Create(m_pDevice, m_pContext, m_wstrTexNormalPath);
 		}
 	}
+
+	m_pTransform->Set_Scale(_float3(3.f, 3.f, 3.f));
 
 	return S_OK;
 }
@@ -91,11 +98,20 @@ HRESULT CVFX_ParticleMesh::Render()
 	return S_OK;
 }
 
-HRESULT CVFX_ParticleMesh::Fetch(any _arg)
+HRESULT CVFX_ParticleMesh::Fetch(any _vPosition3)
 {
 	if (FAILED(__super::Fetch()))
 	{
 		MSG_RETURN(E_FAIL, "CVFX_ParticleMesh::Fetch", "Failed to __super::Fetch");
+	}
+
+	if (_vPosition3.has_value())
+	{
+		m_pTransform->Set_State(TRANSFORM::POSITION, any_cast<_float3>(_vPosition3));
+	}
+	else
+	{
+		m_pTransform->Set_State(TRANSFORM::POSITION, _float3(0.f, 0.f, 0.f));
 	}
 
 	m_fTimeAcc = 0.f;
@@ -153,7 +169,7 @@ void CVFX_ParticleMesh::Update_Instance(void* _pData, _uint _iNumInstance, _floa
 			else if (m_fTimeAcc < m_vecBounceDesc[i].fBeginDuration + m_vecBounceDesc[i].fPeakDuration + m_vecBounceDesc[i].fEndDuration)
 			{
 				_float4x4 m = Function::Lerp(m_vecBounceDesc[i].mPeakTransformation, m_vecBounceDesc[i].mFinalTransformation,
-					m_fTimeAcc / (m_vecBounceDesc[i].fBeginDuration + m_vecBounceDesc[i].fPeakDuration + m_vecBounceDesc[i].fEndDuration), m_vecBounceDesc[i].fEndWeight);
+					(m_fTimeAcc - m_vecBounceDesc[i].fBeginDuration - m_vecBounceDesc[i].fPeakDuration) / (m_vecBounceDesc[i].fEndDuration), m_vecBounceDesc[i].fEndWeight);
 				memcpy(&pData[i], &m, sizeof(_float4x4));
 			}
 			else
@@ -249,9 +265,10 @@ void CVFX_ParticleMesh::Update()
 	{
 	case TYPE::BOUNCE:
 	{
+		_float fTotalTime = 0.f;
 		for (auto& desc : m_vecBounceDesc)
 		{
-			_float fTotalTime = desc.fBeginDuration + desc.fPeakDuration + desc.fEndDuration;
+			fTotalTime = desc.fBeginDuration + desc.fPeakDuration + desc.fEndDuration;
 			if (m_fTotalBounceTime < fTotalTime)
 			{
 				m_fTotalBounceTime = fTotalTime;
@@ -260,10 +277,6 @@ void CVFX_ParticleMesh::Update()
 	}
 	break;
 	}
-}
-
-void CVFX_ParticleMesh::Update(_float fTrack)
-{
 }
 
 shared_ptr<CVFX_ParticleMesh> CVFX_ParticleMesh::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -307,14 +320,23 @@ HRESULT CVFX_ParticleMesh::Read(const wstring& _wstrPath)
 	_wchar wszBuffer[MAX_PATH];
 
 	inFile.read(reinterpret_cast<_byte*>(&nPathLength),				sizeof(size_t));
-	if(nPathLength)
+	if (nPathLength)
+	{
+		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
+		inFile.read(reinterpret_cast<_byte*>(wszBuffer),			sizeof(_wchar) * nPathLength);
+		m_wstrVIInstMeshTag = wszBuffer;
+	}
+
+	inFile.read(reinterpret_cast<_byte*>(&nPathLength),				sizeof(size_t));
+	if (nPathLength)
 	{
 		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
 		inFile.read(reinterpret_cast<_byte*>(wszBuffer),			sizeof(_wchar) * nPathLength);
 		m_wstrTexDiffusePath = wszBuffer;
 	}
+
 	inFile.read(reinterpret_cast<_byte*>(&nPathLength),				sizeof(size_t));
-	if(nPathLength)
+	if (nPathLength)
 	{
 		ZeroMemory(wszBuffer, sizeof(_wchar) * MAX_PATH);
 		inFile.read(reinterpret_cast<_byte*>(wszBuffer),			sizeof(_wchar) * nPathLength);
@@ -355,6 +377,13 @@ HRESULT CVFX_ParticleMesh::Export(const wstring& _wstrPath)
 
 	size_t nPathLength(0);
 	
+	nPathLength = m_wstrVIInstMeshTag.length();
+	outFile.write(reinterpret_cast<const _byte*>(&nPathLength),						sizeof(size_t));
+	if (nPathLength)
+	{
+		outFile.write(reinterpret_cast<const _byte*>(m_wstrVIInstMeshTag.c_str()), sizeof(_wchar) * nPathLength);
+	}
+
 	nPathLength = m_wstrTexDiffusePath.length();
 	outFile.write(reinterpret_cast<const _byte*>(&nPathLength),						sizeof(size_t));
 	if (nPathLength)

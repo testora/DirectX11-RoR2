@@ -84,6 +84,10 @@ void CCamera_Main::Late_Tick(_float _fTimeDelta)
 		ImGui::Text("Z: %f\t", m_pTransform->Get_State(TRANSFORM::POSITION).z);
 
 		ImGui::Checkbox("Debug", &m_bDebug);
+		if (ImGui::Button("Reset Position"))
+		{
+			m_pTransform->Set_Matrix(g_mUnit);
+		}
 
 		ImGui::End();
 	}

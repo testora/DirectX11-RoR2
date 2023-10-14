@@ -78,7 +78,7 @@ void CVFX_TrailQuad::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	Add_RenderObject(RENDER_GROUP::BLEND);
+//	Add_RenderObject(RENDER_GROUP::BLEND);
 }
 
 HRESULT CVFX_TrailQuad::Render()

@@ -32,25 +32,7 @@ HRESULT CGlobalGizmo::Initialize(any)
 
 	shared_ptr<CTransform> pTransform = Get_Component<CTransform>(COMPONENT::TRANSFORM);
 	pTransform->LookTo(_float3(0.f, 1.f, 0.f), false);
-//	pTransform->Set_Scale(_float3(100.f, 100.f, 100.f));
-	shared_ptr<CVIBufferInstance_Rect> pVIBuffer = Get_Component<CVIBufferInstance_Rect>(COMPONENT::VIBUFFER_INSTANCE_RECT);
-	pVIBuffer->Update(
-		[&](void* _pData, _uint iNumInstance)
-		{
-			VTXPOSSIZEINSTTRANS* pData = reinterpret_cast<VTXPOSSIZEINSTTRANS*>(_pData);
-			size_t iInstance = 0;
-			for (size_t x = 0; x < 10; ++x)
-			{
-				for (size_t y = 0; y < 10; ++y)
-				{
-					_float4x4 mTransformation = g_mUnit;
-					mTransformation._41 = -4.5f + static_cast<_float>(x);
-					mTransformation._42 = +4.5f - static_cast<_float>(y);
-					memcpy(&pData[iInstance++], &mTransformation, sizeof(_float4x4));
-				}
-			}
-		}
-	);
+	Initialize_Gizmo(_int2(10, 10));
 
 	if (FAILED(Add_Component(COMPONENT::TEXTURE, CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/Gizmo.png")))))
 	{
@@ -80,6 +62,30 @@ HRESULT CGlobalGizmo::Render()
 	}
 
 	return S_OK;
+}
+
+void CGlobalGizmo::Initialize_Gizmo(_int2 _vGridSize)
+{
+	shared_ptr<CVIBufferInstance_Rect> pVIBuffer = Get_Component<CVIBufferInstance_Rect>(COMPONENT::VIBUFFER_INSTANCE_RECT);
+	pVIBuffer->Update(
+		[&](void* _pData, _uint iNumInstance)
+		{
+			VTXPOSSIZEINSTTRANS* pData = reinterpret_cast<VTXPOSSIZEINSTTRANS*>(_pData);
+			_int2 vGridSize = _int2(std::clamp(_vGridSize.x, 1, 100), std::clamp(_vGridSize.y, 1, 100));
+			size_t iInstance = 0;
+			ZeroMemory(pData, sizeof(VTXPOSSIZEINSTTRANS) * iNumInstance);
+			for (size_t x = 0; x < vGridSize.x; ++x)
+			{
+				for (size_t y = 0; y < vGridSize.y; ++y)
+				{
+					_float4x4 mTransformation = g_mUnit;
+					mTransformation._41 = (1.f - vGridSize.x) * 0.5f + static_cast<_float>(x);
+					mTransformation._42 = (vGridSize.y - 1.f) * 0.5f - static_cast<_float>(y);
+					memcpy(&pData[iInstance++], &mTransformation, sizeof(_float4x4));
+				}
+			}
+		}
+	);
 }
 
 shared_ptr<CGlobalGizmo> CGlobalGizmo::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
