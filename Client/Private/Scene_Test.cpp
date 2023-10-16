@@ -64,30 +64,43 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 void CScene_Test::Late_Tick(_float _fTimeDelta)
 {
-#if ACTIVATE_TOOL
-	ImGui::Begin("MATERIAL");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("NONBLEND");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("LIGHT");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::End();
-#endif
 }
 
 HRESULT CScene_Test::Render()
 {
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CScene_Test::Debug()
+{
+#if ACTIVATE_TOOL
+	if (CImGui_Manager::Get_Instance()->Is_Enable())
+	{
+		ImGui::Begin("MATERIAL");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("NONBLEND");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("LIGHT");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+		ImGui::End();
+	}
+#endif
+}
+#endif
 
 HRESULT CScene_Test::Ready_Light()
 {

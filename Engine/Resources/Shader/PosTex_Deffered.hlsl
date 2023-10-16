@@ -87,7 +87,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	
 	vPosition		*= fViewZ;
 	vPosition		= mul(vPosition, g_mProjInv);
-	
 	vPosition		= mul(vPosition, g_mViewInv);
 	
 	float4			vLook			= vPosition - g_vCamPosition;
@@ -117,7 +116,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	
 	vPosition		*= fViewZ;
 	vPosition		= mul(vPosition, g_mProjInv);
-	
 	vPosition		= mul(vPosition, g_mViewInv);
 	
 	float4			vLightDir		= vPosition - g_vLightPosition;
@@ -167,8 +165,9 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 	PS_OUT Out;
 	
 	float4	vMask	= g_texMaskTarget.Sample(LinearSampler, In.vTexCoord);
+	float4	vDepth	= g_texDepthTarget.Sample(LinearSampler, In.vTexCoord);
 	
-	if (0.f < vMask.a && vMask.a < 0.1f)
+	if (0.f < vMask.a && vMask.a < 0.1f) 
     {
         float	fWaveLengthX	= vMask.x * 100.f;
         float	fWaveLengthY	= vMask.y * 100.f;
@@ -181,6 +180,11 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 	else
     {
 		Out.vColor	= g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord);
+    }
+	
+	if (Out.vColor.a == 0.f)
+    {
+        discard;
     }
 	
     return Out;
@@ -198,7 +202,7 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Accumulate, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        SetDepthStencilState(DSS_IgnoreDepth, 0);
+        SetDepthStencilState(DSS_Default, 0);
     }
 
 	pass Point
@@ -211,8 +215,8 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Accumulate, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(DSS_IgnoreDepth, 0);
-	}
+        SetDepthStencilState(DSS_Default, 0);
+    }
 
 	pass PreProcess
 	{
@@ -224,8 +228,8 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(DSS_IgnoreDepth, 0);
-	}
+        SetDepthStencilState(DSS_Default, 0);
+    }
 
 	pass PostProcess
 	{
@@ -237,6 +241,6 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-		SetDepthStencilState(DSS_IgnoreDepth, 0);
-	}
+        SetDepthStencilState(DSS_Default, 0);
+    }
 }

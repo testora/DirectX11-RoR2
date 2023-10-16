@@ -17,7 +17,7 @@
 #define SHADER_FLAG_TRIPLANER_SHARE_X_Z			0b0000'1000'0000'0000
 #define SHADER_FLAG_TRIPLANER_SYNC_XZ			0b0001'0000'0000'0000
 
-#define SHADER_CAM_FAR							"g_fCamFar"
+#define SHADER_CAMFAR							"g_fCamFar"
 
 #define SHADER_TEXDIFFUSE						"g_texDiffuse"
 #define SHADER_TEXNORMAL						"g_texNormal"

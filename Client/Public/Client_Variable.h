@@ -4,6 +4,8 @@
 
 #define PROTOTYPE_GAMEOBJECT_CAMERA_MAIN							TEXT("Prototype:GameObject:Camera:Main")
 
+#define PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0							TEXT("Prototype:GameObject:Skybox:Sky0")
+
 #define PROTOTYPE_GAMEOBJECT_BACKGROUND								TEXT("Prototype:GameObject:Background")
 #define PROTOTYPE_GAMEOBJECT_TERRAIN								TEXT("Prototype:GameObject:Terrain")
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS							TEXT("Prototype:GameObject:GolemPlains")
@@ -24,6 +26,7 @@
 #define PROTOTYPE_COMPONENT_RENDERER_MAIN							TEXT("Prototype:Component:Renderer:Main")
 
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSTEX						TEXT("Prototype:Component:Shader:VTXPOSTEX")
+#define PROTOTYPE_COMPONENT_SHADER_VTXCUBEPOSTEX					TEXT("Prototype:Component:Shader:VTXCUBEPOSTEX")
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX						TEXT("Prototype:Component:Shader:VTXPOSNORTEX")
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEX					TEXT("Prototype:Component:Shader:VTXPOSNORTANTEX")
 #define PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTANTEXBONE				TEXT("Prototype:Component:Shader:VTXPOSNORTANTEXBONE")
@@ -34,6 +37,7 @@
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT					TEXT("Prototype:Component:Shader:Instance:Rect")
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH					TEXT("Prototype:Component:Shader:Instance:Mesh")
 
+#define PROTOTYPE_COMPONENT_TEXTURE_SKY0							TEXT("Prototype:Component:Texture:Sky0")
 #define PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND						TEXT("Prototype:Component:Texture:Background")
 #define PROTOTYPE_COMPONENT_TEXTURE_TERRAIN							TEXT("Prototype:Component:Texture:Terrain")
 #define PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP						TEXT("Prototype:Component:Texture:HeightMap")
@@ -44,6 +48,7 @@
 #define PROTOTYPE_COMPONENT_COLLIDER								TEXT("Prototype:Component:Collider")
 
 #define PROTOTYPE_COMPONENT_VIBUFFER_RECT							TEXT("Prototype:Component:VIBuffer:Rect")
+#define PROTOTYPE_COMPONENT_VIBUFFER_CUBE							TEXT("Prototype:Component:VIBuffer:Cube")
 #define PROTOTYPE_COMPONENT_VIBUFFER_TERRAIN						TEXT("Prototype:Component:VIBuffer:Terrain")
 #define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_POINT					TEXT("Prototype:Component:VIBuffer:Instance:Point")
 #define PROTOTYPE_COMPONENT_VIBUFFER_INSTANCE_LINE					TEXT("Prototype:Component:VIBuffer:Instance:Line")
@@ -55,6 +60,8 @@
 #define PROTOTYPE_COMPONENT_MODEL_GOLEM								TEXT("Prototype:Component:Model:Golem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS						TEXT("Prototype:Component:Model:GolemPlains")
 #define PROTOTYPE_COMPONENT_MODEL_MOON								TEXT("Prototype:Component:Model:Moon")
+
+#define PROTOTYPE_COMPONENT_MODEL_SPHERE							TEXT("Prototype:Component:Model:Sphere")
 
 #ifdef _DEBUG
 #define PROTOTYPE_COMPONENT_MODEL_CUBE								TEXT("Prototype:Component:Model:Cube")

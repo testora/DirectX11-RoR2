@@ -59,6 +59,20 @@ namespace Engine
 		{}
 	} MATERIALDESC;
 
+	typedef struct tagShaderDesc
+	{
+		_flags			iShaderFlag;
+		_float			fDiffuseTiling;
+		_float			fNormalTiling;
+		MATERIALDESC	tMaterialDesc;
+
+		tagShaderDesc() :
+			iShaderFlag		(0),
+			fDiffuseTiling	(1.f),
+			fNormalTiling	(1.f)
+		{}
+	} SHADERDESC;
+
 #pragma endregion
 #pragma region Vertex
 
@@ -87,6 +101,15 @@ namespace Engine
 		const static _uint						iNumElement = 2;
 		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
 	} VTXPOSTEX;
+
+	typedef struct ENGINE_DLL tagVertexCubePositionTexcoord
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vTexCoord;
+
+		const static _uint						iNumElement = 2;
+		const static D3D11_INPUT_ELEMENT_DESC	tElements[iNumElement];
+	} VTXCUBEPOSTEX;
 
 	typedef struct ENGINE_DLL tagVertexPositionNormalTexcoord
 	{

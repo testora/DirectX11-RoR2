@@ -15,6 +15,7 @@
 #include "VIBufferInstance_Mesh.h"
 #include "VFX_TrailQuad.h"
 #include "VFX_TrailLine.h"
+#include "SkyCube.h"
 
 HRESULT CLoader::Load_Moon()
 {
@@ -71,6 +72,12 @@ HRESULT CLoader::Load_Moon()
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL
 
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_SKY0,
+		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/SkyBox/sky0.dds")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_SKY0");
+	}
+
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO,
 		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/Background.png")))))
 	{
@@ -104,7 +111,7 @@ HRESULT CLoader::Load_Moon()
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_MOON,
 	//	CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain.mdl")))))
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain_.mdl")))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain__.mdl")))))
 		{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_MOON");
 	}
@@ -150,6 +157,12 @@ HRESULT CLoader::Load_Moon()
 		CCamera_Main::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0,
+		CSkyCube::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_MOON,

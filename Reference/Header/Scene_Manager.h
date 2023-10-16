@@ -13,6 +13,9 @@ private:
 public:
 	void						Tick(_float fTimeDelta);
 	void						Late_Tick(_float fTimeDelta);
+#ifdef _DEBUG
+	void						Debug();
+#endif
 
 public:
 	HRESULT						Initialize(_In_ const SCENE eStatic, _In_ const SCENE eMax);

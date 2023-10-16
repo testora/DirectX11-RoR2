@@ -125,8 +125,11 @@ HRESULT CMainApp::Render()
 
 	m_pMainRenderer->Draw_RenderGroup();
 
+#ifdef _DEBUG
+	m_pGameInstance->Debug_Engine();
 #if ACTIVATE_IMGUI
 	m_pImGui_Manager->Render();
+#endif
 #endif
 
 	m_pGameInstance->Present();
@@ -206,6 +209,12 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	}
 	pShader->Bind_Matrix(SHADER_MATORTHOGRAPHIC, XMMatrixOrthographicLH(g_iWinCX, g_iWinCY, 0.f, 1.f));
 
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXCUBEPOSTEX,
+		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/CubePosTex.hlsl"), VTXCUBEPOSTEX::tElements, VTXCUBEPOSTEX::iNumElement))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_SHADER_VTXCUBEPOSTEX");
+	}
+
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_SHADER_VTXPOSNORTEX,
 		pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosNorTex.hlsl"), VTXPOSNORTEX::tElements, VTXPOSNORTEX::iNumElement))))
 	{
@@ -252,6 +261,12 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_RECT");
+	}
+
+	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_VIBUFFER_CUBE,
+		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Ready_Component_Prototype", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_VIBUFFER_CUBE");
 	}
 
 	if (FAILED(m_pGameInstance->Add_Component_Prototype(SCENE::STATIC, PROTOTYPE_COMPONENT_COLLIDER,

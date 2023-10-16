@@ -28,6 +28,8 @@ public:
 
 public:
 #ifdef _DEBUG
+	_bool							Is_Debug() const							{ return m_bDebug; }
+
 	void							Set_Debug(_bool bDebug = true)				{ m_bDebug = bDebug; }
 	void							Set_DebugSensitivity(_float2 vSensitivity)	{ m_vDebugSensitivity = vSensitivity; }
 #endif

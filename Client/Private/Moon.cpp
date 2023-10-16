@@ -30,12 +30,30 @@ HRESULT CMoon::Initialize(any)
 		MSG_RETURN(E_FAIL, "CMoon::Initialize", "Failed To __super::Initialize");
 	}
 
+#ifdef _DEBUG
+	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
+#endif
+
 	return S_OK;
 }
 
 void CMoon::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+
+#if ACTIVATE_IMGUI
+	ImGui::Begin("Moon Render");
+	for (_uint i = 0; i < m_pModel->Get_NumMeshes(); ++i)
+	{
+		std::string checkboxLabel = "Mesh " + std::to_string(i);
+		_bool isHidden = m_pModel->Is_MeshHidden(i);
+		if (ImGui::Checkbox(checkboxLabel.c_str(), &isHidden))
+		{
+			m_pModel->Hide_Mesh(i, isHidden);
+		}
+	}
+	ImGui::End();
+#endif
 }
 
 void CMoon::Late_Tick(_float _fTimeDelta)

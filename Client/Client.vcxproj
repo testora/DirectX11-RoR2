@@ -129,6 +129,7 @@
     <ClInclude Include="Public\VFX_TrailQuad.h" />
     <ClInclude Include="Public\VFX_TrailLine.h" />
     <ClInclude Include="Public\VFX_ParticleMesh.h" />
+    <ClInclude Include="Public\SkyCube.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Reference\Source\ImGuiFileDialog\ImGuiFileDialog.cpp">
@@ -283,6 +284,7 @@
     <ClCompile Include="Private\VFX_TrailQuad.cpp" />
     <ClCompile Include="Private\VFX_TrailLine.cpp" />
     <ClCompile Include="Private\VFX_ParticleMesh.cpp" />
+    <ClCompile Include="Private\SkyCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Default\Client.ico" />
@@ -292,6 +294,7 @@
     <ResourceCompile Include="Default\Client.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\CubePosTex.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstLine.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstMesh.hlsl" />
     <FxCompile Include="..\Resources\Shader\InstPoint.hlsl" />

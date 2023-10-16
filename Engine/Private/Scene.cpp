@@ -14,3 +14,9 @@ HRESULT CScene::Initialize()
 {
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CScene::Debug()
+{
+}
+#endif

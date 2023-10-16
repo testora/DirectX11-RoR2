@@ -66,9 +66,9 @@ RasterizerState RS_NoneCull
 
 RasterizerState RS_WireFrame
 {
-    FillMode				= wireframe;
-    CullMode				= back;
-    FrontCounterClockwise	= false;
+	FillMode				= wireframe;
+	CullMode				= back;
+	FrontCounterClockwise	= false;
 };
 
 // BlendState
@@ -103,10 +103,19 @@ DepthStencilState DSS_Default
 	DepthEnable             = true;
 	DepthWriteMask          = all;
 	DepthFunc               = less_equal;
+
+	StencilEnable			= false;
+	FrontFaceStencilFunc	= less;
+	FrontFaceStencilPass	= replace;
 };
 
 DepthStencilState DSS_IgnoreDepth
 {
 	DepthEnable             = false;
 	DepthWriteMask          = zero;
+	DepthFunc               = less_equal;
+
+	StencilEnable			= false;
+	FrontFaceStencilFunc	= less;
+	FrontFaceStencilPass	= replace;
 };

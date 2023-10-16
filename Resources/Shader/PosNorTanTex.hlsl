@@ -141,7 +141,7 @@ PS_OUT PS_TRIPLANER_MIX(PS_IN In)
 	// TriPlaner
 	float3	vBlendFactor	=	BlendFactor(In.vNormal.xyz);
 
-	float4	vTexColor		=	TriPlanar_Mix_Diffuse(g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord * g_fTilingNormal[0]), In.vNormal.xyz, In.vWorldPos.xyz, vBlendFactor);
+	float4	vTexColor		=	TriPlanar_Mix_Diffuse(g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord * g_fTilingDiffuse[0]), In.vNormal.xyz, In.vWorldPos.xyz, vBlendFactor);
 	
 	// Normal
 	float3	vNormal			=	In.vNormal.xyz;

@@ -70,34 +70,43 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
 {
-#if ACTIVATE_TOOL
-	ImGui::Begin("MATERIAL");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("NONBLEND");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("LIGHT");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("MASK");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
-	ImGui::End();
-#endif
 }
 
 HRESULT CScene_Moon::Render()
 {
 	return S_OK;
 }
+
+#ifdef _DEBUG
+void CScene_Moon::Debug()
+{
+#if ACTIVATE_TOOL
+	if (CImGui_Manager::Get_Instance()->Is_Enable())
+	{
+		ImGui::Begin("MATERIAL");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("NONBLEND");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("LIGHT");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+		ImGui::End();
+	}
+#endif
+}
+#endif
 
 HRESULT CScene_Moon::Ready_Light()
 {
@@ -123,7 +132,7 @@ HRESULT CScene_Moon::Ready_Camera()
 	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::MOON, LAYER_CAMERA);
 
 	if (nullptr == pLayer)
-	{
+	{	
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Camera", "Failed to Add_Layer: LAYER_CAMERA");
 	}
 
@@ -143,7 +152,6 @@ HRESULT CScene_Moon::Ready_Terrain()
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Add_Layer: LAYER_TERRAIN");
 	}
-
 	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_MOON))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_MOON");
@@ -157,6 +165,11 @@ HRESULT CScene_Moon::Ready_Terrain()
 			return true;
 		}
 	);
+
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
+	}
 
 	return S_OK;
 }

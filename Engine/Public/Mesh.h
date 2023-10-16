@@ -28,7 +28,7 @@ public:
 	_uint							Get_NumBones() const					{ return m_iNumBones; }
 
 	const _char*					Get_Name() const						{ return m_szName; }
-	_uint							Get_MaterialIndex() const				{ return m_iMaterialIndex; }
+	const _uint						Get_MaterialIndex() const				{ return m_iMaterialIndex; }
 	const _float4x4*				Get_BoneMatrices(vector<shared_ptr<class CBone>>::iterator itBegin, _matrixf mPivot);
 
 	void							Set_InterpolationMatrix(vector<shared_ptr<class CBone>>::iterator itBegin, _float fDuration);

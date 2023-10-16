@@ -34,10 +34,15 @@ public:
 	_bool														Is_AnimationPlaying(_uint iAnimationIndex) const;
 	_bool														Is_AnimationFinished(_uint iAnimationIndex) const;
 
+	const _bool													Is_ManualShader() const											{ return m_bManualShader; }
+	const _bool													Is_SubShaderPass(_uint iMeshIndex) const						{ return m_vecSubShaderPass[iMeshIndex]; }
+
 	_uint														Get_BoneIndex(const _char* szBoneName) const;
 	_uint														Get_MeshIndex(const _char* szMeshName) const;
 	_float4x4													Get_Pivot() const												{ return m_mPivot; }
 #if ACTIVATE_TOOL
+	const MODEL													Get_Type() const												{ return m_eType; }
+
 	const _uint													Get_NumBones() const											{ return m_iNumBones; }
 	const _uint													Get_NumAnimations() const										{ return m_iNumAnimations; }
 	const _uint													Get_NumMeshes() const											{ return m_iNumMeshes; }
@@ -52,14 +57,25 @@ public:
 	shared_ptr<class CMesh>										Get_Mesh(_uint iIndex) const									{ return m_vecMeshes[iIndex]; }
 	MATERIAL													Get_Material(_uint iIndex) const								{ return m_vecMaterials[iIndex]; }
 
+	const _uint													Get_MeshIndex(shared_ptr<class CMesh>) const;
 	const _uint													Get_AnimationIndex(shared_ptr<class CAnimation>) const;
 	const _uint													Get_BoneAnimationIndex(_uint iBoneIndex) const					{ return m_vecBoneAnimationIndices[iBoneIndex]; }
-	
+
+	const SHADERDESC											Get_ShaderDesc(_uint iMeshIndex) const							{ return m_vecShaderDescs[iMeshIndex]; }
+	const _uint													Get_SubShaderPassIndex() const									{ return m_iSubShaderPass; }
+	const _bool													Get_SubShaderPass(_uint iMeshIndex) const						{ return m_vecSubShaderPass[iMeshIndex]; }
+
 	void														Set_BoneAnimationIndex(_uint iBoneIndex, _uint iAnimationIndex)	{ m_vecBoneAnimationIndices[iBoneIndex] = iAnimationIndex; }
 #endif
-	void														Set_DefaultAnimation(_uint iAnimationIndex);
-
 	void														Set_BonePivot(_uint iBoneIndex, _matrixf mPivot)				{ m_vecBonePivot[iBoneIndex] = mPivot; };
+	void														Set_DefaultAnimation(_uint iAnimationIndex);
+	
+#if ACTIVATE_TOOL
+	void														Set_ManualShader(_bool bManualShader = true)					{ m_bManualShader = bManualShader; }
+	void														Set_ShaderDesc(_uint iMeshIndex, SHADERDESC tShaderDesc)		{ m_vecShaderDescs[iMeshIndex] = tShaderDesc; }
+	void														Set_SubShaderPass(_uint iMeshIndex, _bool bSubShader = true)	{ m_vecSubShaderPass[iMeshIndex] = bSubShader; }
+	void														Set_SubShaderPassIndex(_uint iSubShaderPass)					{ m_iSubShaderPass = iSubShaderPass; }
+#endif
 
 public:
 	void														Set_Animation(_uint iAnimationIndex, _float fPlaySpeed = 1.f, _bool bReverse = false, _float fInterpolationDuration = g_fDefaultInterpolationDuration, _bool bLoop = true);
@@ -74,12 +90,18 @@ public:
 	HRESULT														Show_MeshFromAnimations(_uint iAnimationIndex, _uint iMeshIndex);
 	HRESULT														Hide_MeshFromAnimations(_uint iAnimationIndex, _uint iMeshIndex);
 
+#ifdef _DEBUG
+	_bool														Is_MeshHidden(_uint iMeshIndex) const;
+	void														Hide_Mesh(_uint iMeshIndex, _bool bHide = true);
+#endif
+
 private:
 	HRESULT														Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, _uint iTextureIndex = 0);
 	HRESULT														Bind_ShaderResourceView(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName, _uint iTextureIndex = 0);
 	HRESULT														Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>);
 	HRESULT														Bind_ShaderResourceViews(_uint iMeshIndex, shared_ptr<class CShader>, aiTextureType, const _char* szConstantName);
 	HRESULT														Bind_BoneMatrices(_uint iMeshIndex, shared_ptr<class CShader>, const _char* szConstantName);
+	HRESULT														Bind_ShaderOptions(_uint iMeshIndex, shared_ptr<class CShader>);
 
 private:
 	MODEL														m_eType						= MODEL::MAX;
@@ -96,6 +118,9 @@ private:
 
 	_uint														m_iNumMaterials				= 0;
 	vector<MATERIAL>											m_vecMaterials;
+
+	vector<SHADERDESC>											m_vecShaderDescs;
+
 	vector<MATERIALDESC>										m_vecMaterialDescs;
 
 	vector<_uint>												m_vecBoneAnimationIndices;
@@ -109,6 +134,14 @@ private:
 	map<_uint, _flags>											m_mapMeshShaderFlags;
 	map<_uint, function<HRESULT(shared_ptr<class CShader>)>>	m_mapMeshShaderBindings;
 	multimap<_uint, _uint>										m_mapHideMeshFromAnimations;
+
+	_bool														m_bManualShader				= false;
+	_uint														m_iSubShaderPass			= 0;
+	vector<_bool>												m_vecSubShaderPass;
+
+#ifdef _DEBUG
+	vector<_uint>												m_vecMeshHide;
+#endif
 
 public:
 	static shared_ptr<CModel>									Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>, const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);

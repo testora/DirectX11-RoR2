@@ -51,6 +51,7 @@ public:
 	virtual void										Tick(_float fTimeDelta) override;
 	virtual void										Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT										Render() override;
+	virtual void										Debug() override;
 
 private:
 	void												System_Model();

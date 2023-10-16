@@ -21,6 +21,16 @@ void CScene_Manager::Late_Tick(_float _fTimeDelta)
 	}
 }
 
+#ifdef _DEBUG
+void CScene_Manager::Debug()
+{
+	if (nullptr != m_pScene)
+	{
+		m_pScene->Debug();
+	}
+}
+#endif
+
 HRESULT CScene_Manager::Initialize(_In_ const SCENE _eStatic, _In_ const SCENE _eMax)
 {
 	m_eSceneStatic	= _eStatic;

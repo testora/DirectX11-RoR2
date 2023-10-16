@@ -85,9 +85,9 @@ HRESULT CScene_Tool::Initialize()
 	return S_OK;
 }
 
-static _bool bTriplanerPass = true;
-static _bool bTickParticle = false;
-static _bool bGlobalGizmo = false;
+static _bool bTriplanerPass(false);
+static _bool bTickParticle(false);
+static _bool bGlobalGizmo(false);
 static _int2 vGismoSize(10, 10);
 
 void CScene_Tool::Tick(_float _fTimeDelta)
@@ -116,16 +116,14 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 
 		if (ImGui::BeginMenu("Triplaner"))
 		{
-			if (ImGui::MenuItem("TriPlaner Shader"))
-			{
-				bTriplanerPass = true;
-			}
-
 			if (ImGui::MenuItem("Regular Shader"))
 			{
 				bTriplanerPass = false;
 			}
-
+			if (ImGui::MenuItem("TriPlaner Shader"))
+			{
+				bTriplanerPass = true;
+			}
 			ImGui::EndMenu();
 		}
 
@@ -167,27 +165,6 @@ void CScene_Tool::Tick(_float _fTimeDelta)
 
 void CScene_Tool::Late_Tick(_float _fTimeDelta)
 {
-	ImGui::Begin("MATERIAL");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("NONBLEND");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("LIGHT");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
-	ImGui::End();
-
-	ImGui::Begin("MASK");
-	ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
-	ImGui::End();
-
 	if (bGlobalGizmo)
 	{
 		m_pGlobalGizmo->Late_Tick(_fTimeDelta);
@@ -214,7 +191,8 @@ void CScene_Tool::Late_Tick(_float _fTimeDelta)
 
 static MODEL	eType(MODEL::NONANIM);
 static FX_AREA	eArea(FX_AREA::MAX);
-static _bool	bRenderMesh(false);
+static _bool	bRenderFullModel(true);
+static _bool	bToolShader(false);
 
 HRESULT Bind_EmptyMaterialDesc(shared_ptr<CShader> _pShader)
 {
@@ -262,13 +240,13 @@ HRESULT CScene_Tool::Render()
 				{
 					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CTransform::Bind_OnShader");
 				}
-				if (bRenderMesh)
+				if (bRenderFullModel)
 				{
-					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
+					m_pairSelectedModel.second->Render(m_pShader_AnimMesh, 0);
 				}
 				else
 				{
-					m_pairSelectedModel.second->Render(m_pShader_AnimMesh, 0);
+					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
 				}
 				break;
 			case MODEL::NONANIM:
@@ -280,13 +258,13 @@ HRESULT CScene_Tool::Render()
 				{
 					MSG_RETURN(E_FAIL, "CScene_Tool::Render", "Failed to CTransform::Bind_OnShader");
 				}
-				if (bRenderMesh)
+				if (bRenderFullModel)
 				{
-					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
+					m_pairSelectedModel.second->Render(m_pShader_NonAnimMesh, bTriplanerPass ? 1 : 0);
 				}
 				else
 				{
-					m_pairSelectedModel.second->Render(m_pShader_NonAnimMesh, bTriplanerPass ? 1 : 0);
+					m_pairSelectedMesh.second->Render(m_pShader_NonAnimMesh, 0);
 				}
 				break;
 			}
@@ -327,6 +305,33 @@ HRESULT CScene_Tool::Render()
 	}
 
 	return S_OK;
+}
+
+void CScene_Tool::Debug()
+{
+	if (CImGui_Manager::Get_Instance()->Is_Enable())
+	{
+		ImGui::Begin("MATERIAL");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MATERIAL_EMISSIVE).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("NONBLEND");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_NORMAL).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_DEPTH).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("LIGHT");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+		ImGui::End();
+	}
 }
 
 static _int iSelectedKeyFrame(0);
@@ -533,9 +538,12 @@ void CScene_Tool::System_Model()
 		{
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
-				m_pairSelectedModel = pair;
-				m_pSelectedAnimation = nullptr;
-				bRenderMesh = false;
+				bRenderFullModel			= true;
+				m_pairSelectedMesh.first.clear();
+				m_pairSelectedMesh.second	= nullptr;
+				m_pSelectedAnimation		= nullptr;
+				m_pairSelectedModel			= pair;
+				bToolShader					= !pair.second->Is_ManualShader();
 			}
 
 			if (m_pairSelectedModel == pair)
@@ -560,9 +568,12 @@ void CScene_Tool::System_Model()
 		{
 			if (ImGui::Selectable(pair.first.c_str(), m_pairSelectedModel == pair))
 			{
-				m_pairSelectedModel = pair;
-				m_pSelectedAnimation = nullptr;
-				bRenderMesh = false;
+				bRenderFullModel			= true;
+				m_pairSelectedMesh.first.clear();
+				m_pairSelectedMesh.second	= nullptr;
+				m_pSelectedAnimation		= nullptr;
+				m_pairSelectedModel			= pair;
+				bToolShader					= !pair.second->Is_ManualShader();
 			}
 
 			if (m_pairSelectedModel == pair)
@@ -941,6 +952,9 @@ void CScene_Tool::Info_Model()
 	static _uint			iRangeMesh;
 	static _uint			iRangeMaterial;
 
+	static SHADERDESC		tShaderDesc;
+	static _uint			iSubShaderPassIdx(0);
+
 	static aiTextureType	eTexType(aiTextureType_DIFFUSE);
 
 	if (m_pairSelectedModel.second)
@@ -1019,9 +1033,10 @@ void CScene_Tool::Info_Model()
 					{
 						iSelectedItem = iItemIdx;
 
-						bRenderMesh = true;
 						m_pairSelectedMesh.first = string(std::to_string(i) + m_pairSelectedModel.second->Get_Mesh(i)->Get_Name());
 						m_pairSelectedMesh.second = m_pairSelectedModel.second->Get_Mesh(i);
+
+						tShaderDesc = m_pairSelectedModel.second->Get_ShaderDesc(i);
 					}
 					++iItemIdx;
 				}
@@ -1302,6 +1317,162 @@ void CScene_Tool::Info_Model()
 
 			if (m_pairSelectedMesh.second)
 			{
+				ImGui::Text("Material Index: ", m_pairSelectedMesh.second->Get_MaterialIndex());
+				ImGui::SameLine();
+				if (ImGui::Button(string("Material " + std::to_string(m_pairSelectedMesh.second->Get_MaterialIndex())).c_str()))
+				{
+					iSelectedItem		= iRangeMaterial - 1;
+					iSelectedMaterial	= m_pairSelectedMesh.second->Get_MaterialIndex();
+					iSelectedTexture	= -1;
+					m_tSelectedMaterial = m_pairSelectedModel.second->Get_Material(iSelectedMaterial);
+				}
+			}
+
+			if (ImGui::TreeNode("Hide"))
+			{
+				ImGui::BeginChild("##ScrollingRegion", ImVec2(0, ImGui::GetFrameHeightWithSpacing() * 8), true);
+
+				for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumMeshes(); ++i)
+				{
+					string	strLabel	= "Mesh " + std::to_string(i);
+					_bool	bHidden		= m_pairSelectedModel.second->Is_MeshHidden(i);
+					if (ImGui::Checkbox(strLabel.c_str(), &bHidden))
+					{
+						m_pairSelectedModel.second->Hide_Mesh(i, bHidden);
+					}
+				}
+
+				ImGui::EndChild();
+				ImGui::TreePop();
+			}
+
+			if (m_pairSelectedMesh.second)
+			{
+				static _bool	bApplyShaderDesc(false);
+
+				if (ImGui::TreeNode("Shader"))
+				{
+					if (ImGui::Checkbox("Tool Shader", &bToolShader))
+					{
+						m_pairSelectedModel.second->Set_ManualShader(!bToolShader);
+					}
+
+					if (!bToolShader)
+					{
+						ImGui::Text("Manual Shader!");
+					}
+					else
+					{
+						if (ImGui::TreeNode("SubShader"))
+						{
+							if (ImGui::Button("Apply##SubShaderIdx"))
+							{
+								iSubShaderPassIdx = std::clamp(iSubShaderPassIdx, 0u, 100u);
+								m_pairSelectedModel.second->Set_SubShaderPassIndex(iSubShaderPassIdx);
+							}
+							ImGui::SameLine();
+							ImGui::PushItemWidth(100);
+							if (ImGui::InputInt("SubShader Index", reinterpret_cast<_int*>(&iSubShaderPassIdx)))
+							{
+								iSubShaderPassIdx = std::clamp(iSubShaderPassIdx, 0u, 100u);
+							}
+							ImGui::PopItemWidth();
+
+							if (ImGui::TreeNode("SubShader Properties"))
+							{
+								ImGui::BeginChild("##SubShaderScrollingRegion", ImVec2(0, ImGui::GetFrameHeightWithSpacing() * 8), true);
+
+								for (_uint i = 0; i < m_pairSelectedModel.second->Get_NumMeshes(); ++i)
+								{
+									string	strLabel	= "Mesh " + std::to_string(i);
+									_bool	isSubShader	= m_pairSelectedModel.second->Is_SubShaderPass(i);
+									if (ImGui::Checkbox(strLabel.c_str(), &isSubShader))
+									{
+										m_pairSelectedModel.second->Set_SubShaderPass(i, isSubShader);
+									}
+								}
+
+								ImGui::EndChild();
+								ImGui::TreePop();
+							}
+
+							ImGui::TreePop();
+						}
+						if (ImGui::TreeNode("Shader Flag"))
+						{
+							if (ImGui::CheckboxFlags("Texture Diffuse##Shader",			&tShaderDesc.iShaderFlag,	SHADER_FLAG_TEXDIFFUSE))			bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Texture Normal##Shader",			&tShaderDesc.iShaderFlag,	SHADER_FLAG_TEXNORMAL))				bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner X Positive##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_POSITIVE_X))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner Y Positive##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_POSITIVE_Y))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner Z Positive##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_POSITIVE_Z))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner X Negative##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_NEGATIVE_X))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner Y Negative##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_NEGATIVE_Y))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("TriPlaner Z Negative##Shader",	&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_NEGATIVE_Z))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner X-Share##Shader",		&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_SHARE_X))		bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner Y-Share##Shader",		&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_SHARE_Y))		bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner Z-Share##Shader",		&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_SHARE_Z))		bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner XZ-Share##Shader",		&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_SHARE_X_Z))	bApplyShaderDesc = true;
+							if (ImGui::CheckboxFlags("Triplaner XZ-Sync##Shader",		&tShaderDesc.iShaderFlag,	SHADER_FLAG_TRIPLANER_SYNC_XZ))		bApplyShaderDesc = true;
+
+							ImGui::TreePop();
+						}
+						if (ImGui::TreeNode("Texture Tiling"))
+						{
+							if (ImGui::DragFloat("Diffuse##Shader", &tShaderDesc.fDiffuseTiling, 0.1f, 0.f, 10.f))	bApplyShaderDesc = true;
+							if (ImGui::DragFloat("Normal##Shader", &tShaderDesc.fNormalTiling, 0.1f, 0.f, 10.f))	bApplyShaderDesc = true;
+
+							ImGui::TreePop();
+						}
+						if (ImGui::TreeNode("Shader Material"))
+						{
+							if (ImGui::TreeNode("Diffuse##ShaderMaterial"))
+							{
+								if (ImGui::ColorPicker4("Diffuse##Picker", reinterpret_cast<_float*>(&tShaderDesc.tMaterialDesc.vDiffuse),
+									ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB))					bApplyShaderDesc = true;
+								ImGui::TreePop();
+							}
+							if (ImGui::TreeNode("Ambient##ShaderMaterial"))
+							{
+								if (ImGui::ColorPicker4("Ambient##Picker", reinterpret_cast<_float*>(&tShaderDesc.tMaterialDesc.vAmbient),
+									ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB))					bApplyShaderDesc = true;
+								ImGui::TreePop();
+							}
+							if (ImGui::TreeNode("Specular##ShaderMaterial"))
+							{
+								if (ImGui::ColorPicker4("Specular##Picker", reinterpret_cast<_float*>(&tShaderDesc.tMaterialDesc.vSpecular),
+									ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB))					bApplyShaderDesc = true;
+								ImGui::TreePop();
+							}
+							if (ImGui::TreeNode("Emissive##ShaderMaterial"))
+							{
+								if (ImGui::ColorPicker4("Emissive##Picker", reinterpret_cast<_float*>(&tShaderDesc.tMaterialDesc.vEmissive),
+									ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB))					bApplyShaderDesc = true;
+								ImGui::TreePop();
+							}
+
+							if (ImGui::InputFloat("Shine##Shader", &tShaderDesc.tMaterialDesc.fShininess))			bApplyShaderDesc = true;
+
+							ImGui::TreePop();
+						}
+					}
+
+					ImGui::TreePop();
+				}
+
+				if (ImGui::Button("Apply##ShaderDesc"))
+				{
+					m_pairSelectedModel.second->Set_ShaderDesc(m_pairSelectedModel.second->Get_MeshIndex(m_pairSelectedMesh.second), tShaderDesc);
+				}
+
+			//	if (bApplyShaderDesc)
+			//	{
+			//		bApplyShaderDesc = false;
+			//
+			//		m_pairSelectedModel.second->Set_ShaderDesc(m_pairSelectedModel.second->Get_MeshIndex(m_pairSelectedMesh.second), tShaderDesc);
+			//	}
+
+				ImGui::Separator();
+
 				if (ImGui::Button("Export"))
 				{
 					const _char* szFilters = "Meshes (*.msh,*.fbx){.msh},Binary (*.msh){.msh},FBX (*.fbx){.fbx},All files{.*}";
@@ -1340,6 +1511,20 @@ void CScene_Tool::Info_Model()
 						}
 					}
 					ImGui::EndCombo();
+				}
+				if (ImGui::IsItemHovered())
+				{
+					if (_float fWheelDeltaV = ImGui::GetIO().MouseWheel)
+					{
+						if (0 > fWheelDeltaV && iCurrentMaterialIdx == 0)
+						{
+							iCurrentMaterialIdx = 1;
+						}
+						if (0 < fWheelDeltaV && iCurrentMaterialIdx == 1)
+						{
+							iCurrentMaterialIdx = 0;
+						}
+					}
 				}
 	
 				switch (iCurrentMaterialIdx)
@@ -1408,22 +1593,25 @@ void CScene_Tool::Info_Model()
 				if (ImGui::BeginListBox("Texture Listbox", ImVec2(-FLT_MIN, 0.f)))
 				{
 					iTextureIdx = 0;
-					for (_uint i = 0; i < m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_NumTextures(); ++i)
+					if (m_tSelectedMaterial.pTexture[IDX(eTexType)])
 					{
-						wstring wstrTexturePath = m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(i);
-						wstring wstrFileName, wstrExtension;
-						Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
-	
-						ImGui::PushID(iTextureIdx);
-						if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
+						for (_uint i = 0; i < m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_NumTextures(); ++i)
 						{
-							iSelectedTexture = iTextureIdx;
+							wstring wstrTexturePath = m_tSelectedMaterial.pTexture[IDX(eTexType)]->Get_TexturePath(i);
+							wstring wstrFileName, wstrExtension;
+							Function::SplitPath(wstrTexturePath, nullptr, nullptr, &wstrFileName, &wstrExtension);
+
+							ImGui::PushID(iTextureIdx);
+							if (ImGui::Selectable(Function::ToString(wstrFileName + wstrExtension).c_str(), iSelectedTexture == iTextureIdx))
+							{
+								iSelectedTexture = iTextureIdx;
+							}
+							ImGui::PopID();
+
+							++iTextureIdx;
 						}
-						ImGui::PopID();
-	
-						++iTextureIdx;
+						ImGui::EndListBox();
 					}
-					ImGui::EndListBox();	
 				}
 	
 				if (iSelectedTexture != -1)
@@ -1873,7 +2061,15 @@ void CScene_Tool::Control_Model()
 		ImGui::PopItemWidth();
 	}
 
-	ImGui::Checkbox("Fix Mode", &bAnimationFix);
+	if (m_pairSelectedMesh.second)
+	{
+		ImGui::Checkbox("Render Full Model", &bRenderFullModel);
+	}
+
+	if (m_pairSelectedModel.second && MODEL::ANIM == m_pairSelectedModel.second->Get_Type())
+	{
+		ImGui::Checkbox("Fix Mode", &bAnimationFix);
+	}
 
 	if (m_pSelectedAnimation)
 	{

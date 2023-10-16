@@ -96,6 +96,7 @@
     <ClInclude Include="Public\VIBufferInstance_Point.h" />
     <ClInclude Include="Public\VIBufferInstance_Line.h" />
     <ClInclude Include="Public\VIBufferInstance_Mesh.h" />
+    <ClInclude Include="Public\VIBuffer_Cube.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\Effect.cpp" />
@@ -170,6 +171,7 @@
     <ClCompile Include="Private\VIBufferInstance_Point.cpp" />
     <ClCompile Include="Private\VIBufferInstance_Line.cpp" />
     <ClCompile Include="Private\VIBufferInstance_Mesh.cpp" />
+    <ClCompile Include="Private\VIBuffer_Cube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Public\BlackBoard.inl" />

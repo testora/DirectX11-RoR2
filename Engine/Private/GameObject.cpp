@@ -233,6 +233,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComp
 	case COMPONENT::SHADER:
 	case COMPONENT::COLLIDER:
 	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_CUBE:
 		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
 			CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
@@ -263,6 +264,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComp
 	{
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_CUBE:
 	case COMPONENT::VIBUFFER_TERRAIN:
 	case COMPONENT::VIBUFFER_INSTANCE_MESH:
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
@@ -293,6 +295,7 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComp
 		break;
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_CUBE:
 	case COMPONENT::VIBUFFER_TERRAIN:
 	case COMPONENT::VIBUFFER_INSTANCE_MESH:
 	case COMPONENT::VIBUFFER_INSTANCE_POINT:
@@ -352,6 +355,7 @@ HRESULT CGameObject::Delete_Component(const COMPONENT _eComponent)
 	{
 	case COMPONENT::MESH:
 	case COMPONENT::VIBUFFER_RECT:
+	case COMPONENT::VIBUFFER_CUBE:
 	case COMPONENT::VIBUFFER_TERRAIN:
 		m_umapComponent.erase(m_umapComponent.find(COMPONENT::VIBUFFER));
 		m_bitComponent.set(IDX(COMPONENT::VIBUFFER), false);

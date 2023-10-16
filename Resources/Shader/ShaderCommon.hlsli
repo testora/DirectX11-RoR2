@@ -81,57 +81,99 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 	float4	vTriColor		= float4(0.f, 0.f, 0.f, 0.f);
 	float   fBlendFactor	= 1.f;
 	
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_X && vNormal.x > 0)
+	if (vNormal.x > 0)
 	{
-		vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x;
-		fBlendFactor	-=	vBlendFactor.x;
+		if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_X)
+		{
+			vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x;
+			fBlendFactor	-=	vBlendFactor.x;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y && vNormal.y > 0)
+	if (vNormal.y > 0)
 	{
-		vTriColor		+=	g_texDiffuse[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 1]) * vBlendFactor.y;
-		fBlendFactor	-=	vBlendFactor.y;
+		if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y)
+		{
+			vTriColor		+=	g_texDiffuse[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 1]) * vBlendFactor.y;
+			fBlendFactor	-=	vBlendFactor.y;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z && vNormal.z > 0)
+	if (vNormal.z > 0)
 	{
-		vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z:
-							g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z;
-		fBlendFactor	-=	vBlendFactor.z;
+		if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z)
+		{
+			vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)			* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z:
+								g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z;
+			fBlendFactor	-=	vBlendFactor.z;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X && vNormal.x < 0)
+	if (vNormal.x < 0)
 	{
-		vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X ?
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.x:
-							g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.x;
-		fBlendFactor	-=	vBlendFactor.x;
+		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X)
+		{
+			vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X ?
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x:
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.x:
+								g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.x;
+			fBlendFactor	-=	vBlendFactor.x;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y && vNormal.y < 0)
+	if (vNormal.y < 0)
 	{
-		vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Y ?
-							g_texDiffuse[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 1]) * vBlendFactor.y:
-							g_texDiffuse[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 4]) * vBlendFactor.y;
-		fBlendFactor	-=	vBlendFactor.y;
+		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y)
+		{
+			vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Y ?
+								g_texDiffuse[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 1]) * vBlendFactor.y:
+								g_texDiffuse[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 4]) * vBlendFactor.y;
+			fBlendFactor	-=	vBlendFactor.y;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z && vNormal.z < 0)
+	if (vNormal.z < 0)
 	{
-		vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Z ?
-							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
-							g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z:
-							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.z:
-							g_texDiffuse[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 5]) * vBlendFactor.z;
-		fBlendFactor	-=	vBlendFactor.z;
+		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z)
+		{
+			vTriColor		+=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Z ?
+								g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.z:
+								g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z:
+								g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.z:
+								g_texDiffuse[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 5]) * vBlendFactor.z;
+			fBlendFactor	-=	vBlendFactor.z;
+		}
+		else
+		{
+			return vTexColor;
+		}
 	}
 	
 	return vTriColor + vTexColor * fBlendFactor;
@@ -143,64 +185,106 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 	float3		vTriNormal		= float3(0.f, 0.f, 0.f);
 	float		fBlendFactor	= 1.f;
 	
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_X && vNormal.x > 0)
+	if (vNormal.x > 0)
 	{
-		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 0]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
-		fBlendFactor	-=	vBlendFactor.x;
-	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y && vNormal.y > 0)
+        if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_X)
+        {
+			float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 1.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 0]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
+			fBlendFactor	-=	vBlendFactor.x;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
+	if (vNormal.y > 0)
 	{
-		float4 vDXT5nm	=	g_texNormal[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 1]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
-		fBlendFactor	-=	vBlendFactor.y;
-	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z && vNormal.z > 0)
+        if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y)
+        {
+			float4 vDXT5nm	=	g_texNormal[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 1]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
+			fBlendFactor	-=	vBlendFactor.y;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
+	if (vNormal.z > 0)
 	{
-		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)		* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)		* g_fTilingNormal[TRIPLANAR_SLOT + 2]):
-							g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 2]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
-		fBlendFactor	-=	vBlendFactor.z;
-	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X && vNormal.x < 0)
+        if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z)
+        {
+			float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)		* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, RotateUV(vWorldPos.xy, PI)		* g_fTilingNormal[TRIPLANAR_SLOT + 2]):
+								g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 2]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
+			fBlendFactor	-=	vBlendFactor.z;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
+	if (vNormal.x < 0)
 	{
-		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X ?
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
-							g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 3]):
-							g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 3]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
-		fBlendFactor	-=	vBlendFactor.x;
-	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y && vNormal.y < 0)
+        if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X)
+        {
+			float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_X ?
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_iShaderFlag & STATUS_TRIPLANER_SYNC_XZ ?
+								g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, RotateUV(vWorldPos.yz, PI * 0.5f)	* g_fTilingNormal[TRIPLANAR_SLOT + 3]):
+								g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.yz						* g_fTilingNormal[TRIPLANAR_SLOT + 3]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
+			fBlendFactor	-=	vBlendFactor.x;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
+	if (vNormal.y < 0)
 	{
-		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Y ?
-							g_texNormal[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 1]):
-							g_texNormal[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 4]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
-		fBlendFactor	-=	vBlendFactor.y;
-	}
-	if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z && vNormal.z < 0)
+        if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y)
+        {
+			float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Y ?
+								g_texNormal[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 1]):
+								g_texNormal[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 4]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
+			fBlendFactor	-=	vBlendFactor.y;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
+	if (vNormal.z < 0)
 	{
-		float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Z ?
-							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
-							g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 2]):
-							g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
-							g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 3]):
-							g_texNormal[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 5]);
-		vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
-		fBlendFactor	-=	vBlendFactor.z;
-	}
+        if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z)
+        {
+			float4 vDXT5nm	=	g_iShaderFlag & STATUS_TRIPLANER_SHARE_Z ?
+								g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_texNormal[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 0]):
+								g_texNormal[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 2]):
+								g_iShaderFlag & STATUS_TRIPLANER_SHARE_X_Z ?
+								g_texNormal[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 3]):
+								g_texNormal[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 5]);
+			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
+			fBlendFactor	-=	vBlendFactor.z;
+        }
+		else
+        {
+			return vNormal;
+        }
+    }
 	
 	return vTriNormal + vNormal * fBlendFactor;
 }

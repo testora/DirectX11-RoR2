@@ -34,6 +34,9 @@ protected:
 	void								Adjust_FOV(_float fTargetRadian, _float fDuration = 0.f, _float fWeight = 1.f);
 	void								Release_FOV(_float fDuration = 0.f, _float fWeight = 1.f);
 
+public:
+	CAMERA_DESC							Get_Desc() const	{ return m_tCameraDesc; }
+
 protected:
 	shared_ptr<class CPipeLine>			m_pPipeLine;
 

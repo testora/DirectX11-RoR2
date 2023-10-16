@@ -15,6 +15,9 @@ public:
 	virtual void					Tick(_float fTimeDelta)			PURE;
 	virtual void					Late_Tick(_float fTimeDelta)	PURE;
 	virtual HRESULT					Render()						PURE;
+#ifdef _DEBUG
+	virtual void					Debug();
+#endif
 
 public:
 	virtual const SCENE				Get_Scene(_bool _bSkipLoad = true) const	{ return m_eScene; }

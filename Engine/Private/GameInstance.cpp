@@ -127,6 +127,13 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pEvent_Handler->Tick(_fTimeDelta);
 }
 
+#ifdef _DEBUG
+void CGameInstance::Debug_Engine()
+{
+	m_pScene_Manager->Debug();
+}
+#endif
+
 LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam, LPARAM _lParam)
 {
 	if (nullptr != m_pMouse_Manager)

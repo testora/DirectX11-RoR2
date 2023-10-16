@@ -15,6 +15,9 @@ public:
 	virtual void					Tick(_float fTimeDelta) override;
 	virtual void					Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT					Render() override;
+#ifdef _DEBUG
+	virtual void					Debug() override;
+#endif
 
 private:
 	HRESULT							Ready_Light();

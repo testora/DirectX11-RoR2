@@ -66,11 +66,6 @@ void CCamera::Late_Tick(_float _fTimeDelta)
 
 HRESULT CCamera::Render()
 {
-	if (FAILED(m_pShader->Bind_Vector(SHADER_CAMPOS, _float4(m_pTransform->Get_State(TRANSFORM::POSITION), 1.f))))
-	{
-		MSG_RETURN(E_FAIL, "CCamera::Render", "Failed to CShader::Bind_Vector");
-	}
-
 	switch (m_tCameraDesc.eType)
 	{
 	case TYPE::PERSPECTIVE:

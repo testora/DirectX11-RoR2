@@ -86,6 +86,13 @@ void CRailGunner_Crosshair::Tick(_float _fTimeDelta)
 
 void CRailGunner_Crosshair::Late_Tick(_float _fTimeDelta)
 {
+#ifdef _DEBUG
+	if (CPipeLine::Get_Instance()->Get_Camera<CCamera_Main>()->Is_Debug())
+	{
+		return;
+	}
+#endif
+
 	m_pRenderer->Add_RenderObject(RENDER_GROUP::UI, shared_from_this());
 }
 

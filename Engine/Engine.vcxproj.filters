@@ -217,12 +217,6 @@
     <Filter Include="04. Utility\06. Component\08. VIBuffer\02. Rect">
       <UniqueIdentifier>{a7134421-7946-4ec0-9b97-604cfe3ac1cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\03. Terrain">
-      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. Utility\06. Component\08. VIBuffer\04. Cell">
-      <UniqueIdentifier>{73dd86b2-b9f5-4590-acb9-e34e70a7d575}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance">
       <UniqueIdentifier>{8c69faaf-bc7a-4a43-9ac5-f692b52b1039}</UniqueIdentifier>
     </Filter>
@@ -240,6 +234,15 @@
     </Filter>
     <Filter Include="04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh">
       <UniqueIdentifier>{c7db8c43-7773-4642-8974-792dce2f2ecb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\05. Terrain">
+      <UniqueIdentifier>{cafcdec1-692f-4b05-8ef9-eeb866fa5a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\03. Cube">
+      <UniqueIdentifier>{c24c37bd-b562-44a6-9f8c-0709e171369b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Utility\06. Component\08. VIBuffer\04. Cell">
+      <UniqueIdentifier>{73dd86b2-b9f5-4590-acb9-e34e70a7d575}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -304,7 +307,7 @@
       <Filter>00. Header\02. Source</Filter>
     </ClCompile>
     <ClCompile Include="Private\VIBuffer_Terrain.cpp">
-      <Filter>04. Utility\06. Component\08. VIBuffer\03. Terrain</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\05. Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Private\Picker.cpp">
       <Filter>04. Utility\10. Picker</Filter>
@@ -444,6 +447,9 @@
     <ClCompile Include="Private\VIBufferInstance_Mesh.cpp">
       <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Private\VIBuffer_Cube.cpp">
+      <Filter>04. Utility\06. Component\08. VIBuffer\03. Cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Engine_Define.h">
@@ -525,7 +531,7 @@
       <Filter>04. Utility\06. Component\08. VIBuffer</Filter>
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Terrain.h">
-      <Filter>04. Utility\06. Component\08. VIBuffer\03. Terrain</Filter>
+      <Filter>04. Utility\06. Component\08. VIBuffer\05. Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Public\HandleRAII.h">
       <Filter>04. Utility\00. RAII</Filter>
@@ -676,6 +682,9 @@
     </ClInclude>
     <ClInclude Include="Public\VIBufferInstance_Mesh.h">
       <Filter>04. Utility\06. Component\08. VIBuffer\00. Instance\00. Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\VIBuffer_Cube.h">
+      <Filter>04. Utility\06. Component\08. VIBuffer\03. Cube</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

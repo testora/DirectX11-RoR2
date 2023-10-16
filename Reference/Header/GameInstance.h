@@ -18,6 +18,9 @@ public:
 
 	HRESULT										Initialize_Engine(_In_ const SCENE eStatic, _In_ const SCENE eMax, _In_ const GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
 	void										Tick_Engine(_float fTimeDelta);
+#ifdef _DEBUG
+	void										Debug_Engine();
+#endif
 
 	LRESULT										WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

@@ -15,6 +15,7 @@ CModel::CModel(const CModel& _rhs)
 	: CComponent					(_rhs)
 	, m_eType						(_rhs.m_eType)
 	, m_mPivot						(_rhs.m_mPivot)
+	, m_bManualShader				(_rhs.m_bManualShader)
 	, m_iNumBones					(_rhs.m_iNumBones)
 	, m_iNumMeshes					(_rhs.m_iNumMeshes)
 	, m_iNumMaterials				(_rhs.m_iNumMaterials)
@@ -22,6 +23,9 @@ CModel::CModel(const CModel& _rhs)
 	, m_vecMeshes					(_rhs.m_vecMeshes)
 	, m_vecMaterials				(_rhs.m_vecMaterials)
 	, m_vecMaterialDescs			(_rhs.m_vecMaterialDescs)
+	, m_vecShaderDescs				(_rhs.m_vecShaderDescs)
+	, m_vecSubShaderPass			(_rhs.m_vecSubShaderPass)
+	, m_iSubShaderPass				(_rhs.m_iSubShaderPass)
 	, m_vecBoneAnimationIndices		(_rhs.m_vecBoneAnimationIndices)
 	, m_vecBonePivot				(_rhs.m_vecBonePivot)
 	, m_mapHideMeshFromAnimations	(_rhs.m_mapHideMeshFromAnimations)
@@ -95,19 +99,34 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 {
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		if (m_mapMeshShaderFlags.find(i) != m_mapMeshShaderFlags.end())
+#ifdef _DEBUG
+		if (std::find(m_vecMeshHide.begin(), m_vecMeshHide.end(), i) != m_vecMeshHide.end())
 		{
-			_pShader->Set_Flag(m_mapMeshShaderFlags[i]);
+			continue;
 		}
-
-		if (m_mapMeshShaderBindings.find(i) != m_mapMeshShaderBindings.end())
+#endif
+		if (m_bManualShader)
 		{
-			if (nullptr != m_mapMeshShaderBindings[i])
+			if (m_mapMeshShaderFlags.find(i) != m_mapMeshShaderFlags.end())
 			{
-				if (FAILED(m_mapMeshShaderBindings[i](_pShader)))
+				_pShader->Set_Flag(m_mapMeshShaderFlags[i]);
+			}
+			if (m_mapMeshShaderBindings.find(i) != m_mapMeshShaderBindings.end())
+			{
+				if (nullptr != m_mapMeshShaderBindings[i])
 				{
-					MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind");
+					if (FAILED(m_mapMeshShaderBindings[i](_pShader)))
+					{
+						MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind");
+					}
 				}
+			}
+		}
+		else
+		{
+			if (FAILED(Bind_ShaderOptions(i, _pShader)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to Bind_ShaderOptions");
 			}
 		}
 
@@ -115,18 +134,18 @@ HRESULT CModel::Render(shared_ptr<CShader> _pShader, _uint _iPassIndex)
 		{
 			if (FAILED(Bind_BoneMatrices(i, _pShader, SHADER_BONE)))
 			{
-				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_BoneMatrices");
+				MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind_BoneMatrices");
 			}
 		}
 
 		if (FAILED(Bind_ShaderResourceViews(i, _pShader)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Bind_ShaderResourceViews");
+			MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Bind_ShaderResourceViews");
 		}
 
 		if (FAILED(Render(i, _pShader, _iPassIndex)))
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CModel::Render");
+			MSG_RETURN(E_FAIL, "CModel::Render", "Failed to Render");
 		}
 	}
 
@@ -137,40 +156,46 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 {
 	if (m_vecMeshes[_iMeshIndex])
 	{
-		for (_uint iAnimationIndex : m_usetAnimationPlayingIndices)
+		if (MODEL::ANIM == m_eType)
 		{
-			auto range = m_mapHideMeshFromAnimations.equal_range(iAnimationIndex);
-			for (auto iter = range.first; iter != range.second; ++iter)
+			for (_uint iAnimationIndex : m_usetAnimationPlayingIndices)
 			{
-				if (iter->second == _iMeshIndex)
+				auto range = m_mapHideMeshFromAnimations.equal_range(iAnimationIndex);
+				for (auto iter = range.first; iter != range.second; ++iter)
 				{
-					return S_FALSE;
+					if (iter->second == _iMeshIndex)
+					{
+						return S_FALSE;
+					}
 				}
 			}
 		}
 
-		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, m_vecMaterialDescs[_iMeshIndex].vDiffuse)))
+		if (m_bManualShader)
 		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLAMB, m_vecMaterialDescs[_iMeshIndex].vAmbient)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLSPC, m_vecMaterialDescs[_iMeshIndex].vSpecular)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(_pShader->Bind_Vector(SHADER_MTRLEMS, m_vecMaterialDescs[_iMeshIndex].vEmissive)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-		}
-		if (FAILED(_pShader->Bind_Float(SHADER_MTRLSHN, m_vecMaterialDescs[_iMeshIndex].fShininess)))
-		{
-			MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+			if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, m_vecMaterialDescs[_iMeshIndex].vDiffuse)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+			}
+			if (FAILED(_pShader->Bind_Vector(SHADER_MTRLAMB, m_vecMaterialDescs[_iMeshIndex].vAmbient)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+			}
+			if (FAILED(_pShader->Bind_Vector(SHADER_MTRLSPC, m_vecMaterialDescs[_iMeshIndex].vSpecular)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+			}
+			if (FAILED(_pShader->Bind_Vector(SHADER_MTRLEMS, m_vecMaterialDescs[_iMeshIndex].vEmissive)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+			}
+			if (FAILED(_pShader->Bind_Float(SHADER_MTRLSHN, m_vecMaterialDescs[_iMeshIndex].fShininess)))
+			{
+				MSG_RETURN(E_FAIL, "CGameObject::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+			}
 		}
 
-		if (FAILED(m_vecMeshes[_iMeshIndex]->Render(_pShader, _iPassIndex, false)))
+		if (FAILED(m_vecMeshes[_iMeshIndex]->Render(_pShader, m_bManualShader ? _iPassIndex : m_vecSubShaderPass[_iMeshIndex] ? m_iSubShaderPass : _iPassIndex, false)))
 		{
 			MSG_RETURN(E_FAIL, "CModel::Render", "Failed to CMesh::Render");
 		}
@@ -219,6 +244,9 @@ HRESULT CModel::Initialize_FromAssimp(const MODEL _eType, const wstring& _wstrMo
 	{
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromAssimp", "Failed to Ready_Meshes");
 	}
+	m_vecShaderDescs.resize(m_iNumMeshes);
+	m_vecSubShaderPass.resize(m_iNumMeshes);
+	m_vecMaterialDescs.resize(m_iNumMeshes);
 
 	if (FAILED(Ready_Materials(pAIScene, _wstrModelPath)))
 	{
@@ -239,11 +267,13 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 	}
 
 	inFile.read(reinterpret_cast<_byte*>(&m_eType),				sizeof(MODEL));
+	inFile.read(reinterpret_cast<_byte*>(&m_bManualShader),		sizeof(_bool));
 	inFile.read(reinterpret_cast<_byte*>(&m_mPivot),			sizeof(_float4x4));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumBones),			sizeof(_uint));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumAnimations),	sizeof(_uint));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumMeshes),		sizeof(_uint));
 	inFile.read(reinterpret_cast<_byte*>(&m_iNumMaterials),		sizeof(_uint));
+	inFile.read(reinterpret_cast<_byte*>(&m_iSubShaderPass),	sizeof(_uint));
 	
 	if (inFile.fail() || inFile.eof())
 	{
@@ -252,6 +282,7 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File: Model");
 	}
 
+#pragma region Bones
 	m_vecBones.reserve(m_iNumBones);
 	for (_uint i = 0; i < m_iNumBones; ++i)
 	{
@@ -263,7 +294,8 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 		inFile.close();
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File: Bones");
 	}
-
+#pragma endregion
+#pragma region Animations
 	m_vecAnimations.reserve(m_iNumAnimations);
 	for (_uint i = 0; i < m_iNumAnimations; ++i)
 	{
@@ -275,7 +307,8 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 		inFile.close();
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File: Animations");
 	}
-
+#pragma endregion
+#pragma region Meshes
 	m_vecMeshes.reserve(m_iNumMeshes);
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
@@ -287,7 +320,8 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 		inFile.close();
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File: Meshes");
 	}
-
+#pragma endregion
+#pragma region Materials
 	m_vecMaterials.resize(m_iNumMaterials);
 	for (_uint i = 0; i < m_iNumMaterials; ++i)
 	{
@@ -317,12 +351,34 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 		inFile.close();
 		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File: Materials");
 	}
+#pragma endregion
+#pragma region Shaders
+	m_vecShaderDescs.resize(m_iNumMeshes);
+	m_vecSubShaderPass.resize(m_iNumMeshes);
+	m_vecMaterialDescs.resize(m_iNumMeshes);
+	if (m_bManualShader)
+	{
+		inFile.read(reinterpret_cast<_byte*>(m_vecShaderDescs.data()),	sizeof(SHADERDESC) * m_iNumMeshes);
+		for (_uint i = 0; i < m_iNumMeshes; ++i)
+		{
+			_bool bSubShaderPass(false);
+			inFile.read(reinterpret_cast<_byte*>(&bSubShaderPass),		sizeof(_bool));
+			m_vecSubShaderPass[i] = bSubShaderPass;
+		}
+	}
+	if (inFile.fail() || inFile.eof())
+	{
+		inFile.clear();
+		inFile.close();
+		MSG_RETURN(E_FAIL, "CModel::Initialize_FromBinary", "Failed to Read File");
+	}
+#pragma endregion
 
 	inFile.close();
 
-	m_vecMaterialDescs.resize(m_iNumMeshes);
 	m_vecBoneAnimationIndices.resize(m_iNumBones);
 	m_vecBonePivot.resize(m_iNumBones);
+	m_vecMaterialDescs.resize(m_iNumMeshes);
 	std::fill(m_vecBonePivot.begin(), m_vecBonePivot.end(), g_mUnit);
 
 	return S_OK;
@@ -388,8 +444,6 @@ HRESULT CModel::Ready_Meshes(const aiScene* _pAIScene, _matrixf _mPivot)
 
 		m_vecMeshes.emplace_back(pMesh);
 	}
-
-	m_vecMaterialDescs.resize(m_iNumMeshes);
 
 	return hr;
 }
@@ -461,6 +515,19 @@ _uint CModel::Get_MeshIndex(const _char* _szMeshName) const
 }
 
 #if ACTIVATE_TOOL
+const _uint CModel::Get_MeshIndex(shared_ptr<CMesh> _pMesh) const
+{
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		if (m_vecMeshes[i] == _pMesh)
+		{
+			return i;
+		}
+	}
+
+	return m_iNumMeshes;
+}
+
 const _uint CModel::Get_AnimationIndex(shared_ptr<CAnimation> _pAnimation) const
 {
 	for (_uint i = 0; i < m_iNumAnimations; ++i)
@@ -609,6 +676,28 @@ HRESULT CModel::Hide_MeshFromAnimations(_uint _iAnimationIndex, _uint _iMeshInde
 	return S_OK;
 }
 
+#ifdef _DEBUG
+_bool CModel::Is_MeshHidden(_uint iMeshIndex) const
+{
+	return std::find(m_vecMeshHide.begin(), m_vecMeshHide.end(), iMeshIndex) != m_vecMeshHide.end();
+}
+
+void CModel::Hide_Mesh(_uint _iMeshIndex, _bool _bHide)
+{
+	if (Function::InRange(_iMeshIndex, 0u, m_iNumMeshes))
+	{
+		if (_bHide)
+		{
+			m_vecMeshHide.emplace_back(_iMeshIndex);
+		}
+		else
+		{
+			m_vecMeshHide.erase(std::find(m_vecMeshHide.begin(), m_vecMeshHide.end(), _iMeshIndex));
+		}
+	}
+}
+#endif
+
 HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CShader> _pShader, _uint _iTextureIndex)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
@@ -686,7 +775,7 @@ HRESULT CModel::Bind_ShaderResourceView(_uint _iMeshIndex, shared_ptr<class CSha
 	return pTexture->Bind_ShaderResourceView(_pShader, _eAIType, _szConstantName, _iTextureIndex);
 }
 
-HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<class CShader> _pShader)
+HRESULT CModel::Bind_ShaderResourceViews(_uint _iMeshIndex, shared_ptr<CShader> _pShader)
 {
 	if (_iMeshIndex >= m_iNumMeshes)
 	{
@@ -778,6 +867,53 @@ HRESULT CModel::Bind_BoneMatrices(_uint _iMeshIndex, shared_ptr<class CShader> _
 	return _pShader->Bind_MatrixArray(_szConstantName, m_vecMeshes[_iMeshIndex]->Get_BoneMatrices(m_vecBones.begin(), m_mPivot), m_vecMeshes[_iMeshIndex]->Get_NumBones());
 }
 
+HRESULT CModel::Bind_ShaderOptions(_uint _iMeshIndex, shared_ptr<CShader> _pShader)
+{
+	if (_iMeshIndex >= m_iNumMeshes)
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Invalid Range");
+	}
+
+	if (nullptr == m_vecMeshes[_iMeshIndex])
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderResourceView", "Null Exception");
+	}
+
+	_pShader->Set_Flag(m_vecShaderDescs[_iMeshIndex].iShaderFlag);
+
+	if (FAILED(_pShader->Bind_Float(SHADER_TILING_DIFFUSE, m_vecShaderDescs[_iMeshIndex].fDiffuseTiling)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to Bind_Float");
+	}
+	if (FAILED(_pShader->Bind_Float(SHADER_TILING_NORMAL, m_vecShaderDescs[_iMeshIndex].fNormalTiling)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to Bind_Float");
+	}
+
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLDIF, m_vecShaderDescs[_iMeshIndex].tMaterialDesc.vDiffuse)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLAMB, m_vecShaderDescs[_iMeshIndex].tMaterialDesc.vAmbient)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLSPC, m_vecShaderDescs[_iMeshIndex].tMaterialDesc.vSpecular)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Vector(SHADER_MTRLEMS, m_vecShaderDescs[_iMeshIndex].tMaterialDesc.vEmissive)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
+	}
+	if (FAILED(_pShader->Bind_Float(SHADER_MTRLSHN, m_vecShaderDescs[_iMeshIndex].tMaterialDesc.fShininess)))
+	{
+		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
+	}
+
+	return S_OK;
+}
+
 shared_ptr<CModel> CModel::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext, const MODEL _eType, const wstring& _wstrModelPath, _matrixf _mPivot)
 {
 	shared_ptr<CModel> pInstance = make_private_shared(CModel, _pDevice, _pContext);
@@ -813,11 +949,13 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 
 #pragma region Model
 	outFile.write(reinterpret_cast<const _byte*>(&m_eType),				sizeof(MODEL));
+	outFile.write(reinterpret_cast<const _byte*>(&m_bManualShader),		sizeof(_bool));
 	outFile.write(reinterpret_cast<const _byte*>(&m_mPivot),			sizeof(_float4x4));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumBones),			sizeof(_uint));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumAnimations),	sizeof(_uint));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumMeshes),		sizeof(_uint));
 	outFile.write(reinterpret_cast<const _byte*>(&m_iNumMaterials),		sizeof(_uint));
+	outFile.write(reinterpret_cast<const _byte*>(&m_iSubShaderPass),	sizeof(_uint));
 
 	if (outFile.fail())
 	{
@@ -827,11 +965,10 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Bones
-	for(const auto& pBone : m_vecBones)
+	for (const auto& pBone : m_vecBones)
 	{
 		pBone->Export(outFile);
 	}
-
 	if (outFile.fail())
 	{
 		outFile.clear();
@@ -844,7 +981,6 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	{
 		pAnimation->Export(outFile);
 	}
-
 	if (outFile.fail())
 	{
 		outFile.clear();
@@ -857,7 +993,6 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	{
 		pMesh->Export(outFile, m_eType);
 	}
-
 	if (outFile.fail())
 	{
 		outFile.clear();
@@ -873,12 +1008,27 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 			tMaterial.pTexture[i]->Export(outFile);
 		}
 	}
-
 	if (outFile.fail())
 	{
 		outFile.clear();
 		outFile.close();
 		MSG_RETURN(E_FAIL, "CModel::Export", "Failed to Write File: Materials");
+	}
+#pragma endregion
+#pragma region Shaders
+	if (m_bManualShader)
+	{
+		outFile.write(reinterpret_cast<const _byte*>(m_vecShaderDescs.data()),	sizeof(SHADERDESC) * m_iNumMeshes);
+		for (const auto& bSubShader : m_vecSubShaderPass)
+		{
+			outFile.write(reinterpret_cast<const _byte*>(&bSubShader),			sizeof(_bool));
+		}
+	}
+	if (outFile.fail())
+	{
+		outFile.clear();
+		outFile.close();
+		MSG_RETURN(E_FAIL, "CModel::Export", "Failed to Write File: Shaders");
 	}
 #pragma endregion
 

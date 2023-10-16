@@ -11,6 +11,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "System.h"
+#include "Camera.h"
 
 CRenderer::CRenderer(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent				(_pDevice, _pContext, COMPONENT::RENDERER)
@@ -287,6 +288,18 @@ HRESULT CRenderer::Draw_Light()
 	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_LIGHT)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_LIGHT");
+	}
+
+	if (CPipeLine::Get_Instance()->Get_Camera())
+	{
+		if (FAILED(m_pShader->Bind_Vector(SHADER_CAMPOS, CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION))))
+		{
+			MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Vector: SHADER_CAMPOS");
+		}
+		if (FAILED(m_pShader->Bind_Float(SHADER_CAMFAR, CPipeLine::Get_Instance()->Get_Camera()->Get_Desc().fFar)))
+		{
+			MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Float: SHADER_CAMFAR");
+		}
 	}
 
 	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEWINV, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW).inverse())))

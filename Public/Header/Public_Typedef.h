@@ -6,6 +6,8 @@ typedef signed short			_short;
 typedef unsigned int			_uint;
 typedef signed int				_int;
 
+typedef unsigned int	 		_flags;
+
 typedef unsigned long			_ulong;
 typedef signed long				_long;
 
