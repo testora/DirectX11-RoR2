@@ -81,7 +81,7 @@ HRESULT CRenderTarget_Manager::Add_RenderTarget(const wstring& _wstrTargetTag, c
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::Begin_MultiRenderTaget(const wstring& _wstrMultiTargetTag)
+HRESULT CRenderTarget_Manager::Begin_MultiRenderTaget(const wstring& _wstrMultiTargetTag, _uint _iCopyResource)
 {
 	if (!Exist_MultiRenderTarget(_wstrMultiTargetTag))
 	{
@@ -99,6 +99,14 @@ HRESULT CRenderTarget_Manager::Begin_MultiRenderTaget(const wstring& _wstrMultiT
 	{
 		pRenderTarget->Clear(m_pContext);
 		pRenderTargetView[iIndex++] = pRenderTarget->Get_RenderTargetView().Get();
+	}
+
+	if (Function::InRange(_iCopyResource, 0u, iIndex))
+	{
+		ComPtr<ID3D11Resource> pSrc, pDst;
+		m_pBackBufferView->GetResource(pSrc.GetAddressOf());
+		pRenderTargetView[_iCopyResource]->GetResource(pDst.GetAddressOf());
+		m_pContext->CopyResource(pDst.Get(), pSrc.Get());
 	}
 
 	m_pContext->OMSetRenderTargets(MAX_RENDERTARGET, pRenderTargetView, m_pDepthStencilView.Get());

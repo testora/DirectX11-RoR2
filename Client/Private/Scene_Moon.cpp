@@ -5,6 +5,12 @@
 #include "Camera_Main.h"
 #include "VFX_ParticleMesh.h"
 
+#define SCENE_MOON_FOG_COLOR	_float4(0.75f, 0.85f, 0.95f, 1.00f)
+#define SCENE_MOON_FOG_START	0.01f
+#define SCENE_MOON_FOG_END		1.00f
+#define SCENE_MOON_FOG_MAX		0.60f
+#define SCENE_MOON_FOG_POWER	0.25f
+
 CScene_Moon::CScene_Moon(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::MOON)
 {
@@ -70,6 +76,32 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
 {
+#if ACTIVATE_TOOL
+	static _float4 vFogColor = SCENE_MOON_FOG_COLOR;
+	static _float fFogStart = SCENE_MOON_FOG_START;
+	static _float fFogEnd = SCENE_MOON_FOG_END;
+	static _float fFogMax = SCENE_MOON_FOG_MAX;
+	static _float fFogPower = SCENE_MOON_FOG_POWER;
+
+	ImGui::Begin("Fog");
+	ImGui::InputFloat4("Color", reinterpret_cast<_float*>(&vFogColor));
+	ImGui::InputFloat("Start", &fFogStart);
+	ImGui::InputFloat("End", &fFogEnd);
+	ImGui::InputFloat("Max", &fFogMax);
+	ImGui::InputFloat("Power", &fFogPower);
+	if (ImGui::Button("Apply"))
+	{
+		shared_ptr<CRenderer> pRenderer = dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+		shared_ptr<CShader> pShader = dynamic_pointer_cast<CShader>(pRenderer->Get_DeferredShader());
+
+		pShader->Bind_Vector(SHADER_FOG_COLOR, vFogColor);
+		pShader->Bind_Float(SHADER_FOG_START, fFogStart);
+		pShader->Bind_Float(SHADER_FOG_END, fFogEnd);
+		pShader->Bind_Float(SHADER_FOG_MAX, fFogMax);
+		pShader->Bind_Float(SHADER_FOG_POWER, fFogPower);
+	}
+	ImGui::End();
+#endif
 }
 
 HRESULT CScene_Moon::Render()
@@ -169,6 +201,43 @@ HRESULT CScene_Moon::Ready_Terrain()
 	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
+	}
+
+	shared_ptr<CRenderer> pRenderer = dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+	if (nullptr == pRenderer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_Component");
+	}
+	shared_ptr<CShader> pShader = dynamic_pointer_cast<CShader>(pRenderer->Get_DeferredShader());
+	if (nullptr == pShader)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Get_DeferredShader");
+	}
+
+	_bool bFogEnable(true);
+	if (FAILED(pShader->Bind_RawValue(SHADER_FOG_ENABLE, &bFogEnable, sizeof(_bool))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_RawValue");
+	}
+	if (FAILED(pShader->Bind_Vector(SHADER_FOG_COLOR, SCENE_MOON_FOG_COLOR)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Vector");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_START, SCENE_MOON_FOG_START)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_END, SCENE_MOON_FOG_END)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_MAX, SCENE_MOON_FOG_MAX)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_POWER, SCENE_MOON_FOG_POWER)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Float");
 	}
 
 	return S_OK;

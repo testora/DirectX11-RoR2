@@ -23,7 +23,7 @@ public:
 
 	HRESULT															Add_RenderTarget(const wstring& wstrTargetTag, const _uint2 vResolution, const DXGI_FORMAT, const _color vClear);
 
-	HRESULT															Begin_MultiRenderTaget(const wstring& wstrMultiTargetTag);
+	HRESULT															Begin_MultiRenderTaget(const wstring& wstrMultiTargetTag, _uint iCopyResource = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT);
 	HRESULT															End_MultiRenderTarget();
 
 	HRESULT															Bind_RenderTarget(const wstring& wstrTargetTag, shared_ptr<class CShader>, const _char* szConstantName);

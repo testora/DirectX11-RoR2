@@ -20,6 +20,8 @@ HRESULT CRenderTarget::Initialize(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11De
 	tTexture2DDesc.CPUAccessFlags		= 0;
 	tTexture2DDesc.MiscFlags			= 0;
 
+	m_vClear = _vClear;
+
 	if (FAILED(_pDevice->CreateTexture2D(&tTexture2DDesc, nullptr, m_pTexture2D.GetAddressOf())))
 	{
 		MSG_BOX("CRenderTarget::Initialize", "Failed to CreateTexture2D");

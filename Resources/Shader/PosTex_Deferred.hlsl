@@ -11,7 +11,14 @@ Texture2D	g_texSpecularTarget;
 Texture2D	g_texPreProcessTarget;
 Texture2D	g_texMaskTarget;
 
-float		g_fTime	= 0.f;
+float		g_fTime		= 0.f;
+
+bool		g_bFog		= false;
+float4		g_vFogColor	= float4(1.f, 1.f, 1.f, 1.f);
+float		g_fFogStart	= 0.f;
+float		g_fFogEnd	= 1.f;
+float		g_fFogMax	= 1.f;
+float		g_fFogPower	= 1.f;
 
 struct VS_IN
 {
@@ -73,8 +80,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float4			vDepthTarget	= g_texDepthTarget.Sample(PointSampler, In.vTexCoord);
 	float			fViewZ			= vDepthTarget.y * g_fCamFar;
 
-    float			fShade			= saturate(dot(normalize(g_vLightDirection), -vNormal));
-    fShade							= floor(fShade * CELL_SHADE_FREQUENCY) / CELL_SHADE_FREQUENCY;
+	float			fShade			= saturate(dot(normalize(g_vLightDirection), -vNormal));
+	fShade							= floor(fShade * CELL_SHADE_FREQUENCY) / CELL_SHADE_FREQUENCY;
 	
 	Out.vShade		= fShade;
 	
@@ -136,13 +143,13 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 
 PS_OUT_POSTPROCESS PS_MAIN_PREPROCESS(PS_IN In)
 {
-    PS_OUT_POSTPROCESS Out;
+	PS_OUT_POSTPROCESS Out;
 	
 	float4	vMtrlDiffuse	= g_texMtrlDiffuseTarget.Sample(LinearSampler, In.vTexCoord);
 	if (vMtrlDiffuse.a == 0.f)
-    {
-        discard;
-    }
+	{
+		discard;
+	}
 	float4	vMtrlAmbient	= g_texMtrlAmbientTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vMtrlSpecular	= g_texMtrlSpecularTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vMtrlEmissive	= g_texMtrlEmissiveTarget.Sample(LinearSampler, In.vTexCoord);
@@ -168,26 +175,29 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 	float4	vDepth	= g_texDepthTarget.Sample(LinearSampler, In.vTexCoord);
 	
 	if (0.f < vMask.a && vMask.a < 0.1f) 
-    {
-        float	fWaveLengthX	= vMask.x * 100.f;
-        float	fWaveLengthY	= vMask.y * 100.f;
-        float	fFrequency		= vMask.z * 100.f;
+	{
+		float	fWaveLengthX	= vMask.x * 100.f;
+		float	fWaveLengthY	= vMask.y * 100.f;
+		float	fFrequency		= vMask.z * 100.f;
 		
-        float2	vDistortion		= float2(sin(In.vTexCoord.x + g_fTime * fFrequency * 0.01f) * fWaveLengthX, cos(In.vTexCoord.y + g_fTime * fFrequency * 0.01f) * fWaveLengthY);
+		float2	vDistortion		= float2(sin(In.vTexCoord.x + g_fTime * fFrequency * 0.01f) * fWaveLengthX, cos(In.vTexCoord.y + g_fTime * fFrequency * 0.01f) * fWaveLengthY);
 		
-        Out.vColor = g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord + vDistortion);
-    }
+		Out.vColor	= g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord + vDistortion);
+	}
 	else
-    {
+	{
 		Out.vColor	= g_texPreProcessTarget.Sample(LinearSampler, In.vTexCoord);
-    }
+	}
 	
-	if (Out.vColor.a == 0.f)
-    {
-        discard;
-    }
-	
-    return Out;
+	if (g_bFog)
+	{
+		float	fFogFactor	= saturate(vDepth.y);
+		fFogFactor			= smoothstep(g_fFogStart, g_fFogEnd, fFogFactor);
+		fFogFactor			= pow(fFogFactor, g_fFogPower);
+		Out.vColor			= lerp(Out.vColor, g_vFogColor, min(fFogFactor, g_fFogMax));
+	}
+
+	return Out;
 }
 
 technique11 DefaultTechnique
@@ -202,7 +212,7 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Accumulate, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_IgnoreDepth, 0);
     }
 
 	pass Point
@@ -215,7 +225,7 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Accumulate, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_IgnoreDepth, 0);
     }
 
 	pass PreProcess
@@ -227,9 +237,9 @@ technique11 DefaultTechnique
 		PixelShader		= compile ps_5_0 PS_MAIN_PREPROCESS();
 
 		SetRasterizerState(RS_Default);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        SetDepthStencilState(DSS_Default, 0);
-    }
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_IgnoreDepth, 0);
+	}
 
 	pass PostProcess
 	{
@@ -241,6 +251,6 @@ technique11 DefaultTechnique
 
 		SetRasterizerState(RS_Default);
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_IgnoreDepth, 0);
     }
 }

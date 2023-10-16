@@ -18,6 +18,9 @@ public:
 
 	HRESULT									Draw_RenderGroup();
 
+public:
+	shared_ptr<class CShader>				Get_DeferredShader() const	{ return m_pShader; }
+
 private:
 	HRESULT									Ready_Camera();
 

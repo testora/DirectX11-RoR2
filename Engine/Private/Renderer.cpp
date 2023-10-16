@@ -126,7 +126,7 @@ HRESULT CRenderer::Initialize(any)
 
 #pragma endregion
 
-	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosTex_Deffered.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement);
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Shader/PosTex_Deferred.hlsl"), VTXPOSTEX::tElements, VTXPOSTEX::iNumElement);
 	if(nullptr == m_pShader)
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Compile Shader");
@@ -348,7 +348,7 @@ HRESULT CRenderer::Draw_Light()
 
 HRESULT CRenderer::Draw_PreProcess()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_POSTPROCESS)))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_POSTPROCESS, 0)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_POSTPROCESS");
 	}

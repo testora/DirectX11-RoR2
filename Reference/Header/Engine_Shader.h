@@ -70,6 +70,13 @@
 #define SHADER_THICKNESS						"g_fThickness"
 #define SHADER_MAXINSTANCE						"g_iMaxInstance"
 
+#define SHADER_FOG_ENABLE						"g_bFog"
+#define SHADER_FOG_COLOR						"g_vFogColor"
+#define SHADER_FOG_START						"g_fFogStart"
+#define SHADER_FOG_END							"g_fFogEnd"
+#define SHADER_FOG_MAX							"g_fFogMax"
+#define SHADER_FOG_POWER						"g_fFogPower"
+
 #define RENDERTARGET_MATERIAL_DIFFUSE			TEXT("RenderTarget:Material:Diffuse")
 #define RENDERTARGET_MATERIAL_AMBIENT			TEXT("RenderTarget:Material:Ambient")
 #define RENDERTARGET_MATERIAL_SPECULAR			TEXT("RenderTarget:Material:Specular")

@@ -184,7 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\Shader\Pos.hlsl" />
-    <FxCompile Include="Resources\Shader\PosTex_Deffered.hlsl" />
+    <FxCompile Include="Resources\Shader\PosTex_Deferred.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

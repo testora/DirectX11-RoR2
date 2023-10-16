@@ -714,7 +714,7 @@
     <FxCompile Include="Resources\Shader\Pos.hlsl">
       <Filter>05. Shader\01. Forward</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shader\PosTex_Deffered.hlsl">
+    <FxCompile Include="Resources\Shader\PosTex_Deferred.hlsl">
       <Filter>05. Shader\02. Deferred</Filter>
     </FxCompile>
   </ItemGroup>
