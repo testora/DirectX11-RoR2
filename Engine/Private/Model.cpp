@@ -356,7 +356,7 @@ HRESULT CModel::Initialize_FromBinary(const wstring& _wstrModelPath)
 	m_vecShaderDescs.resize(m_iNumMeshes);
 	m_vecSubShaderPass.resize(m_iNumMeshes);
 	m_vecMaterialDescs.resize(m_iNumMeshes);
-	if (m_bManualShader)
+	if (!m_bManualShader)
 	{
 		inFile.read(reinterpret_cast<_byte*>(m_vecShaderDescs.data()),	sizeof(SHADERDESC) * m_iNumMeshes);
 		for (_uint i = 0; i < m_iNumMeshes; ++i)
@@ -881,11 +881,15 @@ HRESULT CModel::Bind_ShaderOptions(_uint _iMeshIndex, shared_ptr<CShader> _pShad
 
 	_pShader->Set_Flag(m_vecShaderDescs[_iMeshIndex].iShaderFlag);
 
-	if (FAILED(_pShader->Bind_Float(SHADER_TILING_DIFFUSE, m_vecShaderDescs[_iMeshIndex].fDiffuseTiling)))
+	_float fDifTiling[8], fNorTiling[8];
+	std::fill(fDifTiling, fDifTiling + 8, m_vecShaderDescs[_iMeshIndex].fDiffuseTiling);
+	std::fill(fNorTiling, fNorTiling + 8, m_vecShaderDescs[_iMeshIndex].fNormalTiling);
+
+	if (FAILED(_pShader->Bind_FloatArray(SHADER_TILING_DIFFUSE, fDifTiling, 8)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to Bind_Float");
 	}
-	if (FAILED(_pShader->Bind_Float(SHADER_TILING_NORMAL, m_vecShaderDescs[_iMeshIndex].fNormalTiling)))
+	if (FAILED(_pShader->Bind_FloatArray(SHADER_TILING_NORMAL, fNorTiling, 8)))
 	{
 		MSG_RETURN(E_FAIL, "CModel::Bind_ShaderOptions", "Failed to Bind_Float");
 	}
@@ -1016,12 +1020,13 @@ HRESULT CModel::Export(const wstring& _wstrPath)
 	}
 #pragma endregion
 #pragma region Shaders
-	if (m_bManualShader)
+	if (!m_bManualShader)
 	{
 		outFile.write(reinterpret_cast<const _byte*>(m_vecShaderDescs.data()),	sizeof(SHADERDESC) * m_iNumMeshes);
-		for (const auto& bSubShader : m_vecSubShaderPass)
+		for (_uint i = 0; i < m_iNumMeshes; ++i)
 		{
-			outFile.write(reinterpret_cast<const _byte*>(&bSubShader),			sizeof(_bool));
+			_bool bSubShaderPass = m_vecSubShaderPass[i];;
+			outFile.write(reinterpret_cast<const _byte*>(&bSubShaderPass), sizeof(_bool));
 		}
 	}
 	if (outFile.fail())

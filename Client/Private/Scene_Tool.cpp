@@ -72,10 +72,10 @@ HRESULT CScene_Tool::Initialize()
 
 	LIGHTDESC				tLightDesc{};
 	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
-	tLightDesc.vDirection	= _float3(1.f, -1.f, 0.f);
-	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.1f, 0.1f, 0.1f, 1.f);
-	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 0.5f);
+	tLightDesc.vDirection = _float3(-0.64f, -0.76f, -0.12f);
+	tLightDesc.vDiffuse = _color(0.6f, 0.6f, 0.6f, 1.f);
+	tLightDesc.vSpecular = _color(0.3f, 0.3f, 0.3f, 1.f);
+	tLightDesc.vAmbient = _color(0.5f, 0.5f, 0.5f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr)))
 	{
@@ -1518,10 +1518,12 @@ void CScene_Tool::Info_Model()
 					{
 						if (0 > fWheelDeltaV && iCurrentMaterialIdx == 0)
 						{
+							iSelectedTexture	= -1;
 							iCurrentMaterialIdx = 1;
 						}
 						if (0 < fWheelDeltaV && iCurrentMaterialIdx == 1)
 						{
+							iSelectedTexture	= -1;
 							iCurrentMaterialIdx = 0;
 						}
 					}
@@ -2080,6 +2082,24 @@ void CScene_Tool::Control_Model()
 		}
 	}
 
+	if (ImGui::TreeNode("Light##Model"))
+	{
+		static LIGHTDESC tLightDesc;
+
+		ImGui::InputFloat3("Direction##Model",	reinterpret_cast<_float*>(&tLightDesc.vDirection));
+		ImGui::InputFloat4("Diffuse##Model",	reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
+		ImGui::InputFloat4("Ambient##Model",	reinterpret_cast<_float*>(&tLightDesc.vAmbient));
+		ImGui::InputFloat4("Specular##Model",	reinterpret_cast<_float*>(&tLightDesc.vSpecular));
+
+		if (ImGui::Button("Apply##ModelLight"))
+		{
+			CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
+			CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
+		}
+
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 }
 
@@ -2153,6 +2173,24 @@ void CScene_Tool::Control_Effect()
 		{
 			m_pairSelectedParticleMesh.second->Set_Time(fTrack);
 		}
+	}
+	
+	if (ImGui::TreeNode("Light##Effect"))
+	{
+		static LIGHTDESC tLightDesc;
+
+		ImGui::InputFloat3("Direction##Effect",	reinterpret_cast<_float*>(&tLightDesc.vDirection));
+		ImGui::InputFloat4("Diffuse##Effect",	reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
+		ImGui::InputFloat4("Ambient##Effect",	reinterpret_cast<_float*>(&tLightDesc.vAmbient));
+		ImGui::InputFloat4("Specular##Effect",	reinterpret_cast<_float*>(&tLightDesc.vSpecular));
+
+		if (ImGui::Button("Apply##EffectLight"))
+		{
+			CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
+			CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
+		}
+
+		ImGui::TreePop();
 	}
 
 	ImGui::End();

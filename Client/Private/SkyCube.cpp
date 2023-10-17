@@ -43,6 +43,21 @@ void CSkyCube::Late_Tick(_float _fTimeDelta)
 	__super::Late_Tick(_fTimeDelta);
 
 	Add_RenderObject(RENDER_GROUP::PRIORITY);
+
+#if ACTIVATE_TOOL
+//	if (CImGui_Manager::Get_Instance()->Is_Enable())
+//	{
+//
+//		static _float4 vDiffuse = _color(1.f, 1.f, 1.f, 1.f);
+//		ImGui::Begin("SkyBox Diffuse");
+//		ImGui::InputFloat4("Diffuse", reinterpret_cast<_float*>(&vDiffuse));
+//		if (ImGui::Button("Apply"))
+//		{
+//			m_tMaterialDesc.vDiffuse = vDiffuse;
+//		}
+//		ImGui::End();
+//	}
+#endif
 }
 
 HRESULT CSkyCube::Render()

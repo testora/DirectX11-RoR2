@@ -65,7 +65,7 @@ void CMoon::Late_Tick(_float _fTimeDelta)
 
 HRESULT CMoon::Render()
 {
-	if (FAILED(__super::Render(0)))
+	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CMoon::Render", "Failed to __super::Render");
 	}

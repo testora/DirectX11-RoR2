@@ -99,6 +99,17 @@ HRESULT CGolemPlains::Initialize(any)
 void CGolemPlains::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
+
+#if ACTIVATE_TOOL
+	ImGui::Begin("TPSharp");
+	static float sharp = 1.f;
+	ImGui::InputFloat("Sharp", &sharp);
+	if (ImGui::Button("Apply"))
+	{
+		m_pShader->Bind_Float("g_fTPSharpness", sharp);
+	}
+	ImGui::End();
+#endif
 }
 
 void CGolemPlains::Late_Tick(_float _fTimeDelta)

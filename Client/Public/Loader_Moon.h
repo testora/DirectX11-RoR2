@@ -69,6 +69,7 @@ HRESULT CLoader::Load_Moon()
 #pragma endregion
 #pragma region Prototype Texture
 
+//	PROTOTYPE_COMPONENT_TEXTURE_SKY0
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL
 
@@ -111,7 +112,7 @@ HRESULT CLoader::Load_Moon()
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_MOON,
 	//	CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain.mdl")))))
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain__.mdl")))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Map/Moon/Terrain___.mdl")))))
 		{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_MOON");
 	}

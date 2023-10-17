@@ -192,7 +192,7 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 	if (g_bFog)
 	{
 		float	fFogFactor	= saturate(vDepth.y);
-		fFogFactor			= smoothstep(g_fFogStart, g_fFogEnd, fFogFactor);
+		fFogFactor			= smoothstep(g_fFogStart, g_fFogEnd, clamp(fFogFactor, g_fFogStart, g_fFogEnd));
 		fFogFactor			= pow(fFogFactor, g_fFogPower);
 		Out.vColor			= lerp(Out.vColor, g_vFogColor, min(fFogFactor, g_fFogMax));
 	}

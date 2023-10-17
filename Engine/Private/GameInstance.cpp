@@ -604,6 +604,16 @@ HRESULT CGameInstance::Add_Light(const SCENE _eScene, LIGHTDESC _tLightDesc, sha
 	return m_pLight_Manager->Add_Light(_eScene, _tLightDesc, _pTransform);
 }
 
+HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
+{
+	if (nullptr == m_pLight_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Clear_Light", "Null Exception: m_pLight_Manager");
+	}
+
+	return m_pLight_Manager->Clear_Lights(_eScene);
+}
+
 #pragma endregion
 
 void CGameInstance::Release_Engine()

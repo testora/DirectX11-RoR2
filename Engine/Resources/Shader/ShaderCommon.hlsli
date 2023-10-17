@@ -90,11 +90,7 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 								g_texDiffuse[TRIPLANAR_SLOT + 0].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 0]) * vBlendFactor.x;
 			fBlendFactor	-=	vBlendFactor.x;
 		}
-		else
-		{
-			return vTexColor;
-		}
-	}
+    }
 	if (vNormal.y > 0)
 	{
 		if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Y)
@@ -102,11 +98,7 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 			vTriColor		+=	g_texDiffuse[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 1]) * vBlendFactor.y;
 			fBlendFactor	-=	vBlendFactor.y;
 		}
-		else
-		{
-			return vTexColor;
-		}
-	}
+    }
 	if (vNormal.z > 0)
 	{
 		if (g_iShaderFlag & STATUS_TRIPLANER_POSITIVE_Z)
@@ -120,11 +112,7 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 								g_texDiffuse[TRIPLANAR_SLOT + 2].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 2]) * vBlendFactor.z;
 			fBlendFactor	-=	vBlendFactor.z;
 		}
-		else
-		{
-			return vTexColor;
-		}
-	}
+    }
 	if (vNormal.x < 0)
 	{
 		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_X)
@@ -138,11 +126,7 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 								g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.yz							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.x;
 			fBlendFactor	-=	vBlendFactor.x;
 		}
-		else
-		{
-			return vTexColor;
-		}
-	}
+    }
 	if (vNormal.y < 0)
 	{
 		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Y)
@@ -152,11 +136,7 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 								g_texDiffuse[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx							* g_fTilingDiffuse[TRIPLANAR_SLOT + 4]) * vBlendFactor.y;
 			fBlendFactor	-=	vBlendFactor.y;
 		}
-		else
-		{
-			return vTexColor;
-		}
-	}
+    }
 	if (vNormal.z < 0)
 	{
 		if (g_iShaderFlag & STATUS_TRIPLANER_NEGATIVE_Z)
@@ -169,10 +149,6 @@ float4 TriPlanar_Mix_Diffuse(float4 vTexColor, float3 vNormal, float3 vWorldPos,
 								g_texDiffuse[TRIPLANAR_SLOT + 3].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 3]) * vBlendFactor.z:
 								g_texDiffuse[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy							* g_fTilingDiffuse[TRIPLANAR_SLOT + 5]) * vBlendFactor.z;
 			fBlendFactor	-=	vBlendFactor.z;
-		}
-		else
-		{
-			return vTexColor;
 		}
 	}
 	
@@ -195,10 +171,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
 			fBlendFactor	-=	vBlendFactor.x;
         }
-		else
-        {
-			return vNormal;
-        }
     }
 	if (vNormal.y > 0)
 	{
@@ -207,10 +179,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 			float4 vDXT5nm	=	g_texNormal[TRIPLANAR_SLOT + 1].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 1]);
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
 			fBlendFactor	-=	vBlendFactor.y;
-        }
-		else
-        {
-			return vNormal;
         }
     }
 	if (vNormal.z > 0)
@@ -227,10 +195,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
 			fBlendFactor	-=	vBlendFactor.z;
         }
-		else
-        {
-			return vNormal;
-        }
     }
 	if (vNormal.x < 0)
 	{
@@ -246,10 +210,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.x;
 			fBlendFactor	-=	vBlendFactor.x;
         }
-		else
-        {
-			return vNormal;
-        }
     }
 	if (vNormal.y < 0)
 	{
@@ -260,10 +220,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 								g_texNormal[TRIPLANAR_SLOT + 4].Sample(LinearSampler, vWorldPos.zx						* g_fTilingNormal[TRIPLANAR_SLOT + 4]);
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.y;
 			fBlendFactor	-=	vBlendFactor.y;
-        }
-		else
-        {
-			return vNormal;
         }
     }
 	if (vNormal.z < 0)
@@ -279,10 +235,6 @@ float3 TriPlanar_Mix_Normal(float3 vNormal, float3 vTangent, float3 vWorldPos, f
 								g_texNormal[TRIPLANAR_SLOT + 5].Sample(LinearSampler, vWorldPos.xy						* g_fTilingNormal[TRIPLANAR_SLOT + 5]);
 			vTriNormal		+=	UnpackNormalDXT5nm(vDXT5nm, mTBN)														* vBlendFactor.z;
 			fBlendFactor	-=	vBlendFactor.z;
-        }
-		else
-        {
-			return vNormal;
         }
     }
 	

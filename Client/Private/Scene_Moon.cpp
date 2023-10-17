@@ -146,9 +146,9 @@ HRESULT CScene_Moon::Ready_Light()
 	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
 	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
-	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.5f, 0.5f, 0.5f, 1.f);
-	tLightDesc.vAmbient		= _color(0.1f, 0.1f, 0.1f, 1.f);
+	tLightDesc.vDiffuse		= _color(0.6f, 0.6f, 0.6f, 1.f);
+	tLightDesc.vSpecular	= _color(0.3f, 0.3f, 0.3f, 1.f);
+	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 1.f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, nullptr)))

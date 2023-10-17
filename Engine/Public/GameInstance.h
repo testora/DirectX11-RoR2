@@ -122,6 +122,7 @@ public:
 #pragma region Light Manager
 
 	HRESULT										Add_Light(const SCENE, LIGHTDESC, shared_ptr<class CTransform>);
+	HRESULT										Clear_Lights(const SCENE);
 
 #pragma endregion
 

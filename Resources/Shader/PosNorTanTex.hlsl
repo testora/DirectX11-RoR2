@@ -63,14 +63,14 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT		Out;
 	
 	float3		vFinalColor;
-	float4		vTexColor		=	g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord);
+	float4		vTexColor		=	g_texDiffuse[0].Sample(LinearSampler, In.vTexCoord) * g_fTilingDiffuse[0];
 	
 	// Normal
 	float3		vNormal			=	In.vNormal.xyz;
 	
 	if (g_iShaderFlag & STATUS_TEXNORMAL)
 	{
-		float4		vUnityDXT5nm	= g_texNormal[0].Sample(LinearSampler, In.vTexCoord);
+		float4		vUnityDXT5nm	= g_texNormal[0].Sample(LinearSampler, In.vTexCoord * g_fTilingNormal[0]);
 		float3x3	mTBN			= float3x3(In.vTangent.xyz, normalize(cross(In.vNormal.xyz, In.vTangent.xyz)), In.vNormal.xyz);
 		vNormal						= UnpackNormalDXT5nm(vUnityDXT5nm, mTBN);
 	}
