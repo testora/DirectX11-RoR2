@@ -4,6 +4,13 @@
 #include "ImGui_Manager.h"
 #include "Camera_Main.h"
 
+#define SCENE_TEST_FOG_COLOR	_float4(0.48f, 0.64f, 0.72f, 1.00f)
+#define SCENE_TEST_FOG_START	0.00f
+#define SCENE_TEST_FOG_END		0.25f
+#define SCENE_TEST_FOG_AMBIENT	0.00f
+#define SCENE_TEST_FOG_MAX		0.60f
+#define SCENE_TEST_FOG_POWER	0.25f
+
 CScene_Test::CScene_Test(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::TEST)
 {
@@ -29,6 +36,11 @@ HRESULT CScene_Test::Initialize()
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Camera");
+	}
+
+	if (FAILED(Ready_Background()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Background");
 	}
 
 	if (FAILED(Ready_Terrain()))
@@ -64,6 +76,35 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 void CScene_Test::Late_Tick(_float _fTimeDelta)
 {
+#if ACTIVATE_TOOL
+	static _float4	vFogColor	= SCENE_TEST_FOG_COLOR;
+	static _float	fFogStart	= SCENE_TEST_FOG_START;
+	static _float	fFogEnd		= SCENE_TEST_FOG_END;
+	static _float	fFogAmbient	= SCENE_TEST_FOG_AMBIENT;
+	static _float	fFogMax		= SCENE_TEST_FOG_MAX;
+	static _float	fFogPower	= SCENE_TEST_FOG_POWER;
+
+	ImGui::Begin("Fog");
+	ImGui::InputFloat4("Color", reinterpret_cast<_float*>(&vFogColor));
+	ImGui::InputFloat("Start", &fFogStart);
+	ImGui::InputFloat("End", &fFogEnd);
+	ImGui::InputFloat("Ambient", &fFogAmbient);
+	ImGui::InputFloat("Max", &fFogMax);
+	ImGui::InputFloat("Power", &fFogPower);
+	if (ImGui::Button("Apply"))
+	{
+		shared_ptr<CRenderer> pRenderer = dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+		shared_ptr<CShader> pShader = dynamic_pointer_cast<CShader>(pRenderer->Get_DeferredShader());
+
+		pShader->Bind_Vector(SHADER_FOG_COLOR, vFogColor);
+		pShader->Bind_Float(SHADER_FOG_START, fFogStart);
+		pShader->Bind_Float(SHADER_FOG_END, fFogEnd);
+		pShader->Bind_Float(SHADER_FOG_AMBIENT, fFogAmbient);
+		pShader->Bind_Float(SHADER_FOG_MAX, fFogMax);
+		pShader->Bind_Float(SHADER_FOG_POWER, fFogPower);
+	}
+	ImGui::End();
+#endif
 }
 
 HRESULT CScene_Test::Render()
@@ -133,6 +174,69 @@ HRESULT CScene_Test::Ready_Camera()
 	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_CAMERA_MAIN))))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Camera", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
+	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Test::Ready_Background()
+{
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, LAYER_BACKGROUND);
+
+	if (nullptr == pLayer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Add_Layer: LAYER_BACKGROUND");
+	}
+
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
+	}
+
+	pLayer->Iterate_Objects(
+		[&](shared_ptr<CGameObject> _pTerrain)->_bool
+		{
+			_pTerrain->Get_Component<CTransform>(COMPONENT::TRANSFORM)->Rotate(TRANSFORM::UP, -XM_PIDIV2);
+
+			return true;
+		}
+	);
+
+	shared_ptr<CRenderer> pRenderer = dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
+	if (nullptr == pRenderer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Clone_Component");
+	}
+	shared_ptr<CShader> pShader = dynamic_pointer_cast<CShader>(pRenderer->Get_DeferredShader());
+	if (nullptr == pShader)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Get_DeferredShader");
+	}
+
+	_bool bFogEnable(true);
+	if (FAILED(pShader->Bind_RawValue(SHADER_FOG_ENABLE, &bFogEnable, sizeof(_bool))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_RawValue");
+	}
+	if (FAILED(pShader->Bind_Vector(SHADER_FOG_COLOR, SCENE_TEST_FOG_COLOR)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_Vector");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_START, SCENE_TEST_FOG_START)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_END, SCENE_TEST_FOG_END)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_MAX, SCENE_TEST_FOG_MAX)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_Float");
+	}
+	if (FAILED(pShader->Bind_Float(SHADER_FOG_POWER, SCENE_TEST_FOG_POWER)))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Terrain", "Failed to Bind_Float");
 	}
 
 	return S_OK;

@@ -5,6 +5,7 @@
 #define PROTOTYPE_GAMEOBJECT_CAMERA_MAIN							TEXT("Prototype:GameObject:Camera:Main")
 
 #define PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0							TEXT("Prototype:GameObject:Skybox:Sky0")
+#define PROTOTYPE_GAMEOBJECT_SKYBOX_SKY1							TEXT("Prototype:GameObject:Skybox:Sky1")
 
 #define PROTOTYPE_GAMEOBJECT_BACKGROUND								TEXT("Prototype:GameObject:Background")
 #define PROTOTYPE_GAMEOBJECT_TERRAIN								TEXT("Prototype:GameObject:Terrain")
@@ -37,7 +38,7 @@
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_RECT					TEXT("Prototype:Component:Shader:Instance:Rect")
 #define PROTOTYPE_COMPONENT_SHADER_INSTANCE_MESH					TEXT("Prototype:Component:Shader:Instance:Mesh")
 
-#define PROTOTYPE_COMPONENT_TEXTURE_SKY0							TEXT("Prototype:Component:Texture:Sky0")
+#define PROTOTYPE_COMPONENT_TEXTURE_SKY								TEXT("Prototype:Component:Texture:Sky")
 #define PROTOTYPE_COMPONENT_TEXTURE_BACKGROUND						TEXT("Prototype:Component:Texture:Background")
 #define PROTOTYPE_COMPONENT_TEXTURE_TERRAIN							TEXT("Prototype:Component:Texture:Terrain")
 #define PROTOTYPE_COMPONENT_TEXTURE_HEIGHTMAP						TEXT("Prototype:Component:Texture:HeightMap")
@@ -74,6 +75,7 @@
 
 #define LAYER_LIGHT													TEXT("Layer:Light")
 #define LAYER_CAMERA												TEXT("Layer:Camera")
+#define LAYER_BACKGROUND											TEXT("Layer:Background")
 #define LAYER_TERRAIN												TEXT("Layer:Terrain")
 #define LAYER_PLAYER												TEXT("Layer:Player")
 

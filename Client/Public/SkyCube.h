@@ -32,6 +32,9 @@ private:
 	shared_ptr<CShader>					m_pShader;
 	shared_ptr<CTexture>				m_pTexture;
 
+private:
+	_bool								m_bCloud	= false;
+
 public:
 	static shared_ptr<CSkyCube>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
 	virtual shared_ptr<CGameObject>		Clone(any = g_aNull) override;

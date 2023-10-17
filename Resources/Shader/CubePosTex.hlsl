@@ -2,6 +2,8 @@
 
 TextureCube g_texCubeDiffuse;
 
+bool		g_bCloud	= false;
+
 struct VS_IN
 {
 	float3	vPosition	: POSITION;
@@ -47,7 +49,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor	=	g_texCubeDiffuse.Sample(LinearSampler, In.vTexCoord);
 	Out.vColor	*=	g_vMtrlDiffuse;
 	
-	if (In.vTexCoord.y > 0.f)
+	if (g_bCloud && In.vTexCoord.y > 0.f)
 	{
 	    Out.vColor = lerp(Out.vColor, float4(0.95f, 0.95f, 0.95f, 1.f), smoothstep(0.f, 0.5f, In.vTexCoord.y) * 0.8f + 0.2f);
 	}

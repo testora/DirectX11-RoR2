@@ -32,7 +32,7 @@ float4		g_vMtrlSpecular;
 float4		g_vMtrlEmissive;
 float		g_fMtrlShininess		= 32.f;
 
-float		g_fTPSharpness			= 32.f;
+float		g_fTPSharpness			= 2.f;
 
 float3		g_vSize					= float3(1.f, 1.f, 1.f);
 float		g_fThickness			= 1.f;

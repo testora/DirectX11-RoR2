@@ -22,6 +22,7 @@ public:
 private:
 	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
+	HRESULT							Ready_Background();
 	HRESULT							Ready_Terrain();
 	HRESULT							Ready_Player();
 	HRESULT							Ready_Monster();

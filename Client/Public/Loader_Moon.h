@@ -69,14 +69,14 @@ HRESULT CLoader::Load_Moon()
 #pragma endregion
 #pragma region Prototype Texture
 
-//	PROTOTYPE_COMPONENT_TEXTURE_SKY0
+//	PROTOTYPE_COMPONENT_TEXTURE_SKY
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO
 //	PROTOTYPE_COMPONENT_TEXTURE_EFFECT_BROTHER_HAMMERTRAIL
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_SKY0,
-		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/SkyBox/sky0.dds")))))
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_SKY,
+		CTexture::Create(m_pDevice, m_pContext, TEXT("Bin/Resources/Texture/SkyBox/sky1.dds")))))
 	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_SKY0");
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_TEXTURE_SKY");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_TEXTURE_EFFECT_DEMO,
@@ -160,10 +160,10 @@ HRESULT CLoader::Load_Moon()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_CAMERA_MAIN");
 	}
 
-	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0,
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY1,
 		CSkyCube::Create(m_pDevice, m_pContext))))
 	{
-		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY1");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_MOON,

@@ -8,6 +8,7 @@
 #define SCENE_MOON_FOG_COLOR	_float4(0.75f, 0.85f, 0.95f, 1.00f)
 #define SCENE_MOON_FOG_START	0.01f
 #define SCENE_MOON_FOG_END		1.00f
+#define SCENE_MOON_FOG_AMBIENT	0.0f
 #define SCENE_MOON_FOG_MAX		0.60f
 #define SCENE_MOON_FOG_POWER	0.25f
 
@@ -41,6 +42,11 @@ HRESULT CScene_Moon::Initialize()
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Camera");
+	}
+
+	if (FAILED(Ready_Background()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Background");
 	}
 
 	if (FAILED(Ready_Terrain()))
@@ -77,16 +83,18 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
 {
 #if ACTIVATE_TOOL
-	static _float4 vFogColor = SCENE_MOON_FOG_COLOR;
-	static _float fFogStart = SCENE_MOON_FOG_START;
-	static _float fFogEnd = SCENE_MOON_FOG_END;
-	static _float fFogMax = SCENE_MOON_FOG_MAX;
-	static _float fFogPower = SCENE_MOON_FOG_POWER;
+	static _float4	vFogColor	= SCENE_MOON_FOG_COLOR;
+	static _float	fFogStart	= SCENE_MOON_FOG_START;
+	static _float	fFogEnd		= SCENE_MOON_FOG_END;
+	static _float	fFogAmbient	= SCENE_MOON_FOG_AMBIENT;
+	static _float	fFogMax		= SCENE_MOON_FOG_MAX;
+	static _float	fFogPower	= SCENE_MOON_FOG_POWER;
 
 	ImGui::Begin("Fog");
 	ImGui::InputFloat4("Color", reinterpret_cast<_float*>(&vFogColor));
 	ImGui::InputFloat("Start", &fFogStart);
 	ImGui::InputFloat("End", &fFogEnd);
+	ImGui::InputFloat("Ambient", &fFogAmbient);
 	ImGui::InputFloat("Max", &fFogMax);
 	ImGui::InputFloat("Power", &fFogPower);
 	if (ImGui::Button("Apply"))
@@ -97,6 +105,7 @@ void CScene_Moon::Late_Tick(_float _fTimeDelta)
 		pShader->Bind_Vector(SHADER_FOG_COLOR, vFogColor);
 		pShader->Bind_Float(SHADER_FOG_START, fFogStart);
 		pShader->Bind_Float(SHADER_FOG_END, fFogEnd);
+		pShader->Bind_Float(SHADER_FOG_AMBIENT, fFogAmbient);
 		pShader->Bind_Float(SHADER_FOG_MAX, fFogMax);
 		pShader->Bind_Float(SHADER_FOG_POWER, fFogPower);
 	}
@@ -176,31 +185,18 @@ HRESULT CScene_Moon::Ready_Camera()
 	return S_OK;
 }
 
-HRESULT CScene_Moon::Ready_Terrain()
+HRESULT CScene_Moon::Ready_Background()
 {
-	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::MOON, LAYER_TERRAIN);
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::MOON, LAYER_BACKGROUND);
 
 	if (nullptr == pLayer)
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Add_Layer: LAYER_TERRAIN");
-	}
-	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_MOON))))
-	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_MOON");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Add_Layer: LAYER_BACKGROUND");
 	}
 
-	pLayer->Iterate_Objects(
-		[&](shared_ptr<CGameObject> _pTerrain)->_bool
-		{
-			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::MOON, GRID_TERRAIN, _pTerrain);
-
-			return true;
-		}
-	);
-
-	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0))))
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_SKYBOX_SKY1, true))))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_SKYBOX_SKY1");
 	}
 
 	shared_ptr<CRenderer> pRenderer = dynamic_pointer_cast<CRenderer>(CGameInstance::Get_Instance()->Clone_Component(SCENE::STATIC, PROTOTYPE_COMPONENT_RENDERER_MAIN));
@@ -240,6 +236,30 @@ HRESULT CScene_Moon::Ready_Terrain()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Bind_Float");
 	}
 
+	return S_OK;
+}
+
+HRESULT CScene_Moon::Ready_Terrain()
+{
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::MOON, LAYER_TERRAIN);
+
+	if (nullptr == pLayer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Add_Layer: LAYER_TERRAIN");
+	}
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::MOON, PROTOTYPE_GAMEOBJECT_MOON))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Terrain", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_MOON");
+	}
+
+	pLayer->Iterate_Objects(
+		[&](shared_ptr<CGameObject> _pTerrain)->_bool
+		{
+			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::MOON, GRID_TERRAIN, _pTerrain);
+
+			return true;
+		}
+	);
 	return S_OK;
 }
 

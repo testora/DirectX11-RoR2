@@ -2,6 +2,7 @@
 
 xcopy	/y/s	..\Engine\Resources\*.*				..\Engine\Bin\Resources\
 xcopy	/y/s	..\Engine\Resources\*.*				..\Client\Bin\Resources\
+xcopy	/y/s	..\Engine\Resources\Shader\*.hlsl	..\Resources\Shader\
 xcopy	/y/s	..\Engine\Resources\Shader\*.hlsli	..\Resources\Shader\
 echo	Resources Complete!
 

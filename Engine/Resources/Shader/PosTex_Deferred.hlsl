@@ -11,14 +11,15 @@ Texture2D	g_texSpecularTarget;
 Texture2D	g_texPreProcessTarget;
 Texture2D	g_texMaskTarget;
 
-float		g_fTime		= 0.f;
+float		g_fTime			= 0.f;
 
-bool		g_bFog		= false;
-float4		g_vFogColor	= float4(1.f, 1.f, 1.f, 1.f);
-float		g_fFogStart	= 0.f;
-float		g_fFogEnd	= 1.f;
-float		g_fFogMax	= 1.f;
-float		g_fFogPower	= 1.f;
+bool		g_bFog			= false;
+float4		g_vFogColor		= float4(1.f, 1.f, 1.f, 1.f);
+float		g_fFogStart		= 0.f;
+float		g_fFogEnd		= 1.f;
+float		g_fFogAmbient	= 0.f;
+float		g_fFogMax		= 1.f;
+float		g_fFogPower		= 1.f;
 
 struct VS_IN
 {
@@ -194,7 +195,7 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 		float	fFogFactor	= saturate(vDepth.y);
 		fFogFactor			= smoothstep(g_fFogStart, g_fFogEnd, clamp(fFogFactor, g_fFogStart, g_fFogEnd));
 		fFogFactor			= pow(fFogFactor, g_fFogPower);
-		Out.vColor			= lerp(Out.vColor, g_vFogColor, min(fFogFactor, g_fFogMax));
+		Out.vColor			= lerp(Out.vColor, g_vFogColor, saturate(min(fFogFactor, g_fFogMax) + g_fFogAmbient));
 	}
 
 	return Out;

@@ -1,6 +1,9 @@
 #include "ClientPCH.h"
 #include "SkyCube.h"
 #include "GameInstance.h"
+#if ACTIVATE_TOOL
+#include "ImGui_Manager.h"
+#endif
 
 CSkyCube::CSkyCube(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CGameObject(_pDevice, _pContext)
@@ -23,11 +26,21 @@ HRESULT CSkyCube::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkyCube::Initialize(any)
+HRESULT CSkyCube::Initialize(any _arg)
 {
 	if (FAILED(__super::Initialize()))
 	{
 		MSG_RETURN(E_FAIL, "CSkyCube::Initialize", "Failed to __super::Initialize");
+	}
+
+	if (_arg.has_value())
+	{
+		m_bCloud = any_cast<_bool>(_arg);
+	}
+
+	if (FAILED(m_pShader->Bind_RawValue("g_bCloud", &m_bCloud, sizeof(_bool))))
+	{
+		MSG_RETURN(E_FAIL, "CSkyCube::Initialize", "Failed to Bind_RawValue");
 	}
 
 	return S_OK;
@@ -45,18 +58,21 @@ void CSkyCube::Late_Tick(_float _fTimeDelta)
 	Add_RenderObject(RENDER_GROUP::PRIORITY);
 
 #if ACTIVATE_TOOL
-//	if (CImGui_Manager::Get_Instance()->Is_Enable())
-//	{
-//
-//		static _float4 vDiffuse = _color(1.f, 1.f, 1.f, 1.f);
-//		ImGui::Begin("SkyBox Diffuse");
-//		ImGui::InputFloat4("Diffuse", reinterpret_cast<_float*>(&vDiffuse));
-//		if (ImGui::Button("Apply"))
-//		{
-//			m_tMaterialDesc.vDiffuse = vDiffuse;
-//		}
-//		ImGui::End();
-//	}
+	if (CImGui_Manager::Get_Instance()->Is_Enable())
+	{
+		ImGui::Begin("SkyBox Diffuse");
+		static MATERIALDESC tMtrlDesc;
+		ImGui::InputFloat4("Diffuse", reinterpret_cast<_float*>(&tMtrlDesc.vDiffuse));
+		ImGui::InputFloat4("Ambient", reinterpret_cast<_float*>(&tMtrlDesc.vAmbient));
+		ImGui::InputFloat4("Specular", reinterpret_cast<_float*>(&tMtrlDesc.vSpecular));
+		ImGui::InputFloat4("Emissive", reinterpret_cast<_float*>(&tMtrlDesc.vEmissive));
+		ImGui::InputFloat("Shininess", &tMtrlDesc.fShininess);
+		if (ImGui::Button("Apply"))
+		{
+			m_tMaterialDesc = tMtrlDesc;
+		}
+		ImGui::End();
+	}
 #endif
 }
 
@@ -96,7 +112,7 @@ HRESULT CSkyCube::Ready_Components()
 		MSG_RETURN(E_FAIL, "CSkyCube::Ready_Components", "Failed to Get_Component");
 	}
 
-	m_pTexture = dynamic_pointer_cast<CTexture>(CGameInstance::Get_Instance()->Clone_Component(CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_COMPONENT_TEXTURE_SKY0));
+	m_pTexture = dynamic_pointer_cast<CTexture>(CGameInstance::Get_Instance()->Clone_Component(CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_COMPONENT_TEXTURE_SKY));
 	if (nullptr == m_pTexture)
 	{
 		MSG_RETURN(E_FAIL, "CSkyCube::Ready_Components", "Failed to Clone_Component");
@@ -117,11 +133,11 @@ shared_ptr<CSkyCube> CSkyCube::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D
 	return pInstance;
 }
 
-shared_ptr<CGameObject> CSkyCube::Clone(any)
+shared_ptr<CGameObject> CSkyCube::Clone(any _arg)
 {
 	shared_ptr<CSkyCube> pInstance = make_private_shared_copy(CSkyCube, *this);
 
-	if (FAILED(pInstance->Initialize()))
+	if (FAILED(pInstance->Initialize(_arg)))
 	{
 		MSG_RETURN(nullptr, "CSkyCube::Create", "Failed to Initialize");
 	}

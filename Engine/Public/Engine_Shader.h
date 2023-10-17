@@ -74,6 +74,7 @@
 #define SHADER_FOG_COLOR						"g_vFogColor"
 #define SHADER_FOG_START						"g_fFogStart"
 #define SHADER_FOG_END							"g_fFogEnd"
+#define SHADER_FOG_AMBIENT						"g_fFogAmbient"
 #define SHADER_FOG_MAX							"g_fFogMax"
 #define SHADER_FOG_POWER						"g_fFogPower"
 
