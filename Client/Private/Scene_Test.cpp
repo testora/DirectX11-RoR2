@@ -31,6 +31,11 @@ HRESULT CScene_Test::Initialize()
 	CImGui_Manager::Get_Instance()->Enable();
 #endif
 
+	if (FAILED(Ready_SpawnPoint(TEXT("Bin/Resources/Data/SpawnPoint/Test/Data.dat"))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_SpawnPoint");
+	}
+
 	if (FAILED(Ready_Light()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Light");
@@ -78,7 +83,10 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Down('G'))
 	{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(g_aNull);
+		for (auto vPoint : m_vecSpawnPoint)
+		{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(vPoint);
+		}
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('4'))
@@ -155,6 +163,39 @@ void CScene_Test::Debug()
 #endif
 }
 #endif
+
+HRESULT CScene_Test::Ready_SpawnPoint(const wstring& _wstrPath)
+{
+	std::ifstream inFile(_wstrPath, std::ios::binary);
+
+	if (!inFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_SpawnPoint", "Failed to Open File");
+	}
+
+	size_t nLength(0);
+
+	inFile.read(reinterpret_cast<_byte*>(&nLength),		sizeof(size_t));
+	m_vecSpawnPoint.reserve(nLength);
+
+	for (size_t i = 0; i < nLength; ++i)
+	{
+		_float3 vPoint;
+		inFile.read(reinterpret_cast<_byte*>(&vPoint),	sizeof(_float3));
+		m_vecSpawnPoint.emplace_back(vPoint);
+	}
+
+	if (inFile.fail() || inFile.eof())
+	{
+		inFile.clear();
+		inFile.close();
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_SpawnPoint", "Failed to Read File");
+	}
+
+	inFile.close();
+
+	return S_OK;
+}
 
 HRESULT CScene_Test::Ready_Light()
 {
@@ -310,7 +351,7 @@ HRESULT CScene_Test::Ready_Player()
 
 HRESULT CScene_Test::Ready_Monster()
 {
-	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_MONSTER_GOLEM, PROTOTYPE_GAMEOBJECT_GOLEM, 10);
+	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_MONSTER_GOLEM, PROTOTYPE_GAMEOBJECT_GOLEM, 100);
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_GOLEM");

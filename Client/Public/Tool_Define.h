@@ -7,3 +7,4 @@
 #define DIALOG_OPEN_TEXTURE		"Dialog:Open:Texture"
 #define DIALOG_EXPORT_MESH		"Dialog:Export:Mesh"
 #define DIALOG_SET_TEXTURE		"Dialog:Set:Texture"
+#define DIALOG_EXPORT_POINTS	"Dialog:Export:Points"

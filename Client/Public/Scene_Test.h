@@ -20,6 +20,7 @@ public:
 #endif
 
 private:
+	HRESULT							Ready_SpawnPoint(const wstring& wstrPath);
 	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Background();
@@ -27,6 +28,9 @@ private:
 	HRESULT							Ready_Player();
 	HRESULT							Ready_Monster();
 	HRESULT							Ready_Interactable();
+
+private:
+	vector<_float3>					m_vecSpawnPoint;
 
 public:
 	static shared_ptr<CScene_Test>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

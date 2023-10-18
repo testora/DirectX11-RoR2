@@ -8,7 +8,7 @@
 
 #define CRITERION_GROUND					1.f
 #define CRITERION_OBSTACLE_VERTICAL			_float3(0.f, 1.f, 0.f)
-#define CRITERION_OBSTACLE_SCALE			10.f
+#define CRITERION_OBSTACLE_SCALE			g_fTolorance	//10.f
 #define CRITERION_OBSTACLE_SAFE_DISTANCE	2.f
 #define REFLECT_SCALE						2.f
 
@@ -69,6 +69,8 @@ void CGrounding::Tick(_float _fTimeDelta)
 
 void CGrounding::Late_Tick(_float _fTimeDelta)
 {
+	m_bIsObstacleHit = false;
+
 	if (m_pOwnerPhysics->Is_Moving(true, false, true))
 	{
 		_float3 vNormal = _float3{};
@@ -81,7 +83,8 @@ void CGrounding::Late_Tick(_float _fTimeDelta)
 		{
 			_float3 vReflection = Function::ComputeSlideVector(m_pOwnerPhysics->Get_Velocity(), vNormal, true);
 			m_pOwnerPhysics->Force(-vReflection);
-			m_pOwnerTransform->Translate(-vReflection * _fTimeDelta * REFLECT_SCALE);
+			m_pOwnerTransform->Translate(-vReflection * (_fTimeDelta));
+			m_bIsObstacleHit = true;
 		}
 	}
 }

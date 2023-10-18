@@ -70,6 +70,7 @@ private:
 	HRESULT												Export_BinaryMeshInstanceList(const wstring& wstrPath);
 	HRESULT												Export_BinaryModel(const wstring& wstrPath);
 	HRESULT												Export_BinaryParticleMesh(const wstring& wstrPath);
+	HRESULT												Export_BinaryPoints(const wstring& wstrPath);
 
 private:
 	ImGuiFileDialog										m_imEmbed_Open;
@@ -101,6 +102,8 @@ private:
 	shared_ptr<CShader>									m_pShader_NonAnimMesh;
 	shared_ptr<CShader>									m_pShader_AnimMesh;
 	shared_ptr<CShader>									m_pShader_InstMesh;
+
+	vector<_float3>										m_vecPoint;
 
 	TOOL												m_eTool	= TOOL::MAX;
 

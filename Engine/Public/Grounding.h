@@ -18,6 +18,7 @@ public:
 
 public:
 	_bool							Is_Grounding() const	{ return m_bIsGrounding; }
+	_bool							Is_ObstacleHit() const	{ return m_bIsObstacleHit; }
 
 private:
 	_float3							Intersect_Terrain_Ground();
@@ -26,6 +27,7 @@ private:
 private:
 	wstring							m_wstrTerrainGridLayerTag;
 	_bool							m_bIsGrounding		= false;
+	_bool							m_bIsObstacleHit	= false;
 
 	shared_ptr<class CTransform>	m_pOwnerTransform;
 	shared_ptr<class CPhysics>		m_pOwnerPhysics;

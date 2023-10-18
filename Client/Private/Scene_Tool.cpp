@@ -931,108 +931,105 @@ void CScene_Tool::System_Effect()
 	ImGui::End();
 }
 
+static list<_float3>	lstPoint;
+static _float3			vPicked;
+static _bool			bPicked(false);
+static _bool			bCollide(false);
+static _bool			bPickerEnable(false);
+
 void CScene_Tool::System_Option()
 {
-	if (ImGui::TreeNode("Option##System"))
+	ImGui::SeparatorText("Utility##System");
+
+	ImGui::Checkbox("Global Gizmo##System", &bGlobalGizmo);
+	if (bGlobalGizmo)
 	{
-		ImGui::Checkbox("Global Gizmo##System", &bGlobalGizmo);
-		if (bGlobalGizmo)
+		if (ImGui::Button("Apply##System"))
 		{
-			if (ImGui::Button("Apply##System"))
-			{
-				m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
-			}
-			ImGui::SameLine();
-			ImGui::PushItemWidth(100);
-			ImGui::InputInt2("Gismo Size##System", reinterpret_cast<int*>(&vGismoSize));
-			ImGui::PopItemWidth();
+			m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
 		}
+		ImGui::SameLine();
+		ImGui::PushItemWidth(100);
+		ImGui::InputInt2("Gismo Size##System", reinterpret_cast<int*>(&vGismoSize));
+		ImGui::PopItemWidth();
+	}
 
-		if (ImGui::TreeNode("Light##System"))
+	if (ImGui::TreeNode("Light##System"))
+	{
+		ImGui::InputFloat3("Direction##System", reinterpret_cast<_float*>(&tLightDesc.vDirection));
+		ImGui::InputFloat4("Diffuse##System", reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
+		ImGui::InputFloat4("Ambient##System", reinterpret_cast<_float*>(&tLightDesc.vAmbient));
+		ImGui::InputFloat4("Specular##System", reinterpret_cast<_float*>(&tLightDesc.vSpecular));
+
+		if (ImGui::Button("Apply##System"))
 		{
-			ImGui::InputFloat3("Direction##System", reinterpret_cast<_float*>(&tLightDesc.vDirection));
-			ImGui::InputFloat4("Diffuse##System", reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
-			ImGui::InputFloat4("Ambient##System", reinterpret_cast<_float*>(&tLightDesc.vAmbient));
-			ImGui::InputFloat4("Specular##System", reinterpret_cast<_float*>(&tLightDesc.vSpecular));
-
-			if (ImGui::Button("Apply##System"))
-			{
-				CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
-				CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
-			}
-
-			ImGui::TreePop();
+			CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
+			CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
 		}
-
-#pragma region Picker
-		if (ImGui::TreeNode("Picker"))
-		{
-			static list<_float3>	lstPoint;
-			static _float3			vPicked;
-			static _bool			bPicked(false);
-			static _bool			bCollide(false);
-			static _bool			bPickerEnable(false);
-
-			lstPoint.clear();
-			bCollide = false;
-
-			ImGui::Checkbox("Enable##Picker", &bPickerEnable);
-
-			if (bPickerEnable)
-			{
-				ImGui::Text(bPicked ? "Pick Success!" : "Pick Fail!");
-				ImGui::InputFloat3("Position##Picked", reinterpret_cast<_float*>(&vPicked), "%3.f", ImGuiInputTextFlags_ReadOnly);
-
-				if (CGameInstance::Get_Instance()->Key_Down(VK_LBUTTON))
-				{
-					for (auto& pModel : m_mapNonAnimModels)
-					{
-						pModel.second->Iterate_Meshes(
-							[&](shared_ptr<CMesh> _pMesh)->_bool
-							{
-								_float3 vOut;
-								if (_pMesh->Intersect(vOut))
-								{
-									bCollide = true;
-									lstPoint.emplace_back(vOut);
-								}
-	
-								return true;
-							}
-						);
-					}
-	
-					if (true == bCollide)
-					{
-						_float3 vCamPos = _float3(CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION));
-						_float3 vNearest = vCamPos;
-	
-						for (auto& vPoint : lstPoint)
-						{
-							if (vCamPos == vNearest)
-							{
-								vNearest = vPoint;
-							}
-	
-							if (_float3(vCamPos - vPoint).length() < _float3(vCamPos - vNearest).length())
-							{
-								vNearest = vPoint;
-							}
-						}
-	
-						vPicked = vNearest;
-					}
-
-					bPicked = bCollide;
-				}
-			}
-
-			ImGui::TreePop();
-		}
-#pragma endregion
 
 		ImGui::TreePop();
 	}
+
+#pragma region Picker
+	if (ImGui::TreeNode("Picker"))
+	{
+		lstPoint.clear();
+		bCollide = false;
+
+		ImGui::Checkbox("Enable##Picker", &bPickerEnable);
+
+		if (bPickerEnable)
+		{
+			ImGui::Text(bPicked ? "Pick Success!" : "Pick Fail!");
+			ImGui::InputFloat3("Position##Picked", reinterpret_cast<_float*>(&vPicked), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+			if (CGameInstance::Get_Instance()->Key_Down(VK_LBUTTON) && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+			{
+				for (auto& pModel : m_mapNonAnimModels)
+				{
+					pModel.second->Iterate_Meshes(
+						[&](shared_ptr<CMesh> _pMesh)->_bool
+						{
+							_float3 vOut;
+							if (_pMesh->Intersect(vOut))
+							{
+								bCollide = true;
+								lstPoint.emplace_back(vOut);
+							}
+
+							return true;
+						}
+					);
+				}
+
+				if (true == bCollide)
+				{
+					_float3 vCamPos = _float3(CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION));
+					_float3 vNearest = vCamPos;
+
+					for (auto& vPoint : lstPoint)
+					{
+						if (vCamPos == vNearest)
+						{
+							vNearest = vPoint;
+						}
+
+						if (_float3(vCamPos - vPoint).length() < _float3(vCamPos - vNearest).length())
+						{
+							vNearest = vPoint;
+						}
+					}
+
+					vPicked = vNearest;
+				}
+
+				bPicked = bCollide;
+			}
+		}
+
+		ImGui::TreePop();
+	}
+#pragma endregion
 }
 
 void CScene_Tool::Info_Model()
@@ -2153,12 +2150,13 @@ void CScene_Tool::Info_Effect()
 
 void CScene_Tool::Control_Model()
 {
-	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 180.f));
-	ImGui::SetNextWindowSize(ImVec2(1020.f, 180.f));
+	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 215.f));
+	ImGui::SetNextWindowSize(ImVec2(1020.f, 215.f));
 
 	ImGui::Begin("Control:Model", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
 	static _bool bAnimationFix = false;
+	static _bool bRegisterPoint = false;
 	static _float fTrack = 0.f;
 
 	if (m_pairSelectedMesh.second)
@@ -2166,9 +2164,47 @@ void CScene_Tool::Control_Model()
 		ImGui::Checkbox("Render Full Model", &bRenderFullModel);
 	}
 
-	if (m_pairSelectedModel.second && MODEL::ANIM == m_pairSelectedModel.second->Get_Type())
+	if (m_pairSelectedModel.second)
 	{
-		ImGui::Checkbox("Fix Mode", &bAnimationFix);
+		if (MODEL::NONANIM == m_pairSelectedModel.second->Get_Type())
+		{
+			ImGui::Checkbox("Register Point", &bRegisterPoint);
+
+			if (bRegisterPoint)
+			{
+				if (ImGui::Button("Register##Point"))
+				{
+					m_vecPoint.emplace_back(vPicked);
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Clear##Point"))
+				{
+					m_vecPoint.clear();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Export##Point"))
+				{
+					const _char* szFilters = "Data (*.dat){.dat},All files{.*}";
+					ImGuiFileDialog::Instance()->OpenDialog(DIALOG_EXPORT_POINTS, "Open Texture", szFilters, "Bin/Resources/", 1, nullptr, ImGuiFileDialogFlags_Modal);
+				}
+
+				if (ImGui::BeginListBox("Point List##Point", ImVec2(-FLT_MIN, 0.f)))
+				{
+					for (auto vPoint : m_vecPoint)
+					{
+						_char szLabel[MAX_PATH];
+						snprintf(szLabel, sizeof(szLabel), "(%.3f, %.3f, %.3f)", vPoint.x, vPoint.y, vPoint.z);
+						ImGui::Selectable(szLabel, false, ImGuiSelectableFlags_Disabled);
+					}
+
+					ImGui::EndListBox();
+				}
+			}
+		}
+		else if (MODEL::ANIM == m_pairSelectedModel.second->Get_Type())
+		{
+			ImGui::Checkbox("Fix Mode", &bAnimationFix);
+		}
 	}
 
 	if (m_pSelectedAnimation)
@@ -2180,13 +2216,29 @@ void CScene_Tool::Control_Model()
 		}
 	}
 
+#pragma region File Dialog
+
+	if (ImGuiFileDialog::Instance()->Display(DIALOG_EXPORT_POINTS))
+	{
+		if (ImGuiFileDialog::Instance()->IsOk())
+		{
+			if (FAILED(Export_BinaryPoints(Function::ToWString(ImGuiFileDialog::Instance()->GetFilePathName()))))
+			{
+				MSG_BOX("Scene_Tool::Control_Model", "Failed to DIALOG_EXPORT_POINTS");
+			}
+		}
+		ImGuiFileDialog::Instance()->Close();
+	}
+
+#pragma endregion
+
 	ImGui::End();
 }
 
 void CScene_Tool::Control_Effect()
 {
-	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 180.f));
-	ImGui::SetNextWindowSize(ImVec2(660.f, 180.f));
+	ImGui::SetNextWindowPos(ImVec2(540.f, ImGui::GetIO().DisplaySize.y - 215.f));
+	ImGui::SetNextWindowSize(ImVec2(660.f, 215.f));
 
 	ImGui::Begin("Control:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
@@ -2450,6 +2502,37 @@ HRESULT CScene_Tool::Export_BinaryParticleMesh(const wstring& _wstrPath)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryParticleMesh", "Failed to Export");
 	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Tool::Export_BinaryPoints(const wstring& _wstrPath)
+{
+	std::ofstream outFile(_wstrPath, std::ios::binary);
+	if (!outFile.is_open())
+	{
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryPoints", "Failed to Open File");
+	}
+
+#pragma region Export
+
+	size_t nLength = m_vecPoint.size();
+	outFile.write(reinterpret_cast<const _byte*>(&nLength), sizeof(size_t));
+	for (auto vPoint : m_vecPoint)
+	{
+		outFile.write(reinterpret_cast<const _byte*>(&vPoint), sizeof(_float3));
+	}
+
+#pragma endregion
+
+	if (outFile.fail())
+	{
+		outFile.clear();
+		outFile.close();
+		MSG_RETURN(E_FAIL, "CScene_Tool::Export_BinaryPoints", "Failed to Write File");
+	}
+
+	outFile.close();
 
 	return S_OK;
 }
