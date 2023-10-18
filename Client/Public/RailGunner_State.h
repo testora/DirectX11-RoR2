@@ -30,7 +30,7 @@ public:
 
 private:
 	void									Handle_Aim();
-	void									Handle_State();
+	void									Handle_State(_float fTimeDelta);
 	void									Handle_Skill(_float fTimeDelta);
 	void									Handle_Backpack();
 
@@ -49,6 +49,8 @@ private:
 	_uint									m_iBackPackBoneIndex	= 0;
 	_float4x4								m_mAimPivot;
 	_float4x4								m_mNonAimPivot;
+
+	_float									m_fAirTimeAcc			= 0.f;
 
 public:
 	static shared_ptr<CRailGunner_State>	Create(shared_ptr<class CRailGunner>);

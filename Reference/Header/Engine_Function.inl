@@ -219,6 +219,21 @@ namespace Function
 		if (_pFileName)		*_pFileName		= szFileName;
 		if (_pExtension)	*_pExtension	= szExt;
 	}
+
+	XMVECTOR ComputeNormal(FXMVECTOR _vA, FXMVECTOR _vB, FXMVECTOR _vC)
+	{
+		XMVECTOR vAB = _vB - _vA;
+		XMVECTOR vAC = _vC - _vA;
+
+		return XMVector3Normalize(XMVector3Cross(vAB, vAC));
+	}
+
+	XMVECTOR ComputeSlideVector(FXMVECTOR _vDirection, FXMVECTOR _vNormal, _bool _bReturnReflection)
+	{
+		XMVECTOR vNormalProjection = _vNormal * XMVectorGetX(XMVector3Dot(_vDirection, _vNormal));
+
+		return _bReturnReflection ? vNormalProjection : _vDirection - vNormalProjection;
+	}
 }
 
 namespace DirectX

@@ -23,6 +23,7 @@ CScene_Tool::CScene_Tool(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceConte
 }
 
 static shared_ptr<CMesh> pMesh;
+static LIGHTDESC tLightDesc{};
 
 HRESULT CScene_Tool::Initialize()
 {
@@ -70,7 +71,6 @@ HRESULT CScene_Tool::Initialize()
 
 	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
 
-	LIGHTDESC				tLightDesc{};
 	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
 	tLightDesc.vDirection = _float3(-0.64f, -0.76f, -0.12f);
 	tLightDesc.vDiffuse = _color(0.6f, 0.6f, 0.6f, 1.f);
@@ -586,6 +586,8 @@ void CScene_Tool::System_Model()
 
 #pragma endregion
 
+	System_Option();
+
 	ImGui::End();
 }
 
@@ -924,7 +926,113 @@ void CScene_Tool::System_Effect()
 #pragma endregion
 #pragma endregion
 
+	System_Option();
+
 	ImGui::End();
+}
+
+void CScene_Tool::System_Option()
+{
+	if (ImGui::TreeNode("Option##System"))
+	{
+		ImGui::Checkbox("Global Gizmo##System", &bGlobalGizmo);
+		if (bGlobalGizmo)
+		{
+			if (ImGui::Button("Apply##System"))
+			{
+				m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
+			}
+			ImGui::SameLine();
+			ImGui::PushItemWidth(100);
+			ImGui::InputInt2("Gismo Size##System", reinterpret_cast<int*>(&vGismoSize));
+			ImGui::PopItemWidth();
+		}
+
+		if (ImGui::TreeNode("Light##System"))
+		{
+			ImGui::InputFloat3("Direction##System", reinterpret_cast<_float*>(&tLightDesc.vDirection));
+			ImGui::InputFloat4("Diffuse##System", reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
+			ImGui::InputFloat4("Ambient##System", reinterpret_cast<_float*>(&tLightDesc.vAmbient));
+			ImGui::InputFloat4("Specular##System", reinterpret_cast<_float*>(&tLightDesc.vSpecular));
+
+			if (ImGui::Button("Apply##System"))
+			{
+				CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
+				CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
+			}
+
+			ImGui::TreePop();
+		}
+
+#pragma region Picker
+		if (ImGui::TreeNode("Picker"))
+		{
+			static list<_float3>	lstPoint;
+			static _float3			vPicked;
+			static _bool			bPicked(false);
+			static _bool			bCollide(false);
+			static _bool			bPickerEnable(false);
+
+			lstPoint.clear();
+			bCollide = false;
+
+			ImGui::Checkbox("Enable##Picker", &bPickerEnable);
+
+			if (bPickerEnable)
+			{
+				ImGui::Text(bPicked ? "Pick Success!" : "Pick Fail!");
+				ImGui::InputFloat3("Position##Picked", reinterpret_cast<_float*>(&vPicked), "%3.f", ImGuiInputTextFlags_ReadOnly);
+
+				if (CGameInstance::Get_Instance()->Key_Down(VK_LBUTTON))
+				{
+					for (auto& pModel : m_mapNonAnimModels)
+					{
+						pModel.second->Iterate_Meshes(
+							[&](shared_ptr<CMesh> _pMesh)->_bool
+							{
+								_float3 vOut;
+								if (_pMesh->Intersect(vOut))
+								{
+									bCollide = true;
+									lstPoint.emplace_back(vOut);
+								}
+	
+								return true;
+							}
+						);
+					}
+	
+					if (true == bCollide)
+					{
+						_float3 vCamPos = _float3(CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::POSITION));
+						_float3 vNearest = vCamPos;
+	
+						for (auto& vPoint : lstPoint)
+						{
+							if (vCamPos == vNearest)
+							{
+								vNearest = vPoint;
+							}
+	
+							if (_float3(vCamPos - vPoint).length() < _float3(vCamPos - vNearest).length())
+							{
+								vNearest = vPoint;
+							}
+						}
+	
+						vPicked = vNearest;
+					}
+
+					bPicked = bCollide;
+				}
+			}
+
+			ImGui::TreePop();
+		}
+#pragma endregion
+
+		ImGui::TreePop();
+	}
 }
 
 void CScene_Tool::Info_Model()
@@ -1095,40 +1203,66 @@ void CScene_Tool::Info_Model()
 			ImGui::NewLine();
 			ImGui::SeparatorText("Animations");
 	
-			if (ImGui::TreeNodeEx(m_pSelectedAnimation->Get_Name(), ImGuiTreeNodeFlags_DefaultOpen))
+			if (m_pSelectedAnimation)
 			{
-				ImGui::SetNextItemWidth(120.f);
-				if (ImGui::BeginCombo(string("Channel(" + std::to_string(m_pSelectedAnimation->Get_NumChannels()) + ")").c_str(), string("Channel " + std::to_string(iCurrentChannelIdx)).c_str()))
+				if (ImGui::TreeNodeEx(m_pSelectedAnimation->Get_Name(), ImGuiTreeNodeFlags_DefaultOpen))
 				{
-					for (_uint i = 0; i < m_pSelectedAnimation->Get_NumChannels(); ++i)
+					ImGui::SetNextItemWidth(120.f);
+					if (ImGui::BeginCombo(string("Channel(" + std::to_string(m_pSelectedAnimation->Get_NumChannels()) + ")").c_str(), string("Channel " + std::to_string(iCurrentChannelIdx)).c_str()))
 					{
-						const _bool bSelected = iCurrentChannelIdx == i;
-						if (ImGui::Selectable((string("Channel ") + std::to_string(i)).c_str(), bSelected))
+						for (_uint i = 0; i < m_pSelectedAnimation->Get_NumChannels(); ++i)
 						{
-							iCurrentChannelIdx = i;
-							iSelectedKeyFrame = 0;
-						}
-	
-						if (bSelected)
-						{
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
-				if (ImGui::IsItemHovered())
-				{
-					if (_float fWheelDeltaV = ImGui::GetIO().MouseWheel)
-					{
-						if (0 > fWheelDeltaV)
-						{
-							if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
+							const _bool bSelected = iCurrentChannelIdx == i;
+							if (ImGui::Selectable((string("Channel ") + std::to_string(i)).c_str(), bSelected))
 							{
-								iCurrentChannelIdx += 1;
+								iCurrentChannelIdx = i;
 								iSelectedKeyFrame = 0;
 							}
+	
+							if (bSelected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
 						}
-						else
+						ImGui::EndCombo();
+					}
+					if (ImGui::IsItemHovered())
+					{
+						if (_float fWheelDeltaV = ImGui::GetIO().MouseWheel)
+						{
+							if (0 > fWheelDeltaV)
+							{
+								if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
+								{
+									iCurrentChannelIdx += 1;
+									iSelectedKeyFrame = 0;
+								}
+							}
+							else
+							{
+								if (iCurrentChannelIdx > 0)
+								{
+									iCurrentChannelIdx -= 1;
+									iSelectedKeyFrame = 0;
+								}
+							}
+						}
+	
+						if (CGameInstance::Get_Instance()->Key_Down(VK_DOWN))
+						{
+							if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames() - 1))
+							{
+								iSelectedKeyFrame += 1;
+							}
+						}
+						if (CGameInstance::Get_Instance()->Key_Down(VK_UP))
+						{
+							if (iSelectedKeyFrame > 0)
+							{
+								iSelectedKeyFrame -= 1;
+							}
+						}
+						if (CGameInstance::Get_Instance()->Key_Down(VK_LEFT))
 						{
 							if (iCurrentChannelIdx > 0)
 							{
@@ -1136,42 +1270,67 @@ void CScene_Tool::Info_Model()
 								iSelectedKeyFrame = 0;
 							}
 						}
-					}
+						if (CGameInstance::Get_Instance()->Key_Down(VK_RIGHT))
+						{
+							if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
+							{
+								iCurrentChannelIdx += 1;
+								iSelectedKeyFrame = 0;
+							}
+						}
 	
-					if (CGameInstance::Get_Instance()->Key_Down(VK_DOWN))
-					{
-						if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames() - 1))
+						if (CGameInstance::Get_Instance()->Key_Down(VK_DELETE))
 						{
-							iSelectedKeyFrame += 1;
-						}
-					}
-					if (CGameInstance::Get_Instance()->Key_Down(VK_UP))
-					{
-						if (iSelectedKeyFrame > 0)
-						{
-							iSelectedKeyFrame -= 1;
-						}
-					}
-					if (CGameInstance::Get_Instance()->Key_Down(VK_LEFT))
-					{
-						if (iCurrentChannelIdx > 0)
-						{
-							iCurrentChannelIdx -= 1;
-							iSelectedKeyFrame = 0;
-						}
-					}
-					if (CGameInstance::Get_Instance()->Key_Down(VK_RIGHT))
-					{
-						if (iCurrentChannelIdx < m_pSelectedAnimation->Get_NumChannels() - 1)
-						{
-							iCurrentChannelIdx += 1;
-							iSelectedKeyFrame = 0;
+							if (iCurrentChannelIdx != -1)
+							{
+								if (FAILED(m_pSelectedAnimation->Remove_Channel(iCurrentChannelIdx)))
+								{
+									MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove_Channel");
+								}
+	
+								if (iCurrentChannelIdx == m_pSelectedAnimation->Get_NumChannels())
+								{
+									iCurrentChannelIdx -= 1;
+								}
+	
+								iSelectedKeyFrame = 0;
+							}
 						}
 					}
 	
-					if (CGameInstance::Get_Instance()->Key_Down(VK_DELETE))
+					_float fWindowWidth1 = ImGui::GetWindowWidth();
+					_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
+					_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
+	
+					static _char szBoneIndex[32]	= "0";
+					static _uint iFindBoneIndex		= 0;
+					ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
+					ImGui::Button("~##FindChannel", ImVec2(fButtonWidth1, fButtonWidth1));
+					if (ImGui::BeginPopupContextItem())
 					{
-						if (iCurrentChannelIdx != -1)
+						ImGui::Text("Find by Bone Index:");
+						if (ImGui::InputText("##Input_FindChannel", szBoneIndex, IM_ARRAYSIZE(szBoneIndex), ImGuiInputTextFlags_CharsDecimal))
+						{
+							_uint iChannelIdx = m_pSelectedAnimation->Get_ChannelIndex(atoi(szBoneIndex));
+							if (m_pSelectedAnimation->Get_NumChannels() != iChannelIdx)
+							{
+								iCurrentChannelIdx = iChannelIdx;
+							}
+						}
+						if (ImGui::Button("Close"))
+						{
+							ImGui::CloseCurrentPopup();
+						}
+	
+						ImGui::EndPopup();
+					}
+	
+					if (iCurrentChannelIdx != -1)
+					{
+						ImGui::Text("Channel: %d, KeyFrame: %d, BoneIndex: %d", iCurrentChannelIdx, iSelectedKeyFrame, m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex());
+	
+						ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
+						if (ImGui::Button("-##RemoveChannel", ImVec2(fButtonWidth1, fButtonWidth1)))
 						{
 							if (FAILED(m_pSelectedAnimation->Remove_Channel(iCurrentChannelIdx)))
 							{
@@ -1185,126 +1344,78 @@ void CScene_Tool::Info_Model()
 	
 							iSelectedKeyFrame = 0;
 						}
-					}
-				}
 	
-				_float fWindowWidth1 = ImGui::GetWindowWidth();
-				_float fButtonWidth1 = ImGui::GetFrameHeightWithSpacing() - ImGui::GetStyle().ItemInnerSpacing.y;
-				_float fButtonSpace1 = ImGui::GetStyle().ItemInnerSpacing.x;
-	
-				static _char szBoneIndex[32]	= "0";
-				static _uint iFindBoneIndex		= 0;
-				ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
-				ImGui::Button("~##FindChannel", ImVec2(fButtonWidth1, fButtonWidth1));
-				if (ImGui::BeginPopupContextItem())
-				{
-					ImGui::Text("Find by Bone Index:");
-					if (ImGui::InputText("##Input_FindChannel", szBoneIndex, IM_ARRAYSIZE(szBoneIndex), ImGuiInputTextFlags_CharsDecimal))
-					{
-						_uint iChannelIdx = m_pSelectedAnimation->Get_ChannelIndex(atoi(szBoneIndex));
-						if (m_pSelectedAnimation->Get_NumChannels() != iChannelIdx)
+						if (ImGui::BeginListBox("Keyframe Listbox", ImVec2(-FLT_MIN, 0.f)))
 						{
-							iCurrentChannelIdx = iChannelIdx;
-						}
-					}
-					if (ImGui::Button("Close"))
-					{
-						ImGui::CloseCurrentPopup();
-					}
-	
-					ImGui::EndPopup();
-				}
-	
-				if (iCurrentChannelIdx != -1)
-				{
-					ImGui::Text("Channel: %d, KeyFrame: %d, BoneIndex: %d", iCurrentChannelIdx, iSelectedKeyFrame, m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex());
-	
-					ImGui::SameLine(fWindowWidth1 - fButtonWidth1 - ImGui::GetStyle().WindowPadding.x);
-					if (ImGui::Button("-##RemoveChannel", ImVec2(fButtonWidth1, fButtonWidth1)))
-					{
-						if (FAILED(m_pSelectedAnimation->Remove_Channel(iCurrentChannelIdx)))
-						{
-							MSG_BOX("CScene_Tool::Info_Model", "Failed to Remove_Channel");
-						}
-	
-						if (iCurrentChannelIdx == m_pSelectedAnimation->Get_NumChannels())
-						{
-							iCurrentChannelIdx -= 1;
-						}
-	
-						iSelectedKeyFrame = 0;
-					}
-	
-					if (ImGui::BeginListBox("Keyframe Listbox", ImVec2(-FLT_MIN, 0.f)))
-					{
-						iKeyFrameIdx = 0;
-						for (_uint i = 0; i < m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames(); ++i)
-						{
-							ImGui::PushID(iKeyFrameIdx);
-							if (ImGui::Selectable(string("KeyFrame " + std::to_string(i)).c_str(), iSelectedKeyFrame == iKeyFrameIdx))
+							iKeyFrameIdx = 0;
+							for (_uint i = 0; i < m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames(); ++i)
 							{
-								iSelectedKeyFrame = iKeyFrameIdx;
+								ImGui::PushID(iKeyFrameIdx);
+								if (ImGui::Selectable(string("KeyFrame " + std::to_string(i)).c_str(), iSelectedKeyFrame == iKeyFrameIdx))
+								{
+									iSelectedKeyFrame = iKeyFrameIdx;
+								}
+								ImGui::PopID();
+	
+								++iKeyFrameIdx;
 							}
-							ImGui::PopID();
-	
-							++iKeyFrameIdx;
+							ImGui::EndListBox();
 						}
-						ImGui::EndListBox();
-					}
 	
-					if (iSelectedKeyFrame != -1)
-					{
-						KEYFRAME tSelectKeyFrame{}, tCompareKeyFrame{};
-	
-						if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames()))
+						if (iSelectedKeyFrame != -1)
 						{
-							ImGui::SeparatorText(m_pairSelectedModel.second->Get_Bone(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex())->Get_Name());
-							ImGui::BeginGroup();
+							KEYFRAME tSelectKeyFrame{}, tCompareKeyFrame{};
+	
+							if (iSelectedKeyFrame < static_cast<_int>(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_NumKeyFrames()))
 							{
-								tSelectKeyFrame = m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_KeyFrame(iSelectedKeyFrame);
-	
-								ImGui::InputFloat4	("Scale",		reinterpret_cast<_float*>(&tSelectKeyFrame.vScale),				"%.3f", ImGuiInputTextFlags_ReadOnly);
-								ImGui::InputFloat4	("Rotation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
-								ImGui::InputFloat4	("Translation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
-								ImGui::InputFloat	("Time",		reinterpret_cast<_float*>(&tSelectKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
-	
-								m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Set_KeyFrame(iSelectedKeyFrame, tSelectKeyFrame);
-							}
-							ImGui::EndGroup();
-							ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
-	
-							_uint iCompareAnimation = 15;
-	
-							shared_ptr<CChannel> pCompareChannel = m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Channel(
-								m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex(), true);
-							if (nullptr != pCompareChannel
-							&&	iSelectedKeyFrame < static_cast<_int>(pCompareChannel->Get_NumKeyFrames()))
-							{
-								ImGui::SeparatorText(string("Compare: " + string(m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Name())).c_str());
+								ImGui::SeparatorText(m_pairSelectedModel.second->Get_Bone(m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex())->Get_Name());
 								ImGui::BeginGroup();
 								{
-									tCompareKeyFrame = pCompareChannel->Get_KeyFrame(iSelectedKeyFrame);
+									tSelectKeyFrame = m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_KeyFrame(iSelectedKeyFrame);
 	
-									ImGui::InputFloat4	("Scale##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.vScale),			"%.3f", ImGuiInputTextFlags_ReadOnly);
-									ImGui::InputFloat4	("Rotation##Compare",		reinterpret_cast<_float*>(&tCompareKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
-									ImGui::InputFloat4	("Translation##Compare",	reinterpret_cast<_float*>(&tCompareKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
-									ImGui::InputFloat	("Time##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat4	("Scale",		reinterpret_cast<_float*>(&tSelectKeyFrame.vScale),				"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat4	("Rotation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat4	("Translation",	reinterpret_cast<_float*>(&tSelectKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
+									ImGui::InputFloat	("Time",		reinterpret_cast<_float*>(&tSelectKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
+	
+									m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Set_KeyFrame(iSelectedKeyFrame, tSelectKeyFrame);
 								}
 								ImGui::EndGroup();
 								ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
 	
-								_bool bKeyFrameEqual =
-									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vScale),			XMLoadFloat4(&tCompareKeyFrame.vScale))) &&
-									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vRotation),		XMLoadFloat4(&tCompareKeyFrame.vRotation))) &&
-									Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vTranslation),	XMLoadFloat4(&tCompareKeyFrame.vTranslation)));
-								
-								ImGui::Text(bKeyFrameEqual ? "Equal" : "Not Equal");
+								_uint iCompareAnimation = 15;
+	
+								shared_ptr<CChannel> pCompareChannel = m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Channel(
+									m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex(), true);
+								if (nullptr != pCompareChannel
+								&&	iSelectedKeyFrame < static_cast<_int>(pCompareChannel->Get_NumKeyFrames()))
+								{
+									ImGui::SeparatorText(string("Compare: " + string(m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Name())).c_str());
+									ImGui::BeginGroup();
+									{
+										tCompareKeyFrame = pCompareChannel->Get_KeyFrame(iSelectedKeyFrame);
+	
+										ImGui::InputFloat4	("Scale##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.vScale),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+										ImGui::InputFloat4	("Rotation##Compare",		reinterpret_cast<_float*>(&tCompareKeyFrame.vRotation),			"%.3f", ImGuiInputTextFlags_ReadOnly);
+										ImGui::InputFloat4	("Translation##Compare",	reinterpret_cast<_float*>(&tCompareKeyFrame.vTranslation),		"%.3f", ImGuiInputTextFlags_ReadOnly);
+										ImGui::InputFloat	("Time##Compare",			reinterpret_cast<_float*>(&tCompareKeyFrame.fTime), 0.f, 0.f,	"%.3f", ImGuiInputTextFlags_ReadOnly);
+									}
+									ImGui::EndGroup();
+									ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
+	
+									_bool bKeyFrameEqual =
+										Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vScale),			XMLoadFloat4(&tCompareKeyFrame.vScale))) &&
+										Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vRotation),		XMLoadFloat4(&tCompareKeyFrame.vRotation))) &&
+										Function::NearZero4(XMVectorSubtract(XMLoadFloat4(&tSelectKeyFrame.vTranslation),	XMLoadFloat4(&tCompareKeyFrame.vTranslation)));
+									
+									ImGui::Text(bKeyFrameEqual ? "Equal" : "Not Equal");
+								}
 							}
 						}
 					}
+					
+					ImGui::TreePop();
 				}
-				
-				ImGui::TreePop();
 			}
 		}
 	
@@ -2050,19 +2161,6 @@ void CScene_Tool::Control_Model()
 	static _bool bAnimationFix = false;
 	static _float fTrack = 0.f;
 
-	ImGui::Checkbox("Global Gizmo##ModelControl", &bGlobalGizmo);
-	if (bGlobalGizmo)
-	{
-		if (ImGui::Button("Apply##ModelControlGizmo"))
-		{
-			m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
-		}
-		ImGui::SameLine();
-		ImGui::PushItemWidth(100);
-		ImGui::InputInt2("Gismo Size##ModelControl", reinterpret_cast<int*>(&vGismoSize));
-		ImGui::PopItemWidth();
-	}
-
 	if (m_pairSelectedMesh.second)
 	{
 		ImGui::Checkbox("Render Full Model", &bRenderFullModel);
@@ -2082,24 +2180,6 @@ void CScene_Tool::Control_Model()
 		}
 	}
 
-	if (ImGui::TreeNode("Light##Model"))
-	{
-		static LIGHTDESC tLightDesc;
-
-		ImGui::InputFloat3("Direction##Model",	reinterpret_cast<_float*>(&tLightDesc.vDirection));
-		ImGui::InputFloat4("Diffuse##Model",	reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
-		ImGui::InputFloat4("Ambient##Model",	reinterpret_cast<_float*>(&tLightDesc.vAmbient));
-		ImGui::InputFloat4("Specular##Model",	reinterpret_cast<_float*>(&tLightDesc.vSpecular));
-
-		if (ImGui::Button("Apply##ModelLight"))
-		{
-			CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
-			CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
-		}
-
-		ImGui::TreePop();
-	}
-
 	ImGui::End();
 }
 
@@ -2109,19 +2189,6 @@ void CScene_Tool::Control_Effect()
 	ImGui::SetNextWindowSize(ImVec2(660.f, 180.f));
 
 	ImGui::Begin("Control:Effect", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-
-	ImGui::Checkbox("Global Gizmo##EffectControl", &bGlobalGizmo);
-	if (bGlobalGizmo)
-	{
-		if (ImGui::Button("Apply##EffectControlGizmo"))
-		{
-			m_pGlobalGizmo->Initialize_Gizmo(vGismoSize);
-		}
-		ImGui::SameLine();
-		ImGui::PushItemWidth(100);
-		ImGui::InputInt2("Gismo Size##EffectControl", reinterpret_cast<int*>(&vGismoSize));
-		ImGui::PopItemWidth();
-	}
 
 	ImGui::Checkbox("Tick", &bTickParticle);
 
@@ -2173,24 +2240,6 @@ void CScene_Tool::Control_Effect()
 		{
 			m_pairSelectedParticleMesh.second->Set_Time(fTrack);
 		}
-	}
-	
-	if (ImGui::TreeNode("Light##Effect"))
-	{
-		static LIGHTDESC tLightDesc;
-
-		ImGui::InputFloat3("Direction##Effect",	reinterpret_cast<_float*>(&tLightDesc.vDirection));
-		ImGui::InputFloat4("Diffuse##Effect",	reinterpret_cast<_float*>(&tLightDesc.vDiffuse));
-		ImGui::InputFloat4("Ambient##Effect",	reinterpret_cast<_float*>(&tLightDesc.vAmbient));
-		ImGui::InputFloat4("Specular##Effect",	reinterpret_cast<_float*>(&tLightDesc.vSpecular));
-
-		if (ImGui::Button("Apply##EffectLight"))
-		{
-			CGameInstance::Get_Instance()->Clear_Lights(SCENE::TOOL);
-			CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr);
-		}
-
-		ImGui::TreePop();
 	}
 
 	ImGui::End();

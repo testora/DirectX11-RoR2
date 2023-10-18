@@ -6,6 +6,7 @@
 #include "VIBufferInstance_Mesh.h"
 #include "VIBufferInstance_Rect.h"
 
+#if ACTIVATE_TOOL
 HRESULT CLoader::Load_Tool()
 {
 #pragma region Prototype Texture
@@ -33,3 +34,4 @@ HRESULT CLoader::Load_Tool()
 
 	return S_OK;
 }
+#endif

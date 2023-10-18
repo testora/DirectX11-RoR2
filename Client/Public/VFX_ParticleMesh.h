@@ -60,9 +60,9 @@ public:
 	void												Set_VIBufferInstanceMeshTag(const wstring& wstrTag)			{ m_wstrVIInstMeshTag = wstrTag; }
 
 	virtual void										Set_ActivateInstances(_uint iNumInstance) override;
+#endif
 
 	void												Update();
-#endif
 
 	virtual HRESULT										Add_Component(const COMPONENT, shared_ptr<class CComponent>) override;
 

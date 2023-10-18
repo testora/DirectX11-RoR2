@@ -20,7 +20,8 @@ public:
 	_bool							Is_Grounding() const	{ return m_bIsGrounding; }
 
 private:
-	_float3							Intersect_Terrain();
+	_float3							Intersect_Terrain_Ground();
+	_float3							Intersect_Terrain_Obstacle(_float fTimeDelta, _float3* pNormal);
 
 private:
 	wstring							m_wstrTerrainGridLayerTag;

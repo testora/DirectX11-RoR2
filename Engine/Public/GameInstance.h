@@ -115,8 +115,8 @@ public:
 	HRESULT										Register_VIBuffer(const SCENE, const wstring& wstrGridLayerTag, shared_ptr<class CGameObject>);
 	HRESULT										Reset_Grids(const SCENE, const wstring& wstrGridLayerTag = wstring());
 
-	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
-	_float3										Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float3										Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX, _float3* pNormal = nullptr);
+	_float3										Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX, _float3* pNormal = nullptr);
 
 #pragma endregion
 #pragma region Light Manager

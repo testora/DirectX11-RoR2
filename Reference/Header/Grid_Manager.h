@@ -20,11 +20,11 @@ public:
 	HRESULT																Register_VIBuffer(const SCENE, const wstring& wstrGridLayerTag, shared_ptr<class CVIBuffer>, shared_ptr<class CTransform>);
 	HRESULT																Reset_Grids(const SCENE, const wstring& wstrGridLayerTag = wstring());
 
-	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
-	_float3																Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float3																Raycast(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX, _float3* pNormal = nullptr);
+	_float3																Raycast(const wstring& wstrGridLayerTag, _vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX, _float3* pNormal = nullptr);
 
 private:
-	_float																Raycast_Distance(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX);
+	_float																Raycast_Distance(_vectorf vRayOrigin, _vectorf vRayDirection, _float fRange = FLT_MAX, _float3* pNormal = nullptr);
 
 private:
 	typedef unordered_map<_float3, shared_ptr<class CGrid>, FLOAT3HASH>	Grids;

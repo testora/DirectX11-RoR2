@@ -45,6 +45,8 @@ HRESULT CRailGunner::Initialize_Prototype()
 	m_tEntityDesc.vMaxSpeed					= PLAYER_SPEED_TERMINAL;
 	m_tEntityDesc.vResist					= PLAYER_SPEED_RESIST;
 
+	m_tMaterialDesc.vSpecular				= _color(0.5f, 0.5f, 0.5f, 1.f);
+
 	return S_OK;
 }
 

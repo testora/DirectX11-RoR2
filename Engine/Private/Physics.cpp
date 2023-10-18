@@ -56,6 +56,29 @@ void CPhysics::Late_Tick(_float _fTimeDelta)
 	}
 }
 
+inline const _bool CPhysics::Is_Moving(_bool _bX, _bool _bY, _bool _bZ) const
+{
+	if (_bX && m_vVelocity.x)
+	{
+		return true;
+	}
+	if (_bY && m_vVelocity.y)
+	{
+		return true;
+	}
+	if (_bZ && m_vVelocity.z)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void CPhysics::Force(_vectorf _vDirection)
+{
+	m_vVelocity += _vDirection;
+}
+
 void CPhysics::Force(_vectorf _vDirection, _float _fMagnitude, _float _fTimeDelta)
 {
 	m_vVelocity += XMVector3Normalize(_vDirection) * _fMagnitude * _fTimeDelta;

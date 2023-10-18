@@ -15,10 +15,11 @@ public:
 public:
 	void									Add_Polygon(POLYGON);
 
-	void									Iterate_Polygon(function<_bool(POLYGON)>);
+	void									Iterate_Polygon(function<_bool(POLYGON, _float3 vNormal)>);
 
 private:
 	vector<POLYGON>							m_vecPolygons;
+	vector<_float3>							m_vecNormal;
 
 	_float3									m_vMinBound;
 	_float3									m_vGridSize;

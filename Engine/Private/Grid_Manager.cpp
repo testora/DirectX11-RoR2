@@ -64,7 +64,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _ws
 	return hr;
 }
 
-HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<class CVIBuffer> _pVIBuffer, shared_ptr<class CTransform> _pTransform)
+HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<CVIBuffer> _pVIBuffer, shared_ptr<CTransform> _pTransform)
 {
 	if (nullptr == _pTransform)
 	{
@@ -78,7 +78,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _ws
 	_pVIBuffer->Iterate_Polygons(
 		[&](POLYGON _polygon)->_bool
 		{
-			_float3 arrVertex[3] =
+			POLYGON arrVertex =
 			{
 				 XMVector3TransformCoord(_polygon[0], _pTransform->Get_Matrix()),
 				 XMVector3TransformCoord(_polygon[1], _pTransform->Get_Matrix()),
@@ -121,7 +121,7 @@ HRESULT CGrid_Manager::Register_VIBuffer(const SCENE _eScene, const wstring& _ws
 							GridLayer[_wstrGridLayerTag][_float3(x, y, z)] = CGrid::Create(_float3(x, y, z), m_vGridSize);
 						}
 
-						GridLayer[_wstrGridLayerTag][_float3(x, y, z)]->Add_Polygon(_polygon);
+						GridLayer[_wstrGridLayerTag][_float3(x, y, z)]->Add_Polygon(arrVertex);
 					}
 				}
 			}
@@ -157,7 +157,7 @@ HRESULT CGrid_Manager::Reset_Grids(const SCENE _eScene, const wstring& _wstrGrid
 	return S_OK;
 }
 
-_float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange, _float3* _pNormal)
 {
 	m_mmapRaycastGrid.clear();
 
@@ -193,7 +193,7 @@ _float3 CGrid_Manager::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _f
 	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange);
 }
 
-_float3 CGrid_Manager::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float3 CGrid_Manager::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange, _float3* _pNormal)
 {
 	m_mmapRaycastGrid.clear();
 
@@ -228,24 +228,26 @@ _float3 CGrid_Manager::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayO
 		}
 	}
 
-	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange);
+	return _vRayOrigin + vRayDirection * Raycast_Distance(_vRayOrigin, vRayDirection, _fRange, _pNormal);
 }
 
-_float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange, _float3* _pNormal)
 {
-	_float fFinalDist = FLT_MAX;
+	_float	fFinalDist = FLT_MAX;
+	_float3	vFinalNormal;
 
 	for (auto& pair : m_mmapRaycastGrid)
 	{
 		pair.second->Iterate_Polygon(
-			[&](POLYGON _polygon)->_bool
+			[&](POLYGON _polygon, _float3 _vNormal)->_bool
 			{
-				_float fDist = 0.f;
+				_float fDist(0.f);
 				if (TriangleTests::Intersects(_vRayOrigin, _vRayDirection, _polygon[0], _polygon[1], _polygon[2], fDist))
 				{
 					if (fDist < _fRange && fDist < fFinalDist)
 					{
 						fFinalDist = fDist;
+						vFinalNormal = _vNormal;
 					};
 				}
 
@@ -257,6 +259,11 @@ _float CGrid_Manager::Raycast_Distance(_vectorf _vRayOrigin, _vectorf _vRayDirec
 		{
 			break;
 		}
+	}
+
+	if (_pNormal)
+	{
+		*_pNormal = vFinalNormal;
 	}
 
 	return fFinalDist == FLT_MAX ? 0.f : fFinalDist;

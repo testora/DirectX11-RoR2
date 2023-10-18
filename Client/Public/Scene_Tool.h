@@ -56,6 +56,7 @@ public:
 private:
 	void												System_Model();
 	void												System_Effect();
+	void												System_Option();
 	void												Info_Model();
 	void												Info_Effect();
 	void												Control_Model();

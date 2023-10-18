@@ -15,6 +15,7 @@
 #include "VIBufferInstance_Mesh.h"
 #include "VFX_TrailQuad.h"
 #include "VFX_TrailLine.h"
+#include "VFX_ParticleMesh.h"
 #include "SkyCube.h"
 
 HRESULT CLoader::Load_Moon()
@@ -203,7 +204,7 @@ HRESULT CLoader::Load_Moon()
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH,
-		CVFX_ParticleMesh::Create(m_pDevice, m_pContext))))
+	CVFX_ParticleMesh::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH");
 	}

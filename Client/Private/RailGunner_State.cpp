@@ -76,7 +76,7 @@ void CRailGunner_State::Tick(_float _fTimeDelta)
 {
 	Handle_Backpack();
 	Handle_Aim();
-	Handle_State();
+	Handle_State(_fTimeDelta);
 	Handle_Skill(_fTimeDelta);
 
 	m_bitPrevState = m_bitState;
@@ -127,7 +127,7 @@ void CRailGunner_State::Handle_Aim()
 		Function::Clamp(0.f, 1.f, Function::ProportionalRatio(XMConvertToRadians(MAINCAM_YAW_MIN * 0.25f), XMConvertToRadians(MAINCAM_YAW_MAX * 0.25f), fYaw)));
 }
 
-void CRailGunner_State::Handle_State()
+void CRailGunner_State::Handle_State(_float _fTimeDelta)
 {
 	shared_ptr<CGameInstance>	pGameInstance	= CGameInstance::Get_Instance();
 	shared_ptr<CRailGunner>		pRailGunner		= m_pRailGunner.lock();
@@ -135,18 +135,25 @@ void CRailGunner_State::Handle_State()
 #pragma region Air
 	if (m_bitState.test(IDX(RG_STATE::AIR)))
 	{
+		m_fAirTimeAcc += _fTimeDelta;
+
 		if (!m_pAnimator->Is_Playing(ANIMATION::RAILGUNNER::JUMP_START))
 		{
 			if (m_pPhysics->Get_Velocity().y >= 0.f)
 			{
 				m_pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_UP, 1.f, false, 0.25f);
 			}
-			else
+			else if (0.35f < m_fAirTimeAcc)
 			{
 				m_pAnimator->Play_Animation(ANIMATION::RAILGUNNER::AIR_LOOP_DOWN, 1.f, false, 0.25f);
 			}
 		}
 	}
+	else
+	{
+		m_fAirTimeAcc = 0.f;
+	}
+
 	m_bitState.set(IDX(RG_STATE::AIR), !m_pGrounding->Is_Grounding());
 #pragma endregion
 #pragma region Sprint

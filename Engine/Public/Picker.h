@@ -13,7 +13,7 @@ public:
 	HRESULT						Initialize(HWND);
 	void						Tick();
 
-private:
+public:
 	_bool						Intersect(_Out_ _float3&, const _float3 vA, const _float3 vB, const _float3 vC, _In_opt_ const _float4x4 mWorld = g_mUnit);
 
 private:
@@ -22,7 +22,6 @@ private:
 
 	HWND						m_hWnd	= 0;
 
-	friend class CVIBuffer;
 	friend CSingleton<CPicker>;
 };
 

@@ -9,6 +9,7 @@
 #include "RailGunner_PistolBullet.h"
 #include "Golem.h"
 #include "SkyCube.h"
+#include "Teleporter.h"
 
 HRESULT CLoader::Load_Test()
 {
@@ -28,6 +29,7 @@ HRESULT CLoader::Load_Test()
 //	PROTOTYPE_COMPONENT_MODEL_RAILGUNNER
 //	PROTOTYPE_COMPONENT_MODEL_GOLEM
 //	PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS
+//	PROTOTYPE_COMPONENT_MODEL_TELEPORTER
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/RailGunner/RailGunner_mod_aim_backpack_pistol_sniper_super.mdl")))))
@@ -46,6 +48,12 @@ HRESULT CLoader::Load_Test()
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS");
 	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_TELEPORTER,
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Interactable/Teleporter/Teleporter.mdl")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_TELEPORTER");
+	}
 	
 #ifdef _DEBUG
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::TEST, PROTOTYPE_COMPONENT_MODEL_CUBE,
@@ -62,6 +70,7 @@ HRESULT CLoader::Load_Test()
 
 //	PROTOTYPE_GAMEOBJECT_CAMERA_MAIN
 //	PROTOTYPE_GAMEOBJECT_SKYBOX_SKY0
+//	PROTOTYPE_GAMEOBJECT_TELEPORTER
 //	PROTOTYPE_GAMEOBJECT_GOLEMPLAINS
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET
@@ -101,6 +110,12 @@ HRESULT CLoader::Load_Test()
 		CGolem::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_GOLEM");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TELEPORTER,
+		CTeleporter::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Test", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_TELEPORTER");
 	}
 
 #pragma endregion

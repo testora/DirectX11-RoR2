@@ -3,13 +3,16 @@
 #include "GameInstance.h"
 #include "ImGui_Manager.h"
 #include "Camera_Main.h"
+#include "Scene_Load.h"
 
-#define SCENE_TEST_FOG_COLOR	_float4(0.48f, 0.64f, 0.72f, 1.00f)
-#define SCENE_TEST_FOG_START	0.00f
-#define SCENE_TEST_FOG_END		0.25f
-#define SCENE_TEST_FOG_AMBIENT	0.00f
-#define SCENE_TEST_FOG_MAX		0.60f
-#define SCENE_TEST_FOG_POWER	0.25f
+#define SCENE_TEST_FOG_COLOR			_float4(0.48f, 0.64f, 0.72f, 1.00f)
+#define SCENE_TEST_FOG_START			0.00f
+#define SCENE_TEST_FOG_END				0.25f
+#define SCENE_TEST_FOG_AMBIENT			0.00f
+#define SCENE_TEST_FOG_MAX				0.60f
+#define SCENE_TEST_FOG_POWER			0.25f
+
+#define SCENE_TEST_TELEPORTER_POSITION	_float3(-50.f, -155.f, -50.f)
 
 CScene_Test::CScene_Test(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CScene(_pDevice, _pContext, SCENE::TEST)
@@ -43,6 +46,11 @@ HRESULT CScene_Test::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Background");
 	}
 
+	if (FAILED(Ready_Interactable()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Background");
+	}
+
 	if (FAILED(Ready_Terrain()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Terrain");
@@ -68,9 +76,14 @@ void CScene_Test::Tick(_float _fTimeDelta)
 		CGameInstance::Get_Instance()->Toggle_Cursor();
 	}
 
-	if (CGameInstance::Get_Instance()->Key_Down('K'))
+	if (CGameInstance::Get_Instance()->Key_Down('G'))
 	{
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(g_aNull);
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('4'))
+	{
+		CGameInstance::Get_Instance()->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::MOON));
 	}
 }
 
@@ -302,6 +315,31 @@ HRESULT CScene_Test::Ready_Monster()
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_GOLEM");
 	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Test::Ready_Interactable()
+{
+	shared_ptr<CObjectLayer> pLayer = CGameInstance::Get_Instance()->Add_Layer(SCENE::TEST, LAYER_INTERACTABLE);
+	if (nullptr == pLayer)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Interactable", "Failed to Add_Layer: LAYER_INTERACTABLE");
+	}
+
+	if (FAILED(pLayer->Add(CGameInstance::Get_Instance()->Clone_GameObject(SCENE::TEST, PROTOTYPE_GAMEOBJECT_TELEPORTER, SCENE_TEST_TELEPORTER_POSITION))))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Interactable", "Failed to Clone_GameObject: PROTOTYPE_GAMEOBJECT_TELEPORTER");
+	}
+
+	pLayer->Iterate_Objects(
+		[&](shared_ptr<CGameObject> _pTerrain)->_bool
+		{
+			CGameInstance::Get_Instance()->Register_VIBuffer(SCENE::TEST, GRID_TERRAIN, _pTerrain);
+
+			return true;
+		}
+	);
 
 	return S_OK;
 }

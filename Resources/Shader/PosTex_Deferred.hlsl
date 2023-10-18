@@ -174,7 +174,7 @@ PS_OUT PS_MAIN_POSTPROCESS(PS_IN In)
 	
 	float4	vMask	= g_texMaskTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vDepth	= g_texDepthTarget.Sample(LinearSampler, In.vTexCoord);
-	
+
 	if (0.f < vMask.a && vMask.a < 0.1f) 
 	{
 		float	fWaveLengthX	= vMask.x * 100.f;

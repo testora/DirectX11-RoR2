@@ -229,7 +229,6 @@ HRESULT CVFX_ParticleMesh::Set_TexturePath(aiTextureType _eType, const wstring& 
 
 	return S_OK;
 }
-#endif
 
 void CVFX_ParticleMesh::Set_ActivateInstances(_uint _iNumInstance)
 {
@@ -244,6 +243,7 @@ void CVFX_ParticleMesh::Set_ActivateInstances(_uint _iNumInstance)
 	break;
 	}
 }
+#endif
 
 HRESULT CVFX_ParticleMesh::Add_Component(const COMPONENT _eComponent, shared_ptr<CComponent> _pComponent)
 {

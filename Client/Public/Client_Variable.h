@@ -9,6 +9,7 @@
 
 #define PROTOTYPE_GAMEOBJECT_BACKGROUND								TEXT("Prototype:GameObject:Background")
 #define PROTOTYPE_GAMEOBJECT_TERRAIN								TEXT("Prototype:GameObject:Terrain")
+#define PROTOTYPE_GAMEOBJECT_TELEPORTER								TEXT("Prototype:GameObject:Teleporter")
 #define PROTOTYPE_GAMEOBJECT_GOLEMPLAINS							TEXT("Prototype:GameObject:GolemPlains")
 #define PROTOTYPE_GAMEOBJECT_MOON									TEXT("Prototype:GameObject:Moon")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER								TEXT("Prototype:GameObject:RailGunner")
@@ -60,6 +61,7 @@
 #define PROTOTYPE_COMPONENT_MODEL_BROTHER							TEXT("Prototype:Component:Model:Brother")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEM								TEXT("Prototype:Component:Model:Golem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS						TEXT("Prototype:Component:Model:GolemPlains")
+#define PROTOTYPE_COMPONENT_MODEL_TELEPORTER						TEXT("Prototype:Component:Model:Teleporter")
 #define PROTOTYPE_COMPONENT_MODEL_MOON								TEXT("Prototype:Component:Model:Moon")
 
 #define PROTOTYPE_COMPONENT_MODEL_SPHERE							TEXT("Prototype:Component:Model:Sphere")
@@ -72,6 +74,7 @@
 #pragma region Layer
 
 #define LAYER_BACKGROUND											TEXT("Layer:Background")
+#define LAYER_INTERACTABLE											TEXT("Layer:Interactable")
 
 #define LAYER_LIGHT													TEXT("Layer:Light")
 #define LAYER_CAMERA												TEXT("Layer:Camera")
@@ -84,7 +87,6 @@
 
 #define POOL_MONSTER_BROTHER										TEXT("Pool:Monster:Brother")
 #define POOL_MONSTER_GOLEM											TEXT("Pool:Monster:Golem")
-
 #define POOL_RAILGUNNER_PISTOLBULLET								TEXT("Pool:RailGunner:PistolBullet")
 
 #define POOL_EFFECT_DEMO_POINT										TEXT("Pool:Effect:Demo:Point")

@@ -27,6 +27,9 @@ namespace Function
 	inline void							SplitPath(_In_ const string& _str, _Out_opt_ string* _pDrive, _Out_opt_ string* _pDirectory, _Out_opt_ string* _pFileName, _Out_opt_ string* _pExtension);
 	inline void							SplitPath(_In_ const wstring& _wstr, _Out_opt_ wstring* _pDrive, _Out_opt_ wstring* _pDirectory, _Out_opt_ wstring* _pFileName, _Out_opt_ wstring* _pExtension);
 
+	inline XMVECTOR						ComputeNormal(FXMVECTOR, FXMVECTOR, FXMVECTOR);
+	inline XMVECTOR						ComputeSlideVector(FXMVECTOR vDirection, FXMVECTOR vNormal, _bool bReturnReflection = false);
+
 #pragma region Template
 
 	template<typename T>

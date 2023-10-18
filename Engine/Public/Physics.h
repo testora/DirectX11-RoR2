@@ -17,10 +17,13 @@ public:
 	virtual void					Late_Tick(_float fTimeDelta) override;
 
 public:
+	inline const _bool				Is_Moving(_bool bX = true, _bool bY = true, _bool bZ = true) const;
+
 	const _float3					Get_Velocity() const				{ return m_vVelocity; }
 	void							Set_Gravity(_bool bEnable = true)	{ m_bEnableGravity = bEnable; }
 
 public:
+	void							Force(_vectorf);
 	void							Force(_vectorf vDirection, _float fMagnitude, _float fTimeDelta = 1.f);
 	void							Force(TRANSFORM eDirection, _float fMagnitude, _float fTimeDelta = 1.f);
 	void							Flattern(_bool bX, _bool bY, _bool bZ);

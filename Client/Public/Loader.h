@@ -19,7 +19,9 @@ public:
 
 private:
 	HRESULT						Load_Menu();
+#if ACTIVATE_TOOL
 	HRESULT						Load_Tool();
+#endif
 	HRESULT						Load_Test();
 	HRESULT						Load_Moon();
 

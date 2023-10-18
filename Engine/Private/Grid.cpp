@@ -12,13 +12,14 @@ HRESULT CGrid::Initialize(_float3 _vMinBound, _float3 _vGridSize)
 void CGrid::Add_Polygon(POLYGON _polygon)
 {
 	m_vecPolygons.emplace_back(_polygon);
+	m_vecNormal.emplace_back(Function::ComputeNormal(_polygon[0], _polygon[1], _polygon[2]));
 }
 
-void CGrid::Iterate_Polygon(function<_bool(POLYGON)> _funcCallback)
+void CGrid::Iterate_Polygon(function<_bool(POLYGON, _float3)> _fpCallback)
 {
-	for (auto& polygon : m_vecPolygons)
+	for (size_t i = 0; i < m_vecPolygons.size(); ++i)
 	{
-		if (!_funcCallback(polygon))
+		if (!_fpCallback(m_vecPolygons[i], m_vecNormal[i]))
 		{
 			return;
 		}

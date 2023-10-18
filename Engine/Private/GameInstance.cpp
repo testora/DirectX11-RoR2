@@ -551,7 +551,7 @@ _float3 CGameInstance::Get_GridSize()
 	return m_pGrid_Manager->Get_GridSize();
 }
 
-HRESULT CGameInstance::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<class CGameObject> _pObject)
+HRESULT CGameInstance::Register_VIBuffer(const SCENE _eScene, const wstring& _wstrGridLayerTag, shared_ptr<CGameObject> _pObject)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
@@ -571,24 +571,24 @@ HRESULT CGameInstance::Reset_Grids(const SCENE _eScene, const wstring& _wstrGrid
 	return m_pGrid_Manager->Reset_Grids(_eScene, _wstrGridLayerTag);
 }
 
-_float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float3 CGameInstance::Raycast(_vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange, _float3* _pNormal)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(_vRayOrigin, "CGameInstance::Raycast", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Raycast(_vRayOrigin, _vRayDirection, _fRange);
+	return m_pGrid_Manager->Raycast(_vRayOrigin, _vRayDirection, _fRange, _pNormal);
 }
 
-_float3 CGameInstance::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange)
+_float3 CGameInstance::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayOrigin, _vectorf _vRayDirection, _float _fRange, _float3* _pNormal)
 {
 	if (nullptr == m_pGrid_Manager)
 	{
 		MSG_RETURN(_vRayOrigin, "CGameInstance::Raycast", "Null Exception: m_pGrid_Manager");
 	}
 
-	return m_pGrid_Manager->Raycast(_wstrGridLayerTag, _vRayOrigin, _vRayDirection, _fRange);
+	return m_pGrid_Manager->Raycast(_wstrGridLayerTag, _vRayOrigin, _vRayDirection, _fRange, _pNormal);
 }
 
 #pragma endregion
