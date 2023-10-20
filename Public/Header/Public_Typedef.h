@@ -11,6 +11,9 @@ typedef unsigned int	 		_flags;
 typedef unsigned long			_ulong;
 typedef signed long				_long;
 
+typedef unsigned long long		_ullong;
+typedef signed long long		_llong;
+
 typedef float					_float;
 typedef double					_double;
 

@@ -1,9 +1,7 @@
 #include "ClientPCH.h"
 #include "Brother_BehaviorTree.h"
 #include "BlackBoard.h"
-#include "BrotherNode_Root.h"
 #include "GameInstance.h"
-#include "GameObject.h"
 #include "Brother.h"
 
 HRESULT CBrother_BehaviorTree::Initialize(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)

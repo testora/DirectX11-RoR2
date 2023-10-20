@@ -1,6 +1,5 @@
 #include "ClientPCH.h"
 #include "GameInstance.h"
-#include "Brother_BehaviorTree.h"
 #include "BrotherNodeDecorator_Range.h"
 
 CBrotherNodeDecorator_Range::CBrotherNodeDecorator_Range(shared_ptr<CNode> _pNode, _float _fDistance, _bool _bInRange)

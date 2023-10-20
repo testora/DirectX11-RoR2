@@ -106,7 +106,7 @@ void CGolem_Behavior::Handle_State(_float _fTimeDelta)
 		m_fTimeAcc += _fTimeDelta;
 		if (m_fTimeAcc >= GOLEM_MOVEMENT_TIME_MAX)
 		{
-			m_pGolem->Wander();
+		//	m_pGolem->Wander();
 			m_fTimeAcc = 0.f;
 		}
 	}

@@ -29,12 +29,8 @@ public:
 	_float4x4					Get_WeakPoint() const;
 
 public:
-	_float						Distance(shared_ptr<CGameObject>);
-
 	virtual void				Hit()			PURE;
 	virtual void				Hit_WeakPoint()	PURE;
-
-	virtual void				Wander()		PURE;
 
 protected:
 	shared_ptr<CTransform>		m_pTransform;

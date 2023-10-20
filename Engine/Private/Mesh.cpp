@@ -250,6 +250,8 @@ HRESULT CMesh::Ready_VertexBuffer_Anim(const aiMesh* _pAIMesh, shared_ptr<CModel
 		m_iNumBones = 1;
 		m_vecBoneIndices.emplace_back(_pModel->Get_BoneIndex(m_szName));
 		m_vecBoneOffsets.emplace_back(g_mUnit);
+		m_vecBones.emplace_back(g_mUnit);
+		m_vecInterpolationMatrices.emplace_back(g_mUnit);
 	}
 
 #if ACTIVATE_TOOL

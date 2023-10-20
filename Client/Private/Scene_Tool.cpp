@@ -1380,7 +1380,7 @@ void CScene_Tool::Info_Model()
 								ImGui::EndGroup();
 								ImGui::GetWindowDrawList()->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(110, 110, 128, 128));
 	
-								_uint iCompareAnimation = 15;
+								_uint iCompareAnimation = 0;
 	
 								shared_ptr<CChannel> pCompareChannel = m_pairSelectedModel.second->Get_Animation(iCompareAnimation)->Get_Channel(
 									m_pSelectedAnimation->Get_Channel(iCurrentChannelIdx)->Get_BoneIndex(), true);

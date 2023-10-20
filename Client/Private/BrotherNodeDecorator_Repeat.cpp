@@ -1,6 +1,5 @@
 #include "ClientPCH.h"
 #include "GameInstance.h"
-#include "Brother_BehaviorTree.h"
 #include "BrotherNodeDecorator_Repeat.h"
 
 CBrotherNodeDecorator_Repeat::CBrotherNodeDecorator_Repeat(shared_ptr<CNode> _pNode, _float _fDuration)

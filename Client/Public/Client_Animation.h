@@ -56,7 +56,7 @@ namespace ANIMATION
 	//	TEST
 		TEST							= 2,				// IconicTestPose
 
-		MAX								= 38
+		MAX
 	};
 #pragma endregion
 #pragma region MONSTER
@@ -134,7 +134,80 @@ namespace ANIMATION
 		HURT_TO_DEATH					= 12,
 		DEATH_LOOP						= 16,
 #pragma endregion
+	//
 		MAX								= 49
+	};
+
+	enum class LUNAR_EXPLODER
+	{
+	//	IDLE
+		IDLE							= 1,
+		IDLE_							= 10,
+	//	AIR
+		JUMP							= 3,
+		AIR_LOOP_UP						= 0,
+		AIR_LOOP_DOWN					= 5,
+	//	MOVE
+		RUN_FORWARD						= 2,
+		SPRINT_FORWARD					= 11,
+	//	SHARD
+		FIRE_EXPLODE_SHARDS				= 8,
+	//	HIT
+		HURT1							= 4,
+		LIGHT_IMPACT					= 7,
+	//	FLINCH
+		FLINCH1							= 14,
+		FLINCH2							= 9,
+		FLINCH3							= 6,
+	//	EVENT
+		SPAWN							= 12,
+		DEATH							= 13,
+	//	
+		MAX								= 15
+	};
+
+	enum class LUNAR_GOLEM
+	{
+	//	IDLE
+		IDLE							= 15,
+		IDLE_							= 16,
+	//	AIR
+		JUMP							= 17,
+		AIR_LOOP_DOWN					= 2,
+		AIR_LOOP_UP						= 3,
+	//	AIM
+		AIM_PITCH						= 0,
+		AIM_YAW							= 1,
+	//	WALK
+		WALK_BACKWARD					= 23,
+		WALK_FORWARD					= 24,
+		WALK_LEFT						= 25,
+		WALK_RIGHT						= 26,
+	//	SPRINT
+		SPRINT_LEFT						= 19,
+		SPRINT_RIGHT					= 20,
+		SPRINT_FORWARD					= 21,
+	//	FIRE
+		FIRE_LEFT						= 9,
+		FIRE_RIGHT						= 10,
+		FIRE_TWIN						= 11,
+		FIRE_TWIN_CHARGE				= 5,
+	//	CROUCH
+		CROUCH							= 6,
+	//	FLINCH
+		FLINCH1							= 12,
+		FLINCH2							= 13,
+		FLINCH3							= 14,
+	//	LEAP
+		LEAP_BEGIN						= 4,
+		FINISH_LEAP						= 8,
+	//	HIT
+		STUN							= 22,
+		LIGHT_IMPACT					= 18,
+	//	EVENT
+		DEATH2							= 7,
+	//
+		MAX								= 27
 	};
 
 	enum class GOLEM
@@ -170,7 +243,7 @@ namespace ANIMATION
 		SPAWN							= 20,
 	//	TEST
 		TPOSE							= 21,
-
+	//
 		MAX								= 23
 	};
 #pragma endregion

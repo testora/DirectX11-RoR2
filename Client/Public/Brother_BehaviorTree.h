@@ -55,7 +55,6 @@
 #pragma endregion
 #pragma endregion
 
-
 BEGIN(Engine)
 class CTransform;
 class CPhysics;

@@ -26,7 +26,7 @@ HRESULT CBrotherNodeLeaf_SpellChannel::Initialize(shared_ptr<CBlackBoard> _pBlac
 
 void CBrotherNodeLeaf_SpellChannel::Activate()
 {
-	if (!m_bIsInital)
+	if (!m_bIsInitial)
 	{
 		m_eStatus = STATUS::FAILURE;
 		return;
@@ -77,7 +77,7 @@ void CBrotherNodeLeaf_SpellChannel::Terminate()
 
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::HURT_IDLE_LOOP);
 
-	m_bIsInital = false;
+	m_bIsInitial = false;
 }
 
 shared_ptr<CBrotherNodeLeaf_SpellChannel> CBrotherNodeLeaf_SpellChannel::Create(shared_ptr<CBlackBoard> _pBlackBoard)

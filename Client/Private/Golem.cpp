@@ -104,6 +104,7 @@ HRESULT CGolem::Ready_Behaviors()
 	return S_OK;
 }
 
+/*
 void CGolem::Wander()
 {
 	_float	fProgressTime(Function::RandomFloat(GOLEM_MOVEMENT_TIME_MIN, GOLEM_MOVEMENT_TIME_MAX));
@@ -130,6 +131,7 @@ void CGolem::Wander()
 		}
 	);
 }
+*/
 
 void CGolem::Hit()
 {

@@ -83,8 +83,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	float			fShade			= saturate(dot(normalize(g_vLightDirection), -vNormal));
 	fShade							= floor(fShade * CELL_SHADE_FREQUENCY) / CELL_SHADE_FREQUENCY;
-	
+
+//	
 	Out.vShade		= fShade;
+//	Out.vShade		= g_vLightDiffuse * fShade + g_vLightAmbient;
 	
 	float4			vPosition;
 	
@@ -99,8 +101,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 	
 	float4			vLook			= vPosition - g_vCamPosition;
 	float4			vHalfWay		= normalize(normalize(g_vLightDirection) + normalize(-vLook));
-	
+
+//	
 	Out.vSpecular	= pow(abs(dot(vNormal, vHalfWay)), g_fMtrlShininess);
+//	Out.vSpecular	= g_vLightSpecular * abs(dot(vNormal, vHalfWay));
 
 	return Out;
 }
@@ -114,7 +118,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	
 	float4			vDepthTarget	= g_texDepthTarget.Sample(PointSampler, In.vTexCoord);
 	float			fViewZ			= vDepthTarget.y * g_fCamFar;
-
+	
 	float4			vPosition;
 	
 	vPosition.x		= In.vPosition.x * +2.f - 1.f;
@@ -126,6 +130,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	vPosition		= mul(vPosition, g_mProjInv);
 	vPosition		= mul(vPosition, g_mViewInv);
 	
+//	
 	float4			vLightDir		= vPosition - g_vLightPosition;
 	float			fDistance		= length(vLightDir);
 	
@@ -138,6 +143,22 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
 	float4			vHalfWay		= normalize(normalize(g_vLightDirection) + normalize(-vLook));
 	
 	Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(dot(vNormal, vHalfWay), 1);
+//
+//	float4			vLightDirection	= vPosition - g_vLightPosition;
+//	float			fLightDistance	= length(vLightDirection);
+//	vLightDirection	= normalize(vLightDirection);
+//	
+//	float			fShade			= saturate(dot(normalize(vLightDirection), -vNormal));
+//	fShade			= floor(fShade * CELL_SHADE_FREQUENCY) / CELL_SHADE_FREQUENCY;
+//	
+//	float			fAtt			= saturate(fLightDistance / g_fLightRange);
+//	
+//	Out.vShade		= fShade * fAtt;
+//	
+//	float4			vLook			= vPosition - g_vCamPosition;
+//	float4			vHalfWay		= normalize(vLightDirection + normalize(-vLook));
+//	
+//	Out.vSpecular	= g_vLightSpecular * abs(dot(vNormal, vHalfWay)) * fAtt;
 	
 	return Out;
 }
@@ -158,10 +179,16 @@ PS_OUT_POSTPROCESS PS_MAIN_PREPROCESS(PS_IN In)
 	float4	vShade			= g_texShadeTarget.Sample(LinearSampler, In.vTexCoord);
 	float4	vSpecular		= g_texSpecularTarget.Sample(LinearSampler, In.vTexCoord);
 	
+//
 	Out.vPreProcess			= vMtrlDiffuse	* g_vLightDiffuse	* vShade
 							+ vMtrlAmbient	* g_vLightAmbient
 							+ vMtrlSpecular	* g_vLightSpecular	* vSpecular
 							+ vMtrlEmissive;
+//
+//	Out.vPreProcess			= vMtrlDiffuse * vShade
+//							+ vMtrlAmbient	
+//							+ pow(vMtrlSpecular * vSpecular, g_fMtrlShininess);
+//							+ vMtrlEmissive;
 	
 	Out.vMask				= float4(0.f, 0.f, 0.f, 0.f);
 	

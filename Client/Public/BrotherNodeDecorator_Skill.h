@@ -2,9 +2,6 @@
 #include "Client_Define.h"
 #include "Decorator.h"
 
-BEGIN(Engine)
-END
-
 BEGIN(Client)
 
 class CBrotherNodeDecorator_Skill final : public CDecorator

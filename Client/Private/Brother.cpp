@@ -235,13 +235,22 @@ HRESULT CBrother::Ready_Behaviors()
 	return S_OK;
 }
 
-void CBrother::Wander()
-{
-	return;
-}
-
 void CBrother::Hit()
 {
+	_uint iIndex = rand() % 3;
+
+	switch (iIndex)
+	{
+	case 0:
+		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH1, 1.f, false, g_fDefaultInterpolationDuration, false);
+		break;
+	case 1:
+		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH2, 1.f, false, g_fDefaultInterpolationDuration, false);
+		break;
+	case 2:
+		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH3, 1.f, false, g_fDefaultInterpolationDuration, false);
+		break;
+	}
 }
 
 void CBrother::Hit_WeakPoint()

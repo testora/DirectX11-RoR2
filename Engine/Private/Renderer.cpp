@@ -212,6 +212,14 @@ HRESULT CRenderer::Draw_RenderGroup()
 		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_UI");
 	}
 
+#ifdef _DEBUG
+	if (FAILED(Render_Debug()))
+	{
+		hr = E_FAIL;
+		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Debug");
+	}
+#endif
+
 	return hr;
 }
 
@@ -499,6 +507,27 @@ HRESULT CRenderer::Render_UI()
 
 	return hr;
 }
+
+#ifdef _DEBUG
+HRESULT CRenderer::Render_Debug()
+{
+	HRESULT hr = S_OK;
+
+	for (auto& pSystem : m_lstRenderGroup[IDX(RENDER_GROUP::DEBUG)])
+	{
+		if (nullptr != pSystem)
+		{
+			if (FAILED(pSystem->Render()))
+			{
+				hr = E_FAIL;
+			}
+		}
+	}
+	m_lstRenderGroup[IDX(RENDER_GROUP::DEBUG)].clear();
+
+	return hr;
+}
+#endif
 #pragma endregion
 
 shared_ptr<CRenderer> CRenderer::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

@@ -23,7 +23,7 @@ private:
 	virtual HRESULT						Ready_Behaviors() override;
 
 public:
-	virtual void						Wander() override;
+//	virtual void						Wander() override;
 	
 	virtual void						Hit() override;
 	virtual void						Hit_WeakPoint() override;

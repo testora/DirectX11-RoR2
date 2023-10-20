@@ -22,7 +22,7 @@ public:
 	virtual void									Terminate() override;
 
 private:
-	_bool											m_bIsInital	= true;
+	_bool											m_bIsInitial	= true;
 
 public:
 	static shared_ptr<CBrotherNodeSequence_Enter>	Create(shared_ptr<class CBlackBoard>);

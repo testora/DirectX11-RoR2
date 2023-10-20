@@ -15,6 +15,8 @@
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER								TEXT("Prototype:GameObject:RailGunner")
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET				TEXT("Prototype:GameObject:RailGunner:PistolBullet")
 #define PROTOTYPE_GAMEOBJECT_BROTHER								TEXT("Prototype:GameObject:Brother")
+#define PROTOTYPE_GAMEOBJECT_LUNAREXPLODER							TEXT("Prototype:GameObject:LunarExploder")
+#define PROTOTYPE_GAMEOBJECT_LUNARGOLEM								TEXT("Prototype:GameObject:LunarGolem")
 #define PROTOTYPE_GAMEOBJECT_GOLEM									TEXT("Prototype:GameObject:Golem")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_POINT						TEXT("Prototype:GameObject:Effect:Demo:Point")
 #define PROTOTYPE_GAMEOBJECT_EFFECT_DEMO_RECT						TEXT("Prototype:GameObject:Effect:Demo:Rect")
@@ -59,6 +61,8 @@
 
 #define PROTOTYPE_COMPONENT_MODEL_RAILGUNNER						TEXT("Prototype:Component:Model:RailGunner")
 #define PROTOTYPE_COMPONENT_MODEL_BROTHER							TEXT("Prototype:Component:Model:Brother")
+#define PROTOTYPE_COMPONENT_MODEL_LUNAREXPLODER						TEXT("Prototype:Component:Model:LunarExploder")
+#define PROTOTYPE_COMPONENT_MODEL_LUNARGOLEM						TEXT("Prototype:Component:Model:LunarGolem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEM								TEXT("Prototype:Component:Model:Golem")
 #define PROTOTYPE_COMPONENT_MODEL_GOLEMPLAINS						TEXT("Prototype:Component:Model:GolemPlains")
 #define PROTOTYPE_COMPONENT_MODEL_TELEPORTER						TEXT("Prototype:Component:Model:Teleporter")
@@ -86,6 +90,8 @@
 #pragma region Pool
 
 #define POOL_MONSTER_BROTHER										TEXT("Pool:Monster:Brother")
+#define POOL_MONSTER_LUNAREXPLODER									TEXT("Pool:Monster:LunarExploder")
+#define POOL_MONSTER_LUNARGOLEM										TEXT("Pool:Monster:LunarGolem")
 #define POOL_MONSTER_GOLEM											TEXT("Pool:Monster:Golem")
 #define POOL_RAILGUNNER_PISTOLBULLET								TEXT("Pool:RailGunner:PistolBullet")
 

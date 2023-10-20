@@ -1,6 +1,5 @@
 #include "ClientPCH.h"
 #include "GameInstance.h"
-#include "Brother_BehaviorTree.h"
 #include "BrotherNodeDecorator_Delay.h"
 
 CBrotherNodeDecorator_Delay::CBrotherNodeDecorator_Delay(shared_ptr<CNode> _pNode, _float _fDelay)

@@ -27,7 +27,7 @@ private:
 	shared_ptr<CTransform>								m_pTransform;
 	shared_ptr<CAnimator>								m_pAnimator;
 
-	_bool												m_bIsInital = true;
+	_bool												m_bIsInitial = true;
 
 public:
 	static shared_ptr<CBrotherNodeLeaf_SpellChannel>	Create(shared_ptr<class CBlackBoard>);

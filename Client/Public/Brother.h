@@ -29,8 +29,6 @@ public:
 	void								Set_Render(_bool bEnable = true)	{ m_bRender = bEnable; }
 
 public:
-	virtual void						Wander() override;
-	
 	virtual void						Hit() override;
 	virtual void						Hit_WeakPoint() override;
 

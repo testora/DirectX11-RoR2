@@ -393,14 +393,14 @@ HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
 #ifdef _DEBUG
 			if (m_bitComponent.test(IDX(COMPONENT::COLLIDER)))
 			{
-				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::NONLIGHT, m_umapComponent[COMPONENT::COLLIDER])))
+				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::COLLIDER])))
 				{
 					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
 				}
 			}
 			if (m_bitComponent.test(IDX(COMPONENT::NAVIGATION)))
 			{
-				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::NONLIGHT, m_umapComponent[COMPONENT::NAVIGATION])))
+				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::NAVIGATION])))
 				{
 					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
 				}

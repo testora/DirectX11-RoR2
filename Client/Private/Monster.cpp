@@ -85,14 +85,3 @@ _float4x4 CMonster::Get_WeakPoint() const
 {
 	return (m_pWeakPointWorld ? XMLoadFloat4x4(m_pWeakPointWorld) : g_mUnit) * m_mPivot * m_pTransform->Get_Matrix();
 }
-
-_float CMonster::Distance(shared_ptr<CGameObject> _pObject)
-{
-	shared_ptr<CTransform> pTargetTransform = _pObject->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	if (nullptr == pTargetTransform)
-	{
-		MSG_RETURN(FLT_MAX, "CMonster::Discance", "Failed to Get_Component: TRANSFORM");
-	}
-
-	return _float3(m_pTransform->Get_State(TRANSFORM::POSITION) - pTargetTransform->Get_State(TRANSFORM::POSITION)).length();
-}

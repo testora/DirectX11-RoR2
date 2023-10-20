@@ -12,6 +12,9 @@ enum class RENDER_GROUP
 	NONLIGHT,
 	BLEND,
 	UI,
+#ifdef _DEBUG
+	DEBUG,
+#endif
 	MAX
 };
 

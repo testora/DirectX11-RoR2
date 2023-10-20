@@ -78,6 +78,16 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 	{
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_BROTHER)->Pop(ARENA_CENTER);
 	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('N'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_LUNAREXPLODER)->Pop(ARENA_CENTER);
+	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('M'))
+	{
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_LUNARGOLEM)->Pop(ARENA_CENTER);
+	}
 }
 
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
@@ -294,10 +304,24 @@ HRESULT CScene_Moon::Ready_Player()
 
 HRESULT CScene_Moon::Ready_Monster()
 {
-	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_BROTHER, PROTOTYPE_GAMEOBJECT_BROTHER, 1);
+	shared_ptr<CObjectPool> pPool;
+
+	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_BROTHER, PROTOTYPE_GAMEOBJECT_BROTHER, 1);
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_BROTHER");
+	}
+
+	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNAREXPLODER, PROTOTYPE_GAMEOBJECT_LUNAREXPLODER, 1);
+	if (nullptr == pPool)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_LUNAREXPLODER");
+	}
+
+	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNARGOLEM, PROTOTYPE_GAMEOBJECT_LUNARGOLEM, 1);
+	if (nullptr == pPool)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_LUNARGOLEM");
 	}
 
 	return S_OK;

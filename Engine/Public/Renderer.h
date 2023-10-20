@@ -38,6 +38,10 @@ private:
 
 	HRESULT									Render_UI();
 
+#ifdef _DEBUG
+	HRESULT									Render_Debug();
+#endif
+
 private:
 	list<shared_ptr<class ISystem>>			m_lstRenderGroup[IDX(RENDER_GROUP::MAX)];
 

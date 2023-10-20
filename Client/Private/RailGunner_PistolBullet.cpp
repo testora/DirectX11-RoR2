@@ -187,7 +187,7 @@ void CRailGunner_PistolBullet::Search_Target()
 					shared_ptr<CMonster> pMonster = dynamic_pointer_cast<CMonster>(pObject);
 					if (nullptr != pMonster)
 					{
-						if (PISTOLBULLET_TARGET_RANGE / 3.f > pMonster->Distance(shared_from_gameobject()))
+						if (PISTOLBULLET_TARGET_RANGE / 3.f > Function::Distance(m_pTransform, pMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM)))
 						{
 							Set_Target(pMonster);
 						}
