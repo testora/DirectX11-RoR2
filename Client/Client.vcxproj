@@ -35,6 +35,7 @@
     <ClInclude Include="..\Reference\Header\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Reference\Header\ImGui\imstb_truetype.h" />
+    <ClInclude Include="Public\BrotherUI_HealthBar.h" />
     <ClInclude Include="Public\LunarGolemNodeDecorator_Delay.h" />
     <ClInclude Include="Public\LunarGolemNodeDecorator_Range.h" />
     <ClInclude Include="Public\LunarGolemNodeDecorator_Repeat.h" />
@@ -229,6 +230,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Private\BrotherUI_HealthBar.cpp" />
     <ClCompile Include="Private\LunarGolemNodeDecorator_Delay.cpp" />
     <ClCompile Include="Private\LunarGolemNodeDecorator_Range.cpp" />
     <ClCompile Include="Private\LunarGolemNodeDecorator_Repeat.cpp" />

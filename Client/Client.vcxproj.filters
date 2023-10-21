@@ -610,6 +610,12 @@
     <Filter Include="05. GameObject\08. Monster\03. LunarGolem\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\01. Leap\02. End">
       <UniqueIdentifier>{9302fca7-2ee4-4571-be31-15ef1892c6a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. GameObject\08. Monster\01. Brother\02. UI">
+      <UniqueIdentifier>{22248975-c75c-4bd6-b1e6-6a0a03d6e3ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. GameObject\08. Monster\01. Brother\02. UI\00. HealthBar">
+      <UniqueIdentifier>{a32460fa-cffb-44c5-a92d-bb95d437d38f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -1035,6 +1041,9 @@
     <ClInclude Include="Public\LunarGolemNodeLeaf_Death.h">
       <Filter>05. GameObject\08. Monster\03. LunarGolem\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\02. Death</Filter>
     </ClInclude>
+    <ClInclude Include="Public\BrotherUI_HealthBar.h">
+      <Filter>05. GameObject\08. Monster\01. Brother\02. UI\00. HealthBar</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -1405,6 +1414,9 @@
     </ClCompile>
     <ClCompile Include="Private\LunarGolemNodeLeaf_Death.cpp">
       <Filter>05. GameObject\08. Monster\03. LunarGolem\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\02. Death</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherUI_HealthBar.cpp">
+      <Filter>05. GameObject\08. Monster\01. Brother\02. UI\00. HealthBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

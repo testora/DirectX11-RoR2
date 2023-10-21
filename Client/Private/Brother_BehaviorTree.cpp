@@ -12,6 +12,7 @@ HRESULT CBrother_BehaviorTree::Initialize(shared_ptr<CGameObject> _pOwner, const
 	}
 
 	m_pBlackBoard->Add_System(TEXT("Owner:Transform"),	_pOwner->Get_Component(COMPONENT::TRANSFORM));
+	m_pBlackBoard->Add_System(TEXT("Owner:Model"),		_pOwner->Get_Component(COMPONENT::MODEL));
 	m_pBlackBoard->Add_System(TEXT("Owner:Physics"),	_pOwner->Get_Behavior(BEHAVIOR::PHYSICS));
 	m_pBlackBoard->Add_System(TEXT("Owner:Animator"),	_pOwner->Get_Behavior(BEHAVIOR::ANIMATOR));
 

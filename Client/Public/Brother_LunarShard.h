@@ -33,24 +33,12 @@ private:
 	virtual HRESULT							Ready_Behaviors() override;
 
 private:
-	void									Set_Target(shared_ptr<class CMonster>);
+	_float									m_fTimeAcc			= 0.f;
 
-private:
-	void									Manage_State(_float fTimeDelta);
-	void									Search_Target();
-
-	void									Destroy();
-
-private:
-	_float									m_fTimeAcc = 0.f;
-	_float3									m_vDirection;
-
-	shared_ptr<class CMonster>				m_pTarget;
 	shared_ptr<CTransform>					m_pTargetTransform;
 
 	shared_ptr<CTransform>					m_pTransform;
 	shared_ptr<CShader>						m_pShader;
-	shared_ptr<CTexture>					m_pTexMask;
 	shared_ptr<CPhysics>					m_pPhysics;
 
 	shared_ptr<CObjectPool>					m_pPool;

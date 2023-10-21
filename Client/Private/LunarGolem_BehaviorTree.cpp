@@ -22,6 +22,8 @@ HRESULT CLunarGolem_BehaviorTree::Initialize(shared_ptr<class CGameObject> _pOwn
 	m_pBlackBoard->Add_Anything(TEXT("Owner"), dynamic_pointer_cast<CLunarGolem>(_pOwner));
 
 	Set_RootNode(CLunarGolemNode_Root::Create(m_pBlackBoard));
+
+	return S_OK;
 }
 
 shared_ptr<CLunarGolem_BehaviorTree> CLunarGolem_BehaviorTree::Create(shared_ptr<CGameObject> _pOwner, const ENTITYDESC* _pEntityDesc)

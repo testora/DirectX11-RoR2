@@ -158,6 +158,10 @@ void CCamera_Main::Rebound_Pistol()
 		
 				m_pTransform->Rotate(Function::Slerp(vPistolReboundQuaternion, -fRatio));
 			}
+			else
+			{
+				m_pTransform->Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+			}
 
 			return fAcc < 1.f;
 		}

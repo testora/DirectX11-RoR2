@@ -7,6 +7,7 @@
 #include "RailGunner.h"
 #include "RailGunner_PistolBullet.h"
 #include "Brother.h"
+#include "Brother_LunarShard.h"
 #include "LunarExploder.h"
 #include "LunarGolem.h"
 #include "Effect_Demo_Point.h"
@@ -113,6 +114,12 @@ HRESULT CLoader::Load_Moon()
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_BROTHER");
 	}
 
+	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_BROTHER_LUNARSHARD,
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, TEXT("Bin/Resources/Model/Brother/LunarShardMesh.mdl")))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_BROTHER_LUNARSHARD");
+	}
+
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_LUNAREXPLODER,
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/LunarExploder/LunarExploder.mdl")))))
 	{
@@ -203,6 +210,12 @@ HRESULT CLoader::Load_Moon()
 		CBrother::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_BROTHER_LUNARSHARD,
+		CBrother_LunarShard::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER_LUNARSHARD");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_LUNAREXPLODER,

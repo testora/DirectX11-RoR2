@@ -11,7 +11,7 @@ HRESULT CLunarGolemNodeSelector_Main::Initialize(shared_ptr<CBlackBoard> _pBlack
 	}
 
 	Add_Child(
-		CLunarGolemNodeDecorator_Range::Create(m_pBlackBoard, 50.f, true,
+		CLunarGolemNodeDecorator_Range::Create(m_pBlackBoard, 40.f, true,
 			CLunarGolemNodeParallel_WalkShot::Create(m_pBlackBoard)));
 
 	Add_Child(

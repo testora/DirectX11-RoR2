@@ -3,6 +3,9 @@
 #include "Node.h"
 
 BEGIN(Engine)
+class CObjectPool;
+class CTransform;
+class CModel;
 class CAnimator;
 END
 
@@ -23,7 +26,16 @@ public:
 	virtual void								Terminate() override;
 
 private:
+	shared_ptr<CTransform>						m_pTransform;
+	shared_ptr<CModel>							m_pModel;
 	shared_ptr<CAnimator>						m_pAnimator;
+
+	shared_ptr<CObjectPool>						m_pPool;
+
+	_float4x4									m_mPivot;
+	const _float4x4*							m_pShardPoint	= nullptr;
+
+	_float										m_fShardTime	= 0.f;
 
 public:
 	static shared_ptr<CBrotherNodeLeaf_Shard>	Create(shared_ptr<class CBlackBoard>);
