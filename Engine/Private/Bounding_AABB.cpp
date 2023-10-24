@@ -13,6 +13,7 @@ HRESULT CBounding_AABB::Initialize(any _pColliderDesc)
 
 	m_tStaticAABB	= BoundingBox(m_pColliderDesc->vPosition, m_pColliderDesc->vSize);
 	m_tAABB			= BoundingBox(m_tStaticAABB);
+	m_pBounding		= &m_tAABB;
 
 	return S_OK;
 }
@@ -29,6 +30,21 @@ HRESULT CBounding_AABB::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _
 void CBounding_AABB::Tick_Transformation(_matrixf _mWorld)
 {
 	m_tStaticAABB.Transform(m_tAABB, _mWorld);
+}
+
+inline _bool CBounding_AABB::Intersect(BoundingSphere _tBounding)
+{
+	return m_tAABB.Intersects(_tBounding);
+}
+
+inline _bool CBounding_AABB::Intersect(BoundingBox _tBounding)
+{
+	return m_tAABB.Intersects(_tBounding);
+}
+
+inline _bool CBounding_AABB::Intersect(BoundingOrientedBox _tBounding)
+{
+	return m_tAABB.Intersects(_tBounding);
 }
 
 shared_ptr<CBounding_AABB> CBounding_AABB::Create(any _pColliderDesc)

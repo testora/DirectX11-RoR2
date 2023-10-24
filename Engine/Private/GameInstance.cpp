@@ -8,6 +8,7 @@
 #include "Event_Handler.h"
 #include "Scene_Manager.h"
 #include "Object_Manager.h"
+#include "Collision_Manager.h"
 #include "Component_Manager.h"
 #include "Grid_Manager.h"
 #include "Light_Manager.h"
@@ -22,6 +23,7 @@ CGameInstance::CGameInstance()
 	, m_pEvent_Handler			(CEvent_Handler::Get_Instance())
 	, m_pScene_Manager			(CScene_Manager::Get_Instance())
 	, m_pObject_Manager			(CObject_Manager::Get_Instance())
+	, m_pCollision_Manager		(CCollision_Manager::Get_Instance())
 	, m_pComponent_Manager		(CComponent_Manager::Get_Instance())
 	, m_pGrid_Manager			(CGrid_Manager::Get_Instance())
 	, m_pLight_Manager			(CLight_Manager::Get_Instance())
@@ -31,14 +33,14 @@ CGameInstance::CGameInstance()
 
 #pragma region Engine
 
-HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const SCENE _eMax, _In_ const GRAPHICDESC _tGraphicDesc, _Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext)
+HRESULT CGameInstance::Initialize_Engine(_Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext, _In_ const GRAPHICDESC _tGraphicDesc, _In_ const SCENE _eStaticScene, _In_ const SCENE _eMaxScene, _In_ const COLLISION_GROUP _eMaxGroup)
 {
 	if (FAILED(m_pGraphic_Device->Ready_GraphicDevice(_tGraphicDesc, _pDevice, _pContext)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
 	}
 
-	if (FAILED(m_pLight_Manager->Initialize(_pDevice, _pContext, _tGraphicDesc, _eMax)))
+	if (FAILED(m_pLight_Manager->Initialize(_pDevice, _pContext, _tGraphicDesc, _eMaxScene)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pLight_Manager->Reserve_Manager");
 	}
@@ -63,22 +65,27 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pKey_Manager->Initialize");
 	}
 
-	if (FAILED(m_pScene_Manager->Initialize(_eStatic, _eMax)))
+	if (FAILED(m_pScene_Manager->Initialize(_eStaticScene, _eMaxScene)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pScene_Manager->Initialize");
 	}
 
-	if (FAILED(m_pObject_Manager->Reserve_Manager(_eMax)))
+	if (FAILED(m_pObject_Manager->Reserve_Manager(_eMaxScene)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pObject_Manager->Reserve_Manager");
 	}
 
-	if (FAILED(m_pComponent_Manager->Reserve_Manager(_eMax)))
+	if (FAILED(m_pCollision_Manager->Reserve_Manager(_eMaxGroup)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pCollision_Manager->Reserve_Manager");
+	}
+
+	if (FAILED(m_pComponent_Manager->Reserve_Manager(_eMaxScene)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pComponent_Manager->Reserve_Manager");
 	}
 
-	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMax, g_vGridSize)))
+	if (FAILED(m_pGrid_Manager->Reserve_Manager(_eMaxScene, g_vGridSize)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Reserve_Manager");
 	}
@@ -122,6 +129,8 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
 	
+	m_pCollision_Manager->Tick(_fTimeDelta);
+
 	m_pPicker->Tick();
 	
 	m_pLight_Manager->Tick();
@@ -520,6 +529,49 @@ void CGameInstance::Iterate_Pools(const SCENE _eScene, function<_bool(pair<wstri
 	}
 
 	return m_pObject_Manager->Iterate_Pools(_eScene, _funcCallback);
+}
+
+#pragma endregion
+#pragma region Collision Manager
+
+void CGameInstance::Reset_CollisionGroupCheck()
+{
+	if (nullptr == m_pCollision_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pCollision_Manager");
+	}
+
+	return m_pCollision_Manager->Reset_GroupCheck();
+}
+
+void CGameInstance::Check_CollisionGroup(COLLISION_GROUP _eGroupA, COLLISION_GROUP _eGroupB, _bool _bCheck)
+{
+	if (nullptr == m_pCollision_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pCollision_Manager");
+	}
+
+	return m_pCollision_Manager->Check_Group(_eGroupA, _eGroupB, _bCheck);
+}
+
+void CGameInstance::Register_Collider(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pObject, shared_ptr<CCollider> _pCollider)
+{
+	if (nullptr == m_pCollision_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pCollision_Manager");
+	}
+
+	return m_pCollision_Manager->Register_Collider(_eGroup, _pObject, _pCollider);
+}
+
+void CGameInstance::Delete_Collider(shared_ptr<CGameObject> _pObject, _float _fTimeDelta)
+{
+	if (nullptr == m_pCollision_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Iterate_Layers", "Null Exception: m_pCollision_Manager");
+	}
+
+	return m_pCollision_Manager->Delete_Collider(_pObject, _fTimeDelta);
 }
 
 #pragma endregion

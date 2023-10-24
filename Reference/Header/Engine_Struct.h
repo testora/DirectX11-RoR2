@@ -213,10 +213,10 @@ namespace Engine
 
 	typedef struct tagKeyFrame
 	{
-		XMFLOAT4	vScale;
-		XMFLOAT4	vRotation;
-		XMFLOAT4	vTranslation;
-		_float		fTime;
+		XMFLOAT4		vScale;
+		XMFLOAT4		vRotation;
+		XMFLOAT4		vTranslation;
+		_float			fTime;
 	} KEYFRAME;
 
 #pragma endregion
@@ -224,8 +224,8 @@ namespace Engine
 
 	typedef struct tagNavigationDesc
 	{
-		_uint		iInitialIndex;
-		XMFLOAT4X4	mWorld;
+		_uint			iInitialIndex;
+		XMFLOAT4X4		mWorld;
 	} NAVIGATIONDESC;
 
 #pragma endregion
@@ -233,12 +233,13 @@ namespace Engine
 
 	typedef struct tagColliderDesc
 	{
-		COLLIDER	eType;
+		COLLIDER		eType;
+		COLLISION_GROUP	eGroup;
 
-		XMFLOAT3	vPosition;
-		XMFLOAT3	vSize;
-		XMFLOAT3	vRotation;
-		_float 		fRadius;
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vSize;
+		XMFLOAT3		vRotation;
+		_float 			fRadius;
 	} COLLIDERDESC;
 
 #pragma endregion
@@ -246,29 +247,29 @@ namespace Engine
 
 	typedef struct tagEntityDesc
 	{
-		_float		fMaxHP;
-		_float		fHP;
-		_float		fAtk;
-
-		_float		fForwardSpeed;
-		_float		fLeftSpeed;
-		_float		fBackwardSpeed;
-		_float		fRightSpeed;
-		_float		fSpritPower;
-		_float		fJumpPower;
-
-		XMFLOAT3	vMaxSpeed;
-		XMFLOAT3	vResist;
+		_float			fMaxHP;
+		_float			fHP;
+		_float			fAtk;
+						
+		_float			fForwardSpeed;
+		_float			fLeftSpeed;
+		_float			fBackwardSpeed;
+		_float			fRightSpeed;
+		_float			fSpritPower;
+		_float			fJumpPower;
+						
+		XMFLOAT3		vMaxSpeed;
+		XMFLOAT3		vResist;
 	} ENTITYDESC;
 
 	typedef struct tagSkillDesc
 	{
-		_uint		iStock;
-		_float		fCurrentCoolTime;
-		_float		fCoefficient;
+		_uint			iStock;
+		_float			fCurrentCoolTime;
+		_float			fCoefficient;
 
-		_uint		iMaxStock;
-		_float		fCoolTime;
+		_uint			iMaxStock;
+		_float			fCoolTime;
 
 	} SKILLDESC;
 

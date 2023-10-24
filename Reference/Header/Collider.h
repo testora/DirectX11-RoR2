@@ -13,18 +13,35 @@ private:
 
 public:
 	HRESULT												Initialize_Prototype();
-	HRESULT												Initialize(COLLIDERDESC);
+	HRESULT												Initialize(shared_ptr<class CGameObject>, COLLIDERDESC);
+	void												Tick(_float fTimeDelta);
 #ifdef _DEBUG
 	virtual HRESULT										Render() override;
 #endif
 
 public:
-	void												Tick_Transformation(_matrixf mWorld);
+	const _uint											Get_ID() const							{ return m_iColID; }
+	_bool												Intersect(shared_ptr<CCollider>);
+
+public:
+
+	void												OnCollisionEnter(shared_ptr<class CGameObject>, _float fTimeDelta);
+	void												OnCollision(shared_ptr<class CGameObject>, _float fTimeDelta);
+	void												OnCollisionExit(shared_ptr<class CGameObject>, _float fTimeDelta);
 
 private:
+	weak_ptr<class CGameObject>							m_pOwner;
+	weak_ptr<class CTransform>							m_pTransform;
+
 	COLLIDERDESC										m_tColliderDesc{};
 
-	shared_ptr<class CBounding>							m_pBounding;
+	shared_ptr<class IBounding>							m_pBounding;
+
+	_bool												m_bCollision	= false;
+	_uint												m_iColCnt		= 0;
+
+	static _uint										s_iColID;
+	const _uint											m_iColID;
 
 #ifdef _DEBUG
 	ComPtr<ID3D11InputLayout>							m_pInputLayout;
@@ -35,7 +52,7 @@ private:
 
 public:
 	static shared_ptr<CCollider>						Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CComponent>						Clone(any _tColliderDesc) override;
+	virtual shared_ptr<CComponent>						Clone(any _pairObject_Desc) override;
 };
 
 END

@@ -64,7 +64,7 @@ HRESULT CMainApp::Initialize()
 	tGraphicDesc.iWinCX		= g_iWinCX;
 	tGraphicDesc.iWinCY		= g_iWinCY;
 
-	if (FAILED(m_pGameInstance->Initialize_Engine(SCENE::STATIC, SCENE::MAX, tGraphicDesc, m_pDevice, m_pContext)))
+	if (FAILED(m_pGameInstance->Initialize_Engine(m_pDevice, m_pContext, tGraphicDesc, SCENE::STATIC, SCENE::MAX, COLLISION_GROUP::MAX)))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: m_pGameInstance->Initialize_Engine");
 	}

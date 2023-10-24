@@ -13,6 +13,7 @@ HRESULT CBounding_Sphere::Initialize(any _pColliderDesc)
 
 	m_tStaticSphere = BoundingSphere(m_pColliderDesc->vPosition, m_pColliderDesc->fRadius);
 	m_tSphere       = BoundingSphere(m_tStaticSphere);
+	m_pBounding		= &m_tSphere;
 
 	return S_OK;
 }
@@ -29,6 +30,21 @@ HRESULT CBounding_Sphere::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>>
 void CBounding_Sphere::Tick_Transformation(_matrixf _mWorld)
 {
 	m_tStaticSphere.Transform(m_tSphere, _mWorld);
+}
+
+inline _bool CBounding_Sphere::Intersect(BoundingSphere _tBounding)
+{
+	return m_tSphere.Intersects(_tBounding);
+}
+
+inline _bool CBounding_Sphere::Intersect(BoundingBox _tBounding)
+{
+	return m_tSphere.Intersects(_tBounding);
+}
+
+inline _bool CBounding_Sphere::Intersect(BoundingOrientedBox _tBounding)
+{
+	return m_tSphere.Intersects(_tBounding);
 }
 
 shared_ptr<CBounding_Sphere> CBounding_Sphere::Create(any _pColliderDesc)

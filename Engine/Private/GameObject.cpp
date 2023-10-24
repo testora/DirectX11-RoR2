@@ -65,14 +65,6 @@ HRESULT CGameObject::Initialize(any _arg)
 
 void CGameObject::Tick(_float _fTimeDelta)
 {
-	if (shared_ptr<CTransform> pTransform = m_pWeakTransform.lock())
-	{
-		if (shared_ptr<CCollider> pCollider = m_pWeakCollider.lock())
-		{
-			pCollider->Tick_Transformation(pTransform->Get_Matrix());
-		}
-	}
-
 	for (auto& iter : m_umapBehavior)
 	{
 		iter.second->Tick(_fTimeDelta);
@@ -100,6 +92,16 @@ _bool CGameObject::Return()
 HRESULT CGameObject::Render_ShadowDepth()
 {
 	return S_OK;
+}
+
+void CGameObject::OnCollisionEnter(shared_ptr<CGameObject>, _float fTimeDelta)
+{
+}
+void CGameObject::OnCollision(shared_ptr<CGameObject>, _float fTimeDelta)
+{
+}
+void CGameObject::OnCollisionExit(shared_ptr<CGameObject>, _float fTimeDelta)
+{
 }
 
 HRESULT CGameObject::Render(_uint _iPassIndex)
@@ -237,7 +239,6 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComp
 
 	case COMPONENT::RENDERER:
 	case COMPONENT::SHADER:
-	case COMPONENT::COLLIDER:
 	case COMPONENT::VIBUFFER_RECT:
 	case COMPONENT::VIBUFFER_CUBE:
 		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
@@ -256,6 +257,12 @@ HRESULT CGameObject::Add_Component(const COMPONENT _eComponent, shared_ptr<CComp
 		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
 			CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Current_Scene(),
 			m_umapComponentArg[_eComponent].first, m_umapComponentArg[_eComponent].second));
+		break;
+
+	case COMPONENT::COLLIDER:
+		m_umapComponent.emplace(_eComponent, _pComponent ? _pComponent :
+			CComponent_Manager::Get_Instance()->Clone_Component(CScene_Manager::Get_Instance()->Static_Scene(),
+				m_umapComponentArg[_eComponent].first, make_pair(shared_from_gameobject(), any_cast<COLLIDERDESC>(m_umapComponentArg[_eComponent].second))));
 		break;
 
 	case COMPONENT::VIBUFFER:

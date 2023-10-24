@@ -13,6 +13,7 @@ HRESULT CBounding_OBB::Initialize(any _pColliderDesc)
 
 	m_tStaticOBB	= BoundingOrientedBox(m_pColliderDesc->vPosition, m_pColliderDesc->vSize, _float4(XMQuaternionRotationRollPitchYawFromVector(_float3(m_pColliderDesc->vRotation))));
 	m_tOBB			= BoundingOrientedBox(m_tStaticOBB);
+	m_pBounding		= &m_tOBB;
 
 	return S_OK;
 }
@@ -29,6 +30,21 @@ HRESULT CBounding_OBB::Render(shared_ptr<PrimitiveBatch<VertexPositionColor>> _p
 void CBounding_OBB::Tick_Transformation(_matrixf _mWorld)
 {
 	m_tStaticOBB.Transform(m_tOBB, _mWorld);
+}
+
+inline _bool CBounding_OBB::Intersect(BoundingSphere _tBounding)
+{
+	return m_tOBB.Intersects(_tBounding);
+}
+
+inline _bool CBounding_OBB::Intersect(BoundingBox _tBounding)
+{
+	return m_tOBB.Intersects(_tBounding);
+}
+
+inline _bool CBounding_OBB::Intersect(BoundingOrientedBox _tBounding)
+{
+	return m_tOBB.Intersects(_tBounding);
 }
 
 shared_ptr<CBounding_OBB> CBounding_OBB::Create(any _pColliderDesc)

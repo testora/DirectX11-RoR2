@@ -18,10 +18,15 @@ public:
 	virtual void												Late_Tick(_float fTimeDelta);
 	virtual HRESULT												Render()				PURE;
 
+public:
 	virtual HRESULT												Fetch(any = g_aNull);
 	virtual _bool												Return();
 
 	virtual HRESULT												Render_ShadowDepth();
+
+	virtual void												OnCollisionEnter(shared_ptr<CGameObject>, _float fTimeDelta);
+	virtual void												OnCollision(shared_ptr<CGameObject>, _float fTimeDelta);
+	virtual void												OnCollisionExit(shared_ptr<CGameObject>, _float fTimeDelta);
 
 public:
 	template <typename T>
@@ -30,7 +35,7 @@ public:
 	template <typename T>
 	shared_ptr<T>												Get_Behavior(const BEHAVIOR);
 	shared_ptr<class CBehavior>									Get_Behavior(const BEHAVIOR);
-		
+
 protected:
 	virtual HRESULT												Render(_uint iPassIndex);
 

@@ -1,12 +1,18 @@
 #include "EnginePCH.h"
 #include "Collider.h"
+#include "Collision_Manager.h"
 #include "Bounding_Sphere.h"
 #include "Bounding_AABB.h"
 #include "Bounding_OBB.h"
+#include "GameObject.h"
+#include "Transform.h"
 #include "PipeLine.h"
+
+_uint CCollider::s_iColID	= 0;
 
 CCollider::CCollider(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::COLLIDER)
+	, m_iColID(s_iColID++)
 {
 }
 
@@ -16,6 +22,7 @@ CCollider::CCollider(const CCollider& _rhs)
 	, m_pBatch			(_rhs.m_pBatch)
 	, m_pEffect			(_rhs.m_pEffect)
 	, m_pInputLayout	(_rhs.m_pInputLayout)
+	, m_iColID			(s_iColID++)
 #endif
 {
 }
@@ -41,8 +48,17 @@ HRESULT CCollider::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCollider::Initialize(COLLIDERDESC _tColliderDesc)
+HRESULT CCollider::Initialize(shared_ptr<CGameObject> _pObject, COLLIDERDESC _tColliderDesc)
 {
+	m_pOwner		= _pObject;
+	m_pTransform	= _pObject->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	m_tColliderDesc = _tColliderDesc;
+
+	if (m_pTransform.expired())
+	{
+		MSG_RETURN(E_FAIL, "CCollider::Initialize", "Failed to Get_Component: TRANSFORM");
+	}
+
 	switch (_tColliderDesc.eType)
 	{
 	case COLLIDER::SPHERE:
@@ -63,9 +79,14 @@ HRESULT CCollider::Initialize(COLLIDERDESC _tColliderDesc)
 		MSG_RETURN(E_FAIL, "CCollider::Initialize", "Failed to Create Bounding");
 	}
 
-	m_tColliderDesc = _tColliderDesc;
+	CCollision_Manager::Get_Instance()->Register_Collider(_tColliderDesc.eGroup, _pObject, dynamic_pointer_cast<CCollider>(shared_from_this()));
 
 	return S_OK;
+}
+
+void CCollider::Tick(_float _fTimeDelta)
+{
+	m_pBounding->Tick_Transformation(m_pTransform.lock()->Get_Matrix());
 }
 
 #ifdef _DEBUG
@@ -80,7 +101,7 @@ HRESULT CCollider::Render()
 
 	m_pBatch->Begin();
 
-	m_pBounding->Render(m_pBatch);
+	m_pBounding->Render(m_pBatch, !m_bCollision ? _color(1.f, 1.f, 1.f, 1.f) : _color(1.f, 0.f, 0.f, 1.f));
 
 	m_pBatch->End();
 
@@ -88,9 +109,36 @@ HRESULT CCollider::Render()
 }
 #endif
 
-void CCollider::Tick_Transformation(_matrixf _mWorld)
+_bool CCollider::Intersect(shared_ptr<CCollider> _pTargetCollider)
 {
-	m_pBounding->Tick_Transformation(_mWorld);
+	switch (_pTargetCollider->m_tColliderDesc.eType)
+	{
+		case COLLIDER::SPHERE:
+			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingSphere*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+		case COLLIDER::AABB:
+			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+		case COLLIDER::OBB:
+			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingOrientedBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+	}
+
+	MSG_RETURN(false, "CCollider::Intersect", "Invalid Type");
+}
+
+void CCollider::OnCollisionEnter(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	++m_iColCnt;
+	m_pOwner.lock()->OnCollisionEnter(_pOther, _fTimeDelta);
+}
+
+void CCollider::OnCollision(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	m_pOwner.lock()->OnCollision(_pOther, _fTimeDelta);
+}
+
+void CCollider::OnCollisionExit(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	--m_iColCnt;
+	m_pOwner.lock()->OnCollisionExit(_pOther, _fTimeDelta);
 }
 
 shared_ptr<CCollider> CCollider::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
@@ -105,15 +153,15 @@ shared_ptr<CCollider> CCollider::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID
 	return pInstance;
 }
 
-shared_ptr<CComponent> CCollider::Clone(any _tColliderDesc)
+shared_ptr<CComponent> CCollider::Clone(any _pairObject_Desc)
 {
-	if (_tColliderDesc.has_value())
+	if (_pairObject_Desc.has_value())
 	{
 		shared_ptr<CCollider> pInstance = make_private_shared_copy(CCollider, *this);
 
-		COLLIDERDESC tDesc = any_cast<COLLIDERDESC>(_tColliderDesc);
+		pair<shared_ptr<CGameObject>, COLLIDERDESC> pairObjectCollider = any_cast<pair<shared_ptr<CGameObject>, COLLIDERDESC>>(_pairObject_Desc);
 
-		if (FAILED(pInstance->Initialize(tDesc)))
+		if (FAILED(pInstance->Initialize(pairObjectCollider.first, pairObjectCollider.second)))
 		{
 			MSG_RETURN(nullptr, "CCollider::Create", "Failed to Initialize");
 		}

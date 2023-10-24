@@ -4,7 +4,7 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CBounding_Sphere final : public CBounding
+class ENGINE_DLL CBounding_Sphere final : public IBounding
 {
 private:
 	explicit CBounding_Sphere() DEFAULT;
@@ -18,6 +18,10 @@ public:
 
 public:
 	virtual void						Tick_Transformation(_matrixf) override;
+
+	inline virtual _bool				Intersect(BoundingSphere) override;
+	inline virtual _bool				Intersect(BoundingBox) override;
+	inline virtual _bool				Intersect(BoundingOrientedBox) override;
 
 private:
 	BoundingSphere						m_tStaticSphere{};

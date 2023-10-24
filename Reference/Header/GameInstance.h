@@ -16,7 +16,7 @@ private:
 public:
 #pragma region Engine
 
-	HRESULT										Initialize_Engine(_In_ const SCENE eStatic, _In_ const SCENE eMax, _In_ const GRAPHICDESC, _Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&);
+	HRESULT										Initialize_Engine(_Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&, _In_ const GRAPHICDESC, _In_ const SCENE eStaticScene, _In_ const SCENE eMaxScene, _In_ const COLLISION_GROUP eMaxGroup);
 	void										Tick_Engine(_float fTimeDelta);
 #ifdef _DEBUG
 	void										Debug_Engine();
@@ -103,6 +103,15 @@ public:
 	void										Iterate_Pools(const SCENE, function<_bool(pair<wstring, shared_ptr<class CObjectPool>>)>);
 
 #pragma endregion
+#pragma region Collision Manager
+
+	void										Reset_CollisionGroupCheck();
+	void										Check_CollisionGroup(COLLISION_GROUP, COLLISION_GROUP, _bool bCheck = true);
+
+	void										Register_Collider(COLLISION_GROUP, shared_ptr<class CGameObject>, shared_ptr<class CCollider>);
+	void										Delete_Collider(shared_ptr<class CGameObject>, _float fTimeDelta = 0.f);
+
+#pragma endregion
 #pragma region Component Manager
 
 	HRESULT										Add_Component_Prototype(const SCENE, const wstring& strPrototypeTag, shared_ptr<class CComponent> pPrototype);
@@ -139,6 +148,7 @@ private:
 	shared_ptr<class CEvent_Handler>			m_pEvent_Handler;
 	shared_ptr<class CScene_Manager>			m_pScene_Manager;
 	shared_ptr<class CObject_Manager>			m_pObject_Manager;
+	shared_ptr<class CCollision_Manager>		m_pCollision_Manager;
 	shared_ptr<class CComponent_Manager>		m_pComponent_Manager;
 	shared_ptr<class CGrid_Manager>				m_pGrid_Manager;
 	shared_ptr<class CLight_Manager>			m_pLight_Manager;

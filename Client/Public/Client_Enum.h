@@ -1,6 +1,6 @@
 #pragma once
 
-enum class	SCENE
+enum class SCENE
 {
 	STATIC,
 	LOADING,
@@ -10,6 +10,12 @@ enum class	SCENE
 #endif
 	TEST,
 	MOON,
+	MAX
+};
+
+enum class COLLISION_GROUP
+{
+	COL,
 	MAX
 };
 

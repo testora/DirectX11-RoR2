@@ -450,6 +450,9 @@
     <ClCompile Include="Private\VIBuffer_Cube.cpp">
       <Filter>04. Utility\06. Component\08. VIBuffer\03. Cube</Filter>
     </ClCompile>
+    <ClCompile Include="Private\Collision_Manager.cpp">
+      <Filter>04. Utility\06. Component\05. Collider\00. Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Public\Engine_Define.h">
@@ -685,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="Public\VIBuffer_Cube.h">
       <Filter>04. Utility\06. Component\08. VIBuffer\03. Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Collision_Manager.h">
+      <Filter>04. Utility\06. Component\05. Collider\00. Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

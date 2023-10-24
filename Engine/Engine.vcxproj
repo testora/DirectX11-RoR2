@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Public\Collision_Manager.h" />
     <ClInclude Include="Public\Engine_Variable.h" />
     <ClInclude Include="Public\Effect.h" />
     <ClInclude Include="Public\BlackBoard.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="Public\VIBuffer_Cube.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Private\Collision_Manager.cpp" />
     <ClCompile Include="Private\Effect.cpp" />
     <ClCompile Include="Private\BlackBoard.cpp" />
     <ClCompile Include="Private\Node.cpp" />
