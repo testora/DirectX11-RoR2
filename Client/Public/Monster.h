@@ -4,6 +4,8 @@
 
 BEGIN(Engine)
 class CTransform;
+class CShader;
+class CModel;
 class CPhysics;
 class CAnimator;
 END
@@ -34,6 +36,8 @@ public:
 
 protected:
 	shared_ptr<CTransform>		m_pTransform;
+	shared_ptr<CShader>			m_pShader;
+	shared_ptr<CModel>			m_pModel;
 	shared_ptr<CPhysics>		m_pPhysics;
 	shared_ptr<CAnimator>		m_pAnimator;
 

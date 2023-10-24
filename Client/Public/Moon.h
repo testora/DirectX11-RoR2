@@ -6,9 +6,7 @@ BEGIN(Engine)
 class CRenderer;
 class CTransform;
 class CShader;
-#ifdef _DEBUG
-class CShader;
-#endif
+class CModel;
 END
 
 BEGIN(Client)
@@ -27,6 +25,8 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
+	virtual HRESULT						Render_ShadowDepth() override;
+
 private:
 	virtual HRESULT						Ready_Components() override;
 
@@ -34,10 +34,7 @@ public:
 	shared_ptr<CRenderer>				m_pRenderer;
 	shared_ptr<CTransform>				m_pTransform;
 	shared_ptr<CShader>					m_pShader;
-
-#ifdef _DEBUG
 	shared_ptr<CModel>					m_pModel;
-#endif
 
 public:
 	static shared_ptr<CMoon>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

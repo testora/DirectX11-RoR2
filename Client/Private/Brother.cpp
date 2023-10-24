@@ -54,6 +54,13 @@ HRESULT CBrother::Initialize(any)
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::IDLE_READY);
 
+	LIGHTDESC tLightDesc{};
+	tLightDesc.eLightType	= LIGHTTYPE::SHADOW;
+	tLightDesc.eShadowType	= SHADOWTYPE::DIRECTIONAL;
+	tLightDesc.fRange		= 10.f;
+	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
+	CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, m_pTransform, shared_from_gameobject());
+		
 	return S_OK;
 }
 
@@ -129,6 +136,7 @@ void CBrother::Late_Tick(_float _fTimeDelta)
 
 	if (m_bRender)
 	{
+		Add_RenderObject(RENDER_GROUP::SHADOW);
 		Add_RenderObject(RENDER_GROUP::NONBLEND);
 	}
 }
@@ -138,6 +146,21 @@ HRESULT CBrother::Render()
 	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CBrother::Render", "Failed to __super::Render");
+	}
+
+	return S_OK;
+}
+
+HRESULT CBrother::Render_ShadowDepth()
+{
+	if (FAILED(m_pTransform->Bind_OnShader(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CBrother::Render_ShadowDepth", "Failed to Bind_OnShader");
+	}
+
+	if (FAILED(m_pModel->Render_ShadowDepth(shared_from_gameobject(), m_pShader, 2)))
+	{
+		MSG_RETURN(E_FAIL, "CBrother::Render_ShadowDepth", "Failed to Render_ShadowDepth");
 	}
 
 	return S_OK;
@@ -180,45 +203,40 @@ HRESULT CBrother::Ready_Components()
 		MSG_RETURN(E_FAIL, "CBrother::Ready_Components", "Failed to __super::Ready_Components");
 	}
 
-	shared_ptr<CModel> pModel = Get_Component<CModel>(COMPONENT::MODEL);
-	if (nullptr == pModel)
-	{
-		MSG_RETURN(E_FAIL, "CBrother::Ready_Components", "Failed to Get_Component: MODEL");
-	}
+	_uint iHammerIndex			= m_pModel->Get_MeshIndex("BrotherHammerConcrete");
+	_uint iConstellationIndex	= m_pModel->Get_MeshIndex("mdlConstellationBrother");
 
-	_uint iHammerIndex			= pModel->Get_MeshIndex("BrotherHammerConcrete");
-	_uint iConstellationIndex	= pModel->Get_MeshIndex("mdlConstellationBrother");
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),	iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_ENTER),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),	iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_LOOP),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::SPELL_CHANNEL_TO_IDLE),	iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),		iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),			iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_LOOP),			iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_IDLE_SINGLE),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_FISTSLAM),			iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_WALK_FORWARD),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),	iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_ENTER),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STRGGER_EXIT),		iConstellationIndex);
 
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iHammerIndex);
-	pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iConstellationIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iHammerIndex);
+	m_pModel->Hide_MeshFromAnimations(IDX(ANIMATION::BROTHER::HURT_STAGGER_LOOP),		iConstellationIndex);
 
-	pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
+	m_pModel->Set_DefaultAnimation(IDX(ANIMATION::BROTHER::IDLE_READY));
 	
 	return S_OK;
 }

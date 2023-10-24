@@ -93,6 +93,15 @@ HRESULT CGolemPlains::Initialize(any)
 		MSG_RETURN(E_FAIL, "CGolemPlains::Initialize", "Failed to __super::Initialize");
 	}
 
+	LIGHTDESC tLightDesc{};
+	tLightDesc.eLightType	= LIGHTTYPE::SHADOW;
+	tLightDesc.eShadowType	= SHADOWTYPE::STATIC;
+	tLightDesc.vPosition	= ARENA_CENTER + _float3(0.f, 100.f, 0.f);
+	tLightDesc.vPosition	= _float3(-300, 600.f, 300.f);
+	tLightDesc.vDirection	= _float3(0.36f, -0.93f, 0.07f);
+	tLightDesc.fRange		= 100.f;
+	CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, nullptr, shared_from_gameobject());
+
 	return S_OK;
 }
 
@@ -109,6 +118,11 @@ void CGolemPlains::Tick(_float _fTimeDelta)
 		m_pShader->Bind_Float("g_fTPSharpness", sharp);
 	}
 	ImGui::End();
+	ImGui::Begin("Deferred Offset");
+	static float fBias = -1.f;
+	ImGui::DragFloat("Bias", &fBias);
+	m_pRenderer->Get_DeferredShader()->Bind_Float("fBias", fBias);
+	ImGui::End();
 #endif
 }
 
@@ -116,6 +130,7 @@ void CGolemPlains::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+	Add_RenderObject(RENDER_GROUP::SHADOW);
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
@@ -124,6 +139,21 @@ HRESULT CGolemPlains::Render()
 	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Render", "Failed to __super::Render");
+	}
+
+	return S_OK;
+}
+
+HRESULT CGolemPlains::Render_ShadowDepth()
+{
+	if (FAILED(m_pTransform->Bind_OnShader(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CGolemPlains::Render_ShadowDepth", "Failed to Bind_OnShader");
+	}
+
+	if (FAILED(m_pModel->Render_ShadowDepth(shared_from_gameobject(), m_pShader, 3)))
+	{
+		MSG_RETURN(E_FAIL, "CGolemPlains::Render_ShadowDepth", "Failed to Render_ShadowDepth");
 	}
 
 	return S_OK;
@@ -152,6 +182,12 @@ HRESULT CGolemPlains::Ready_Components()
 	if (nullptr == m_pShader)
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pShader");
+	}
+
+	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	if (nullptr == m_pModel)
+	{
+		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pModel");
 	}
 
 	return S_OK;

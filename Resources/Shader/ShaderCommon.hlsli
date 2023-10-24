@@ -30,13 +30,15 @@ float4		g_vMtrlDiffuse;
 float4		g_vMtrlAmbient;
 float4		g_vMtrlSpecular;
 float4		g_vMtrlEmissive;
-float		g_fMtrlShininess		= 32.f;
+float		g_fMtrlShininess		= 16.f;
 
 float		g_fTPSharpness			= 2.f;
 
 float3		g_vSize					= float3(1.f, 1.f, 1.f);
 float		g_fThickness			= 1.f;
 int			g_iMaxInstance			= 100;
+
+float		g_fShadowID				= 0.f;
 
 float AvgGrayScale(float3 vRGB)
 {

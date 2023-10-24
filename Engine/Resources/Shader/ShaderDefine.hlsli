@@ -41,6 +41,13 @@ sampler PointSampler = sampler_state
 	AddressV	            = wrap;
 };
 
+sampler TargetSampler = sampler_state
+{
+	Filter		            = MIN_MAG_MIP_POINT;
+	AddressU	            = clamp;
+	AddressV	            = clamp;
+};
+
 // RasterizerState
 
 RasterizerState RS_Default
@@ -48,6 +55,9 @@ RasterizerState RS_Default
 	FillMode                = solid;
 	CullMode                = back;
 	FrontCounterClockwise   = false;
+
+//	DepthBias				= 1000;
+//	SlopeScaledDepthBias	= 1.f;
 };
 
 RasterizerState RS_InverseCull
@@ -114,6 +124,17 @@ DepthStencilState DSS_IgnoreDepth
 	DepthEnable             = false;
 	DepthWriteMask          = zero;
 	DepthFunc               = less_equal;
+
+	StencilEnable			= false;
+	FrontFaceStencilFunc	= less;
+	FrontFaceStencilPass	= replace;
+};
+
+DepthStencilState DSS_ShadowDepth
+{
+	DepthEnable             = true;
+	DepthWriteMask          = all;
+	DepthFunc               = less;
 
 	StencilEnable			= false;
 	FrontFaceStencilFunc	= less;

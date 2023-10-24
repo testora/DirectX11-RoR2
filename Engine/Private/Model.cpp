@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Light_Manager.h"
 
 CModel::CModel(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CComponent(_pDevice, _pContext, COMPONENT::MODEL)
@@ -198,6 +199,39 @@ HRESULT CModel::Render(_uint _iMeshIndex, shared_ptr<CShader> _pShader, _uint _i
 		if (FAILED(m_vecMeshes[_iMeshIndex]->Render(_pShader, m_bManualShader ? _iPassIndex : m_vecSubShaderPass[_iMeshIndex] ? m_iSubShaderPass : _iPassIndex, false)))
 		{
 			MSG_RETURN(E_FAIL, "CModel::Render", "Failed to CMesh::Render");
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CModel::Render_ShadowDepth(shared_ptr<CGameObject> _pObject, shared_ptr<CShader> _pShader, _uint _iPassIndex)
+{
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		if (MODEL::ANIM == m_eType)
+		{
+			for (_uint iAnimationIndex : m_usetAnimationPlayingIndices)
+			{
+				auto range = m_mapHideMeshFromAnimations.equal_range(iAnimationIndex);
+				for (auto iter = range.first; iter != range.second; ++iter)
+				{
+					if (iter->second == i)
+					{
+						return S_FALSE;
+					}
+				}
+			}
+
+			if (FAILED(Bind_BoneMatrices(i, _pShader, SHADER_BONE)))
+			{
+				MSG_RETURN(E_FAIL, "CModel::Render_ShadowDepth", "Failed to Bind_BoneMatrices");
+			}
+		}
+
+		if (FAILED(CLight_Manager::Get_Instance()->Render_ShadowDepth(_pShader, _iPassIndex, m_vecMeshes[i], _pObject)))
+		{
+			MSG_RETURN(E_FAIL, "CModel::Render_ShadowDepth", "Failed to CMesh::Render_ShadowDepth");
 		}
 	}
 

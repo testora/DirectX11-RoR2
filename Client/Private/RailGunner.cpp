@@ -76,6 +76,23 @@ HRESULT CRailGunner::Initialize(any)
 	m_pPistolOffset = pModel->Get_Bone("SMGBarrel_end")->Get_CombinedTransformationPointer();
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
+	LIGHTDESC tLightDesc{};
+	tLightDesc.eLightType	= LIGHTTYPE::SHADOW;
+	tLightDesc.eShadowType	= SHADOWTYPE::DIRECTIONAL;
+	tLightDesc.fRange		= 10.f;
+
+	switch (CGameInstance::Get_Instance()->Current_Scene())
+	{
+	case SCENE::TEST:
+		tLightDesc.vDirection = _float3(0.36f, -0.93f, 0.07f);
+		CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, m_pTransform, shared_from_gameobject());
+		break;
+	case SCENE::MOON:
+		tLightDesc.vDirection = _float3(-0.64f, -0.76f, -0.12f);
+		CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, m_pTransform, shared_from_gameobject());
+		break;
+	}
+
 	return S_OK;
 }
 
@@ -128,6 +145,7 @@ void CRailGunner::Late_Tick(_float _fTimeDelta)
 	}
 #endif
 
+	Add_RenderObject(RENDER_GROUP::SHADOW);
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
@@ -136,6 +154,21 @@ HRESULT CRailGunner::Render()
 	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Render", "Failed to __super::Render");
+	}
+
+	return S_OK;
+}
+
+HRESULT CRailGunner::Render_ShadowDepth()
+{
+	if (FAILED(m_pTransform->Bind_OnShader(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Render_ShadowDepth", "Failed to Bind_OnShader");
+	}
+
+	if (FAILED(m_pModel->Render_ShadowDepth(shared_from_gameobject(), m_pShader, 2)))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Render_ShadowDepth", "Failed to Render_ShadowDepth");
 	}
 
 	return S_OK;
@@ -158,6 +191,18 @@ HRESULT CRailGunner::Ready_Components()
 	if (nullptr == m_pTransform)
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pTransform");
+	}
+
+	m_pShader = Get_Component<CShader>(COMPONENT::SHADER);
+	if (nullptr == m_pShader)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pShader");
+	}
+
+	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	if (nullptr == m_pModel)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner::Ready_Components", "Nullptr Exception: m_pModel");
 	}
 
 	return S_OK;

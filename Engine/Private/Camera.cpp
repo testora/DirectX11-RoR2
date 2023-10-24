@@ -45,6 +45,8 @@ HRESULT CCamera::Initialize(any _arg)
 		MSG_RETURN(E_FAIL, "CCamera::Initialize", "Invalid Camera Type");
 	}
 
+	Render();
+
 #if WIP_FRUSTRUM_CULLING
 	m_pPipeLine->Update_Frustum();
 #endif

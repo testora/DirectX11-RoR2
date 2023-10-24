@@ -30,9 +30,16 @@ HRESULT CMoon::Initialize(any)
 		MSG_RETURN(E_FAIL, "CMoon::Initialize", "Failed To __super::Initialize");
 	}
 
-#ifdef _DEBUG
-	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
-#endif
+	LIGHTDESC tLightDesc{};
+	tLightDesc.eLightType	= LIGHTTYPE::SHADOW;
+	tLightDesc.eShadowType	= SHADOWTYPE::STATIC;
+	tLightDesc.vPosition	= ARENA_CENTER + _float3(0.f, 100.f, 0.f);
+	tLightDesc.vPosition	= _float3(-1600.f, 1500.f, 900.f);
+	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
+//	tLightDesc.vDirection	= _float3(0.01f, -1.f, 0.01f);
+//	tLightDesc.vDirection	= _float3(-0.64f, 0.f, -0.12f);
+	tLightDesc.fRange		= 10.f;
+	CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, nullptr, shared_from_gameobject());
 
 	return S_OK;
 }
@@ -53,6 +60,11 @@ void CMoon::Tick(_float _fTimeDelta)
 		}
 	}
 	ImGui::End();
+	ImGui::Begin("Deferred Offset");
+	static float fBias = -1.f;
+	ImGui::DragFloat("Bias", &fBias);
+	m_pRenderer->Get_DeferredShader()->Bind_Float("fBias", fBias);
+	ImGui::End();
 #endif
 }
 
@@ -60,6 +72,7 @@ void CMoon::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+	Add_RenderObject(RENDER_GROUP::SHADOW);
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
@@ -120,6 +133,21 @@ HRESULT CMoon::Render()
 	return S_OK;
 }
 
+HRESULT CMoon::Render_ShadowDepth()
+{
+	if (FAILED(m_pTransform->Bind_OnShader(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CMoon::Render_ShadowDepth", "Failed to Bind_OnShader");
+	}
+
+	if (FAILED(m_pModel->Render_ShadowDepth(shared_from_gameobject(), m_pShader, 3)))
+	{
+		MSG_RETURN(E_FAIL, "CMoon::Render_ShadowDepth", "Failed to Render_ShadowDepth");
+	}
+
+	return S_OK;
+}
+
 HRESULT CMoon::Ready_Components()
 {
 	if (FAILED(__super::Ready_Components()))
@@ -143,6 +171,12 @@ HRESULT CMoon::Ready_Components()
 	if (nullptr == m_pShader)
 	{
 		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pShader");
+	}
+
+	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	if (nullptr == m_pModel)
+	{
+		MSG_RETURN(E_FAIL, "CGolemPlains::Ready_Components", "Nullptr Exception: m_pModel");
 	}
 
 	return S_OK;

@@ -18,6 +18,8 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
+	virtual HRESULT						Render_ShadowDepth() override;
+
 private:
 	virtual HRESULT						Fetch(any vPosition3 = g_aNull) override;
 	virtual _bool						Return() override;
@@ -33,10 +35,10 @@ public:
 	virtual void						Hit_WeakPoint() override;
 
 private:
-	_bool								m_bRender	= true;
-
 	shared_ptr<class CVFX_TrailLine>	m_pVFX_EyeTrail;
 	shared_ptr<class CVFX_TrailQuad>	m_pVFX_HammerTrail;
+	
+	_bool								m_bRender	= true;
 
 public:
 	static shared_ptr<CBrother>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

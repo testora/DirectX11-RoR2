@@ -212,7 +212,7 @@ void CTransform::LookTo_Interpolation(const _vectorf _vDirection, const _bool _b
 	);
 }
 
-HRESULT CTransform::Bind_OnShader(shared_ptr<class CShader> _pShader)
+HRESULT CTransform::Bind_OnShader(shared_ptr<CShader> _pShader)
 {
 	if (FAILED(_pShader->Bind_Matrix(SHADER_MATWORLD, m_mWorld)))
 	{

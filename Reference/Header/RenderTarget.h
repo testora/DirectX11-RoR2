@@ -14,9 +14,7 @@ public:
 
 public:
 	ComPtr<ID3D11RenderTargetView>		Get_RenderTargetView() const	{ return m_pRenderTargetView; }
-#ifdef _DEBUG
 	ComPtr<ID3D11ShaderResourceView>	Get_ShaderResourceView() const	{ return m_pShaderResourceView; }
-#endif
 
 public:
 	void								Clear(ComPtr<ID3D11DeviceContext>);

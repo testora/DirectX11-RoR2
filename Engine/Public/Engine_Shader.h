@@ -1,6 +1,7 @@
 #pragma once
 
 #define SHADER_TIME								"g_fTime"
+#define SHADOW_ID								"g_fShadowID"
 
 #define SHADER_FLAG								"g_iShaderFlag"
 #define SHADER_FLAG_TEXDIFFUSE					0b0000'0000'0000'0001
@@ -31,16 +32,26 @@
 #define SHADER_MATPROJ							"g_mProj"
 #define SHADER_MATPROJINV						"g_mProjInv"
 #define SHADER_MATORTHOGRAPHIC					"g_mOrthographic"
+#define SHADER_MATQUADWORLD						"g_mQuadWorld"
+#define SHADER_MATQUADVIEW						"g_mQuadView"
+#define SHADER_MATQUADPROJ						"g_mQuadProj"
+
+#define SHADER_SHADOWCOUNT						"g_iShadowCount"
+#define SHADER_MATSHADOWVIEWS					"g_mShadowViews"
+#define SHADER_MATSHADOWPROJS					"g_mShadowProjs"
+
 #define SHADER_CAMPOS							"g_vCamPosition"
 
+#define SHADER_TEXTARGET_SHADOWDEPTH			"g_texShadowDepthTarget"
 #define SHADER_TEXTARGET_MTRL_DIFFUSE			"g_texMtrlDiffuseTarget"
 #define SHADER_TEXTARGET_MTRL_AMBIENT			"g_texMtrlAmbientTarget"
 #define SHADER_TEXTARGET_MTRL_SPECULAR			"g_texMtrlSpecularTarget"
 #define SHADER_TEXTARGET_MTRL_EMISSIVE			"g_texMtrlEmissiveTarget"
 #define SHADER_TEXTARGET_NORMAL					"g_texNormalTarget"
 #define SHADER_TEXTARGET_DEPTH					"g_texDepthTarget"
-#define SHADER_TEXTARGET_SHADE					"g_texShadeTarget"
-#define SHADER_TEXTARGET_SPECULAR				"g_texSpecularTarget"
+#define SHADER_TEXTARGET_LIGHTDIFFUSE			"g_texLightDiffuseTarget"
+#define SHADER_TEXTARGET_LIGHTAMBIENT			"g_texLightAmbientTarget"
+#define SHADER_TEXTARGET_LIGHTSPECULAR			"g_texLightSpecularTarget"
 #define SHADER_TEXTARGET_PREPROCESS				"g_texPreProcessTarget"
 #define SHADER_TEXTARGET_MASK					"g_texMaskTarget"
 
@@ -78,6 +89,8 @@
 #define SHADER_FOG_MAX							"g_fFogMax"
 #define SHADER_FOG_POWER						"g_fFogPower"
 
+#define RENDERTARGET_SHADOWDEPTH				TEXT("RenderTarget:ShadowDepth")
+
 #define RENDERTARGET_MATERIAL_DIFFUSE			TEXT("RenderTarget:Material:Diffuse")
 #define RENDERTARGET_MATERIAL_AMBIENT			TEXT("RenderTarget:Material:Ambient")
 #define RENDERTARGET_MATERIAL_SPECULAR			TEXT("RenderTarget:Material:Specular")
@@ -86,12 +99,16 @@
 #define RENDERTARGET_NORMAL						TEXT("RenderTarget:Normal")
 #define RENDERTARGET_DEPTH						TEXT("RenderTarget:Depth")
 
-#define RENDERTARGET_SHADE						TEXT("RenderTarget:Shade")
-#define RENDERTARGET_SPECULAR					TEXT("RenderTarget:Specular")
+#define RENDERTARGET_LIGHT_DIFFUSE				TEXT("RenderTarget:Light:Diffuse")
+#define RENDERTARGET_LIGHT_AMBIENT				TEXT("RenderTarget:Light:Ambient")
+#define RENDERTARGET_LIGHT_SPECULAR				TEXT("RenderTarget:Light:Specular")
 
 #define RENDERTARGET_PREPROCESS					TEXT("RenderTarget:PreProcess")
 #define RENDERTARGET_MASK						TEXT("RenderTarget:Mask")
 
+#define DEPTHSTENCIL_SHADOWDEPTH				TEXT("DepthStencil:ShadowDepth")
+
+#define MULTIRENDERTARGET_SHADOWDEPTH			TEXT("MultiRenderTarget:ShadowDepth")
 #define MULTIRENDERTARGET_NONBLEND				TEXT("MultiRenderTarget:NonBlend")
 #define MULTIRENDERTARGET_LIGHT					TEXT("MultiRenderTarget:Light")
 #define MULTIRENDERTARGET_POSTPROCESS			TEXT("MultiRenderTarget:PostProcess")

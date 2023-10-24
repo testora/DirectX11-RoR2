@@ -21,6 +21,8 @@ public:
 	virtual HRESULT												Fetch(any = g_aNull);
 	virtual _bool												Return();
 
+	virtual HRESULT												Render_ShadowDepth();
+
 public:
 	template <typename T>
 	shared_ptr<T>												Get_Component(const COMPONENT);

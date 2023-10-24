@@ -34,14 +34,19 @@ HRESULT CScene_Moon::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Effect");
 	}
 
-	if (FAILED(Ready_Light()))
-	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Light");
-	}
-
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Camera");
+	}
+
+	if (FAILED(Ready_Player()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Player");
+	}
+
+	if (FAILED(Ready_Monster()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Monster");
 	}
 
 	if (FAILED(Ready_Background()))
@@ -54,14 +59,9 @@ HRESULT CScene_Moon::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Terrain");
 	}
 
-	if (FAILED(Ready_Player()))
+	if (FAILED(Ready_Light()))
 	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Player");
-	}
-
-	if (FAILED(Ready_Monster()))
-	{
-		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Monster");
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Light");
 	}
 
 	return S_OK;
@@ -153,12 +153,20 @@ void CScene_Moon::Debug()
 		ImGui::End();
 
 		ImGui::Begin("LIGHT");
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADOWDEPTH).Get(), ImVec2(200, 200));
 		ImGui::End();
 
 		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_PREPROCESS).Get(), ImVec2(200, 200));
 		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
+		ImGui::End();
+
+		ImGui::Begin("SHADOW");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_Shadow(0).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_Shadow(1).Get(), ImVec2(200, 200));
 		ImGui::End();
 	}
 #endif
@@ -168,12 +176,12 @@ void CScene_Moon::Debug()
 HRESULT CScene_Moon::Ready_Light()
 {
 	LIGHTDESC				tLightDesc{};
-	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
+	tLightDesc.eLightType	= LIGHTTYPE::DIRECTIONAL;
 	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
-	tLightDesc.vDiffuse		= _color(0.6f, 0.6f, 0.6f, 1.f);
-	tLightDesc.vSpecular	= _color(0.3f, 0.3f, 0.3f, 1.f);
-	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 1.f);
+	tLightDesc.vDiffuse		= _color(1.0f, 1.0f, 1.0f, 1.0f);
+	tLightDesc.vSpecular	= _color(0.2f, 0.2f, 0.2f, 1.0f);
+	tLightDesc.vAmbient		= _color(1.0f, 1.0f, 1.0f, 1.0f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, nullptr)))

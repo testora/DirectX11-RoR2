@@ -27,59 +27,98 @@ HRESULT CRenderer::Initialize(any)
 
 	m_pContext->RSGetViewports(&iNumViewPorts, &tViewPortDesc);
 
-	m_mWorld		= XMMatrixScaling(tViewPortDesc.Width, tViewPortDesc.Height, 1.f);
-	m_mView			= XMMatrixIdentity();
-	m_mProjection	= XMMatrixOrthographicLH(tViewPortDesc.Width, tViewPortDesc.Height, 0.f, 1.f);
+	m_mQuadWorld		= XMMatrixScaling(tViewPortDesc.Width, tViewPortDesc.Height, 1.f);
+	m_mQuadView			= XMMatrixIdentity();
+	m_mQuadProjection	= XMMatrixOrthographicLH(tViewPortDesc.Width, tViewPortDesc.Height, 0.f, 1.f);
 
-	_uint2			vResolution = _uint2(static_cast<_uint>(tViewPortDesc.Width), static_cast<_uint>(tViewPortDesc.Height));
+	_uint2			vResolution			= _uint2(static_cast<_uint>(tViewPortDesc.Width), static_cast<_uint>(tViewPortDesc.Height));
+	_uint2			vShadowResolution	= _uint2(vResolution.x * g_iShadowScale, vResolution.y * g_iShadowScale);
 
 #pragma region Renger Targets
 
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_DIFFUSE, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_SHADOWDEPTH,
+		vShadowResolution, DXGI_FORMAT_R32G32B32A32_FLOAT, _color(1.f, 1.f, 1.f, 1.f))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_SHADOWDEPTH");
+	}
+
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_DIFFUSE,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MATERIAL_DIFFUSE");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_AMBIENT, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_AMBIENT,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MATERIAL_AMBIENT");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_SPECULAR, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_SPECULAR,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MATERIAL_SPECULAR");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_EMISSIVE, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MATERIAL_EMISSIVE,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(1.f, 1.f, 1.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MATERIAL_EMISSIVE");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_NORMAL, vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_NORMAL,
+		vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(1.f, 1.f, 1.f, 1.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_NORMAL");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_DEPTH, vResolution, DXGI_FORMAT_R32G32B32A32_FLOAT, _color(0.f, 1.f, 0.f, 1.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_DEPTH,
+		vResolution, DXGI_FORMAT_R32G32B32A32_FLOAT, _color(0.f, 1.f, 1.f, 1.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_DEPTH");
 	}
 
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_SHADE, vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_LIGHT_DIFFUSE,
+		vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(0.f, 0.f, 0.f, 1.f))))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_SHADE");
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_LIGHT_DIFFUSE");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_SPECULAR, vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_LIGHT_AMBIENT,
+		vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(0.f, 0.f, 0.f, 1.f))))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_SPECULAR");
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_LIGHT_AMBIENT");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_LIGHT_SPECULAR,
+		vResolution, DXGI_FORMAT_R16G16B16A16_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_LIGHT_SPECULAR");
 	}
 	
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_PREPROCESS, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_PREPROCESS,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MASK, vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MASK,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
 	}
 
 #pragma endregion
+#pragma region Depth Stencils
+
+	if (FAILED(m_pRenderTarget_Manager->Add_DepthStencil(DEPTHSTENCIL_SHADOWDEPTH, vShadowResolution)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_DepthStencil: DEPTHSTENCIL_SHADOWDEPTH");
+	}
+
+#pragma endregion
 #pragma region Multi Render Targets
+
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_SHADOWDEPTH, RENDERTARGET_SHADOWDEPTH)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_NONBLEND");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Push_DepthStencil(MULTIRENDERTARGET_SHADOWDEPTH, DEPTHSTENCIL_SHADOWDEPTH)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_DepthStencil: MULTIRENDERTARGET_NONBLEND");
+	}
 
 	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_NONBLEND, RENDERTARGET_MATERIAL_DIFFUSE)))
 	{
@@ -106,11 +145,15 @@ HRESULT CRenderer::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_NONBLEND");
 	}
 
-	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_LIGHT, RENDERTARGET_SHADE)))
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_LIGHT, RENDERTARGET_LIGHT_DIFFUSE)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_LIGHT");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_LIGHT, RENDERTARGET_SPECULAR)))
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_LIGHT, RENDERTARGET_LIGHT_AMBIENT)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_LIGHT");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_LIGHT, RENDERTARGET_LIGHT_SPECULAR)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_LIGHT");
 	}
@@ -140,6 +183,23 @@ HRESULT CRenderer::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Create VIBuffer");
 	}
 
+#pragma region
+
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATQUADWORLD, m_mQuadWorld)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Bind_Matrix: SHADER_MATQUADWORLD");
+	}
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATQUADVIEW, m_mQuadView)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Bind_Matrix: SHADER_MATQUADVIEW");
+	}
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATQUADPROJ, m_mQuadProjection)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Bind_Matrix: SHADER_MATQUADPROJ");
+	}
+
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -159,7 +219,19 @@ HRESULT CRenderer::Draw_RenderGroup()
 {
 	HRESULT hr = S_OK;
 
-	m_pShader->Bind_Float(SHADER_TIME, CGameInstance::Get_Instance()->Get_ActivatedTime());
+	if (FAILED(m_pShader->Bind_Float(SHADER_TIME, CGameInstance::Get_Instance()->Get_ActivatedTime())))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_RenderGroup", "Failed to Bind_Float: SHADER_TIME");
+	}
+
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEW, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_RenderGroup", "Failed to Bind_Matrix: SHADER_MATVIEW");
+	}
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATPROJ, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_RenderGroup", "Failed to Bind_Matrix: SHADER_MATPROJ");
+	}
 
 	if (FAILED(Ready_Camera()))
 	{
@@ -170,6 +242,12 @@ HRESULT CRenderer::Draw_RenderGroup()
 	{
 		hr = E_FAIL;
 		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Priority");
+	}
+
+	if (FAILED(Render_Shadow()))
+	{
+		hr = E_FAIL;
+		MSG_BOX("CRenderer::Draw_RenderGroup", "Failed to Render_Shadow");
 	}
 	if (FAILED(Render_NonBlend()))
 	{
@@ -262,14 +340,48 @@ HRESULT CRenderer::Render_Priority()
 	return hr;
 }
 
+HRESULT CRenderer::Render_Shadow()
+{
+	HRESULT hr = S_OK;
+
+	for (auto& pSystem : m_lstRenderGroup[IDX(RENDER_GROUP::SHADOW)])
+	{
+		if (shared_ptr<CGameObject> pObject = dynamic_pointer_cast<CGameObject>(pSystem))
+		{
+			if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_SHADOWDEPTH)))
+			{
+				MSG_RETURN(E_FAIL, "CRenderer::Render_Shadow", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_SHADOWDEPTH");
+			}
+
+			if (FAILED(pObject->Render_ShadowDepth()))
+			{
+				hr = E_FAIL;
+			}
+
+			if (FAILED(m_pRenderTarget_Manager->End_MultiRenderTarget()))
+			{
+				MSG_RETURN(E_FAIL, "CRenderer::Render_Shadow", "Failed to End_MultiRenderTarget");
+			}
+
+			if (FAILED(m_pLight_Manager->Push_ShadowResourceView(m_pRenderTarget_Manager->Get_ShaderResourceView(RENDERTARGET_SHADOWDEPTH), pObject)))
+			{
+				MSG_RETURN(E_FAIL, "CRenderer::Render_Shadow", "Failed to Push_ShadowResourceView");
+			}
+		}
+	}
+	m_lstRenderGroup[IDX(RENDER_GROUP::SHADOW)].clear();
+
+	return hr;
+}
+
 HRESULT CRenderer::Render_NonBlend()
 {
+	HRESULT hr = S_OK;
+
 	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_NONBLEND)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Render_NonBlend", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_NONBLEND");
 	}
-
-	HRESULT hr = S_OK;
 
 	for (auto& pSystem : m_lstRenderGroup[IDX(RENDER_GROUP::NONBLEND)])
 	{
@@ -319,19 +431,6 @@ HRESULT CRenderer::Draw_Light()
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Matrix: SHADER_MATPROJINV");
 	}
 
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATWORLD, m_mWorld)))
-	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Matrix: SHADER_MATWORLD");
-	}
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEW, m_mView)))
-	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Matrix: SHADER_MATVIEW");
-	}
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATPROJ, m_mProjection)))
-	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_Matrix: SHADER_MATPROJ");
-	}
-
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_NORMAL, m_pShader, SHADER_TEXTARGET_NORMAL)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_Light", "Failed to Bind_RenderTarget: RENDERTARGET_NORMAL");
@@ -361,17 +460,27 @@ HRESULT CRenderer::Draw_PreProcess()
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_POSTPROCESS");
 	}
 
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATWORLD, m_mWorld)))
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEWINV, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW).inverse())))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATWORLD");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATVIEWINV");
 	}
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEW, m_mView)))
+	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATPROJINV, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::PROJECTION).inverse())))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATVIEW");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATPROJINV");
 	}
-	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATPROJ, m_mProjection)))
+
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_DEPTH, m_pShader, SHADER_TEXTARGET_DEPTH)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_Matrix: SHADER_MATPROJ");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_DEPTH");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_SHADOWDEPTH, m_pShader, SHADER_TEXTARGET_SHADOWDEPTH)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_SHADOWDEPTH");
+	}
+
+	if (FAILED(m_pLight_Manager->Bind_ShadowViewMatrices(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_ShadowViewMatrices");
 	}
 
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_MATERIAL_DIFFUSE, m_pShader, SHADER_TEXTARGET_MTRL_DIFFUSE)))
@@ -390,13 +499,17 @@ HRESULT CRenderer::Draw_PreProcess()
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_EMISSIVE");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_SHADE, m_pShader, SHADER_TEXTARGET_SHADE)))
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_LIGHT_DIFFUSE, m_pShader, SHADER_TEXTARGET_LIGHTDIFFUSE)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_SHADE");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_LIGHT_DIFFUSE");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_SPECULAR, m_pShader, SHADER_TEXTARGET_SPECULAR)))
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_LIGHT_AMBIENT, m_pShader, SHADER_TEXTARGET_LIGHTDIFFUSE)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_SPECULAR");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_LIGHT_AMBIENT");
+	}
+	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_LIGHT_SPECULAR, m_pShader, SHADER_TEXTARGET_LIGHTSPECULAR)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Bind_RenderTarget: RENDERTARGET_LIGHT_SPECULAR");
 	}
 
 	if (FAILED(m_pShader->BeginPass(2)))

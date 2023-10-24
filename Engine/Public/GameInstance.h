@@ -25,6 +25,7 @@ public:
 	LRESULT										WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 	_float										Get_ActivatedTime() const;
+	GRAPHICDESC									Get_GraphicDesc() const;
 
 #pragma endregion
 #pragma region Graphic Device
@@ -121,8 +122,11 @@ public:
 #pragma endregion
 #pragma region Light Manager
 
-	HRESULT										Add_Light(const SCENE, LIGHTDESC, shared_ptr<class CTransform>);
+	HRESULT										Add_Light(const SCENE, LIGHTDESC, shared_ptr<class CTransform>, shared_ptr<class CGameObject> = nullptr);
 	HRESULT										Clear_Lights(const SCENE);
+#ifdef _DEBUG
+	ComPtr<ID3D11ShaderResourceView>			Get_Shadow(_uint iIndex);
+#endif
 
 #pragma endregion
 
@@ -141,6 +145,8 @@ private:
 	shared_ptr<class CPicker>					m_pPicker;
 
 private:
+	GRAPHICDESC									m_tGraphicDesc{};
+
 	_float										m_fTimeAcc	= 0.f;
 
 public:

@@ -5,12 +5,14 @@ constexpr _float	g_fEpsilon						= std::numeric_limits<float>::epsilon();
 constexpr _float	g_fTolorance					= 1e-5f;
 
 constexpr _uint		g_iMaxTextures					= 8;
-constexpr _uint		g_iMaxLights					= 64;
+constexpr _uint		g_iMaxLights					= 32;
 constexpr _uint		g_iMaxBones						= 256;
 
 constexpr _float	g_fGravity						= 9.8f * 6.f;
 constexpr _float	g_fDefaultInterpolationDuration	= 0.1f;
 constexpr XMFLOAT3	g_vGridSize						= XMFLOAT3(50.f, 50.f, 50.f);
+
+constexpr _uint		g_iShadowScale					= 1;
 
 const XMMATRIX		g_mUnit							= XMMatrixIdentity();
 const any			g_aNull							= any();

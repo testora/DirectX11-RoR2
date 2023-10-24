@@ -18,6 +18,8 @@ public:
 	virtual void						Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT						Render() override;
 
+	virtual HRESULT						Render_ShadowDepth() override;
+
 private:
 	virtual HRESULT						Ready_Components() override;
 	virtual HRESULT						Ready_Behaviors() override;

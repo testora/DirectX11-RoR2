@@ -103,13 +103,13 @@ HRESULT CLoader::Load_Moon()
 //	PROTOTYPE_COMPONENT_MODEL_MOON
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_RAILGUNNER,
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/RailGunner/RailGunner_mod_aim_backpack_pistol_sniper_super.mdl")))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/RailGunner/RailGunner_mod0.mdl")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_RAILGUNNER");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Component_Prototype(SCENE::MOON, PROTOTYPE_COMPONENT_MODEL_BROTHER,
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/Brother/Brother_mod_aim_flinch_shard.mdl")))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, TEXT("Bin/Resources/Model/Brother/Brother_mod0.mdl")))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Component_Prototype: PROTOTYPE_COMPONENT_MODEL_BROTHER");
 	}

@@ -14,8 +14,10 @@ private:
 public:
 	HRESULT														Initialize_Prototype(const MODEL, const wstring& wstrModelPath, _matrixf mPivot = g_mUnit);
 	HRESULT														Initialize(any mapMeshDesc = g_aNull);
+
 	HRESULT														Render(shared_ptr<class CShader>, _uint iPassIndex);
 	HRESULT														Render(_uint iMeshIndex, shared_ptr<class CShader>, _uint iPassIndex);
+	HRESULT														Render_ShadowDepth(shared_ptr<class CGameObject>, shared_ptr<class CShader>, _uint iPassIndex);
 
 private:
 #if ACTIVATE_TOOL

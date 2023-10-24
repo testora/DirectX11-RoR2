@@ -51,6 +51,13 @@ HRESULT CGolem::Initialize(any)
 	}
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::GOLEM::IDLE);
+	
+	LIGHTDESC tLightDesc{};
+	tLightDesc.eLightType	= LIGHTTYPE::SHADOW;
+	tLightDesc.eShadowType	= SHADOWTYPE::DIRECTIONAL;
+	tLightDesc.fRange		= 10.f;
+	tLightDesc.vDirection	= _float3(0.36f, -0.93f, 0.07f);
+	CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, m_pTransform, shared_from_gameobject());
 
 	return S_OK;
 }
@@ -69,6 +76,7 @@ void CGolem::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+	Add_RenderObject(RENDER_GROUP::SHADOW);
 	Add_RenderObject(RENDER_GROUP::NONBLEND);
 }
 
@@ -77,6 +85,21 @@ HRESULT CGolem::Render()
 	if (FAILED(__super::Render(0)))
 	{
 		MSG_RETURN(E_FAIL, "CGolem::Render", "Failed to __super::Render");
+	}
+
+	return S_OK;
+}
+
+HRESULT CGolem::Render_ShadowDepth()
+{
+	if (FAILED(m_pTransform->Bind_OnShader(m_pShader)))
+	{
+		MSG_RETURN(E_FAIL, "CGolem::Render_ShadowDepth", "Failed to Bind_OnShader");
+	}
+
+	if (FAILED(m_pModel->Render_ShadowDepth(shared_from_gameobject(), m_pShader, 2)))
+	{
+		MSG_RETURN(E_FAIL, "CGolem::Render_ShadowDepth", "Failed to Render_ShadowDepth");
 	}
 
 	return S_OK;

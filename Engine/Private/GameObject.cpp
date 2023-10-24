@@ -97,6 +97,11 @@ _bool CGameObject::Return()
 	return false;
 }
 
+HRESULT CGameObject::Render_ShadowDepth()
+{
+	return S_OK;
+}
+
 HRESULT CGameObject::Render(_uint _iPassIndex)
 {
 	if (shared_ptr<CShader> pShader = m_pWeakShader.lock())
@@ -391,22 +396,24 @@ HRESULT CGameObject::Add_RenderObject(const RENDER_GROUP _eRenderGroup)
 		if (SUCCEEDED(pRenderer->Add_RenderObject(_eRenderGroup, shared_from_this())))
 		{
 #ifdef _DEBUG
-			if (m_bitComponent.test(IDX(COMPONENT::COLLIDER)))
+			if (RENDER_GROUP::SHADOW != _eRenderGroup)
 			{
-				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::COLLIDER])))
+				if (m_bitComponent.test(IDX(COMPONENT::COLLIDER)))
 				{
-					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+					if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::COLLIDER])))
+					{
+						MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+					}
 				}
-			}
-			if (m_bitComponent.test(IDX(COMPONENT::NAVIGATION)))
-			{
-				if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::NAVIGATION])))
+				if (m_bitComponent.test(IDX(COMPONENT::NAVIGATION)))
 				{
-					MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+					if (FAILED(pRenderer->Add_RenderObject(RENDER_GROUP::DEBUG, m_umapComponent[COMPONENT::NAVIGATION])))
+					{
+						MSG_RETURN(E_FAIL, "CGameObject::Add_RenderObject", "Failed to CRenderer::Add_RenderObject");
+					}
 				}
 			}
 #endif
-
 			return S_OK;
 		}
 		else

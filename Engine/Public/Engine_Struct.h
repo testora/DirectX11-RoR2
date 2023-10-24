@@ -26,8 +26,8 @@ namespace Engine
 
 	typedef struct tagLightDesc
 	{
-		enum LIGHTTYPE	{ DIRECTIONAL, POINT, MAX };
 		LIGHTTYPE		eLightType;
+		SHADOWTYPE		eShadowType;
 
 		XMFLOAT3		vPosition;
 		XMFLOAT3		vDirection;

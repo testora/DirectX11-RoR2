@@ -20,16 +20,22 @@ struct VS_OUT
 	float4	vProjPos		: TEXCOORD2;
 };
 
+struct VS_OUT_SHADOWDEPTH
+{
+	float4	vPosition		: SV_POSITION;
+	float4	vNormal			: TEXCOORD0;
+	float4	vProjPos		: TEXCOORD1;
+	float4	vDirection		: TEXCOORD2;
+};
+
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT	Out;
 	
-	matrix	mWV, mWVP;
-
-	mWV		= mul(g_mWorld, g_mView);
-	mWVP	= mul(mWV, g_mProj);
+	float4x4	mWV		= mul(g_mWorld, g_mView);
+	float4x4	mWVP	= mul(mWV, g_mProj);
 	
-	matrix mBone =
+	float4x4	mBone =
 		mul(g_mBones[In.vBlendIndices.x], In.vBlendWeights.x) +
 		mul(g_mBones[In.vBlendIndices.y], In.vBlendWeights.y) +
 		mul(g_mBones[In.vBlendIndices.z], In.vBlendWeights.z) +
@@ -49,25 +55,62 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT_SHADOWDEPTH VS_MAIN_SHADOWDEPTH(VS_IN In)
+{
+    VS_OUT_SHADOWDEPTH	Out;
+	
+	float4x4	mWV		= mul(g_mWorld, g_mView);
+	float4x4	mWVP	= mul(mWV, g_mProj);
+	
+	float4x4	mBone =
+		mul(g_mBones[In.vBlendIndices.x], In.vBlendWeights.x) +
+		mul(g_mBones[In.vBlendIndices.y], In.vBlendWeights.y) +
+		mul(g_mBones[In.vBlendIndices.z], In.vBlendWeights.z) +
+		mul(g_mBones[In.vBlendIndices.w], (1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z)));
+	
+	float4 vPosition	= mul(float4(In.vPosition, 1.f), mBone);
+	float4 vNormal		= mul(float4(In.vNormal, 0.f), mBone);
+	
+	Out.vNormal			= normalize(mul(vNormal, g_mWorld));
+	Out.vPosition		= mul(vPosition, mWVP);
+	Out.vProjPos		= Out.vPosition;
+	Out.vDirection		= g_mView[2];
+	
+    return Out;
+}
+
 struct PS_IN
 {
-	float4	vPosition	: SV_POSITION;
-	float4	vNormal		: NORMAL;
-	float4	vTangent	: TANGENT;
-	float2	vTexCoord	: TEXCOORD0;
-	float4	vWorldPos	: TEXCOORD1;
-	float4	vProjPos	: TEXCOORD2;
+	float4	vPosition		: SV_POSITION;
+	float4	vNormal			: NORMAL;
+	float4	vTangent		: TANGENT;
+	float2	vTexCoord		: TEXCOORD0;
+	float4	vWorldPos		: TEXCOORD1;
+	float4	vProjPos		: TEXCOORD2;
+};
+
+struct PS_IN_SHADOWDEPTH
+{
+	float4	vPosition		: SV_POSITION;
+	float4	vNormal			: TEXCOORD0;
+	float4	vProjPos		: TEXCOORD1;
+	float4	vDirection		: TEXCOORD2;
 };
 
 struct PS_OUT
 {
-//	float4	vColor		: SV_TARGET0;
-	float4	vDiffuse	: SV_TARGET0;
-	float4	vAmbient	: SV_TARGET1;
-	float4	vSpecular	: SV_TARGET2;
-	float4	vEmissive	: SV_TARGET3;
-	float4	vNormal		: SV_TARGET4;
-	float4	vDepth		: SV_TARGET5;
+//	float4	vColor			: SV_TARGET0;
+	float4	vDiffuse		: SV_TARGET0;
+	float4	vAmbient		: SV_TARGET1;
+	float4	vSpecular		: SV_TARGET2;
+	float4	vEmissive		: SV_TARGET3;
+	float4	vNormal			: SV_TARGET4;
+	float4	vDepth			: SV_TARGET5;
+};
+
+struct PS_OUT_SHADOWDEPTH
+{
+	float4	vShadowDepth	: SV_TARGET0;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -144,6 +187,20 @@ PS_OUT PS_MAIN(PS_IN In)
 	return Out;
 }
 
+PS_OUT_SHADOWDEPTH PS_MAIN_SHADOWDEPTH(PS_IN_SHADOWDEPTH In)
+{
+    PS_OUT_SHADOWDEPTH	Out;
+	
+//	if (0.f > dot(In.vNormal, In.vDirection))
+//	{
+//	    discard;
+//	}
+	
+    Out.vShadowDepth = float4(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / g_fCamFar, 0.f, 0.f);
+	
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
 	pass MESH
@@ -171,4 +228,17 @@ technique11 DefaultTechnique
 		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
+
+    pass SHADOWDEPTH
+    {
+		VertexShader	= compile vs_5_0 VS_MAIN_SHADOWDEPTH();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_MAIN_SHADOWDEPTH();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_Default, 0);
+    }
 }

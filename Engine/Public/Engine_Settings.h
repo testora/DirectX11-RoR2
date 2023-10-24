@@ -16,6 +16,8 @@
 
 #pragma region Post-Settings
 #ifndef _DEBUG
+#undef ACTIVATE_CONSOLE
+#define ACTIVATE_CONSOLE		FALSE
 #undef ACTIVATE_IMGUI
 #define ACTIVATE_IMGUI			FALSE
 #endif

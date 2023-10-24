@@ -152,11 +152,14 @@ void CScene_Test::Debug()
 		ImGui::End();
 
 		ImGui::Begin("LIGHT");
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADOWDEPTH).Get(), ImVec2(200, 200));
 		ImGui::End();
 
 		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_PREPROCESS).Get(), ImVec2(200, 200));
 		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
 		ImGui::End();
 	}
@@ -200,12 +203,12 @@ HRESULT CScene_Test::Ready_SpawnPoint(const wstring& _wstrPath)
 HRESULT CScene_Test::Ready_Light()
 {
 	LIGHTDESC				tLightDesc{};
-	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
+	tLightDesc.eLightType	= LIGHTTYPE::DIRECTIONAL;
 	tLightDesc.vDirection	= _float3(0.36f, -0.93f, 0.07f);
 //	tLightDesc.vDirection	= _float3(-1.f, -2.f, -1.f);
-	tLightDesc.vDiffuse		= _color(1.f, 1.f, 1.f, 1.f);
-	tLightDesc.vSpecular	= _color(0.1f, 0.1f, 0.1f, 1.f);
-	tLightDesc.vAmbient		= _color(0.3f, 0.3f, 0.3f, 1.f);
+	tLightDesc.vDiffuse		= _color(1.0f, 1.0f, 1.0f, 1.0f);
+	tLightDesc.vSpecular	= _color(0.2f, 0.2f, 0.2f, 1.0f);
+	tLightDesc.vAmbient		= _color(1.0f, 1.0f, 1.0f, 1.0f);
 //	tLightDesc.vAmbient		= _color(1.f, 1.f, 1.f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::TEST, tLightDesc, nullptr)))

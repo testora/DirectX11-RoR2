@@ -38,6 +38,11 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGraphic_Device->Ready_GraphicDevice");
 	}
 
+	if (FAILED(m_pLight_Manager->Initialize(_pDevice, _pContext, _tGraphicDesc, _eMax)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pLight_Manager->Reserve_Manager");
+	}
+
 	if (FAILED(m_pRenderTarget_Manager->Initialize(_pDevice, _pContext)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pRenderTarget_Manager->Initialize");
@@ -78,11 +83,6 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pGrid_Manager->Reserve_Manager");
 	}
 
-	if (FAILED(m_pLight_Manager->Reserve_Manager(_eMax)))
-	{
-		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pLight_Manager->Reserve_Manager");
-	}
-
 #ifdef _DEBUG
 #if ACTIVATE_CONSOLE
 	if (::AllocConsole() == TRUE)
@@ -95,6 +95,8 @@ HRESULT CGameInstance::Initialize_Engine(_In_ const SCENE _eStatic, _In_ const S
 	}
 #endif
 #endif
+
+	m_tGraphicDesc = _tGraphicDesc;
 
 	return S_OK;
 }
@@ -117,12 +119,12 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pScene_Manager->Tick(_fTimeDelta);
 	m_pObject_Manager->Tick(_fTimeDelta);
 
-	m_pLight_Manager->Tick();
-
-	m_pPicker->Tick();
-
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
+	
+	m_pPicker->Tick();
+	
+	m_pLight_Manager->Tick();
 
 	m_pEvent_Handler->Tick(_fTimeDelta);
 }
@@ -147,6 +149,11 @@ LRESULT CGameInstance::WndProcHandler(HWND _hWnd, UINT _message, WPARAM _wParam,
 _float CGameInstance::Get_ActivatedTime() const
 {
 	return m_fTimeAcc;
+}
+
+GRAPHICDESC CGameInstance::Get_GraphicDesc() const
+{
+	return m_tGraphicDesc;
 }
 
 #pragma endregion
@@ -594,14 +601,14 @@ _float3 CGameInstance::Raycast(const wstring& _wstrGridLayerTag, _vectorf _vRayO
 #pragma endregion
 #pragma region Light Manager
 
-HRESULT CGameInstance::Add_Light(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<class CTransform> _pTransform)
+HRESULT CGameInstance::Add_Light(const SCENE _eScene, LIGHTDESC _tLightDesc, shared_ptr<CTransform> _pTransform, shared_ptr<CGameObject> _pObject)
 {
 	if (nullptr == m_pLight_Manager)
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Add_Light", "Null Exception: m_pLight_Manager");
 	}
 
-	return m_pLight_Manager->Add_Light(_eScene, _tLightDesc, _pTransform);
+	return m_pLight_Manager->Add_Light(_eScene, _tLightDesc, _pTransform, _pObject);
 }
 
 HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
@@ -613,6 +620,13 @@ HRESULT CGameInstance::Clear_Lights(const SCENE _eScene)
 
 	return m_pLight_Manager->Clear_Lights(_eScene);
 }
+
+#ifdef _DEBUG
+ComPtr<ID3D11ShaderResourceView> CGameInstance::Get_Shadow(_uint _iIndex)
+{
+	return m_pLight_Manager->Get_Shadow(_iIndex);
+}
+#endif
 
 #pragma endregion
 

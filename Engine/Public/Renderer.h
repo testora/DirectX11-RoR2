@@ -23,8 +23,9 @@ public:
 
 private:
 	HRESULT									Ready_Camera();
-
 	HRESULT									Render_Priority();
+
+	HRESULT									Render_Shadow();
 	HRESULT									Render_NonBlend();
 
 	HRESULT									Draw_Light();
@@ -51,9 +52,9 @@ private:
 	shared_ptr<class CShader>				m_pShader;
 	shared_ptr<class CVIBuffer_Rect>		m_pVIBuffer;
 
-	_float4x4								m_mWorld;
-	_float4x4								m_mView;
-	_float4x4								m_mProjection;
+	_float4x4								m_mQuadWorld;
+	_float4x4								m_mQuadView;
+	_float4x4								m_mQuadProjection;
 
 public:
 	static shared_ptr<CRenderer>			Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

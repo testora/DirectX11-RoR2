@@ -71,11 +71,11 @@ HRESULT CScene_Tool::Initialize()
 
 	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
 
-	tLightDesc.eLightType	= LIGHTDESC::LIGHTTYPE::DIRECTIONAL;
-	tLightDesc.vDirection = _float3(-0.64f, -0.76f, -0.12f);
-	tLightDesc.vDiffuse = _color(0.6f, 0.6f, 0.6f, 1.f);
-	tLightDesc.vSpecular = _color(0.3f, 0.3f, 0.3f, 1.f);
-	tLightDesc.vAmbient = _color(0.5f, 0.5f, 0.5f, 1.f);
+	tLightDesc.eLightType	= LIGHTTYPE::DIRECTIONAL;
+	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
+	tLightDesc.vDiffuse		= _color(0.6f, 0.6f, 0.6f, 1.f);
+	tLightDesc.vSpecular	= _color(0.3f, 0.3f, 0.3f, 1.f);
+	tLightDesc.vAmbient		= _color(0.5f, 0.5f, 0.5f, 1.f);
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Light(SCENE::TOOL, tLightDesc, nullptr)))
 	{
@@ -324,11 +324,14 @@ void CScene_Tool::Debug()
 		ImGui::End();
 
 		ImGui::Begin("LIGHT");
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADE).Get(), ImVec2(200, 200));
-		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_DIFFUSE).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_AMBIENT).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_LIGHT_SPECULAR).Get(), ImVec2(200, 200));
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_SHADOWDEPTH).Get(), ImVec2(200, 200));
 		ImGui::End();
 
 		ImGui::Begin("MASK");
+		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_PREPROCESS).Get(), ImVec2(200, 200));
 		ImGui::Image(CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_MASK).Get(), ImVec2(200, 200));
 		ImGui::End();
 	}

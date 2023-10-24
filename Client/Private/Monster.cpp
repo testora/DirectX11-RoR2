@@ -43,6 +43,18 @@ HRESULT CMonster::Ready_Components()
 		MSG_RETURN(E_FAIL, "CMonster::Ready_Components", "Failed to Get_Component: TRANSFORM");
 	}
 
+	m_pShader = Get_Component<CShader>(COMPONENT::SHADER);
+	if (nullptr == m_pShader)
+	{
+		MSG_RETURN(E_FAIL, "CMonster::Ready_Components", "Failed to Get_Component: SHADER");
+	}
+
+	m_pModel = Get_Component<CModel>(COMPONENT::MODEL);
+	if (nullptr == m_pModel)
+	{
+		MSG_RETURN(E_FAIL, "CMonster::Ready_Components", "Failed to Get_Component: MODEL");
+	}
+
 	return S_OK;
 }
 
