@@ -20,13 +20,17 @@ public:
 
 public:
 	virtual HRESULT												Fetch(any = g_aNull);
+	virtual HRESULT												Release();
 	virtual _bool												Return();
 
 	virtual HRESULT												Render_ShadowDepth();
 
-	virtual void												OnCollisionEnter(shared_ptr<CGameObject>, _float fTimeDelta);
-	virtual void												OnCollision(shared_ptr<CGameObject>, _float fTimeDelta);
-	virtual void												OnCollisionExit(shared_ptr<CGameObject>, _float fTimeDelta);
+	virtual void												OnCollisionEnter(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta);
+	virtual void												OnCollision(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta);
+	virtual void												OnCollisionExit(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta);
+
+	_bool														Is_CheckOut() const					{ return m_bIsCheckOut; }
+	void														CheckOut(_bool bCheckOut = true)	{ m_bIsCheckOut = bCheckOut; }
 
 public:
 	template <typename T>
@@ -72,6 +76,9 @@ private:
 	weak_ptr<class CVIBuffer>									m_pWeakVIBuffer;
 	weak_ptr<class CTexture>									m_pWeakTexture;
 	weak_ptr<class CCollider>									m_pWeakCollider;
+
+private:
+	_bool														m_bIsCheckOut			= false;
 
 protected:
 	ComPtr<ID3D11Device>										m_pDevice;

@@ -82,6 +82,11 @@ HRESULT CMonster::Ready_Behaviors()
 
 HRESULT CMonster::Fetch(any _vPosition3)
 {
+	if (FAILED(__super::Fetch()))
+	{
+		MSG_RETURN(E_FAIL, "CMonster::Fetch", "Failed to __super::Fetch");
+	}
+
 	if (_vPosition3.has_value())
 	{
 		if (nullptr != m_pTransform)

@@ -20,6 +20,7 @@ HRESULT CGolem::Initialize_Prototype()
 
 	COLLIDERDESC tColliderDesc{};
 	tColliderDesc.eType		= COLLIDER::AABB;
+	tColliderDesc.eGroup	= COLLISION_GROUP::MONSTER;
 	tColliderDesc.vPosition = _float3(0.f, .5f, 0.f);
 	tColliderDesc.vSize		= _float3(1.f, 1.f, 1.f);
 

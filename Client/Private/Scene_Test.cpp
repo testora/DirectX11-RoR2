@@ -41,6 +41,11 @@ HRESULT CScene_Test::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Light");
 	}
 
+	if (FAILED(Ready_Collision()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Collision");
+	}
+
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Camera");
@@ -196,6 +201,15 @@ HRESULT CScene_Test::Ready_SpawnPoint(const wstring& _wstrPath)
 	}
 
 	inFile.close();
+
+	return S_OK;
+}
+
+HRESULT CScene_Test::Ready_Collision()
+{
+	CGameInstance::Get_Instance()->Reset_CollisionGroupCheck();
+	CGameInstance::Get_Instance()->Check_CollisionGroup(COLLISION_GROUP::PLAYER, COLLISION_GROUP::MONSTER_BULLET);
+	CGameInstance::Get_Instance()->Check_CollisionGroup(COLLISION_GROUP::MONSTER, COLLISION_GROUP::PLAYER_BULLET);
 
 	return S_OK;
 }

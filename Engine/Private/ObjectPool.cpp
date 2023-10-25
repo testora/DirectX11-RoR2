@@ -69,7 +69,11 @@ shared_ptr<CGameObject> CObjectPool::Pop(any _aFetchArg)
 	}
 
 	shared_ptr<CGameObject> pObject = m_deqPool.front();
-	pObject->Fetch(_aFetchArg);
+
+	if (FAILED(pObject->Fetch(_aFetchArg)))
+	{
+		MSG_RETURN(nullptr, "CObjectPool::Pop", "Failed to Fetch");
+	}
 
 	m_deqPool.pop_front();
 	m_lstPop.emplace_back(pObject);
@@ -82,6 +86,11 @@ HRESULT CObjectPool::Push(shared_ptr<CGameObject> _pObject)
 	if (nullptr == _pObject)
 	{
 		MSG_RETURN(E_FAIL, "CObjectPool::Push", "Null Exception");
+	}
+
+	if (FAILED(_pObject->Release()))
+	{
+		MSG_RETURN(E_FAIL, "CObjectPool::Push", "Failed to Release");
 	}
 
 	m_lstPush.emplace_back(_pObject);
@@ -103,6 +112,9 @@ void CObjectPool::Iterate_Objects(function<_bool(shared_ptr<CGameObject>)> _func
 void CObjectPool::Add()
 {
 	shared_ptr<CGameObject> pObject = m_funcPush();
+
+	pObject->CheckOut(false);
+
 	if (nullptr != pObject)
 	{
 		m_deqPool.emplace_back(pObject);

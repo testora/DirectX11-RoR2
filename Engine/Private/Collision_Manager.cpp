@@ -23,7 +23,10 @@ void CCollision_Manager::Tick(_float _fTimeDelta)
 	{
 		for (auto& pair : vec)
 		{
-			pair.second->Tick(_fTimeDelta);
+			if (pair.first.lock()->Is_CheckOut())
+			{
+				pair.second.lock()->Tick(_fTimeDelta);
+			}
 		}
 	}
 
@@ -66,13 +69,19 @@ void CCollision_Manager::Tick_CollisionGroup(_float _fTimeDelta, COLLISION_GROUP
 	{
 		for (auto& iterB : m_vecColliderMap[IDX(_eGroupB)])
 		{
-			shared_ptr<CGameObject>	pObjectA	= iterA.first;
-			shared_ptr<CGameObject>	pObjectB	= iterB.first;
-			shared_ptr<CCollider>	pColliderA	= iterA.second;
-			shared_ptr<CCollider>	pColliderB	= iterB.second;
+			shared_ptr<CGameObject>	pObjectA	= iterA.first.lock();
+			shared_ptr<CGameObject>	pObjectB	= iterB.first.lock();
+			shared_ptr<CCollider>	pColliderA	= iterA.second.lock();
+			shared_ptr<CCollider>	pColliderB	= iterB.second.lock();
 
 			// Self Collision
 			if (pObjectA == pObjectB)
+			{
+				continue;
+			}
+
+			// CheckOut
+			if (!pObjectA->Is_CheckOut() || !pObjectB->Is_CheckOut())
 			{
 				continue;
 			}
@@ -96,14 +105,14 @@ void CCollision_Manager::Tick_CollisionGroup(_float _fTimeDelta, COLLISION_GROUP
 				// Condition: On -> On
 				if (iter->second)
 				{
-					pColliderA->OnCollision(pObjectB, _fTimeDelta);
-					pColliderB->OnCollision(pObjectA, _fTimeDelta);
+					pColliderA->OnCollision(_eGroupB, pObjectB, _fTimeDelta);
+					pColliderB->OnCollision(_eGroupA, pObjectA, _fTimeDelta);
 				}
 				// Condition: Off -> On
 				else
 				{
-					pColliderA->OnCollisionEnter(pObjectB, _fTimeDelta);
-					pColliderB->OnCollisionEnter(pObjectA, _fTimeDelta);
+					pColliderA->OnCollisionEnter(_eGroupB, pObjectB, _fTimeDelta);
+					pColliderB->OnCollisionEnter(_eGroupA, pObjectA, _fTimeDelta);
 					iter->second = true;
 				}
 			}
@@ -113,8 +122,8 @@ void CCollision_Manager::Tick_CollisionGroup(_float _fTimeDelta, COLLISION_GROUP
 				// Condition: On -> Off
 				if (iter->second)
 				{
-					pColliderA->OnCollisionExit(pObjectB, _fTimeDelta);
-					pColliderB->OnCollisionExit(pObjectA, _fTimeDelta);
+					pColliderA->OnCollisionExit(_eGroupB, pObjectB, _fTimeDelta);
+					pColliderB->OnCollisionExit(_eGroupA, pObjectA, _fTimeDelta);
 					iter->second = false;
 				}
 			}
@@ -137,10 +146,10 @@ void CCollision_Manager::Delete_Collider(shared_ptr<CGameObject> _pObject, _floa
 			{
 				for (auto& iterB : m_vecColliderMap[nCol])
 				{
-					shared_ptr<CGameObject>	pObjectA	= iterA.first;
-					shared_ptr<CGameObject>	pObjectB	= iterB.first;
-					shared_ptr<CCollider>	pColliderA	= iterA.second;
-					shared_ptr<CCollider>	pColliderB	= iterB.second;
+					shared_ptr<CGameObject>	pObjectA	= iterA.first.lock();
+					shared_ptr<CGameObject>	pObjectB	= iterB.first.lock();
+					shared_ptr<CCollider>	pColliderA	= iterA.second.lock();
+					shared_ptr<CCollider>	pColliderB	= iterB.second.lock();
 
 					COLLIDER_ID tID{};
 					tID.COL_A = pColliderA->Get_ID();
@@ -153,8 +162,8 @@ void CCollision_Manager::Delete_Collider(shared_ptr<CGameObject> _pObject, _floa
 						{
 							if (iter->second)
 							{
-								pColliderA->OnCollisionExit(pObjectB, _fTimeDelta);
-								pColliderB->OnCollisionExit(pObjectA, _fTimeDelta);
+								pColliderA->OnCollisionExit(static_cast<COLLISION_GROUP>(nCol), pObjectB, _fTimeDelta);
+								pColliderB->OnCollisionExit(static_cast<COLLISION_GROUP>(nRow), pObjectA, _fTimeDelta);
 								iter->second = false;
 							}
 						}

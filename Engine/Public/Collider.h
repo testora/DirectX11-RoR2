@@ -25,9 +25,9 @@ public:
 
 public:
 
-	void												OnCollisionEnter(shared_ptr<class CGameObject>, _float fTimeDelta);
-	void												OnCollision(shared_ptr<class CGameObject>, _float fTimeDelta);
-	void												OnCollisionExit(shared_ptr<class CGameObject>, _float fTimeDelta);
+	void												OnCollisionEnter(COLLISION_GROUP, shared_ptr<class CGameObject>, _float fTimeDelta);
+	void												OnCollision(COLLISION_GROUP, shared_ptr<class CGameObject>, _float fTimeDelta);
+	void												OnCollisionExit(COLLISION_GROUP, shared_ptr<class CGameObject>, _float fTimeDelta);
 
 private:
 	weak_ptr<class CGameObject>							m_pOwner;
@@ -37,7 +37,6 @@ private:
 
 	shared_ptr<class IBounding>							m_pBounding;
 
-	_bool												m_bCollision	= false;
 	_uint												m_iColCnt		= 0;
 
 	static _uint										s_iColID;

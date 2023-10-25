@@ -16,6 +16,7 @@
 #define PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET				TEXT("Prototype:GameObject:RailGunner:PistolBullet")
 #define PROTOTYPE_GAMEOBJECT_BROTHER								TEXT("Prototype:GameObject:Brother")
 #define PROTOTYPE_GAMEOBJECT_BROTHER_LUNARSHARD						TEXT("Prototype:GameObject:Brother:LunarShard")
+#define PROTOTYPE_GAMEOBJECT_BROTHER_HEALTHBAR						TEXT("Prototype:GameObject:Brother:HealthBar")
 #define PROTOTYPE_GAMEOBJECT_LUNAREXPLODER							TEXT("Prototype:GameObject:LunarExploder")
 #define PROTOTYPE_GAMEOBJECT_LUNARGOLEM								TEXT("Prototype:GameObject:LunarGolem")
 #define PROTOTYPE_GAMEOBJECT_GOLEM									TEXT("Prototype:GameObject:Golem")

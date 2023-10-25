@@ -34,6 +34,11 @@ HRESULT CScene_Moon::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Effect");
 	}
 
+	if (FAILED(Ready_Collision()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Collision");
+	}
+
 	if (FAILED(Ready_Camera()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Initialize", "Failed to Ready_Camera");
@@ -367,6 +372,16 @@ HRESULT CScene_Moon::Ready_Effect()
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_PARTICLE_MESH");
 	}
+
+	return S_OK;
+}
+
+HRESULT CScene_Moon::Ready_Collision()
+{
+	CGameInstance::Get_Instance()->Reset_CollisionGroupCheck();
+	CGameInstance::Get_Instance()->Check_CollisionGroup(COLLISION_GROUP::PLAYER, COLLISION_GROUP::MONSTER_BULLET);
+	CGameInstance::Get_Instance()->Check_CollisionGroup(COLLISION_GROUP::MONSTER, COLLISION_GROUP::PLAYER_BULLET);
+	CGameInstance::Get_Instance()->Check_CollisionGroup(COLLISION_GROUP::PLAYER, COLLISION_GROUP::MONSTER);
 
 	return S_OK;
 }

@@ -30,6 +30,8 @@ HRESULT CObjectLayer::Add(shared_ptr<class CGameObject> _pObject)
 		MSG_RETURN(E_FAIL, "CObjectLayer::Add", "Null Exception");
 	}
 
+	_pObject->CheckOut();
+
 	m_usetObject.emplace(_pObject);
 
 	return S_OK;

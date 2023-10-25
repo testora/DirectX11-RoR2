@@ -15,7 +15,16 @@ enum class SCENE
 
 enum class COLLISION_GROUP
 {
-	COL,
+	PLAYER,
+	MONSTER,
+	PLAYER_BULLET,
+	MONSTER_BULLET,
+	MAX
+};
+
+enum class SOUND_CHANNEL
+{
+	STATIC,
 	MAX
 };
 

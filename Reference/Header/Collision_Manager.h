@@ -16,9 +16,9 @@ private:
 		_ullong		KEY;
 	};
 
-	typedef map<shared_ptr<class CGameObject>, shared_ptr<class CCollider>, std::owner_less<>>	COLLIDER_MAP;
-	typedef vector<_bool>																		COLLISION_CHECK;
-	typedef unordered_map<_ullong, _bool>														COLLISION_INFO;
+	typedef map<weak_ptr<class CGameObject>, weak_ptr<class CCollider>, std::owner_less<>>	COLLIDER_MAP;
+	typedef vector<_bool>																	COLLISION_CHECK;
+	typedef unordered_map<_ullong, _bool>													COLLISION_INFO;
 
 private:
 	explicit CCollision_Manager() DEFAULT;

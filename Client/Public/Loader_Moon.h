@@ -8,6 +8,7 @@
 #include "RailGunner_PistolBullet.h"
 #include "Brother.h"
 #include "Brother_LunarShard.h"
+#include "BrotherUI_HealthBar.h"
 #include "LunarExploder.h"
 #include "LunarGolem.h"
 #include "Effect_Demo_Point.h"
@@ -171,6 +172,8 @@ HRESULT CLoader::Load_Moon()
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER
 //	PROTOTYPE_GAMEOBJECT_RAILGUNNER_PISTOLBULLET
 //	PROTOTYPE_GAMEOBJECT_BROTHER
+//	PROTOTYPE_GAMEOBJECT_BROTHER_LUNARSHARD
+//	PROTOTYPE_GAMEOBJECT_BROTHER_HEALTHBAR
 
 //	PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE
 //	PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD
@@ -216,6 +219,12 @@ HRESULT CLoader::Load_Moon()
 		CBrother_LunarShard::Create(m_pDevice, m_pContext))))
 	{
 		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER_LUNARSHARD");
+	}
+
+	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_BROTHER_HEALTHBAR,
+		CBrotherUI_HealthBar::Create(m_pDevice, m_pContext))))
+	{
+		MSG_RETURN(E_FAIL, "CLoader::Load_Moon", "Failed to Add_Object_Prototype: PROTOTYPE_GAMEOBJECT_BROTHER_HEALTHBAR");
 	}
 
 	if (FAILED(CGameInstance::Get_Instance()->Add_Object_Prototype(SCENE::MOON, PROTOTYPE_GAMEOBJECT_LUNAREXPLODER,

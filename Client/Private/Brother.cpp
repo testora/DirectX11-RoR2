@@ -2,8 +2,10 @@
 #include "Brother.h"
 #include "GameInstance.h"
 #include "Brother_BehaviorTree.h"
+#include "BrotherUI_HealthBar.h"
 #include "VFX_TrailLine.h"
 #include "VFX_TrailQuad.h"
+#include "RailGunner.h"
 
 CBrother::CBrother(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)
 	: CMonster(_pDevice, _pContext)
@@ -22,6 +24,7 @@ HRESULT CBrother::Initialize_Prototype()
 
 	COLLIDERDESC tColliderDesc{};
 	tColliderDesc.eType		= COLLIDER::AABB;
+	tColliderDesc.eGroup	= COLLISION_GROUP::MONSTER;
 	tColliderDesc.vPosition = _float3(0.f, .5f, 0.f);
 	tColliderDesc.vSize		= _float3(1.f, 1.f, 1.f);
 
@@ -31,6 +34,9 @@ HRESULT CBrother::Initialize_Prototype()
 	m_umapComponentArg[COMPONENT::MODEL]	= make_pair(PROTOTYPE_COMPONENT_MODEL_BROTHER, g_aNull);
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
+
+	m_tEntityDesc.fMaxHP					= 100.f;
+	m_tEntityDesc.fHP						= m_tEntityDesc.fMaxHP;
 
 	m_tEntityDesc.fForwardSpeed				= BROTHER_SPEED_FORWARD;
 	m_tEntityDesc.fBackwardSpeed			= BROTHER_SPEED_BACKWARD;
@@ -60,6 +66,9 @@ HRESULT CBrother::Initialize(any)
 	tLightDesc.fRange		= 10.f;
 	tLightDesc.vDirection	= _float3(-0.64f, -0.76f, -0.12f);
 	CGameInstance::Get_Instance()->Add_Light(SCENE::MOON, tLightDesc, m_pTransform, shared_from_gameobject());
+
+	m_pHealthBar = dynamic_pointer_cast<CBrotherUI_HealthBar>(CGameInstance::Get_Instance()->Clone_GameObject(
+		CGameInstance::Get_Instance()->Current_Scene(), PROTOTYPE_GAMEOBJECT_BROTHER_HEALTHBAR, &m_tEntityDesc));
 		
 	return S_OK;
 }
@@ -68,10 +77,15 @@ void CBrother::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	if (CGameInstance::Get_Instance()->Key_Down('Y'))
+	if (m_pHealthBar)
 	{
-		m_pTransform->Rotate_Lerp(TRANSFORM::UP, XMConvertToRadians(90.f), 10.f);
+		m_pHealthBar->Tick(_fTimeDelta);
 	}
+
+//	if (CGameInstance::Get_Instance()->Key_Down('Y'))
+//	{
+//		m_pTransform->Rotate_Lerp(TRANSFORM::UP, XMConvertToRadians(90.f), 10.f);
+//	}
 
 #if ACTIVATE_IMGUI
 	static _float fAnimationSpeed = 1.f;
@@ -134,6 +148,11 @@ void CBrother::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
+	if (m_pHealthBar)
+	{
+		m_pHealthBar->Late_Tick(_fTimeDelta);
+	}
+
 	if (m_bRender)
 	{
 		Add_RenderObject(RENDER_GROUP::SHADOW);
@@ -194,6 +213,24 @@ HRESULT CBrother::Fetch(any _vPosition3)
 _bool CBrother::Return()
 {
 	return false;
+}
+
+void CBrother::OnCollisionEnter(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	if (COLLISION_GROUP::PLAYER_BULLET == _eGroup)
+	{
+		int a = 1;
+	}
+}
+
+void CBrother::OnCollision(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	int a = 1;
+}
+
+void CBrother::OnCollisionExit(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+{
+	int a = 1;
 }
 
 HRESULT CBrother::Ready_Components()

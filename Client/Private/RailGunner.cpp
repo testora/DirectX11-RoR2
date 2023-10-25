@@ -25,6 +25,7 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 	COLLIDERDESC tColliderDesc{};
 	tColliderDesc.eType		= COLLIDER::AABB;
+	tColliderDesc.eGroup	= COLLISION_GROUP::PLAYER;
 	tColliderDesc.vPosition = _float3(0.f, .5f, 0.f);
 	tColliderDesc.vSize		= _float3(1.f, 1.f, 1.f);
 
@@ -172,6 +173,21 @@ HRESULT CRailGunner::Render_ShadowDepth()
 	}
 
 	return S_OK;
+}
+
+void CRailGunner::OnCollisionEnter(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pObject, _float _fTimeDelta)
+{
+	int a = 1;
+}
+
+void CRailGunner::OnCollision(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pObject, _float _fTimeDelta)
+{
+	int a = 1;
+}
+
+void CRailGunner::OnCollisionExit(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pObject, _float _fTimeDelta)
+{
+	int a = 1;
 }
 
 HRESULT CRailGunner::Ready_Components()

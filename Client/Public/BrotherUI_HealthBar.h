@@ -2,6 +2,13 @@
 #include "Client_Define.h"
 #include "GameObject.h"
 
+BEGIN(Engine)
+class CTransform;
+class CShader;
+class CTexture;
+class CVIBuffer_Rect;
+END
+
 BEGIN(Client)
 
 class CBrotherUI_HealthBar final : public CGameObject
@@ -12,18 +19,28 @@ private:
 
 public:
 	virtual HRESULT								Initialize_Prototype() override;
-	virtual HRESULT								Initialize(any = g_aNull) override;
+	virtual HRESULT								Initialize(any pBrotherEntityDesc) override;
 	virtual void								Tick(_float fTimeDelta) override;
 	virtual void								Late_Tick(_float fTimeDelta) override;
 	virtual HRESULT								Render() override;
 
 private:
 	virtual HRESULT								Ready_Components() override;
-	virtual HRESULT								Ready_Behaviors() override;
+
+private:
+	shared_ptr<CTransform>						m_pBackground;
+	shared_ptr<CTransform>						m_pHealth;
+
+	shared_ptr<CTexture>						m_pTexHealth;
+
+	shared_ptr<CShader>							m_pShader;
+	shared_ptr<CVIBuffer_Rect>					m_pVIBuffer;
+
+	const ENTITYDESC*							m_pEntityDesc	= nullptr;
 
 public:
 	static shared_ptr<CBrotherUI_HealthBar>		Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);
-	virtual shared_ptr<CGameObject>				Clone(any = g_aNull) override;
+	virtual shared_ptr<CGameObject>				Clone(any pBrotherEntityDesc) override;
 };
 
 END

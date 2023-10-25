@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "GraphicDevice.h"
 #include "RenderTarget_Manager.h"
+#include "Sound_Manager.h"
 #include "Timer_Manager.h"
 #include "Mouse_Manager.h"
 #include "Key_Manager.h"
@@ -17,6 +18,7 @@
 CGameInstance::CGameInstance()
 	: m_pGraphic_Device			(CGraphicDevice::Get_Instance())
 	, m_pRenderTarget_Manager	(CRenderTarget_Manager::Get_Instance())
+	, m_pSound_Manager			(CSound_Manager::Get_Instance())
 	, m_pTimer_Manager			(CTimer_Manager::Get_Instance())
 	, m_pMouse_Manager			(CMouse_Manager::Get_Instance())
 	, m_pKey_Manager			(CKey_Manager::Get_Instance())
@@ -33,7 +35,7 @@ CGameInstance::CGameInstance()
 
 #pragma region Engine
 
-HRESULT CGameInstance::Initialize_Engine(_Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext, _In_ const GRAPHICDESC _tGraphicDesc, _In_ const SCENE _eStaticScene, _In_ const SCENE _eMaxScene, _In_ const COLLISION_GROUP _eMaxGroup)
+HRESULT CGameInstance::Initialize_Engine(_Out_ ComPtr<ID3D11Device>& _pDevice, _Out_ ComPtr<ID3D11DeviceContext>& _pContext, _In_ const GRAPHICDESC _tGraphicDesc, _In_ const SCENE _eStaticScene, _In_ const SCENE _eMaxScene, _In_ const COLLISION_GROUP _eMaxGroup, _In_ const SOUND_CHANNEL _eMaxChannel)
 {
 	if (FAILED(m_pGraphic_Device->Ready_GraphicDevice(_tGraphicDesc, _pDevice, _pContext)))
 	{
@@ -53,6 +55,11 @@ HRESULT CGameInstance::Initialize_Engine(_Out_ ComPtr<ID3D11Device>& _pDevice, _
 	if (FAILED(m_pPicker->Initialize(_tGraphicDesc.hWnd)))
 	{
 		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pPicker->Initialize");
+	}
+
+	if (FAILED(m_pSound_Manager->Initialize(_eMaxChannel)))
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Initialize_Engine", "Failed: m_pSound_Manager->Initialize");
 	}
 
 	if (FAILED(m_pMouse_Manager->Initialize(_tGraphicDesc.hWnd, POINT{static_cast<LONG>(_tGraphicDesc.iWinCX), static_cast<LONG>(_tGraphicDesc.iWinCY)})))
@@ -126,11 +133,11 @@ void CGameInstance::Tick_Engine(_float _fTimeDelta)
 	m_pScene_Manager->Tick(_fTimeDelta);
 	m_pObject_Manager->Tick(_fTimeDelta);
 
+	m_pCollision_Manager->Tick(_fTimeDelta);
+
 	m_pScene_Manager->Late_Tick(_fTimeDelta);
 	m_pObject_Manager->Late_Tick(_fTimeDelta);
 	
-	m_pCollision_Manager->Tick(_fTimeDelta);
-
 	m_pPicker->Tick();
 	
 	m_pLight_Manager->Tick();
@@ -212,6 +219,99 @@ ComPtr<ID3D11ShaderResourceView> CGameInstance::Get_RenderTarget_ShaderResourceV
 	return m_pRenderTarget_Manager->Get_ShaderResourceView(_wstrTargetTag);
 }
 #endif
+
+#pragma endregion
+#pragma region Sound Manager
+
+HRESULT CGameInstance::Load_Sound(const wstring& _wstrDirectory)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(E_FAIL, "CGameInstance::Load_Sound", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Load(_wstrDirectory);
+}
+
+void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float _fVolume, _bool _bLoop)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Play_Sound", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _fVolume, _bLoop);
+}
+
+void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _bool _bLoop)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Play_Sound", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _vSrc, _vDst, _bLoop);
+}
+
+void CGameInstance::Stop_Sound(SOUND_CHANNEL _eChannel)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Stop_Sound", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Stop_Sound(_eChannel);
+}
+
+void CGameInstance::Set_Sound_Distance(pair<_float, _float> _pairDistance)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Set_Sound_Distance", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Set_Sound_Distance(_pairDistance);
+}
+
+void CGameInstance::Set_Sound_Volume(pair<_float, _float> _pairVolume)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Set_Sound_Distance", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Set_Sound_Volume(_pairVolume);
+}
+
+void CGameInstance::Set_SoundChannel_Volume(SOUND_CHANNEL _eChannel, _float _fVolume)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Set_SoundChannel_Volume", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Set_Channel_Volume(_eChannel, _fVolume);
+}
+
+void CGameInstance::Set_SoundChannel_Volume_Distance(SOUND_CHANNEL _eChannel, _float _fDistance)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Set_SoundChannel_Volume_Distance", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Set_Channel_Volume_Distance(_eChannel, _fDistance);
+}
+
+void CGameInstance::Reset_Sound()
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Reset_Sound", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Reset();
+}
 
 #pragma endregion
 #pragma region Timer Manager

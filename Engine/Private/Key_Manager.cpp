@@ -18,7 +18,7 @@ void CKey_Manager::Tick()
 {
 	if (m_bCheckFocus ? m_hWnd == GetFocus() : true)
 	{
-		for (_uint i = 0; i < VK_MAX; ++i)
+		for (_uint i = 1; i < VK_MAX; ++i)
 		{
 			if (GetAsyncKeyState(i) & 0x8000)
 			{
@@ -52,7 +52,7 @@ void CKey_Manager::Tick()
 
 _bool CKey_Manager::Key_None()
 {
-	for (_uint i = 0; i < VK_MAX; ++i)
+	for (_uint i = 1; i < VK_MAX; ++i)
 	{
 		if (i == VK_LBUTTON
 		||	i == VK_RBUTTON
@@ -76,7 +76,7 @@ _bool CKey_Manager::Key_None()
 
 _bool CKey_Manager::Key_Down()
 {
-	for (_uint i = 0; i < VK_MAX; ++i)
+	for (_uint i = 1; i < VK_MAX; ++i)
 	{
 		if (i == VK_LBUTTON
 		||	i == VK_RBUTTON
@@ -101,7 +101,7 @@ _bool CKey_Manager::Key_Down()
 
 _bool CKey_Manager::Key_Hold()
 {
-	for (_uint i = 0; i < VK_MAX; ++i)
+	for (_uint i = 1; i < VK_MAX; ++i)
 	{
 		if (i == VK_LBUTTON
 		||	i == VK_RBUTTON
@@ -126,7 +126,7 @@ _bool CKey_Manager::Key_Hold()
 
 _bool CKey_Manager::Key_Up()
 {
-	for (_uint i = 0; i < VK_MAX; ++i)
+	for (_uint i = 1; i < VK_MAX; ++i)
 	{
 		if (i == VK_LBUTTON
 		||	i == VK_RBUTTON

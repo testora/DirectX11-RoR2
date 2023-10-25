@@ -66,3 +66,4 @@ enum class PICKER		{ LOCAL, WORLD, MAX };
 
 enum class SCENE;
 enum class COLLISION_GROUP;
+enum class SOUND_CHANNEL;

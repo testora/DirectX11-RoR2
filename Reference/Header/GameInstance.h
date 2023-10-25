@@ -16,7 +16,7 @@ private:
 public:
 #pragma region Engine
 
-	HRESULT										Initialize_Engine(_Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&, _In_ const GRAPHICDESC, _In_ const SCENE eStaticScene, _In_ const SCENE eMaxScene, _In_ const COLLISION_GROUP eMaxGroup);
+	HRESULT										Initialize_Engine(_Out_ ComPtr<ID3D11Device>&, _Out_ ComPtr<ID3D11DeviceContext>&, _In_ const GRAPHICDESC, _In_ const SCENE eStaticScene, _In_ const SCENE eMaxScene, _In_ const COLLISION_GROUP eMaxGroup, _In_ const SOUND_CHANNEL eMaxChannel);
 	void										Tick_Engine(_float fTimeDelta);
 #ifdef _DEBUG
 	void										Debug_Engine();
@@ -40,6 +40,21 @@ public:
 #ifdef _DEBUG
 	ComPtr<ID3D11ShaderResourceView>			Get_RenderTarget_ShaderResourceView(const wstring& wstrTargetTag);
 #endif
+
+#pragma endregion
+#pragma region Sound Manager
+
+	HRESULT										Load_Sound(const wstring& wstrDirectory);
+
+	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL eChannel, _float fVolume = 1.f, _bool bLoop = false);
+	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL eChannel, _float3 vSrc, _float3 vDst, _bool bLoop = false);
+	void										Stop_Sound(SOUND_CHANNEL);
+
+	void										Set_Sound_Distance(pair<_float, _float> pairDistance);
+	void										Set_Sound_Volume(pair<_float, _float> pairVolume);
+	void										Set_SoundChannel_Volume(SOUND_CHANNEL, _float);
+	void										Set_SoundChannel_Volume_Distance(SOUND_CHANNEL, _float);
+	void										Reset_Sound();
 
 #pragma endregion
 #pragma region Timer Manager
@@ -142,6 +157,7 @@ public:
 private:
 	shared_ptr<class CGraphicDevice>			m_pGraphic_Device;
 	shared_ptr<class CRenderTarget_Manager>		m_pRenderTarget_Manager;
+	shared_ptr<class CSound_Manager>			m_pSound_Manager;
 	shared_ptr<class CTimer_Manager>			m_pTimer_Manager;
 	shared_ptr<class CMouse_Manager>			m_pMouse_Manager;
 	shared_ptr<class CKey_Manager>				m_pKey_Manager;

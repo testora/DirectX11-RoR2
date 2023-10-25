@@ -244,6 +244,9 @@
     <Filter Include="04. Utility\06. Component\08. VIBuffer\04. Cell">
       <UniqueIdentifier>{73dd86b2-b9f5-4590-acb9-e34e70a7d575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. System\03. Sound">
+      <UniqueIdentifier>{ae7c6426-c4d0-42e0-9bf0-43ac688cb61a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\GameInstance.cpp">
@@ -452,6 +455,9 @@
     </ClCompile>
     <ClCompile Include="Private\Collision_Manager.cpp">
       <Filter>04. Utility\06. Component\05. Collider\00. Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\Sound_Manager.cpp">
+      <Filter>03. System\03. Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -691,6 +697,9 @@
     </ClInclude>
     <ClInclude Include="Public\Collision_Manager.h">
       <Filter>04. Utility\06. Component\05. Collider\00. Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Sound_Manager.h">
+      <Filter>03. System\03. Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

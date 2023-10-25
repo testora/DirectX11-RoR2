@@ -21,6 +21,7 @@ public:
 
 private:
 	HRESULT							Ready_SpawnPoint(const wstring& wstrPath);
+	HRESULT							Ready_Collision();
 	HRESULT							Ready_Light();
 	HRESULT							Ready_Camera();
 	HRESULT							Ready_Background();

@@ -114,6 +114,15 @@ using std::initializer_list;
 #include "DirectXTK/SpriteFont.h"
 #include "FX11/d3dx11effect.h"
 
+#include "FMOD/fmod.h"
+#include "FMOD/fmod.hpp"
+#include "FMOD/fmod_codec.h"
+#include "FMOD/fmod_common.h"
+#include "FMOD/fmod_dsp.h"
+#include "FMOD/fmod_dsp_effects.h"
+#include "FMOD/fmod_errors.h"
+#include "FMOD/fmod_output.h"
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <d3dtypes.h>

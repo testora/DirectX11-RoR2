@@ -81,6 +81,15 @@ void CGameObject::Late_Tick(_float _fTimeDelta)
 
 HRESULT CGameObject::Fetch(any)
 {
+	m_bIsCheckOut = true;
+
+	return S_OK;
+}
+
+HRESULT CGameObject::Release()
+{
+	m_bIsCheckOut = false;
+
 	return S_OK;
 }
 
@@ -94,13 +103,13 @@ HRESULT CGameObject::Render_ShadowDepth()
 	return S_OK;
 }
 
-void CGameObject::OnCollisionEnter(shared_ptr<CGameObject>, _float fTimeDelta)
+void CGameObject::OnCollisionEnter(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta)
 {
 }
-void CGameObject::OnCollision(shared_ptr<CGameObject>, _float fTimeDelta)
+void CGameObject::OnCollision(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta)
 {
 }
-void CGameObject::OnCollisionExit(shared_ptr<CGameObject>, _float fTimeDelta)
+void CGameObject::OnCollisionExit(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta)
 {
 }
 

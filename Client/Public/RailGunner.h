@@ -29,6 +29,10 @@ public:
 
 	virtual HRESULT												Render_ShadowDepth() override;
 
+	virtual void												OnCollisionEnter(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta) override;
+	virtual void												OnCollision(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta) override;
+	virtual void												OnCollisionExit(COLLISION_GROUP, shared_ptr<CGameObject>, _float fTimeDelta) override;
+
 private:
 	virtual HRESULT												Ready_Components() override;
 	virtual HRESULT												Ready_Behaviors() override;

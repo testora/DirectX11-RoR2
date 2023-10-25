@@ -64,7 +64,7 @@ HRESULT CMainApp::Initialize()
 	tGraphicDesc.iWinCX		= g_iWinCX;
 	tGraphicDesc.iWinCY		= g_iWinCY;
 
-	if (FAILED(m_pGameInstance->Initialize_Engine(m_pDevice, m_pContext, tGraphicDesc, SCENE::STATIC, SCENE::MAX, COLLISION_GROUP::MAX)))
+	if (FAILED(m_pGameInstance->Initialize_Engine(m_pDevice, m_pContext, tGraphicDesc, SCENE::STATIC, SCENE::MAX, COLLISION_GROUP::MAX, SOUND_CHANNEL::MAX)))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: m_pGameInstance->Initialize_Engine");
 	}
@@ -84,6 +84,11 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Component_Prototype()))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Ready_Component_Prototype");
+	}
+
+	if (FAILED(m_pGameInstance->Load_Sound(TEXT("Bin/Resources/Sound/"))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed to Load_Sound");
 	}
 
 	if (FAILED(m_pGameInstance->Open_Scene(SCENE::LOADING, CScene_Load::Create(m_pDevice, m_pContext, SCENE::MENU))))

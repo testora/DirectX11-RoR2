@@ -90,6 +90,11 @@ HRESULT CBrother_LunarShard::Render()
 
 HRESULT CBrother_LunarShard::Fetch(any _aPoolPosition)
 {
+	if (FAILED(__super::Fetch()))
+	{
+		MSG_RETURN(E_FAIL, "CBrother_LunarShard::Fetch", "Failed to __super::Fetch");
+	}
+
 	pair<shared_ptr<CObjectPool>, _float3> pairPoolPosition = any_cast<pair<shared_ptr<CObjectPool>, _float3>>(_aPoolPosition);
 	m_pPool = pairPoolPosition.first;
 

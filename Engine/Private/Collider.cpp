@@ -101,7 +101,7 @@ HRESULT CCollider::Render()
 
 	m_pBatch->Begin();
 
-	m_pBounding->Render(m_pBatch, !m_bCollision ? _color(1.f, 1.f, 1.f, 1.f) : _color(1.f, 0.f, 0.f, 1.f));
+	m_pBounding->Render(m_pBatch, !m_iColCnt ? _color(1.f, 1.f, 1.f, 1.f) : _color(1.f, 0.f, 0.f, 1.f));
 
 	m_pBatch->End();
 
@@ -114,31 +114,31 @@ _bool CCollider::Intersect(shared_ptr<CCollider> _pTargetCollider)
 	switch (_pTargetCollider->m_tColliderDesc.eType)
 	{
 		case COLLIDER::SPHERE:
-			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingSphere*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+			return m_pBounding->Intersect(*reinterpret_cast<BoundingSphere*>(_pTargetCollider->m_pBounding->Get_Bounding()));
 		case COLLIDER::AABB:
-			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+			return m_pBounding->Intersect(*reinterpret_cast<BoundingBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
 		case COLLIDER::OBB:
-			return m_bCollision = m_pBounding->Intersect(*reinterpret_cast<BoundingOrientedBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
+			return m_pBounding->Intersect(*reinterpret_cast<BoundingOrientedBox*>(_pTargetCollider->m_pBounding->Get_Bounding()));
 	}
 
 	MSG_RETURN(false, "CCollider::Intersect", "Invalid Type");
 }
 
-void CCollider::OnCollisionEnter(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+void CCollider::OnCollisionEnter(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
 {
 	++m_iColCnt;
-	m_pOwner.lock()->OnCollisionEnter(_pOther, _fTimeDelta);
+	m_pOwner.lock()->OnCollisionEnter(_eGroup, _pOther, _fTimeDelta);
 }
 
-void CCollider::OnCollision(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+void CCollider::OnCollision(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
 {
-	m_pOwner.lock()->OnCollision(_pOther, _fTimeDelta);
+	m_pOwner.lock()->OnCollision(_eGroup, _pOther, _fTimeDelta);
 }
 
-void CCollider::OnCollisionExit(shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
+void CCollider::OnCollisionExit(COLLISION_GROUP _eGroup, shared_ptr<CGameObject> _pOther, _float _fTimeDelta)
 {
 	--m_iColCnt;
-	m_pOwner.lock()->OnCollisionExit(_pOther, _fTimeDelta);
+	m_pOwner.lock()->OnCollisionExit(_eGroup, _pOther, _fTimeDelta);
 }
 
 shared_ptr<CCollider> CCollider::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

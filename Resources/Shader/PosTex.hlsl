@@ -390,7 +390,7 @@ PS_OUT PS_RAILGUNNER_PISTOLBULLET(PS_IN_WORLD In)
 	
 	if (bInside)
 	{
-	    Out.vColor	*=	bCycle ? vMaskColor1 : vMaskColor2;
+		Out.vColor	*=	bCycle ? vMaskColor1 : vMaskColor2;
 	}
 	else
 	{
@@ -400,29 +400,37 @@ PS_OUT PS_RAILGUNNER_PISTOLBULLET(PS_IN_WORLD In)
 	return Out;
 }
 
-
-PS_OUT PS_BROTHER_HEALTHBAR(PS_IN_ORTHOGRAPHIC In)
+PS_OUT PS_BROTHER_HEALTHBAR_BACKGROUND(PS_IN_ORTHOGRAPHIC In)
 {
 	PS_OUT	Out;
 	
 	float2	vSize				= float2(g_mWorld._11, g_mWorld._22);
 	float2	vLocalTexture		= (In.vLocalPos + 0.5f) * vSize;
 	
-	float2	vTextureSize		= float2(256.f, 256.f);
+	float2	vBackgroundSize		= float2(960.f, 24.f);
+	float	fAlphaInterval		= 100.f;
 	
 	float2	vTexCoord = In.vTexCoord * 2.f - 1.f;
 	
-	if (In.vLocalPos.x < 0.f)
+	Out.vColor = float4(0.5f, 0.5f, 0.5f, 0.5f);
+	
+	if (vLocalTexture.x < fAlphaInterval)
 	{
-		vTexCoord.x *= -1.f;
-	}
-	if (In.vLocalPos.y < 0.f)
+        Out.vColor.a = lerp(0.f, Out.vColor.a, vLocalTexture.x / fAlphaInterval);
+    }
+    else if (vLocalTexture.y > vBackgroundSize.x - fAlphaInterval)
 	{
-		vTexCoord.y *= -1.f;
+        Out.vColor.a = lerp(0.f, Out.vColor.a, (vBackgroundSize.x - vLocalTexture.y) / fAlphaInterval);
 	}
 	
-	Out.vColor		= g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
-	Out.vColor.a	= AvgGrayScale(Out.vColor.rgb);
+	return Out;
+}
+
+PS_OUT PS_BROTHER_HEALTHBAR_HEALTH(PS_IN_ORTHOGRAPHIC In)
+{
+	PS_OUT	Out;
+	
+    Out.vColor = float4(0.6f, 0.f, 0.f, 1.f);
 	
 	return Out;
 }
@@ -464,7 +472,7 @@ technique11 DefaultTechnique
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_BOUNDS();
 
 		SetRasterizerState(RS_Default);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
 
@@ -477,7 +485,7 @@ technique11 DefaultTechnique
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_BRACKET();
 
 		SetRasterizerState(RS_Default);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
 
@@ -490,7 +498,7 @@ technique11 DefaultTechnique
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_NIBS();
 
 		SetRasterizerState(RS_Default);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
 
@@ -503,7 +511,7 @@ technique11 DefaultTechnique
 		PixelShader		= compile ps_5_0 PS_RAILGUNNER_CROSSHAIR_SCOPE();
 
 		SetRasterizerState(RS_Default);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
 	}
 
@@ -520,16 +528,29 @@ technique11 DefaultTechnique
 		SetDepthStencilState(DSS_Default, 0);
 	}
 
-    pass Brother_HealthBar
-    {
+	pass Brother_HealthBar_Background
+	{
 		VertexShader	= compile vs_5_0 VS_ORTHOGRAPHIC();
 		GeometryShader	= NULL;
 		HullShader		= NULL;
 		DomainShader	= NULL;
-		PixelShader		= compile ps_5_0 PS_BROTHER_HEALTHBAR();
+		PixelShader		= compile ps_5_0 PS_BROTHER_HEALTHBAR_BACKGROUND();
 
 		SetRasterizerState(RS_Default);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 		SetDepthStencilState(DSS_Default, 0);
-    }
+	}
+
+	pass Brother_HealthBar_Health
+	{
+		VertexShader	= compile vs_5_0 VS_ORTHOGRAPHIC();
+		GeometryShader	= NULL;
+		HullShader		= NULL;
+		DomainShader	= NULL;
+		PixelShader		= compile ps_5_0 PS_BROTHER_HEALTHBAR_HEALTH();
+
+		SetRasterizerState(RS_Default);
+		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+		SetDepthStencilState(DSS_Default, 0);
+	}
 }

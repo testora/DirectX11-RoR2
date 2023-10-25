@@ -25,6 +25,7 @@ HRESULT CRailGunner_PistolBullet::Initialize_Prototype()
 
 	COLLIDERDESC tColliderDesc{};
 	tColliderDesc.eType		= COLLIDER::SPHERE;
+	tColliderDesc.eGroup	= COLLISION_GROUP::PLAYER_BULLET;
 	tColliderDesc.vPosition = _float3(0.f, 0.f, 0.f);
 	tColliderDesc.fRadius	= 0.5f;
 
@@ -86,6 +87,11 @@ HRESULT CRailGunner_PistolBullet::Render()
 
 HRESULT CRailGunner_PistolBullet::Fetch(any _aPoolPosition)
 {
+	if (FAILED(__super::Fetch()))
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Fetch", "Failed to __super::Fetch");
+	}
+
 	pair<shared_ptr<CObjectPool>, _float3> pairPoolPosition = any_cast<pair<shared_ptr<CObjectPool>, _float3>>(_aPoolPosition);
 	m_pPool		= pairPoolPosition.first;
 	
