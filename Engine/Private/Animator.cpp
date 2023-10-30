@@ -39,7 +39,10 @@ HRESULT CAnimator::Initialize(shared_ptr<class CGameObject> _pOwner)
 
 void CAnimator::Tick(_float _fTimeDelta)
 {
-	m_pTargetModel->Tick_Animation(_fTimeDelta);
+	if (!m_bLock)
+	{
+		m_pTargetModel->Tick_Animation(_fTimeDelta);
+	}
 }
 
 void CAnimator::Late_Tick(_float _fTimeDelta)

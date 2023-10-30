@@ -2,6 +2,10 @@
 #include "Client_Define.h"
 #include "Effect.h"
 
+BEGIN(Engine)
+class CObjectPool;
+END
+
 BEGIN(Client)
 
 class CVFX_TrailLine final : public CEffect
@@ -33,11 +37,13 @@ public:
 	void								Set_Color(_color vColor)					{ m_vColor = vColor; }
 	void								Set_Thickness(_float fThickness)			{ m_fThickness = fThickness; }
 
+	void								Push_Pool(shared_ptr<CObjectPool>);
+
 private:
 	shared_ptr<CTransform>				m_pTargetTransform;
 
 	const _float4x4*					m_pTargetPoint	= nullptr;
-	_float4x4							m_mTargetPivot;
+	_float4x4							m_mTargetPivot	= g_mUnit;
 
 	_float								m_fTimeAcc		= 0.f;
 	_uint								m_iIndex		= 0;
@@ -48,6 +54,9 @@ private:
 	_float								m_fInterval		= 0.01f;
 	_color								m_vColor		= _color(1.f, 1.f, 1.f, 1.f);
 	_float								m_fThickness	= 0.05f;
+
+	_bool								m_bPush			= false;
+	_uint								m_iPushCount	= 0;
 
 public:
 	static shared_ptr<CVFX_TrailLine>	Create(ComPtr<ID3D11Device>, ComPtr<ID3D11DeviceContext>);

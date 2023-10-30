@@ -14,7 +14,7 @@ namespace Function
 	inline _bool						NearZero3(FXMVECTOR fVector3);
 	inline _bool						NearZero4(FXMVECTOR fVector4);
 
-	inline _uint						Random(initializer_list<_float>);
+	inline _uint						Probability(initializer_list<_float>);
 	inline _float						RandomFloat(_float fMin = -FLT_MAX, _float fMax = FLT_MAX);
 
 	inline _float						QuaternionToAngle(FXMVECTOR vQuaternion, _bool bToRadians = true);
@@ -86,6 +86,17 @@ namespace Function
 		{
 			throw std::invalid_argument("Function::InRange: Invalid Range Option");
 		}
+	}
+
+	template<typename T>
+	T Random(initializer_list<T> _il)
+	{
+		assert(0 < _il.size());
+
+		auto it = _il.begin();
+		std::advance(it, rand() % _il.size());
+
+		return *it;
 	}
 
 	template<typename T>

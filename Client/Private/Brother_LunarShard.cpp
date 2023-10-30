@@ -104,6 +104,9 @@ HRESULT CBrother_LunarShard::Fetch(any _aPoolPosition)
 
 	m_fTimeAcc = 0.f;
 
+	CGameInstance::Get_Instance()->Play_Sound(Function::Random({ TEXT("brother_shard1"),TEXT("brother_shard2") }), SOUND_CHANNEL::MONSTER_WEAPON,
+		m_pTransform->Get_State(TRANSFORM::POSITION), m_pTargetTransform->Get_State(TRANSFORM::POSITION));
+
 	return S_OK;
 }
 

@@ -579,6 +579,11 @@ const _uint CModel::Get_AnimationIndex(shared_ptr<CAnimation> _pAnimation) const
 void CModel::Set_DefaultAnimation(_uint _iAnimationIndex)
 {
 	std::fill(m_vecBoneAnimationIndices.begin(), m_vecBoneAnimationIndices.end(), _iAnimationIndex);
+
+	for (auto& pAnimation : m_vecAnimations)
+	{
+		pAnimation->Reset();
+	}
 }
 
 void CModel::Set_Animation(_uint _iAnimationIndex, _float _fPlaySpeed, _bool _bReverse, _float _fInterpolationDuration, _bool _bLoop)

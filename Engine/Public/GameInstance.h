@@ -37,23 +37,24 @@ public:
 #pragma endregion
 #pragma region RenderTarget Manager
 
-#ifdef _DEBUG
 	ComPtr<ID3D11ShaderResourceView>			Get_RenderTarget_ShaderResourceView(const wstring& wstrTargetTag);
-#endif
 
 #pragma endregion
 #pragma region Sound Manager
 
 	HRESULT										Load_Sound(const wstring& wstrDirectory);
 
-	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL eChannel, _float fVolume = 1.f, _bool bLoop = false);
-	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL eChannel, _float3 vSrc, _float3 vDst, _bool bLoop = false);
+	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL, _float fVolume = 1.f, _float fSpeed = 1.f, _bool bLoop = false, _bool bSingleAudio = false, _float fStart = 0.f, _float fEnd = 1.f);
+	void										Play_Sound(const wstring& wstrSoundKey, SOUND_CHANNEL, _float3 vSrc, _float3 vDst, _float fSpeed = 1.f, _bool bLoop = false, _bool bSingleAudio = false, _float fStart = 0.f, _float fEnd = 1.f);
+	void										Play_Sounds(const wstring& wstrSoundKeyA, const wstring& wstrSoundKeyB, SOUND_CHANNEL, _float fVolume = 1.f, _float fSpeed = 1.f, _float fStart = 0.f, _float fEnd = 1.f);
+	void										Play_Sounds(const wstring& wstrSoundKeyA, const wstring& wstrSoundKeyB, SOUND_CHANNEL, _float3 vSrc, _float3 vDst, _float fSpeed = 1.f, _float fStart = 0.f, _float fEnd = 1.f);
 	void										Stop_Sound(SOUND_CHANNEL);
 
 	void										Set_Sound_Distance(pair<_float, _float> pairDistance);
 	void										Set_Sound_Volume(pair<_float, _float> pairVolume);
 	void										Set_SoundChannel_Volume(SOUND_CHANNEL, _float);
 	void										Set_SoundChannel_Volume_Distance(SOUND_CHANNEL, _float);
+	void										Set_Channel_Position(SOUND_CHANNEL, _float);
 	void										Reset_Sound();
 
 #pragma endregion

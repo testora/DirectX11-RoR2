@@ -29,6 +29,7 @@ private:
 	HRESULT							Ready_Player();
 	HRESULT							Ready_Monster();
 	HRESULT							Ready_Interactable();
+	HRESULT							Ready_Effect();
 
 private:
 	vector<_float3>					m_vecSpawnPoint;

@@ -34,6 +34,8 @@ public:
 	template<typename T>
 	void							Blend_Animation(T eAnimation, _float fRatio);
 
+	void							Lock(_bool bLock = true)	{ m_bLock = bLock; }
+
 private:
 	_bool							Is_Playing(_uint iAnimationIndex) const;
 	_bool							Is_Finished(_uint iAnimationIndex) const;
@@ -46,6 +48,8 @@ private:
 
 private:
 	shared_ptr<class CModel>		m_pTargetModel;
+
+	_bool							m_bLock	= false;
 
 public:
 	static shared_ptr<CAnimator>	Create(shared_ptr<class CGameObject> pOwner);

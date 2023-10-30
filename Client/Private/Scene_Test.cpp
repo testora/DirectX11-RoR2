@@ -36,6 +36,11 @@ HRESULT CScene_Test::Initialize()
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_SpawnPoint");
 	}
 
+	if (FAILED(Ready_Effect()))
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Effect");
+	}
+
 	if (FAILED(Ready_Light()))
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Initialize", "Failed to Ready_Light");
@@ -88,10 +93,7 @@ void CScene_Test::Tick(_float _fTimeDelta)
 
 	if (CGameInstance::Get_Instance()->Key_Down('G'))
 	{
-		for (auto vPoint : m_vecSpawnPoint)
-		{
-		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(vPoint);
-		}
+		CGameInstance::Get_Instance()->Find_Pool(SCENE::TEST, POOL_MONSTER_GOLEM)->Pop(m_vecSpawnPoint[rand() % m_vecSpawnPoint.size()]);
 	}
 
 	if (CGameInstance::Get_Instance()->Key_Down('4'))
@@ -368,7 +370,7 @@ HRESULT CScene_Test::Ready_Player()
 
 HRESULT CScene_Test::Ready_Monster()
 {
-	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_MONSTER_GOLEM, PROTOTYPE_GAMEOBJECT_GOLEM, 100);
+	shared_ptr<CObjectPool> pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_MONSTER_GOLEM, PROTOTYPE_GAMEOBJECT_GOLEM, 10);
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_GOLEM");
@@ -398,6 +400,23 @@ HRESULT CScene_Test::Ready_Interactable()
 			return true;
 		}
 	);
+
+	return S_OK;
+}
+
+HRESULT CScene_Test::Ready_Effect()
+{
+	shared_ptr<CObjectPool> pPoolTrailLineVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_EFFECT_TRAIL_LINE, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE, 5);
+	if (nullptr == pPoolTrailLineVfx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_LINE");
+	}
+
+	shared_ptr<CObjectPool> pPoolTrailQuadVfx = CGameInstance::Get_Instance()->Add_Pool(SCENE::TEST, POOL_EFFECT_TRAIL_QUAD, PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD, 5);
+	if (nullptr == pPoolTrailQuadVfx)
+	{
+		MSG_RETURN(E_FAIL, "CScene_Test::Ready_Effect", "Failed to Add_Layer: PROTOTYPE_GAMEOBJECT_EFFECT_TRAIL_QUAD");
+	}
 
 	return S_OK;
 }

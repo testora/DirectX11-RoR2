@@ -11,9 +11,8 @@ CObjectPool::CObjectPool(const SCENE _eScene, const _uint _iPoolSize)
 
 HRESULT CObjectPool::Initialize(const wstring& _wstrPrototype, any _arg)
 {
-	m_pPrototype = CObject_Manager::Get_Instance()->Clone_GameObject(m_eScene, _wstrPrototype);
-
-	m_funcPush = [&]()->shared_ptr<CGameObject> { return m_pPrototype->Clone(_arg); };
+	m_pPrototype	= CObject_Manager::Get_Instance()->Clone_GameObject(m_eScene, _wstrPrototype);
+	m_arg			= _arg;
 
 	for (size_t i = 0; i < m_iPoolSize; ++i)
 	{
@@ -111,7 +110,7 @@ void CObjectPool::Iterate_Objects(function<_bool(shared_ptr<CGameObject>)> _func
 
 void CObjectPool::Add()
 {
-	shared_ptr<CGameObject> pObject = m_funcPush();
+	shared_ptr<CGameObject> pObject = m_pPrototype->Clone(m_arg);
 
 	pObject->CheckOut(false);
 

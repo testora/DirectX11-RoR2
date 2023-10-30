@@ -47,8 +47,23 @@ void CLight_Manager::Tick()
 			}
 			else
 			{
-				(*iter)->Tick();
-				++iter;
+				if (LIGHTTYPE::SHADOW == (*iter)->Get_LightDesc().eLightType)
+				{
+					if (!m_mapShadowObjects.find(*iter)->second->Is_CheckOut())
+					{
+						++iter;
+					}
+					else
+					{
+						(*iter)->Tick();
+						++iter;
+					}
+				}
+				else
+				{
+					(*iter)->Tick();
+					++iter;
+				}
 			}
 		}
 	}
@@ -79,6 +94,7 @@ HRESULT CLight_Manager::Add_Light(const SCENE _eScene, LIGHTDESC _tLightDesc, sh
 	if (LIGHTTYPE::SHADOW == _tLightDesc.eLightType)
 	{
 		m_mapShadows.emplace(_pObject, pLight);
+		m_mapShadowObjects.emplace(pLight, _pObject);
 	}
 
     return S_OK;
@@ -150,9 +166,12 @@ HRESULT CLight_Manager::Bind_ShadowViewMatrices(shared_ptr<CShader> _pShader)
 
 	for (auto& pair : m_mapShadows)
 	{
-		m_vecShadowViewMatrices.emplace_back(pair.second->Get_ShadowViewMatrix());
-		m_vecShadowProjectionMatrices.emplace_back(pair.second->Get_ShadowProjectionMatrix());
-		m_vecShadowShaderResourceViews.emplace_back(m_mapShadowShaderResourceViews[pair.first]);
+		if (m_mapShadowObjects[pair.second]->Is_CheckOut())
+		{
+			m_vecShadowViewMatrices.emplace_back(pair.second->Get_ShadowViewMatrix());
+			m_vecShadowProjectionMatrices.emplace_back(pair.second->Get_ShadowProjectionMatrix());
+			m_vecShadowShaderResourceViews.emplace_back(m_mapShadowShaderResourceViews[pair.first]);
+		}
 	}
 
 	if (FAILED(_pShader->Bind_Int(SHADER_SHADOWCOUNT, static_cast<_int>(m_mapShadows.size()))))

@@ -59,7 +59,7 @@ void CLunarGolemNodeLeaf_Walk::Activate()
 
 	do
 	{
-		m_eDirection = static_cast<DIRECTION>(Function::Random({ 0.f, m_fBackward, m_fLeft, m_fRight }));
+		m_eDirection = static_cast<DIRECTION>(Function::Probability({ 0.f, m_fBackward, m_fLeft, m_fRight }));
 
 		switch (m_eDirection)
 		{

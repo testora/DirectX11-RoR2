@@ -49,6 +49,10 @@ void CBrotherNodeLeaf_DashSide::Activate()
 	m_pTransform->Rotate(TRANSFORM::UP, (bDirection ? 1.f : -1.f) * fTheta - XM_PIDIV2);
 	m_pPhysics->Force(TRANSFORM::RIGHT, (bDirection ? 1.f : -1.f) * BROTHER_DASH_FORCE);
 	m_pAnimator->Play_Animation(bDirection ? ANIMATION::BROTHER::DASH_RIGHT : ANIMATION::BROTHER::DASH_LEFT, 2.f, false, g_fDefaultInterpolationDuration, false);
+
+	CGameInstance::Get_Instance()->Play_Sound(
+		Function::Random({ TEXT("brother_dash1"),TEXT("brother_dash2"),TEXT("brother_dash3"),TEXT("brother_dash4"),TEXT("brother_dash5"),TEXT("brother_dash6") }),
+		SOUND_CHANNEL::MONSTER, m_pTransform->Get_State(TRANSFORM::POSITION), m_pTargetTransform->Get_State(TRANSFORM::POSITION));;
 }
 
 STATUS CBrotherNodeLeaf_DashSide::Invoke(_float _fTimeDelta)

@@ -86,7 +86,15 @@ HRESULT CMainApp::Initialize()
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed: Ready_Component_Prototype");
 	}
 
-	if (FAILED(m_pGameInstance->Load_Sound(TEXT("Bin/Resources/Sound/"))))
+	if (FAILED(m_pGameInstance->Load_Sound(TEXT("Bin/Resources/Sound/BGM/"))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed to Load_Sound");
+	}
+	if (FAILED(m_pGameInstance->Load_Sound(TEXT("Bin/Resources/Sound/RailGunner/"))))
+	{
+		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed to Load_Sound");
+	}
+	if (FAILED(m_pGameInstance->Load_Sound(TEXT("Bin/Resources/Sound/Brother/"))))
 	{
 		MSG_RETURN(E_FAIL, "CMainApp::Initialize", "Failed to Load_Sound");
 	}

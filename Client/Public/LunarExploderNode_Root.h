@@ -21,6 +21,8 @@ public:
 private:
 	shared_ptr<CNode>							m_pBehaviorSelector;
 
+	_bool										m_bDeath	= false;
+
 public:
 	static shared_ptr<CLunarExploderNode_Root>	Create(shared_ptr<class CBlackBoard>);
 };

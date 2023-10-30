@@ -98,7 +98,7 @@ namespace Function
 		return XMVector4NearEqual(XMVectorZero(), _fVector4, XMVectorSet(g_fTolorance, g_fTolorance, g_fTolorance, g_fTolorance));
 	}
 
-	_uint Random(initializer_list<_float> _il)
+	_uint Probability(initializer_list<_float> _il)
 	{
 		_uint	iSize	= 0;
 		_float	fAcc	= 0.f;

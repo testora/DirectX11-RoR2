@@ -154,6 +154,13 @@ HRESULT CRailGunner_Crosshair::Render()
 		{
 			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to CTexture::Bind_ShaderResourceViews");
 		}
+
+		if (FAILED(m_pShader->Bind_ShaderResourceView(SHADER_TEXTARGET_SCOPE,
+			CGameInstance::Get_Instance()->Get_RenderTarget_ShaderResourceView(RENDERTARGET_POSTPROCESS))))
+		{
+			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to CShader::Bind_ShaderResourceView");
+		}
+
 		if (FAILED(Render_Element(ELEMENT::SCOPE_SCOPE, 5)))
 		{
 			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to Render_Element: SCOPE_SCOPE");
@@ -162,6 +169,7 @@ HRESULT CRailGunner_Crosshair::Render()
 		{
 			MSG_RETURN(E_FAIL, "CRailGunner_Crosshair::Render", "Failed to Render_Element: SCOPE_CROSS");
 		}
+
 	}
 #pragma endregion
 #pragma region Bound Glowy
@@ -431,9 +439,14 @@ HRESULT CRailGunner_Crosshair::Render_WeakPoints()
 
 void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 {
-	if (m_eState == _eState)
+	if (_eState == m_eState)
 	{
 		return;
+	}
+
+	if (RG_CROSSHAIR::SCOPE == m_eState)
+	{
+		CGameInstance::Get_Instance()->Play_Sound(TEXT("rg_scope_out"), SOUND_CHANNEL::PLAYER_GUN);
 	}
 
 	m_bitElement.reset();
@@ -450,6 +463,7 @@ void CRailGunner_Crosshair::Visualize(const RG_CROSSHAIR _eState)
 		break;
 
 	case RG_CROSSHAIR::SCOPE:
+		CGameInstance::Get_Instance()->Play_Sound(TEXT("rg_scope_in"), SOUND_CHANNEL::PLAYER_GUN);
 		Visualize_Scope();
 		Visualize_WeakPoint();
 		break;
@@ -504,10 +518,22 @@ void CRailGunner_Crosshair::Bounce_Bracket()
 void CRailGunner_Crosshair::Hit_Reload()
 {
 	m_bHitTag = true;
+	
+	if (Function::InRange(m_fCurrentTagPosition, m_pairTagPositionRange.first - m_pairTagPositionRange.second * 0.5f, m_pairTagPositionRange.first + m_pairTagPositionRange.second * 0.5f))
+	{
+		CGameInstance::Get_Instance()->Play_Sound(TEXT("rg_reload_success"), SOUND_CHANNEL::PLAYER_GUN, 0.5f);
+	}
+	else
+	{
+		CGameInstance::Get_Instance()->Play_Sound(TEXT("rg_reload_fail"), SOUND_CHANNEL::PLAYER_GUN, 0.5f);
+	}
+
 }
 
 void CRailGunner_Crosshair::Fire_Sniper()
 {
+	CGameInstance::Get_Instance()->Play_Sound(Function::Random({ TEXT("rg_sniper1"),TEXT("rg_sniper2"),TEXT("rg_sniper3"),TEXT("rg_sniper4") }), SOUND_CHANNEL::PLAYER_GUN);
+
 	for (auto& pMonster : m_lstWeakPointMonsters)
 	{
 		pMonster->Hit_WeakPoint();
@@ -672,11 +698,11 @@ void CRailGunner_Crosshair::Search_WeakPoints()
 						}
 					}
 
-					return false;
+					return true;
 				}
 			);
 
-			return false;
+			return true;
 		}
 	);
 }
@@ -791,6 +817,11 @@ void CRailGunner_Crosshair::Visualize_Reload()
 
 			if (fAcc >= 1.f || fHitAcc >= 1.f)
 			{
+				if (!m_bHitTag)
+				{
+					CGameInstance::Get_Instance()->Play_Sound(TEXT("rg_reload_fail"), SOUND_CHANNEL::PLAYER_GUN, 0.5f);
+				}
+
 				Visualize(RG_CROSSHAIR::MAIN);
 
 				return false;

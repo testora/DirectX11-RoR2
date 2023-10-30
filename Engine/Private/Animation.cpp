@@ -2,6 +2,22 @@
 #include "Animation.h"
 #include "Channel.h"
 
+CAnimation::CAnimation(const CAnimation& _rhs)
+	: m_bReverse			(_rhs.m_bReverse)
+	, m_fDuration			(_rhs.m_fDuration)
+	, m_fTrackPosition		(_rhs.m_fTrackPosition)
+	, m_fTicksPerSecond		(_rhs.m_fTicksPerSecond)
+	, m_iNumChannels		(_rhs.m_iNumChannels)
+	, m_vecChannelKeyFrames	(_rhs.m_vecChannelKeyFrames)
+{
+	strcpy_s(m_szName, MAX_PATH, _rhs.m_szName);
+
+	for (auto pOriginal : _rhs.m_vecChannels)
+	{
+		m_vecChannels.push_back(pOriginal->Clone());
+	}
+}
+
 #if ACTIVATE_TOOL
 HRESULT CAnimation::Initialize_FromAssimp(const aiAnimation* _pAIAnimation, shared_ptr<class CModel> _pModel)
 {

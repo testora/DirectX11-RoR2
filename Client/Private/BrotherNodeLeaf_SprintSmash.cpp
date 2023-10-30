@@ -42,11 +42,19 @@ void CBrotherNodeLeaf_SprintSmash::Activate()
 	m_pTransform->LookAt(m_pTargetTransform);
 	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SPRINT_SMASH, 1.5f, false, g_fDefaultInterpolationDuration, false);
 	m_pPhysics->Force(TRANSFORM::LOOK, BROTHER_SPRINT_SMASH_FORCE);
+
+	CGameInstance::Get_Instance()->Play_Sound(TEXT("brother_sprintsmash"), SOUND_CHANNEL::MONSTER,
+		m_pTransform->Get_State(TRANSFORM::POSITION), m_pTargetTransform->Get_State(TRANSFORM::POSITION), 1.f, false, false, 0.f, 0.05f);
 }
 
 STATUS CBrotherNodeLeaf_SprintSmash::Invoke(_float _fTimeDelta)
 {
 	Begin_Invoke(_fTimeDelta);
+
+	if (Function::Distance(m_pTargetTransform, m_pTransform) < 3.f)
+	{
+		Function::Find_Player()->Get_Behavior<CPhysics>(BEHAVIOR::PHYSICS)->Force(m_pTransform->Get_State(TRANSFORM::LOOK) + _float3(0.f, 0.67f, 0.f), 50.f);
+	}
 
 	if (m_pAnimator->Is_Playing(ANIMATION::BROTHER::SPRINT_SMASH))
 	{

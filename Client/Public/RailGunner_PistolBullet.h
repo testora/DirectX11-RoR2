@@ -58,7 +58,10 @@ private:
 	shared_ptr<CTexture>							m_pTexMask;
 	shared_ptr<CPhysics>							m_pPhysics;
 
+	shared_ptr<class CVFX_TrailLine>				m_pVFX_Trail;
+
 	shared_ptr<CObjectPool>							m_pPool;
+	shared_ptr<CObjectPool>							m_pVFX_Trail_Pool;
 
 public:
 	static shared_ptr<CRailGunner_PistolBullet>		Create(ComPtr<ID3D11Device> pDevice, ComPtr<ID3D11DeviceContext> pContext);

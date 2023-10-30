@@ -3,6 +3,7 @@
 #include "Node.h"
 
 BEGIN(Engine)
+class CTransform;
 class CAnimator;
 END
 
@@ -23,7 +24,10 @@ public:
 	virtual void									Terminate() override;
 
 private:
+	shared_ptr<CTransform>							m_pTransform;
 	shared_ptr<CAnimator>							m_pAnimator;
+
+	const ENTITYDESC*								m_pEntityDesc	= nullptr;
 
 public:
 	static shared_ptr<CLunarExploderNodeLeaf_Death>	Create(shared_ptr<class CBlackBoard>);

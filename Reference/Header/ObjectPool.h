@@ -32,8 +32,7 @@ private:
 	_uint											m_iPoolSize;
 
 	shared_ptr<class CGameObject>					m_pPrototype;
-
-	std::function<shared_ptr<class CGameObject>()>	m_funcPush;
+	any												m_arg;
 
 	const SCENE										m_eScene;
 

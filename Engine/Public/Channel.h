@@ -39,6 +39,8 @@ public:
 #if ACTIVATE_TOOL
 	static shared_ptr<CChannel>	Create(const aiNodeAnim* pAIChannel, shared_ptr<class CModel>);
 #endif
+	shared_ptr<CChannel>		Clone();
+
 	static shared_ptr<CChannel>	Read(std::ifstream&);
 
 #if ACTIVATE_TOOL

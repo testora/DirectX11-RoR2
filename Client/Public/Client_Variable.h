@@ -111,3 +111,5 @@
 #define GRID_TERRAIN												TEXT("Grid:Terrain") 
 
 #pragma endregion
+
+#define SHADER_TEXTARGET_SCOPE										"g_texScopeTarget"

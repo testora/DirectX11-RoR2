@@ -14,10 +14,12 @@ public:
 
 public:
 	void																	Register_OnTickListener(shared_ptr<void>, function<_bool(_float fTimeDelta)> funcListener);
+	void																	Register_OnTickListener(function<_bool(_float fTimeDelta)> funcListener);
 	void																	Erase_OnTickListener(shared_ptr<void>);
 
 private:
 	multimap<weak_ptr<void>, function<_bool(_float)>, std::owner_less<>>	m_mmapTickListener;
+	vector<function<_bool(_float)>>											m_vecTickListener;
 
 	friend CSingleton<CEvent_Handler>;
 };

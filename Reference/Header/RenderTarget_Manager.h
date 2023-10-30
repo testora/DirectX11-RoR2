@@ -24,7 +24,7 @@ public:
 	HRESULT															Erase_RenderTarget(const wstring& wstrMultiTargetTag, const wstring& wstrTargetTag);
 
 	HRESULT															Begin_MultiRenderTaget(const wstring& wstrMultiTargetTag, _uint iCopyResource = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT);
-	HRESULT															End_MultiRenderTarget();
+	HRESULT															End_MultiRenderTarget(const wstring& wstrTargetTag = wstring());
 
 	HRESULT															Bind_RenderTarget(const wstring& wstrTargetTag, shared_ptr<class CShader>, const _char* szConstantName);
 

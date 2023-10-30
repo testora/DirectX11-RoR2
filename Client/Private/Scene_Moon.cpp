@@ -99,6 +99,28 @@ void CScene_Moon::Tick(_float _fTimeDelta)
 		CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_BROTHER_LUNARSHARD)->Pop(
 			make_pair(CGameInstance::Get_Instance()->Find_Pool(SCENE::MOON, POOL_MONSTER_BROTHER_LUNARSHARD), ARENA_CENTER));
 	}
+
+	if (CGameInstance::Get_Instance()->Key_Down('L'))
+	{
+		_float fAcc(0.f);
+		CGameInstance::Get_Instance()->Play_Sound(TEXT("MoonBrotherTheme"), SOUND_CHANNEL::STATIC, 0.f, 1.f, true, false, 0.088f, 0.993f);
+		CGameInstance::Get_Instance()->Set_Channel_Position(SOUND_CHANNEL::STATIC, 0.98f);
+		CGameInstance::Get_Instance()->Register_OnTickListener(shared_from_this(),
+			[=](_float _fTimeDelta) mutable->_bool
+			{
+				fAcc += _fTimeDelta;
+
+				if (fAcc < 1.f)
+				{
+					CGameInstance::Get_Instance()->Set_SoundChannel_Volume(SOUND_CHANNEL::STATIC, std::clamp(fAcc, 0.f, 1.f));
+
+					return true;
+				}
+
+				return false;
+			}
+		);
+	}
 }
 
 void CScene_Moon::Late_Tick(_float _fTimeDelta)
@@ -337,13 +359,13 @@ HRESULT CScene_Moon::Ready_Monster()
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_BROTHER");
 	}
 
-	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNAREXPLODER, PROTOTYPE_GAMEOBJECT_LUNAREXPLODER, 1);
+	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNAREXPLODER, PROTOTYPE_GAMEOBJECT_LUNAREXPLODER, 10);
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_LUNAREXPLODER");
 	}
 
-	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNARGOLEM, PROTOTYPE_GAMEOBJECT_LUNARGOLEM, 1);
+	pPool = CGameInstance::Get_Instance()->Add_Pool(SCENE::MOON, POOL_MONSTER_LUNARGOLEM, PROTOTYPE_GAMEOBJECT_LUNARGOLEM, 10);
 	if (nullptr == pPool)
 	{
 		MSG_RETURN(E_FAIL, "CScene_Moon::Ready_Monster", "Failed to Add_Layer: POOL_MONSTER_LUNARGOLEM");

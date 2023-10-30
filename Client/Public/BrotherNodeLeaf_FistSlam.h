@@ -23,7 +23,10 @@ public:
 	virtual void									Terminate() override;
 
 private:
+	shared_ptr<CTransform>							m_pTransform;
 	shared_ptr<CAnimator>							m_pAnimator;
+
+	shared_ptr<CTransform>							m_pTargetTransform;
 
 public:
 	static shared_ptr<CBrotherNodeLeaf_FistSlam>	Create(shared_ptr<class CBlackBoard>);

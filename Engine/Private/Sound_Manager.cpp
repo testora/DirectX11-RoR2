@@ -1,6 +1,8 @@
 #include "EnginePCH.h"
 #include "Sound_Manager.h"
+#include "Event_Handler.h"
 
+#include <thread>
 #include <io.h>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi")
@@ -92,32 +94,85 @@ HRESULT CSound_Manager::Load(const wstring& _wstrDirectory)
 	return S_OK;
 }
 
-void CSound_Manager::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float _fVolume, _bool _bLoop)
+void CSound_Manager::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float _fVolume, _float _fSpeed, _bool _bLoop, _bool _bSingleAudio, _float _fStart, _float _fEnd)
 {
+	if (_bSingleAudio)
+	{
+		_bool bIsPlaying;
+		m_vecChannels[IDX(_eChannel)]->isPlaying(&bIsPlaying);
+		if (bIsPlaying)
+		{
+			return;
+		}
+	}
+
 	auto iter = m_mapSounds.find(_wstrSoundKey);
 	if (iter == m_mapSounds.end())
 	{
 		return;
 	}
 
-	m_pSystem->playSound(iter->second, nullptr, false, &m_vecChannels[IDX(_eChannel)]);
+	m_pSystem->playSound(iter->second, nullptr, true, &m_vecChannels[IDX(_eChannel)]);
 
-	if (_bLoop)
-	{
-		m_vecChannels[IDX(_eChannel)]->setMode(FMOD_LOOP_NORMAL);
-	}
-	else
-	{
-		m_vecChannels[IDX(_eChannel)]->setMode(FMOD_LOOP_OFF);
-	}
-
+	_uint	_iLength = 0;
+	_float	_fOriginalFrequency = 0.f;
+	iter->second->getLength(&_iLength, FMOD_TIMEUNIT_MS);
+	m_vecChannels[IDX(_eChannel)]->setPosition(static_cast<_uint>(_iLength * _fStart), FMOD_TIMEUNIT_MS);
+	m_vecChannels[IDX(_eChannel)]->setLoopPoints(static_cast<_uint>(_iLength * _fStart), FMOD_TIMEUNIT_MS, static_cast<_uint>(_iLength * _fEnd), FMOD_TIMEUNIT_MS);
+	m_vecChannels[IDX(_eChannel)]->setMode(_bLoop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF);
 	m_vecChannels[IDX(_eChannel)]->setVolume(_fVolume);
+	m_vecChannels[IDX(_eChannel)]->getFrequency(&_fOriginalFrequency);
+	m_vecChannels[IDX(_eChannel)]->setFrequency(_fOriginalFrequency * _fSpeed);
+
+	m_vecChannels[IDX(_eChannel)]->setPaused(false);
 
 	m_pSystem->update();
+
+	if (!_bLoop)
+	{
+		_uint iStartPosition		= static_cast<_uint>(_iLength * _fStart);
+		_uint iEndPosition			= static_cast<_uint>(_iLength * _fEnd);
+		_uint iFadeStartPosition	= static_cast<_uint>(_iLength * _fEnd * 0.9f);
+
+		std::thread([this, _eChannel, iEndPosition, iFadeStartPosition, _fVolume]
+			{
+				_uint iCurPosition = 0;
+				while (true)
+				{
+					m_vecChannels[IDX(_eChannel)]->getPosition(&iCurPosition, FMOD_TIMEUNIT_MS);
+
+					if (iCurPosition >= iFadeStartPosition)
+					{
+						_float fFadeFactor	= static_cast<_float>(iEndPosition - iCurPosition) / static_cast<_float>(iEndPosition - iFadeStartPosition);
+						_float fFadeVolume	= _fVolume * fFadeFactor;
+						Set_Channel_Volume(_eChannel, fFadeVolume);
+					}
+
+					if (iCurPosition >= iEndPosition)
+					{
+						m_vecChannels[IDX(_eChannel)]->setPaused(true);
+						break;
+					}
+
+					std::this_thread::sleep_for(std::chrono::milliseconds(10));
+				}
+			}
+		).detach();
+	}
 }
 
-void CSound_Manager::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _bool _bLoop)
+void CSound_Manager::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _float _fSpeed, _bool _bLoop, _bool _bSingleAudio, _float _fStart, _float _fEnd)
 {
+	if (_bSingleAudio)
+	{
+		_bool bIsPlaying;
+		m_vecChannels[IDX(_eChannel)]->isPlaying(&bIsPlaying);
+		if (bIsPlaying)
+		{
+			return;
+		}
+	}
+
 	_float3	vDistance		= _vSrc - _vDst;
 	_float	fDistance		= vDistance.length();
 	_float	fClampDistance	= std::clamp(fDistance, m_pairDistance.first, m_pairDistance.second);
@@ -127,7 +182,39 @@ void CSound_Manager::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eCh
 		fClampDistance = m_pairVolume.second - std::clamp(fClampDistance / m_pairDistance.second, m_pairVolume.first, m_pairVolume.second);
 	}
 
-	Play_Sound(_wstrSoundKey, _eChannel, fClampDistance, _bLoop);
+	Play_Sound(_wstrSoundKey, _eChannel, fClampDistance, _fSpeed, _bLoop, _bSingleAudio, _fSpeed, _fEnd);
+}
+
+void CSound_Manager::Play_Sounds(const wstring& _wstrSoundKeyA, const wstring& _wstrSoundKeyB, SOUND_CHANNEL _eChannel, _float _fVolume, _float _fSpeed, _float _fStart, _float _fEnd)
+{
+	static _bool bPlayA = true;
+
+	_bool bIsPlaying;
+	m_vecChannels[IDX(_eChannel)]->isPlaying(&bIsPlaying);
+	if (bIsPlaying)
+	{
+		return;
+	}
+
+	Play_Sound(bPlayA ? _wstrSoundKeyA : _wstrSoundKeyB, _eChannel, _fVolume, _fSpeed, false, false, _fStart, _fEnd);
+
+	bPlayA = !bPlayA;
+}
+
+void CSound_Manager::Play_Sounds(const wstring& _wstrSoundKeyA, const wstring& _wstrSoundKeyB, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _float _fSpeed, _float _fStart, _float _fEnd)
+{
+	static _bool bPlayA = true;
+
+	_bool bIsPlaying;
+	m_vecChannels[IDX(_eChannel)]->isPlaying(&bIsPlaying);
+	if (bIsPlaying)
+	{
+		return;
+	}
+
+	Play_Sound(bPlayA ? _wstrSoundKeyA : _wstrSoundKeyB, _eChannel, _vSrc, _vDst, _fSpeed, false, false, _fSpeed, _fEnd);
+
+	bPlayA = !bPlayA;
 }
 
 void CSound_Manager::Stop_Sound(SOUND_CHANNEL _eChannel)
@@ -166,6 +253,34 @@ void CSound_Manager::Set_Channel_Volume_Distance(SOUND_CHANNEL _eChannel, _float
 	fVolume = std::clamp(m_pairVolume.second - fVolume + m_pairVolume.first, m_pairVolume.first, m_pairVolume.second);
 
 	Set_Channel_Volume(_eChannel, fVolume);
+}
+
+void CSound_Manager::Set_Channel_Position(SOUND_CHANNEL _eChannel, _float _fPosition)
+{
+	_bool bIsPlaying;
+	m_vecChannels[IDX(_eChannel)]->isPlaying(&bIsPlaying);
+	if (!bIsPlaying)
+	{
+		return;
+	}
+
+	FMOD::Sound* pSound	= nullptr;
+	m_vecChannels[IDX(_eChannel)]->getCurrentSound(&pSound);
+	if (nullptr == pSound)
+	{
+		return;
+	}
+
+	_uint _iLength = 0;
+	pSound->getLength(&_iLength, FMOD_TIMEUNIT_MS);
+	if (_fPosition < 0 || _fPosition > _iLength)
+	{
+		return;
+	}
+
+	m_vecChannels[IDX(_eChannel)]->setPosition(static_cast<_uint>(_iLength * _fPosition), FMOD_TIMEUNIT_MS);
+
+	m_pSystem->update();
 }
 
 void CSound_Manager::Reset()

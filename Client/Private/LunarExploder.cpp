@@ -24,6 +24,9 @@ HRESULT CLunarExploder::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
+	m_tEntityDesc.fMaxHP					= 10.f;
+	m_tEntityDesc.fHP						= m_tEntityDesc.fMaxHP;
+
 	m_tEntityDesc.fForwardSpeed				= 60.f;
 	m_tEntityDesc.fBackwardSpeed			= 60.f;
 	m_tEntityDesc.fLeftSpeed				= 60.f;
@@ -133,10 +136,12 @@ HRESULT CLunarExploder::Ready_Behaviors()
 
 void CLunarExploder::Hit()
 {
+	m_tEntityDesc.fHP -= 1.f;
 }
 
 void CLunarExploder::Hit_WeakPoint()
 {
+	m_tEntityDesc.fHP -= 5.f;
 }
 
 shared_ptr<CLunarExploder> CLunarExploder::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

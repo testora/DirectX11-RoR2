@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Monster.h"
 #include "Camera_Main.h"
+#include "VFX_TrailLine.h"
 
 #define MASK_COLOR1		_color(0.99f, 0.95f, 0.70f, 1.00f)
 #define MASK_COLOR2		_color(1.00f, 0.40f, 0.30f, 1.00f)
@@ -50,6 +51,12 @@ HRESULT CRailGunner_PistolBullet::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Initialize", "__super::Initialize Failed");
 	}
 
+	m_pVFX_Trail_Pool = CGameInstance::Get_Instance()->Find_Pool(CGameInstance::Get_Instance()->Current_Scene(), POOL_EFFECT_TRAIL_LINE);
+	if (nullptr == m_pVFX_Trail_Pool)
+	{
+		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Initialize", "Find_Pool: POOL_EFFECT_TRAIL_LINE");
+	}
+
 	m_pPhysics->Set_Gravity(false);
 
 	return S_OK;
@@ -87,6 +94,10 @@ HRESULT CRailGunner_PistolBullet::Render()
 
 HRESULT CRailGunner_PistolBullet::Fetch(any _aPoolPosition)
 {
+	m_eState			= STATE::UNTARGET;
+	m_pTargetTransform	= nullptr;
+	m_pTarget			= nullptr;
+
 	if (FAILED(__super::Fetch()))
 	{
 		MSG_RETURN(E_FAIL, "CRailGunner_PistolBullet::Fetch", "Failed to __super::Fetch");
@@ -102,6 +113,11 @@ HRESULT CRailGunner_PistolBullet::Fetch(any _aPoolPosition)
 		CPipeLine::Get_Instance()->Get_Transform(TRANSFORM::LOOK));
 	m_pPhysics->Flattern(true, true, true);
 	m_pPhysics->Force(m_vDirection, m_tEntityDesc.fForwardSpeed);
+
+	m_pVFX_Trail = dynamic_pointer_cast<CVFX_TrailLine>(m_pVFX_Trail_Pool->Pop(make_pair(shared_from_gameobject(), (const _char*)(nullptr))));
+	m_pVFX_Trail->Set_Color(_color(0.99f, 0.95f, 0.70f, 1.00f));
+	m_pVFX_Trail->Set_Thickness(0.03f);
+	m_pVFX_Trail->Set_Interval(0.0005f);
 
 	return S_OK;
 }
@@ -146,10 +162,9 @@ HRESULT CRailGunner_PistolBullet::Ready_Behaviors()
 
 void CRailGunner_PistolBullet::Set_Target(shared_ptr<CMonster> _pTargetMonster)
 {
-	m_eState = STATE::TARGET;
-
-	m_pTarget = _pTargetMonster;
-	m_pTargetTransform = _pTargetMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM);
+	m_eState			= STATE::TARGET;
+	m_pTarget			= _pTargetMonster;
+	m_pTargetTransform	= _pTargetMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 }
 
 void CRailGunner_PistolBullet::Manage_State(_float _fTimeDelta)
@@ -171,7 +186,8 @@ void CRailGunner_PistolBullet::Manage_State(_float _fTimeDelta)
 	break;
 	case STATE::TARGET:
 	{
-		m_pPhysics->Force(m_pTargetTransform->Get_State(TRANSFORM::POSITION) - m_pTransform->Get_State(TRANSFORM::POSITION), m_tEntityDesc.fForwardSpeed, _fTimeDelta);
+		m_pPhysics->Flattern(true, true, true);
+		m_pPhysics->Force(m_pTargetTransform->Get_State(TRANSFORM::POSITION) - m_pTransform->Get_State(TRANSFORM::POSITION), m_tEntityDesc.fForwardSpeed * 50.f, _fTimeDelta);
 		if (Function::Distance(m_pTransform, m_pTargetTransform) < 10.f)
 		{
 			m_pTarget->Hit();
@@ -193,17 +209,28 @@ void CRailGunner_PistolBullet::Search_Target()
 					shared_ptr<CMonster> pMonster = dynamic_pointer_cast<CMonster>(pObject);
 					if (nullptr != pMonster)
 					{
-						if (PISTOLBULLET_TARGET_RANGE / 3.f > Function::Distance(m_pTransform, pMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM)))
+						_float fDistance = Function::Distance(m_pTransform, pMonster->Get_Component<CTransform>(COMPONENT::TRANSFORM));
+						if (PISTOLBULLET_TARGET_RANGE > fDistance)
 						{
-							Set_Target(pMonster);
+							if (m_pTargetTransform)
+							{
+								if (Function::Distance(m_pTransform, m_pTargetTransform) > fDistance)
+								{
+									Set_Target(pMonster);
+								}
+							}
+							else
+							{
+								Set_Target(pMonster);
+							}
 						}
 					}
 
-					return false;
+					return true;
 				}
 			);
 
-			return false;
+			return true;
 		}
 	);
 }
@@ -215,6 +242,10 @@ void CRailGunner_PistolBullet::Destroy()
 	m_fTimeAcc			= 0.f;
 	m_eState			= STATE::UNTARGET;
 	m_pTargetTransform	= nullptr;
+	m_pTarget			= nullptr;
+
+	m_pVFX_Trail->Push_Pool(m_pVFX_Trail_Pool);
+	m_pVFX_Trail = nullptr;
 }
 
 shared_ptr<CRailGunner_PistolBullet> CRailGunner_PistolBullet::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

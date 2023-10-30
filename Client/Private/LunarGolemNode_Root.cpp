@@ -20,7 +20,7 @@ HRESULT CLunarGolemNode_Root::Initialize(shared_ptr<CBlackBoard> _pBlackBoard)
 	{
 		MSG_RETURN(E_FAIL, "CLunarGolemNode_Root::Initialize", "Failed to CBrotherNodeSelector_Phase::Create");
 	}
-	
+
 	return S_OK;
 }
 

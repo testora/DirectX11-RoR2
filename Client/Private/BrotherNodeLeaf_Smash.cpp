@@ -42,7 +42,10 @@ void CBrotherNodeLeaf_Smash::Activate()
 	m_bEffectAvailable = true;
 
 	m_pTransform->LookAt(m_pTargetTransform);
-	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 2.f, false, g_fDefaultInterpolationDuration, false);
+	m_pAnimator->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, 1.5f, false, g_fDefaultInterpolationDuration, false);
+
+	CGameInstance::Get_Instance()->Play_Sound(TEXT("brother_smash"), SOUND_CHANNEL::MONSTER_WEAPON,
+		m_pTransform->Get_State(TRANSFORM::POSITION), m_pTargetTransform->Get_State(TRANSFORM::POSITION));
 }
 
 STATUS CBrotherNodeLeaf_Smash::Invoke(_float _fTimeDelta)

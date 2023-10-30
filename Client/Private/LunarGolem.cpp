@@ -24,6 +24,9 @@ HRESULT CLunarGolem::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
+	m_tEntityDesc.fMaxHP					= 10.f;
+	m_tEntityDesc.fHP						= m_tEntityDesc.fMaxHP;
+
 	m_tEntityDesc.fForwardSpeed				= 30.f;
 	m_tEntityDesc.fBackwardSpeed			= 30.f;
 	m_tEntityDesc.fLeftSpeed				= 30.f;
@@ -135,10 +138,12 @@ HRESULT CLunarGolem::Ready_Behaviors()
 
 void CLunarGolem::Hit()
 {
+	m_tEntityDesc.fHP -= 1.f;
 }
 
 void CLunarGolem::Hit_WeakPoint()
 {
+	m_tEntityDesc.fHP -= 5.f;
 }
 
 shared_ptr<CLunarGolem> CLunarGolem::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

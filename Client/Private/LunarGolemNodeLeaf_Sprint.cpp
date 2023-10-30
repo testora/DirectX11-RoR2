@@ -59,7 +59,7 @@ void CLunarGolemNodeLeaf_Sprint::Activate()
 
 	do
 	{
-		m_eDirection = static_cast<DIRECTION>(Function::Random({ m_fForward, m_fBackward, m_fLeft, m_fRight }));
+		m_eDirection = static_cast<DIRECTION>(Function::Probability({ m_fForward, m_fBackward, m_fLeft, m_fRight }));
 
 		m_pTransform->LookAt(m_pTargetTransform);
 

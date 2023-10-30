@@ -26,6 +26,11 @@ void CLunarExploderNode_Root::Activate()
 
 STATUS CLunarExploderNode_Root::Invoke(_float _fTimeDelta)
 {
+	if (m_bDeath)
+	{
+		return m_eStatus = STATUS::RUNNING;
+	}
+
 	Begin_Invoke(_fTimeDelta);
 
 	m_eStatus = m_pBehaviorSelector->Invoke(_fTimeDelta);

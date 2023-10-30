@@ -16,6 +16,8 @@ HRESULT CBrotherNodeSelector_Phase4::Initialize(shared_ptr<CBlackBoard> _pBlackB
 		MSG_RETURN(E_FAIL, "CBrotherNodeSelector_Phase4::Initialize", "Failed to Get: Owner:Phase");
 	}
 
+	Add_Child(CBrotherNodeLeaf_Death::Create(m_pBlackBoard));
+
 	Add_Child(
 		CBrotherNodeDecorator_Delay::Create(m_pBlackBoard, 1.f,
 			CBrotherNodeLeaf_SpellChannel::Create(m_pBlackBoard)));

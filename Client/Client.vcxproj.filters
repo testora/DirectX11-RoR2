@@ -616,6 +616,9 @@
     <Filter Include="05. GameObject\08. Monster\01. Brother\02. UI\00. HealthBar">
       <UniqueIdentifier>{a32460fa-cffb-44c5-a92d-bb95d437d38f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. GameObject\08. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\04. Death">
+      <UniqueIdentifier>{415473bb-3359-4724-9b72-f277fe8dabf2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Default\Client.h">
@@ -1044,6 +1047,9 @@
     <ClInclude Include="Public\BrotherUI_HealthBar.h">
       <Filter>05. GameObject\08. Monster\01. Brother\02. UI\00. HealthBar</Filter>
     </ClInclude>
+    <ClInclude Include="Public\BrotherNodeLeaf_Death.h">
+      <Filter>05. GameObject\08. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\04. Death</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Default\Client.cpp">
@@ -1417,6 +1423,9 @@
     </ClCompile>
     <ClCompile Include="Private\Golem.cpp">
       <Filter>05. GameObject\08. Monster\02. Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="Private\BrotherNodeLeaf_Death.cpp">
+      <Filter>05. GameObject\08. Monster\01. Brother\00. Behavior\00. Custom\00. BehaviorTree\01. Leaf\00. Event\04. Death</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

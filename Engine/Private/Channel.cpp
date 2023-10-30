@@ -149,6 +149,11 @@ shared_ptr<CChannel> CChannel::Create(const aiNodeAnim* _pAIChannel, shared_ptr<
 }
 #endif
 
+shared_ptr<CChannel> CChannel::Clone()
+{
+	return make_private_shared_copy(CChannel, *this);
+}
+
 shared_ptr<CChannel> CChannel::Read(std::ifstream& _inFile)
 {
 	shared_ptr<CChannel> pInstance = make_private_shared(CChannel);

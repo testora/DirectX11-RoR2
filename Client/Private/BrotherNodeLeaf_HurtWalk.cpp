@@ -46,7 +46,7 @@ void CBrotherNodeLeaf_HurtWalk::Activate()
 
 	_float fRelativeAngle = Function::RelativeAngle(m_pTransform, m_pTargetTransform);
 
-	m_eDirection = static_cast<DIRECTION>(Function::Random({ 1.f, 0.f, 1.f, 1.f }));
+	m_eDirection = static_cast<DIRECTION>(Function::Probability({ 1.f, 0.f, 1.f, 1.f }));
 
 	switch (m_eDirection)
 	{

@@ -51,6 +51,8 @@ void CControl_RailGunner::Late_Tick(_float _fTimeDelta)
 		}
 		else
 		{
+			CGameInstance::Get_Instance()->Play_Sound(Function::Random({ TEXT("rg_jump1"),TEXT("rg_jump2") }), SOUND_CHANNEL::PLAYER);
+
 			m_pTargetPhysics->Force(TRANSFORM::UP, m_pEntityDesc->fJumpPower);
 			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::JUMP_START, 1.f, false, g_fDefaultInterpolationDuration, false);
 			m_pTargetAnimator->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
@@ -294,6 +296,23 @@ void CControl_RailGunner::Handle_KeyInput(_float _fTimeDelta)
 		}
 	}
 	break;
+	}
+
+	switch (static_cast<_uint>(m_bitDirection.to_ulong()))
+	{
+	case BITMASK_FORWARD:
+	case BITMASK_BACKWARD:
+	case BITMASK_LEFT:
+	case BITMASK_RIGHT:
+	case BITMASK_FORWARDLEFT:
+	case BITMASK_FORWARDRIGHT:
+	case BITMASK_BACKWARDLEFT:
+	case BITMASK_BACKWARDRIGHT:
+		if (!pRailGunner->Is_State(BIT(RG_STATE::AIR)))
+		{
+			CGameInstance::Get_Instance()->Play_Sounds(TEXT("rg_step1"), TEXT("rg_step12"), SOUND_CHANNEL::PLAYER_STEP, 0.25f, !pRailGunner->Is_State(BIT(RG_STATE::SPRINT)) ? 1.5f : 1.6f);
+		}
+		break;
 	}
 }
 

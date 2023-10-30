@@ -75,27 +75,6 @@ HRESULT CEffect::Ready_Components()
 
 HRESULT CEffect::Render(_uint _iPassIndex)
 {
-	if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLDIF, m_tMaterialDesc.vDiffuse)))
-	{
-		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-	}
-	if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLAMB, m_tMaterialDesc.vAmbient)))
-	{
-		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-	}
-	if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLSPC, m_tMaterialDesc.vSpecular)))
-	{
-		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-	}
-	if (FAILED(m_pShader->Bind_Vector(SHADER_MTRLEMS, m_tMaterialDesc.vEmissive)))
-	{
-		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CShader::Bind_Vector: SHADER_MTRLDIF");
-	}
-	if (FAILED(m_pShader->Bind_Float(SHADER_MTRLSHN, m_tMaterialDesc.fShininess)))
-	{
-		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CShader::Bind_RawValue: SHADER_MTRLSHN");
-	}
-
 	if (FAILED(__super::Render(_iPassIndex)))
 	{
 		MSG_RETURN(E_FAIL, "CEffect::Render", "Failed to CGameObject::Render");

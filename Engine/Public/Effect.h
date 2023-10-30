@@ -41,8 +41,6 @@ protected:
 	shared_ptr<class CVIBufferInstance>		m_pVIBufferInstance;
 
 	_uint									m_iActivateInstances	= 0;
-
-	MATERIALDESC							m_tMaterialDesc;
 };
 
 END

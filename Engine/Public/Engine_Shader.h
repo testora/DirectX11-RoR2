@@ -105,10 +105,12 @@
 
 #define RENDERTARGET_PREPROCESS					TEXT("RenderTarget:PreProcess")
 #define RENDERTARGET_MASK						TEXT("RenderTarget:Mask")
+#define RENDERTARGET_POSTPROCESS				TEXT("RenderTarget:PostProcess")
 
 #define DEPTHSTENCIL_SHADOWDEPTH				TEXT("DepthStencil:ShadowDepth")
 
 #define MULTIRENDERTARGET_SHADOWDEPTH			TEXT("MultiRenderTarget:ShadowDepth")
 #define MULTIRENDERTARGET_NONBLEND				TEXT("MultiRenderTarget:NonBlend")
 #define MULTIRENDERTARGET_LIGHT					TEXT("MultiRenderTarget:Light")
+#define MULTIRENDERTARGET_PREPROCESS			TEXT("MultiRenderTarget:PreProcess")
 #define MULTIRENDERTARGET_POSTPROCESS			TEXT("MultiRenderTarget:PostProcess")

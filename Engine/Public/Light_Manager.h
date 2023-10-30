@@ -7,6 +7,7 @@ class CLight_Manager final : public CSingleton<CLight_Manager>
 {
 private:
 	typedef vector<shared_ptr<class CLight>>												Lights;
+	typedef map<shared_ptr<class CLight>, shared_ptr<class CGameObject>, std::owner_less<>>	ShadowObjects;
 	typedef map<shared_ptr<class CGameObject>, shared_ptr<class CLight>, std::owner_less<>>	Shadows;
 
 private:
@@ -41,6 +42,7 @@ private:
 	_uint 																	m_iLightCount	= 0;
 
 	Shadows																	m_mapShadows;
+	ShadowObjects															m_mapShadowObjects;
 	vector<_float4x4>														m_vecShadowViewMatrices;
 	vector<_float4x4>														m_vecShadowProjectionMatrices;
 	vector<ComPtr<ID3D11ShaderResourceView>>								m_vecShadowShaderResourceViews;

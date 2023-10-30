@@ -10,6 +10,7 @@ HRESULT CLunarExploderNodeSelector_Main::Initialize(shared_ptr<CBlackBoard> _pBl
 		MSG_RETURN(E_FAIL, "CLunarExploderNodeSelector_Main::Initialize", "Failed to __super::Initialize");
 	}
 
+	Add_Child(CLunarExploderNodeLeaf_Death::Create(m_pBlackBoard));
 	Add_Child(CLunarExploderNodeLeaf_Spawn::Create(m_pBlackBoard));
 
 	Add_Child(

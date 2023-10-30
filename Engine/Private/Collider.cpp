@@ -22,8 +22,8 @@ CCollider::CCollider(const CCollider& _rhs)
 	, m_pBatch			(_rhs.m_pBatch)
 	, m_pEffect			(_rhs.m_pEffect)
 	, m_pInputLayout	(_rhs.m_pInputLayout)
-	, m_iColID			(s_iColID++)
 #endif
+	, m_iColID			(s_iColID++)
 {
 }
 

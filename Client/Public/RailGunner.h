@@ -54,14 +54,14 @@ public:
 	void														Bounce_Bracket();
 	void														Hit_Reload();
 	void														Fire_Sniper();
-#pragma endregion
 	void														Fire_Pistol();
+#pragma endregion
 
 private:
 	unordered_map<SYSTEM, shared_ptr<class Engine::ISystem>>	m_umapSystem;
 
 	shared_ptr<class CObjectPool>								m_pPistolBulletPool;
-	const _float4x4*											m_pPistolOffset	= nullptr;
+	_float4x4													m_mPistolOffset	= g_mUnit;
 
 	shared_ptr<CRenderer>										m_pRenderer;
 	shared_ptr<CTransform>										m_pTransform;

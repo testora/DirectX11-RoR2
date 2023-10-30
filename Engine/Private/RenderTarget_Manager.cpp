@@ -177,16 +177,24 @@ HRESULT CRenderTarget_Manager::Begin_MultiRenderTaget(const wstring& _wstrMultiT
 	return S_OK;
 }
 
-HRESULT CRenderTarget_Manager::End_MultiRenderTarget()
+HRESULT CRenderTarget_Manager::End_MultiRenderTarget(const wstring& _wstrTargetTag)
 {
 	ID3D11RenderTargetView* pRenderTargetView[MAX_RENDERTARGET] = { nullptr };
 
 	m_pContext->OMSetRenderTargets(MAX_RENDERTARGET, pRenderTargetView, nullptr);
 
-	m_pContext->OMSetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencilView.Get());
-
 	m_pBackBufferView->Release();
 	m_pDepthStencilView->Release();
+
+	if (Exist_RenderTarget(_wstrTargetTag))
+	{
+		ComPtr<ID3D11Resource> pSrc, pDst;
+		m_pBackBufferView->GetResource(pDst.GetAddressOf());
+		m_umapRenderTarget[_wstrTargetTag]->Get_RenderTargetView()->GetResource(pSrc.GetAddressOf());
+		m_pContext->CopyResource(pDst.Get(), pSrc.Get());
+	}
+
+	m_pContext->OMSetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencilView.Get());
 
 	return S_OK;
 }

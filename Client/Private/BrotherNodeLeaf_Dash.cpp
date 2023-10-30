@@ -47,7 +47,7 @@ void CBrotherNodeLeaf_Dash::Activate()
 {
 	__super::Activate();
 
-	m_eDirection = static_cast<DIRECTION>(Function::Random({ m_fForward, m_fBackward, m_fLeft, m_fRight }));
+	m_eDirection = static_cast<DIRECTION>(Function::Probability({ m_fForward, m_fBackward, m_fLeft, m_fRight }));
 	
 	m_pPhysics->Flattern(true, false, true);
 	m_pTransform->LookAt(m_pTargetTransform);
@@ -73,6 +73,10 @@ void CBrotherNodeLeaf_Dash::Activate()
 	}
 
 	m_pAnimator->Play_Animation(m_eAnimation, 2.f, false, g_fDefaultInterpolationDuration, false);
+
+	CGameInstance::Get_Instance()->Play_Sound(
+		Function::Random({ TEXT("brother_dash1"),TEXT("brother_dash2"),TEXT("brother_dash3"),TEXT("brother_dash4"),TEXT("brother_dash5"),TEXT("brother_dash6") }),
+		SOUND_CHANNEL::MONSTER, m_pTransform->Get_State(TRANSFORM::POSITION), m_pTargetTransform->Get_State(TRANSFORM::POSITION));
 }
 
 STATUS CBrotherNodeLeaf_Dash::Invoke(_float _fTimeDelta)

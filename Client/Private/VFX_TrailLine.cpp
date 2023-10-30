@@ -44,6 +44,10 @@ void CVFX_TrailLine::Tick(_float _fTimeDelta)
 	if (m_fInterval < m_fTimeAcc)
 	{
 		m_iIndex += static_cast<_uint>(m_fTimeAcc / m_fInterval);
+		if (m_bPush)
+		{
+			++m_iPushCount;
+		}
 		if (m_iIndex >= m_iMaxInstance)
 		{
 			m_iIndex = 0;
@@ -69,6 +73,8 @@ HRESULT CVFX_TrailLine::Render()
 	m_pShader->Bind_Vector(SHADER_MTRLDIF, m_vColor);
 	m_pShader->Bind_Float(SHADER_THICKNESS, m_fThickness);
 
+	m_tMaterialDesc.vDiffuse = m_vColor;
+
 	if (FAILED(__super::Render(1)))
 	{
 		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Render", "Failed to __super::Render");
@@ -79,23 +85,32 @@ HRESULT CVFX_TrailLine::Render()
 
 HRESULT CVFX_TrailLine::Fetch(any _pair_pTarget_szBone)
 {
-	if (FAILED(__super::Fetch()))
-	{
-		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Fetch", "Failed to __super::Fetch");
-	}
-
 	Delete_Component(COMPONENT::TEXTURE);
+	m_pTargetPoint	= nullptr;
 	m_mTargetPivot	= g_mUnit;
 	m_vColor		= _color(1.f, 1.f, 1.f, 1.f);
 	m_fThickness	= 0.05f;
 	m_fInterval		= 0.01f;
 	m_iMaxInstance	= 100;
+	m_iPushCount	= 0;
+	m_bPush			= false;
 
-	pair<shared_ptr<CGameObject>, const _char*> pairArg = any_cast<pair<shared_ptr<CGameObject>, const _char*>>(_pair_pTarget_szBone);
+	if (_pair_pTarget_szBone.has_value())
+	{
+		pair<shared_ptr<CGameObject>, const _char*> pairArg = any_cast<pair<shared_ptr<CGameObject>, const _char*>>(_pair_pTarget_szBone);
+		m_pTargetTransform = pairArg.first->Get_Component<CTransform>(COMPONENT::TRANSFORM);
 
-	m_pTargetTransform = pairArg.first->Get_Component<CTransform>(COMPONENT::TRANSFORM);
-	m_pTargetPoint = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(pairArg.second)->Get_CombinedTransformationPointer();
-	m_mTargetPivot = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
+		if (pairArg.second)
+		{
+			m_pTargetPoint = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Bone(pairArg.second)->Get_CombinedTransformationPointer();
+			m_mTargetPivot = pairArg.first->Get_Component<CModel>(COMPONENT::MODEL)->Get_Pivot();
+		}
+	}
+
+	if (FAILED(__super::Fetch()))
+	{
+		MSG_RETURN(E_FAIL, "CVFX_TrailLine::Fetch", "Failed to __super::Fetch");
+	}
 
 	return S_OK;
 }
@@ -108,6 +123,9 @@ _bool CVFX_TrailLine::Return()
 void CVFX_TrailLine::Fetch_Instance(void* _pData, _uint _iNumInstance, any _arg)
 {
 	VTXPOSSIZEINSTTRANSCOLORARG* pData = reinterpret_cast<VTXPOSSIZEINSTTRANSCOLORARG*>(_pData);
+
+	_float4 vInitial = ((m_pTargetPoint ? XMLoadFloat4x4(m_pTargetPoint) : g_mUnit) * m_mTargetPivot * m_pTargetTransform->Get_Matrix()).r[3];
+	std::fill(m_deqLine.begin(), m_deqLine.end(), vInitial);
 }
 
 void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _fTimeDelta)
@@ -118,7 +136,7 @@ void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _
 
 		VTXPOSSIZEINSTTRANSCOLORARG* pData = reinterpret_cast<VTXPOSSIZEINSTTRANSCOLORARG*>(_pData);
 
-		pData[m_iIndex].vColor = _color(1.f, 1.f, 1.f, 0.f);
+		pData[m_iIndex].vColor = m_vColor;
 
 		for (_uint i = 0; i < m_iMaxInstance; ++i)
 		{
@@ -127,7 +145,14 @@ void CVFX_TrailLine::Update_Instance(void* _pData, _uint _iNumInstance, _float _
 			pData[i].vLook			= _float4(m_deqLine[i + 2]);
 			pData[i].vTranslation	= _float4(m_deqLine[i + 3]);
 
-			pData[i].vColor.w		= max(0.f, 1.f - (i / static_cast<_float>(m_iMaxInstance)));
+			if (m_bPush)
+			{
+				pData[i].vColor.w	= max(0.f, 1.f - (i + m_iPushCount / static_cast<_float>(m_iMaxInstance)));
+			}
+			else
+			{
+				pData[i].vColor.w	= max(0.f, 1.f - (i / static_cast<_float>(m_iMaxInstance)));
+			}
 		}
 	}
 }
@@ -161,6 +186,12 @@ HRESULT CVFX_TrailLine::Set_Texture(const wstring& _wstrTexture)
 	}
 
 	return S_OK;
+}
+
+void CVFX_TrailLine::Push_Pool(shared_ptr<CObjectPool> _pPool)
+{
+	m_bPush = true;
+	m_iPushCount = 0;
 }
 
 shared_ptr<CVFX_TrailLine> CVFX_TrailLine::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

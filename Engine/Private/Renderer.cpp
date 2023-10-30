@@ -92,12 +92,18 @@ HRESULT CRenderer::Initialize(any)
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_PREPROCESS,
 		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_PREPROCESS");
 	}
 	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_MASK,
 		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_MASK");
+	}
+
+	if (FAILED(m_pRenderTarget_Manager->Add_RenderTarget(RENDERTARGET_POSTPROCESS,
+		vResolution, DXGI_FORMAT_R8G8B8A8_UNORM, _color(0.f, 0.f, 0.f, 0.f))))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Add_RenderTarget: RENDERTARGET_POSTPROCESS");
 	}
 
 #pragma endregion
@@ -158,11 +164,16 @@ HRESULT CRenderer::Initialize(any)
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_LIGHT");
 	}
 
-	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_POSTPROCESS, RENDERTARGET_PREPROCESS)))
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_PREPROCESS, RENDERTARGET_PREPROCESS)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_POSTPROCESS");
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_PREPROCESS");
 	}
-	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_POSTPROCESS, RENDERTARGET_MASK)))
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_PREPROCESS, RENDERTARGET_MASK)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_PREPROCESS");
+	}
+
+	if (FAILED(m_pRenderTarget_Manager->Push_RenderTarget(MULTIRENDERTARGET_POSTPROCESS, RENDERTARGET_POSTPROCESS)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Initialize", "Failed to Push_RenderTarget: MULTIRENDERTARGET_POSTPROCESS");
 	}
@@ -455,9 +466,9 @@ HRESULT CRenderer::Draw_Light()
 
 HRESULT CRenderer::Draw_PreProcess()
 {
-	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_POSTPROCESS, 0)))
+	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_PREPROCESS, 0)))
 	{
-		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_POSTPROCESS");
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_PREPROCESS");
 	}
 
 	if (FAILED(m_pShader->Bind_Matrix(SHADER_MATVIEWINV, CPipeLine::Get_Instance()->Get_Transform(PIPELINE::VIEW).inverse())))
@@ -581,6 +592,11 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Draw_PostProcess()
 {
+	if (FAILED(m_pRenderTarget_Manager->Begin_MultiRenderTaget(MULTIRENDERTARGET_POSTPROCESS)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Draw_PreProcess", "Failed to Begin_MultiRenderTaget: MULTIRENDERTARGET_PREPROCESS");
+	}
+
 	if (FAILED(m_pRenderTarget_Manager->Bind_RenderTarget(RENDERTARGET_PREPROCESS, m_pShader, SHADER_TEXTARGET_PREPROCESS)))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to Bind_RenderTarget: RENDERTARGET_MATERIAL_DIFFUSE");
@@ -597,6 +613,11 @@ HRESULT CRenderer::Draw_PostProcess()
 	if (FAILED(m_pVIBuffer->Render()))
 	{
 		MSG_RETURN(E_FAIL, "CRenderer::Draw_PostProcess", "Failed to Render");
+	}
+
+	if (FAILED(m_pRenderTarget_Manager->End_MultiRenderTarget(RENDERTARGET_POSTPROCESS)))
+	{
+		MSG_RETURN(E_FAIL, "CRenderer::Render_Blend", "Failed to End_MultiRenderTarget");
 	}
 
 	return S_OK;

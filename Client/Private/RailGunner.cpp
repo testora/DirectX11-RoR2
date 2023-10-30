@@ -74,7 +74,7 @@ HRESULT CRailGunner::Initialize(any)
 
 	Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::RAILGUNNER::IDLE);
 
-	m_pPistolOffset = pModel->Get_Bone("SMGBarrel_end")->Get_CombinedTransformationPointer();
+	m_mPistolOffset = XMLoadFloat4x4(pModel->Get_Bone("TopRail_end")->Get_CombinedTransformationPointer()) * m_pModel->Get_Pivot();
 	m_pTransform->Set_Scale(_float3(1.2f, 1.2f, 1.2f));
 
 	LIGHTDESC tLightDesc{};
@@ -372,8 +372,16 @@ void CRailGunner::Fire_Sniper()
 
 void CRailGunner::Fire_Pistol()
 {
-	auto a = *m_pPistolOffset * m_pTransform->Get_Matrix();
-	m_pPistolBulletPool->Pop(make_pair(m_pPistolBulletPool, _float3(a.row(3))));
+	if (m_umapSystem.end() == m_umapSystem.find(SYSTEM::CROSSHAIR)
+	||	nullptr == m_umapSystem.find(SYSTEM::CROSSHAIR)->second)
+	{
+		MSG_RETURN(, "CRailGunner::Fire_Sniper", "Nullptr Exception: m_pCrosshair");
+	}
+
+	CGameInstance::Get_Instance()->Play_Sound(
+		Function::Random({ TEXT("rg_pistol1"),TEXT("rg_pistol2"),TEXT("rg_pistol3"),TEXT("rg_pistol4"),TEXT("rg_pistol5"),TEXT("rg_pistol6"),TEXT("rg_pistol7"),TEXT("rg_pistol8"), }), SOUND_CHANNEL::PLAYER_GUN);
+
+	m_pPistolBulletPool->Pop(make_pair(m_pPistolBulletPool, _float3((m_mPistolOffset * m_pTransform->Get_Matrix()).row(3))));
 }
 
 #pragma endregion

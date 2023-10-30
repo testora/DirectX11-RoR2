@@ -10,6 +10,7 @@
 #include "BrotherNodeLeaf_LeapEnd.h"
 #include "BrotherNodeLeaf_SpellChannel.h"
 #include "BrotherNodeLeaf_Stagger.h"
+#include "BrotherNodeLeaf_Death.h"
 #include "BrotherNodeLeaf_Dash.h"
 #include "BrotherNodeLeaf_DashSide.h"
 #include "BrotherNodeLeaf_Run.h"

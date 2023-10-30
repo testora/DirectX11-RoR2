@@ -208,7 +208,6 @@ HRESULT CGameInstance::Present()
 #pragma endregion
 #pragma region RenderTarget Manager
 
-#ifdef _DEBUG
 ComPtr<ID3D11ShaderResourceView> CGameInstance::Get_RenderTarget_ShaderResourceView(const wstring& _wstrTargetTag)
 {
 	if (nullptr == m_pRenderTarget_Manager)
@@ -218,7 +217,6 @@ ComPtr<ID3D11ShaderResourceView> CGameInstance::Get_RenderTarget_ShaderResourceV
 
 	return m_pRenderTarget_Manager->Get_ShaderResourceView(_wstrTargetTag);
 }
-#endif
 
 #pragma endregion
 #pragma region Sound Manager
@@ -233,24 +231,44 @@ HRESULT CGameInstance::Load_Sound(const wstring& _wstrDirectory)
 	return m_pSound_Manager->Load(_wstrDirectory);
 }
 
-void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float _fVolume, _bool _bLoop)
+void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float _fVolume, _float _fSpeed, _bool _bLoop, _bool _bSingleAudio, _float _fStart, _float _fEnd)
 {
 	if (nullptr == m_pSound_Manager)
 	{
 		MSG_RETURN(, "CGameInstance::Play_Sound", "Null Exception: m_pSound_Manager");
 	}
 
-	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _fVolume, _bLoop);
+	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _fVolume, _fSpeed, _bLoop, _bSingleAudio, _fStart, _fEnd);
 }
 
-void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _bool _bLoop)
+void CGameInstance::Play_Sound(const wstring& _wstrSoundKey, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _float _fSpeed, _bool _bLoop, _bool _bSingleAudio, _float _fStart, _float _fEnd)
 {
 	if (nullptr == m_pSound_Manager)
 	{
 		MSG_RETURN(, "CGameInstance::Play_Sound", "Null Exception: m_pSound_Manager");
 	}
 
-	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _vSrc, _vDst, _bLoop);
+	return m_pSound_Manager->Play_Sound(_wstrSoundKey, _eChannel, _vSrc, _vDst, _fSpeed, _bLoop, _bSingleAudio, _fStart, _fEnd);
+}
+
+void CGameInstance::Play_Sounds(const wstring& _wstrSoundKeyA, const wstring& _wstrSoundKeyB, SOUND_CHANNEL _eChannel, _float _fVolume, _float _fSpeed, _float _fStart, _float _fEnd)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Play_Sounds", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Play_Sounds(_wstrSoundKeyA, _wstrSoundKeyB, _eChannel, _fVolume, _fSpeed, _fStart, _fEnd);
+}
+
+void CGameInstance::Play_Sounds(const wstring& _wstrSoundKeyA, const wstring& _wstrSoundKeyB, SOUND_CHANNEL _eChannel, _float3 _vSrc, _float3 _vDst, _float _fSpeed, _float _fStart, _float _fEnd)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Play_Sounds", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Play_Sounds(_wstrSoundKeyA, _wstrSoundKeyB, _eChannel, _vSrc, _vDst, _fSpeed, _fStart, _fEnd);
 }
 
 void CGameInstance::Stop_Sound(SOUND_CHANNEL _eChannel)
@@ -301,6 +319,16 @@ void CGameInstance::Set_SoundChannel_Volume_Distance(SOUND_CHANNEL _eChannel, _f
 	}
 
 	return m_pSound_Manager->Set_Channel_Volume_Distance(_eChannel, _fDistance);
+}
+
+void CGameInstance::Set_Channel_Position(SOUND_CHANNEL _eChannel, _float _fPosition)
+{
+	if (nullptr == m_pSound_Manager)
+	{
+		MSG_RETURN(, "CGameInstance::Set_Channel_Position", "Null Exception: m_pSound_Manager");
+	}
+
+	return m_pSound_Manager->Set_Channel_Position(_eChannel, _fPosition);
 }
 
 void CGameInstance::Reset_Sound()

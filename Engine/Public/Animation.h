@@ -7,7 +7,7 @@ class ENGINE_DLL CAnimation final
 {
 private:
 	explicit CAnimation() DEFAULT;
-	explicit CAnimation(const CAnimation&) DEFAULT;
+	explicit CAnimation(const CAnimation&);
 	virtual ~CAnimation() DEFAULT;
 
 public:

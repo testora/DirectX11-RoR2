@@ -10,6 +10,10 @@ HRESULT CLunarGolemNodeSelector_Main::Initialize(shared_ptr<CBlackBoard> _pBlack
 		MSG_RETURN(E_FAIL, "CLunarGolemNodeSelector_Main::Initialize", "Failed to __super::Initialize");
 	}
 
+	Add_Child(CLunarGolemNodeLeaf_Death::Create(m_pBlackBoard));
+
+	Add_Child(CLunarGolemNodeLeaf_LeapEnd::Create(m_pBlackBoard));
+
 	Add_Child(
 		CLunarGolemNodeDecorator_Range::Create(m_pBlackBoard, 40.f, true,
 			CLunarGolemNodeParallel_WalkShot::Create(m_pBlackBoard)));

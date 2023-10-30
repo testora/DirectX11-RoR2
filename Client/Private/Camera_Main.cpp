@@ -53,11 +53,7 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 	{
 #endif
 		Handle_MouseInput(_fTimeDelta);
-
-		if (nullptr != m_pTargetTransform)
-		{
-			Smooth_Tranformation(_fTimeDelta);
-		}
+		
 #ifdef _DEBUG
 	}
 	else
@@ -69,6 +65,11 @@ void CCamera_Main::Tick(_float _fTimeDelta)
 
 void CCamera_Main::Late_Tick(_float _fTimeDelta)
 {
+	if (m_pTargetTransform)
+	{
+		Smooth_Tranformation(_fTimeDelta);
+	}
+
 	__super::Late_Tick(_fTimeDelta);
 
 #if ACTIVATE_IMGUI
@@ -160,7 +161,7 @@ void CCamera_Main::Rebound_Pistol()
 			}
 			else
 			{
-				m_pTransform->Set_State(TRANSFORM::UP, _float3(0.f, 1.f, 0.f));
+				m_pTransform->Set_State(TRANSFORM::LOOK, m_pTargetTransform->Get_State(TRANSFORM::LOOK));
 			}
 
 			return fAcc < 1.f;
@@ -176,6 +177,7 @@ void CCamera_Main::Rebound_Sniper()
 		return;
 	}
 #endif
+	
 	_float4 vSniperReboundQuaternion = QuaternionBetweenAxis(
 		XMVector3TransformNormal(_float3(0.f, 1.f, 0.f), m_pTransform->Get_Matrix()),
 		XMVector3TransformNormal(_float3(0.00f, 1.00f, -0.02f), m_pTransform->Get_Matrix()));
@@ -215,6 +217,11 @@ void CCamera_Main::Rebound_Sniper()
 		//
 		//		m_pTransform->Rotate(Function::Slerp(m_vSniperReboundQuaternion, -fRatio, 0.5f));
 		//	}
+
+			else
+			{
+				m_pTransform->Set_State(TRANSFORM::LOOK, m_pTargetTransform->Get_State(TRANSFORM::LOOK));
+			}
 
 			return fAcc < 1.f;
 		}
@@ -317,8 +324,9 @@ void CCamera_Main::Smooth_Tranformation(_float _fTimeDelta)
 	_float3 vLook	= m_pTransform->Get_State(TRANSFORM::LOOK).normalize();
 	_float3 vOffset	= XMVector3Rotate(_float3(m_vMainOffset.x, 0.f, m_vMainOffset.z), QuaternionBetweenAxis(_float3(0.f, 0.f, 1.f), vLook));
 
-	m_pTransform->Set_State(TRANSFORM::POSITION, Function::Lerp(m_pTransform->Get_State(TRANSFORM::POSITION),
-		_float3(m_pTargetTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, m_vMainOffset.y, 0.f)) + vOffset, 0.5f));
+//	m_pTransform->Set_State(TRANSFORM::POSITION, Function::Lerp(m_pTransform->Get_State(TRANSFORM::POSITION),
+//		_float3(m_pTargetTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, m_vMainOffset.y, 0.f)) + vOffset, 0.5f));
+	m_pTransform->Set_State(TRANSFORM::POSITION, _float3(m_pTargetTransform->Get_State(TRANSFORM::POSITION) + _float3(0.f, m_vMainOffset.y, 0.f)) + vOffset);
 }
 
 shared_ptr<CCamera_Main> CCamera_Main::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

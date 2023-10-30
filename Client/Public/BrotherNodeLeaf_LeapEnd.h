@@ -27,6 +27,8 @@ private:
 	shared_ptr<CTransform>						m_pTransform;
 	shared_ptr<CAnimator>						m_pAnimator;
 
+	shared_ptr<CTransform>						m_pTargetTransform;
+
 	shared_ptr<class CBrother>					m_pBrother;
 
 public:

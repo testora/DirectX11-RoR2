@@ -35,7 +35,7 @@ HRESULT CBrother::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
-	m_tEntityDesc.fMaxHP					= 100.f;
+	m_tEntityDesc.fMaxHP					= 50.f;
 	m_tEntityDesc.fHP						= m_tEntityDesc.fMaxHP;
 
 	m_tEntityDesc.fForwardSpeed				= BROTHER_SPEED_FORWARD;
@@ -77,7 +77,7 @@ void CBrother::Tick(_float _fTimeDelta)
 {
 	__super::Tick(_fTimeDelta);
 
-	if (m_pHealthBar)
+//	if (m_pHealthBar)
 	{
 		m_pHealthBar->Tick(_fTimeDelta);
 	}
@@ -86,6 +86,11 @@ void CBrother::Tick(_float _fTimeDelta)
 //	{
 //		m_pTransform->Rotate_Lerp(TRANSFORM::UP, XMConvertToRadians(90.f), 10.f);
 //	}
+
+	if (CGameInstance::Get_Instance()->Key_Down(VK_MBUTTON))
+	{
+		m_tEntityDesc.fHP = 50.f;
+	}
 
 #if ACTIVATE_IMGUI
 	static _float fAnimationSpeed = 1.f;
@@ -110,7 +115,7 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("DASH_BACKWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_BACKWARD, fAnimationSpeed);
 	if (ImGui::Button("DASH_LEFT"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_LEFT, fAnimationSpeed);
 	if (ImGui::Button("DASH_RIGHT"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DASH_RIGHT, fAnimationSpeed);
-	if (ImGui::Button("SMASH_FORWARD"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, fAnimationSpeed);
+	if (ImGui::Button("SMASH_FORWARD"))					{Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::SMASH_FORWARD, fAnimationSpeed);CGameInstance::Get_Instance()->Play_Sound(TEXT("brother_smash"), SOUND_CHANNEL::MONSTER_WEAPON); }
 	if (ImGui::Button("LUNARSHARD_FIRE_FORWARD"))		Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::LUNARSHARD_FIRE_FORWARD, fAnimationSpeed);
 	if (ImGui::Button("ULT_ENTER"))						Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_ENTER, fAnimationSpeed);
 	if (ImGui::Button("ULT_CHANNEL"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::ULT_CHANNEL, fAnimationSpeed);
@@ -142,13 +147,18 @@ void CBrother::Tick(_float _fTimeDelta)
 	if (ImGui::Button("DEATH_LOOP"))					Get_Behavior<CAnimator>(BEHAVIOR::ANIMATOR)->Play_Animation(ANIMATION::BROTHER::DEATH_LOOP, fAnimationSpeed);
 	ImGui::End();
 #endif
+
+	if (!m_bRender)
+	{
+		m_pTransform->Set_State(TRANSFORM::POSITION, _float3(0.f, 0.f, 0.f));
+	}
 }
 
 void CBrother::Late_Tick(_float _fTimeDelta)
 {
 	__super::Late_Tick(_fTimeDelta);
 
-	if (m_pHealthBar)
+//	if (m_pHealthBar)
 	{
 		m_pHealthBar->Late_Tick(_fTimeDelta);
 	}
@@ -219,7 +229,7 @@ void CBrother::OnCollisionEnter(COLLISION_GROUP _eGroup, shared_ptr<CGameObject>
 {
 	if (COLLISION_GROUP::PLAYER_BULLET == _eGroup)
 	{
-		int a = 1;
+		m_tEntityDesc.fHP -= 1.f;
 	}
 }
 
@@ -292,24 +302,28 @@ HRESULT CBrother::Ready_Behaviors()
 
 void CBrother::Hit()
 {
-	_uint iIndex = rand() % 3;
+	m_tEntityDesc.fHP -= 1.f;
 
-	switch (iIndex)
+	if (m_pAnimator->Is_Playing(ANIMATION::BROTHER::SPRINT_FORWARD))
 	{
-	case 0:
-		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH1, 1.f, false, g_fDefaultInterpolationDuration, false);
-		break;
-	case 1:
-		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH2, 1.f, false, g_fDefaultInterpolationDuration, false);
-		break;
-	case 2:
-		m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH3, 1.f, false, g_fDefaultInterpolationDuration, false);
-		break;
+		switch (rand() % 3)
+		{
+		case 0:
+			m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH1, 1.f, false, g_fDefaultInterpolationDuration, false);
+			break;
+		case 1:
+			m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH2, 1.f, false, g_fDefaultInterpolationDuration, false);
+			break;
+		case 2:
+			m_pAnimator->Play_Animation(ANIMATION::BROTHER::FLINCH3, 1.f, false, g_fDefaultInterpolationDuration, false);
+			break;
+		}
 	}
 }
 
 void CBrother::Hit_WeakPoint()
 {
+	m_tEntityDesc.fHP -= 5.f;
 }
 
 shared_ptr<CBrother> CBrother::Create(ComPtr<ID3D11Device> _pDevice, ComPtr<ID3D11DeviceContext> _pContext)

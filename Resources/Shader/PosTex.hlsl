@@ -1,7 +1,9 @@
 #include "ShaderCommon.hlsli"
 
-float g_fCrosshairBoundsX;
-float g_fCrosshairBoundsY;
+Texture2D	g_texScopeTarget;
+
+float		g_fCrosshairBoundsX;
+float		g_fCrosshairBoundsY;
 
 struct VS_IN
 {
@@ -359,8 +361,43 @@ PS_OUT PS_RAILGUNNER_CROSSHAIR_SCOPE(PS_IN_ORTHOGRAPHIC In)
 		vTexCoord.y *= -1.f;
 	}
 	
-	Out.vColor		= g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
-	Out.vColor.a	= AvgGrayScale(Out.vColor.rgb);
+	Out.vColor				= g_texDiffuse[1].Sample(LinearSampler, vTexCoord);
+	
+	if (AvgGrayScale(Out.vColor.rgb) < 0.1f)
+	{
+		Out.vColor.a = 0.f;
+	}
+	
+	float3	fYellowColor	= float3(1.f, 1.f, 0.f);
+    float	fYellowFactor	= length(Out.vColor.rgb - fYellowColor);
+	if (fYellowFactor < 0.1f)
+	{
+		Out.vColor			= g_texScopeTarget.Sample(TargetSampler, In.vTexCoord * 0.5f + 0.25f);
+		Out.vColor.rgb		*= 0.25f;
+		Out.vColor.a		= 1.f;
+		
+		return Out;
+	}
+	
+	float3	fOutlineColor	= float3(0.4f, 0.4f, 0.f);
+	float	fOutlineFactor	= length(Out.vColor.rgb - fOutlineColor);
+	if (fOutlineFactor < 0.1f)
+	{
+		Out.vColor			= g_texScopeTarget.Sample(TargetSampler, In.vTexCoord * 0.75f + 0.125f);
+		Out.vColor.rgb		*= 0.5f;
+		Out.vColor.a		= 1.f;
+		
+		return Out;
+	}
+	
+	float3	fCrossColor		= float3(0.f, 1.f, 0.f);
+	float	fCrossFactor	= length(Out.vColor.rgb - fCrossColor);
+	if (fCrossFactor < 0.7f)
+	{
+		return Out;
+	}
+	
+	Out.vColor.rgb			= float3(0.f, 0.f, 0.f);
 	
 	return Out;
 }
@@ -416,11 +453,11 @@ PS_OUT PS_BROTHER_HEALTHBAR_BACKGROUND(PS_IN_ORTHOGRAPHIC In)
 	
 	if (vLocalTexture.x < fAlphaInterval)
 	{
-        Out.vColor.a = lerp(0.f, Out.vColor.a, vLocalTexture.x / fAlphaInterval);
-    }
-    else if (vLocalTexture.y > vBackgroundSize.x - fAlphaInterval)
+		Out.vColor.a = lerp(0.f, Out.vColor.a, vLocalTexture.x / fAlphaInterval);
+	}
+	else if (vLocalTexture.x > vBackgroundSize.x - fAlphaInterval)
 	{
-        Out.vColor.a = lerp(0.f, Out.vColor.a, (vBackgroundSize.x - vLocalTexture.y) / fAlphaInterval);
+		Out.vColor.a = lerp(0.f, Out.vColor.a, (vBackgroundSize.x - vLocalTexture.x) / fAlphaInterval);
 	}
 	
 	return Out;
@@ -430,7 +467,7 @@ PS_OUT PS_BROTHER_HEALTHBAR_HEALTH(PS_IN_ORTHOGRAPHIC In)
 {
 	PS_OUT	Out;
 	
-    Out.vColor = float4(0.6f, 0.f, 0.f, 1.f);
+	Out.vColor = float4(0.6f, 0.f, 0.f, 1.f);
 	
 	return Out;
 }
