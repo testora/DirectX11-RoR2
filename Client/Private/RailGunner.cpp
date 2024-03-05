@@ -36,14 +36,14 @@ HRESULT CRailGunner::Initialize_Prototype()
 
 	m_umapBehaviorArg[BEHAVIOR::GROUNDING]	= make_pair(wstring(), wstring(GRID_TERRAIN));
 
-	m_tEntityDesc.fForwardSpeed				= PLAYER_SPEED_FORWARD;
+	m_tEntityDesc.fForwardSpeed				= PLAYER_SPEED_FORWARD * 2;
 	m_tEntityDesc.fBackwardSpeed			= PLAYER_SPEED_BACKWARD;
 	m_tEntityDesc.fLeftSpeed				= PLAYER_SPEED_LEFT;
 	m_tEntityDesc.fRightSpeed				= PLAYER_SPEED_RIGHT;
-	m_tEntityDesc.fSpritPower				= PLAYER_SPRINT_POWER;
+	m_tEntityDesc.fSpritPower				= PLAYER_SPRINT_POWER * 10;
 	m_tEntityDesc.fJumpPower				= PLAYER_JUMP_POWER;
 
-	m_tEntityDesc.vMaxSpeed					= PLAYER_SPEED_TERMINAL;
+	m_tEntityDesc.vMaxSpeed					= PLAYER_SPEED_TERMINAL * 10;
 	m_tEntityDesc.vResist					= PLAYER_SPEED_RESIST;
 
 	m_tMaterialDesc.vSpecular				= _color(0.25f, 0.25f, 0.25f, 1.f);

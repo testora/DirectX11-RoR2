@@ -32,7 +32,7 @@ HRESULT CRenderer::Initialize(any)
 	m_mQuadProjection	= XMMatrixOrthographicLH(tViewPortDesc.Width, tViewPortDesc.Height, 0.f, 1.f);
 
 	_uint2			vResolution			= _uint2(static_cast<_uint>(tViewPortDesc.Width), static_cast<_uint>(tViewPortDesc.Height));
-	_uint2			vShadowResolution	= _uint2(vResolution.x * g_iShadowScale, vResolution.y * g_iShadowScale);
+	_uint2			vShadowResolution	= _uint2(vResolution.x * g_iShadowScale * 1, vResolution.y * g_iShadowScale * 1);
 
 #pragma region Renger Targets
 

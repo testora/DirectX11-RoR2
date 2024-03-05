@@ -34,7 +34,7 @@ float				g_fFogPower			= 1.f;
 float				fBias				= -4.f;
 static const float	fShadowShade		= 0.5f;
 static const float	fMinShadowAvg		= 0.0f;
-static const int2	vGridSize			= int2(12, 12);
+static const int2	vGridSize			= int2(40, 40);
 static const float2	vTexel				= float2(1.f / 1920.f, 1.f / 1080.f) * 0.2f;
 
 float4 ShadowDepthTargetLiteral(int iIndex, float2 vUV);
